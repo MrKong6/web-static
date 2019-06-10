@@ -1,0 +1,480 @@
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
+
+body {
+  width: 100%;
+  height: 100%;
+  background-color: #f9f9f9;
+}
+
+main {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.b-t {
+  position: relative;
+}
+
+.b-t:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: #eceeef;
+}
+
+.b-b {
+  position: relative;
+}
+
+.b-b:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: #eceeef;
+}
+
+main h5 {
+  position: relative;
+  margin-bottom: 0;
+  padding: 1rem 20px;
+  line-height: 38px;
+  background: #ffffff;
+}
+
+main h5:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: #eceeef;
+}
+
+main h5 p {
+  font-size: .8em;
+  font-weight: normal;
+}
+
+.main {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+.aside-bar {
+  width: 240px;
+  z-index: 2;
+}
+
+.aside-bar .drawer {
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  left: 0;
+  width: 240px;
+  height: 100%;
+  display: inline-flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: rgb(250, 250, 250);
+  border-right: 1px solid rgb(250, 250, 250);
+  overflow: hidden;
+  touch-action: none;
+}
+
+.aside-bar .drawer-spacer {
+  display: flex;
+  position: relative;
+  flex-direction: row;
+  flex-shrink: 0;
+  align-items: center;
+  box-sizing: border-box;
+  height: 54px;
+  padding: 0 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.aside-bar .drawer-spacer img {
+  display: inline-block;
+  height: 100%;
+}
+
+.aside-bar .divider {
+  height: 0;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.aside-bar .item {
+  width: 240px;
+}
+
+.aside-bar .item a {
+  padding: 0 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 48px;
+  line-height: 48px;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.aside-bar .item a:hover {
+  text-decoration: none;
+}
+
+.aside-bar .item a i {
+  margin-right: 12px;
+}
+
+.aside-bar .item.groups a i {
+  margin-right: 0;
+  margin-top: 17px;
+}
+
+.aside-bar .item a.active {
+  color: #007bff;
+}
+
+.aside-bar .item > div {
+  padding-left: 34px;
+}
+
+.tree {
+  padding: 10px 20px;
+}
+
+.tree li,
+.tree ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree li {
+  position: relative;
+  min-height: 24px;
+  line-height: 24px;
+  font-size: 16px;
+}
+
+.tree li li {
+  margin-left: 23px;
+}
+
+.tree .hd {
+  padding-left: 5px;
+  min-height: 24px;
+  line-height: 24px;
+  margin-bottom: 10px;
+}
+
+.tree .hd p {
+  margin-bottom: 0;
+}
+
+.tree .select {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tree .select:before {
+  content: "\f096";
+  display: inline-block;
+  margin-right: 5px;
+  min-width: 20px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tree .select.selected {
+  color: #d9534f;
+}
+
+.tree .select.selected:before {
+  content: "\f046";
+}
+
+.tree-node {
+  display: inline-block;
+  margin-bottom: 0;
+  cursor: pointer;
+}
+
+.tree-node:before {
+  content: "\f147";
+  display: inline-block;
+  margin-right: 10px;
+  font: normal normal normal 14px/1 FontAwesome;
+  font-size: inherit;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tree-node.closed:before {
+  content: "\f196";
+}
+
+.tree-node.not-child {
+  cursor: default;
+}
+
+.tree-node.not-child:before {
+  visibility: hidden;
+}
+
+.progress {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  width: 100%;
+  max-width: 100%;
+}
+
+.progress > .bar {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 0;
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress > .progressbar {
+  background-color: rgb(63, 81, 181);
+  z-index: 1;
+  left: 0;
+}
+
+.progress > .bufferbar {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, rgb(63, 81, 181), rgb(63, 81, 181));
+  z-index: 0;
+  left: 0;
+}
+
+.progress > .auxbar {
+  right: 0;
+}
+
+@supports (-webkit-appearance:none) {
+
+}
+
+.progress:not(.progress--indeterminate) > .auxbar,
+.progress:not(.progress__indeterminate) > .auxbar {
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), linear-gradient(to right, rgb(63, 81, 181), rgb(63, 81, 181));
+}
+
+.progress.progress--indeterminate > .bar1,
+.progress.progress__indeterminate > .bar1 {
+  background-color: rgb(63, 81, 181);
+  animation-name: indeterminate1;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.progress.progress--indeterminate > .bar3,
+.progress.progress__indeterminate > .bar3 {
+  background-image: none;
+  background-color: rgb(63, 81, 181);
+  animation-name: indeterminate2;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes indeterminate1 {
+  0% {
+    left: 0;
+    width: 0;
+  }
+  50% {
+    left: 25%;
+    width: 75%;
+  }
+  75% {
+    left: 100%;
+    width: 0;
+  }
+}
+
+@keyframes indeterminate2 {
+  0% {
+    left: 0;
+    width: 0;
+  }
+  50% {
+    left: 0;
+    width: 0;
+  }
+  75% {
+    left: 0;
+    width: 25%;
+  }
+  100% {
+    left: 100%;
+    width: 0;
+  }
+}
+
+.switch {
+  width: 48px;
+  height: 24px;
+  overflow: hidden;
+}
+
+.switch input {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+}
+
+.switch label {
+  display: inline-block;
+  cursor: pointer;
+  width: 48px;
+  height: 24px;
+  background: grey;
+  border-radius: 24px;
+  position: relative;
+  margin: 0;
+}
+
+.switch label:after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 20px;
+  transition: 0.3s;
+}
+
+.switch input:checked + label {
+  background: #5cb85c;
+}
+
+.switch input:checked + label:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+/* 修正 bootstrap 样式 */
+.container-fluid {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  padding-right: 0;
+  padding-left: 0;
+  height: 100%;
+}
+
+.navbar .btn-link {
+  color: #ffffff;
+}
+
+.navbar .dropdown-menu {
+  left: auto;
+  right: 0;
+}
+
+.table {
+  background: #ffffff;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+.table thead th {
+  white-space: nowrap;
+}
+
+@media (max-width: 1000px) {
+  .table {
+    min-width: 1000px;
+  }
+}
+
+.breadcrumb {
+  background-color: transparent;
+}
+
+.Selectable .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+  background-color: #f0f8ff !important;
+  color: #4a90e2;
+}
+
+.Selectable .DayPicker-Day {
+  border-radius: 0 !important;
+}
+
+.Selectable .DayPicker-Day--start {
+  border-top-left-radius: 50% !important;
+  border-bottom-left-radius: 50% !important;
+}
+
+.Selectable .DayPicker-Day--end {
+  border-top-right-radius: 50% !important;
+  border-bottom-right-radius: 50% !important;
+}
+
+.DayPickerInput input {
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  display: block;
+  width: 100%;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  -webkit-transition: border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
+  -o-transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out, -webkit-box-shadow .15s ease-in-out;
+}
+.ant-upload.ant-upload-select {
+   display: flex;
+}
