@@ -3,39 +3,39 @@ export default {
     //市场相关权限配置
     "1": {ICON_CLASS: "fa-balance-scale"},
     "1-1": {
-      PATH: "mkt/act",
-      PATH_RULE: /^\/mkt\/act(\/((?!create).)*)?$/,
+      PATH: "home/mkt/act",
+      PATH_RULE: /^\/home\/mkt\/act(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-pie-chart",
       CATEGORY: '市场',
       NAME: '活动'
     },
     "1-1-1": {
-      PATH_RULE: /^\/mkt\/act\/create$/,
+      PATH_RULE: /^\/home\/mkt\/act\/create$/,
       ICON_CLASS: "fa-pie-chart",
       CATEGORY: '市场',
       NAME: '活动'
     },
     "1-1-2": {
-      PATH_RULE: /^\/mkt\/act\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/mkt\/act\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-pie-chart",
       CATEGORY: '市场',
       NAME: '活动'
     },
     "1-2": {
-      PATH: "mkt/leads",
-      PATH_RULE: /^\/mkt\/leads(\/((?!create).)*)?$/,
+      PATH: "home/mkt/leads",
+      PATH_RULE: /^\/home\/mkt\/leads(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-filter",
       CATEGORY: '销售',
       NAME: '线索'
     },
     "1-2-1": {
-      PATH_RULE: /^\/mkt\/leads\/create$/,
+      PATH_RULE: /^\/home\/mkt\/leads\/create$/,
       ICON_CLASS: "fa-filter",
       CATEGORY: '销售',
       NAME: '线索'
     },
     "1-2-2": {
-      PATH_RULE: /^\/mkt\/leads\/edit\/((?!create).)*$/,
+      PATH_RULE: /^\/home\/mkt\/leads\/edit\/((?!create).)*$/,
       ICON_CLASS: "fa-filter",
       CATEGORY: '销售',
       NAME: '线索'
@@ -45,58 +45,58 @@ export default {
     //销售相关权限配置
     "2": {ICON_CLASS: "fa-tags"},
     "2-1": {
-      PATH: "sales/oppor",
-      PATH_RULE: /^\/sales\/oppor(\/((?!create).)*)?$/,
+      PATH: "home/sales/oppor",
+      PATH_RULE: /^\/home\/sales\/oppor(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-file-o",
       CATEGORY: '销售',
       NAME: '机会'
     },
     "2-1-1": {
-      PATH_RULE: /^\/sales\/oppor\/create$/,
+      PATH_RULE: /^\/home\/sales\/oppor\/create$/,
       ICON_CLASS: "fa-file-o",
       CATEGORY: '销售',
       NAME: '机会'
     },
     "2-1-2": {
-      PATH_RULE: /^\/sales\/oppor\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/sales\/oppor\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-file-o",
       CATEGORY: '销售',
       NAME: '机会'
     },
     "2-2": {
-      PATH: "sales/contract",
-      PATH_RULE: /^\/sales\/contract(\/((?!create).)*)?$/,
+      PATH: "home/sales/contract",
+      PATH_RULE: /^\/home\/sales\/contract(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-file-text-o",
       CATEGORY: '我的',
       NAME: '合同'
     },
     "2-2-1": {
-      PATH_RULE: /^\/sales\/contract\/create$/,
+      PATH_RULE: /^\/home\/sales\/contract\/create$/,
       ICON_CLASS: "fa-file-text-o",
       CATEGORY: '我的',
       NAME: '合同'
     },
     "2-2-2": {
-      PATH_RULE: /^\/sales\/contract\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/sales\/contract\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-file-text-o",
       CATEGORY: '我的',
       NAME: '合同'
     },
     "2-3": {
-      PATH: "sales/customer",
-      PATH_RULE: /^\/sales\/customer(\/(student|parent|contract)\/((?!create).)*)?$/,
+      PATH: "home/sales/customer",
+      PATH_RULE: /^\/home\/sales\/customer(\/(student|parent|contract)\/((?!create).)*)?$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '我的',
       NAME: '学员'
     },
     "2-3-2": {
-      PATH_RULE: /^\/sales\/customer\/student\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '我的',
       NAME: '学员'
     },
     "2-3-5": {
-      PATH_RULE: /^\/sales\/customer\/parent\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/sales\/customer\/parent\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '我的',
       NAME: '学员'
@@ -106,29 +106,29 @@ export default {
     //服务相关权限配置
     "3": {ICON_CLASS: "fa-cogs"},
     "3-1": {
-      PATH: "service/contract",
-      PATH_RULE: /^\/service\/contract(\/((?!create).)*)?$/,
+      PATH: "home/service/contract",
+      PATH_RULE: /^\/home\/service\/contract(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-file-text-o",
       CATEGORY: '合同'
     },
     "3-1-2": {
-      PATH_RULE: /^\/service\/contract\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/service\/contract\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-file-text-o",
       CATEGORY: '合同'
     },
     "3-2": {
-      PATH: "service/customer",
-      PATH_RULE: /^\/service\/customer(\/(student|parent|contract)\/((?!create).)*)?$/,
+      PATH: "home/service/customer",
+      PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract)\/((?!create).)*)?$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '学员'
     },
     "3-2-2": {
-      PATH_RULE: /^\/service\/customer\/student\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/service\/customer\/student\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '学员'
     },
     "3-2-5": {
-      PATH_RULE: /^\/service\/customer\/parent\/((?!create).)*\/edit$/,
+      PATH_RULE: /^\/home\/service\/customer\/parent\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '学员'
     },
@@ -149,29 +149,29 @@ export default {
     //管理员相关权限配置
     "7": {ICON_CLASS: "fa-sitemap"},
     "7-1": {
-      PATH: "groups",
-      PATH_RULE: /^\/groups$/,
+      PATH: "home/groups",
+      PATH_RULE: /^\/home\/groups$/,
       ICON_CLASS: "fa-sitemap"
     },
-    "7-1-1": {PATH_RULE: /^\/groups\/create$/},
-    "7-1-2": {PATH_RULE: /^\/groups\/((?!create).)*$/},
+    "7-1-1": {PATH_RULE: /^\/home\/groups\/create$/},
+    "7-1-2": {PATH_RULE: /^\/home\/groups\/((?!create).)*$/},
     "7-2": {
-      PATH: "roles",
-      PATH_RULE: /^\/roles$/,
+      PATH: "home/roles",
+      PATH_RULE: /^\/home\/roles$/,
       ICON_CLASS: "fa-shield"
     },
-    "7-2-1": {PATH_RULE: /^\/roles\/create$/},
-    "7-2-2": {PATH_RULE: /^\/roles\/((?!create).)*$/},
+    "7-2-1": {PATH_RULE: /^\/home\/roles\/create$/},
+    "7-2-2": {PATH_RULE: /^\/home\/roles\/((?!create).)*$/},
 
     "7-3": {
-      PATH: "permissions",
-      PATH_RULE: /^\/permissions$/,
+      PATH: "home/permissions",
+      PATH_RULE: /^\/home\/permissions$/,
       ICON_CLASS: "fa-users"
     },
 
-    "7-4": {PATH: "users", PATH_RULE: /^\/users$/, ICON_CLASS: "fa-user"},
-    "7-4-1": {PATH_RULE: /^\/users\/create$/},
-    "7-4-2": {PATH_RULE: /^\/users\/((?!create).)*$/}
+    "7-4": {PATH: "home/users", PATH_RULE: /^\/home\/users$/, ICON_CLASS: "fa-user"},
+    "7-4-1": {PATH_RULE: /^\/home\/users\/create$/},
+    "7-4-2": {PATH_RULE: /^\/home\/users\/((?!create).)*$/}
   },
 
   TYPE_ID: {1: '线索', 2: '新招', 3: '续报'},

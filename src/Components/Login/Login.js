@@ -83,7 +83,7 @@ class Login extends React.Component {
   }
 
   render() {
-    const {from} = this.props.location.state || {from: {pathname: '/'}};
+    const {from} = this.props.location.state || {from: {pathname: '/home'}};
 
     if (this.state.redirectToReferrer) {
       return (
