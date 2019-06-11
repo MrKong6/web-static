@@ -113,7 +113,7 @@ class Editor extends React.Component {
     }
 
     if (this.state.isUpdated) {
-      return <Redirect to="/groups"/>
+      return <Redirect to="/home/groups"/>
     }
 
     return (

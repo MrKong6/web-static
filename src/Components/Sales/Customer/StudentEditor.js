@@ -155,14 +155,14 @@ class StudentEditor extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/sales/customer"/>
+        <Redirect to="/home/sales/customer"/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/sales/customer/student/${this.state.id}`,
+          pathname: `/home/sales/customer/student/${this.state.id}`,
         }}/>
       )
     }

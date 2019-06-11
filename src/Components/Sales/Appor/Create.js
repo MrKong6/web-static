@@ -109,7 +109,7 @@ class Create extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/sales/oppor"/>
+        <Redirect to="/home/sales/oppor"/>
       )
     }
 
@@ -120,7 +120,7 @@ class Create extends React.Component {
 
       return (
         <Redirect to={{
-          pathname: `/sales/oppor/${this.state.createdId}`,
+          pathname: `/home/sales/oppor/${this.state.createdId}`,
           state: {ids: ids}
         }}/>
       )

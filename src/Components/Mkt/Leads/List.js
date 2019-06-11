@@ -11,7 +11,7 @@ import fmtDate from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
-import { Button,Table,Pagination,Upload,Input,Form } from 'element-react';
+import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
 import './Leads.css'
 
 import {$} from "../../../vendor";
@@ -205,7 +205,15 @@ class List extends React.Component {
                 {
                     label: "电话号码",
                     prop: "parent.cellphone",
-                    width: 120
+                    width: 95,
+                    className:'tabletd',
+                    render: function (data) {
+                        return <Tooltip effect="dark" content={data.parent.cellphone}
+                                        placement="top-start">
+                                    {data.parent.cellphone}
+                                </Tooltip>
+                    }
+
                 },
                 {
                     label: "微信号",
@@ -225,7 +233,15 @@ class List extends React.Component {
                 {
                     label: "课程产品",
                     prop: "courseName",
-                    width: 250
+                    width: 95,
+                    className:'tabletd',
+                    render: function (data) {
+
+                        return <Tooltip effect="dark" content={data.courseName}
+                                        placement="top-start">
+                            {data.courseName}
+                        </Tooltip>
+                    }
                 },
             ],
         };
@@ -378,7 +394,8 @@ class List extends React.Component {
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
-                        show-overflow-tooltip={true}
+                        fit={false}
+                        emptyText={"--"}
                     />
                     {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={400}

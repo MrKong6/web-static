@@ -140,7 +140,7 @@ class ParentView extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/sales/customer"/>
+        <Redirect to="/home/sales/customer"/>
       )
     }
 
@@ -153,7 +153,7 @@ class ParentView extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/sales/contract');
+                this.props.history.push('/home/sales/contract');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -185,7 +185,7 @@ class ParentView extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/sales/customer');
+              this.props.history.push('/home/sales/customer');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

@@ -24,7 +24,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/mkt/leads/${ids[curIndex + 1]}`,
+        pathname: `/home/mkt/leads/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -44,7 +44,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/mkt/leads/${ids[curIndex - 1]}`,
+        pathname: `/home/mkt/leads/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -266,13 +266,13 @@ class View extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/mkt/leads"/>
+        <Redirect to="/home/mkt/leads"/>
       )
     }
 
     if (this.state.redirectToConvert) {
       return (
-        <Redirect to={`/sales/oppor/${this.state.id}`}/>
+        <Redirect to={`/home/sales/oppor/${this.state.id}`}/>
       )
     }
 
@@ -285,7 +285,7 @@ class View extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/mkt/leads');
+                this.props.history.push('/home/mkt/leads');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -317,7 +317,7 @@ class View extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/mkt/leads');
+              this.props.history.push('/home/mkt/leads');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

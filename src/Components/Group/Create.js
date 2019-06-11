@@ -95,7 +95,7 @@ class Create extends React.Component {
     }
 
     if (this.state.isCreated) {
-      return <Redirect to="/groups"/>
+      return <Redirect to="/home/groups"/>
     }
 
     return (

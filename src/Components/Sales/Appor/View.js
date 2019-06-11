@@ -156,7 +156,7 @@ class View extends React.Component {
   }
 
   SignAction() {
-    this.props.history.push('/sales/contract/create', {data: this.state.data, oriId: this.state.id});
+    this.props.history.push('/home/sales/contract/create', {data: this.state.data, oriId: this.state.id});
   }
 
   assignAction() {
@@ -224,7 +224,7 @@ class View extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/sales/oppor"/>
+        <Redirect to="/home/sales/oppor"/>
       )
     }
 
@@ -237,7 +237,7 @@ class View extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/sales/oppor');
+                this.props.history.push('/home/sales/oppor');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -269,7 +269,7 @@ class View extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/sales/oppor');
+              this.props.history.push('/home/sales/oppor');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

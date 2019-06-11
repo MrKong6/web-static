@@ -102,7 +102,7 @@ class Create extends React.Component {
     if (this.state.isCreated) {
       return (
         <Redirect to={{
-          pathname: '/users',
+          pathname: '/home/users',
           state: {groupId: this.props.location.state.groupId}
         }}/>
       )
@@ -116,7 +116,7 @@ class Create extends React.Component {
           <p className="d-inline text-muted">新建用户</p>
           <div className="btn-group float-right" role="group">
             <button onClick={() => {
-              this.props.history.push('/users', {groupId: this.props.location.state.groupId});
+              this.props.history.push('/home/users', {groupId: this.props.location.state.groupId});
             }} type="button" className="btn btn-light">取消
             </button>
             <button

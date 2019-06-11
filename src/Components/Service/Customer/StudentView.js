@@ -142,7 +142,7 @@ class StudentView extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/service/customer"/>
+        <Redirect to="/home/service/customer"/>
       )
     }
 
@@ -155,7 +155,7 @@ class StudentView extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/service/customer');
+                this.props.history.push('/home/service/customer');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -187,7 +187,7 @@ class StudentView extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/sales/customer');
+              this.props.history.push('/home/sales/customer');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

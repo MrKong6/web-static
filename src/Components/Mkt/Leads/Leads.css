@@ -5,6 +5,20 @@
 .leadlist_page {
   margin-top: 10px;
 }
+.tabletd div div div div{
+  white-space: nowrap !important;
+  word-break: normal !important;
+  text-overflow:ellipsis !important;
+  overflow: hidden;
+  /*display: block;*/
+  /*overflow: hidden;*/
+}
+.el-table .cell {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  text-overflow:ellipsis !important;
+  overflow: hidden;
+}
 
 @media (min-width: 601px) {
   .login {

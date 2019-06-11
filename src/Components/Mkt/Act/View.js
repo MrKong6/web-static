@@ -225,7 +225,7 @@ class View extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/mkt/act"/>
+        <Redirect to="/home/mkt/act"/>
       )
     }
 
@@ -242,7 +242,7 @@ class View extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/mkt/act');
+              this.props.history.push('/home/mkt/act');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>
