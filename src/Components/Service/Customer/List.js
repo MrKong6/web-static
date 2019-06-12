@@ -1,17 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Link, Redirect} from 'react-router-dom'
+import {Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
 import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
-import fmtDate from '../../../utils/fmtDate';
-import calculateAge from '../../../utils/calculateAge';
 import fmtTitle from '../../../utils/fmtTitle';
-import CONFIG from '../../../utils/config';
 import ajax from "../../../utils/ajax";
+import '../../Mkt/Leads/Leads.css'
+import {Table} from 'element-react';
+import calculateAge from "../../../utils/calculateAge";
+import CONFIG from "../../../utils/config";
+import fmtDate from "../../../utils/fmtDate";
 
+/*
 const Table = ({list, path}) => {
   return (
     <table className="table table-bordered table-sm">
@@ -60,121 +63,183 @@ const TableItem = (data, path) => {
 
   return table;
 };
+*/
 
 class List extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.commands = this.props.commands.filter((command) => (command === 'Add'));
-    this.title = fmtTitle(this.props.location.pathname);
-    this.state = {
-      group: this.props.changedCrmGroup,
-      list: [],
-      ids: [],
-      isAnimating: true,
-      redirectToReferrer: false,
-    };
-    this.createDialogTips = this.createDialogTips.bind(this);
-  }
+        this.commands = this.props.commands.filter((command) => (command === 'Add'));
+        this.title = fmtTitle(this.props.location.pathname);
+        this.state = {
+            group: this.props.changedCrmGroup,
+            list: [],
+            ids: [],
+            isAnimating: true,
+            redirectToReferrer: false,
+            columns: [
+                {
+                    label: "序号",
+                    type: 'index'
+                },
+                {
+                    label: "学员姓名",
+                    prop: "name",
+                },
+                {
+                    label: "学员编号",
+                    prop: "code",
+                },
+                {
+                    label: "性别",
+                    prop: "genderText",
+                    sortable: true
+                },
+                {
+                    label: "出生年月",
+                    prop: "birthday",
+                    sortable: true
+                },
+                {
+                    label: "年龄",
+                    prop: "age",
+                    showOverflowTooltip: true,
+                },
+                {
+                    label: "证件类型",
+                    prop: "idType",
+                },
+                {
+                    label: "证件号码",
+                    prop: "idCode",
+                },
+                {
+                    label: "在读年级",
+                    prop: "schoolGrade",
+                },
+                {
+                    label: "所在学校",
+                    prop: "schoolName",
+                }
+            ],
+        };
+        this.createDialogTips = this.createDialogTips.bind(this);
+    }
 
-  componentDidMount() {
-    const request = async () => {
-      try {
-        let list = await ajax('/service/customer/student/list.do', {organizationId: this.state.group.id});
+    componentDidMount() {
+        const request = async () => {
+            try {
+                let list = await ajax('/service/customer/student/list.do', {organizationId: this.state.group.id});
+                list.map(item => {
+                    if(item.idType != null){
+                        item.idType = CONFIG.DOCUMENT[item.idType];
+                    }
+                    if(item.birthday != null){
+                        item.age = calculateAge(fmtDate(item.birthday));
+                        item.birthday = fmtDate(item.birthday);
+                    }
+                });
+                this.setState({list: list});
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
 
-        this.setState({list: list});
-      } catch (err) {
-        if (err.errCode === 401) {
-          this.setState({redirectToReferrer: true})
+        request();
+        mainSize()
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
+            this.setState({isAnimating: true});
+
+            const request = async () => {
+                try {
+                    let list = await ajax('/service/customer/student/list.do', {organizationId: nextProps.changedCrmGroup.id});
+
+                    this.setState({
+                        group: nextProps.changedCrmGroup,
+                        list: list
+                    });
+                } catch (err) {
+                    if (err.errCode === 401) {
+                        this.setState({redirectToReferrer: true})
+                    } else {
+                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    }
+                } finally {
+                    this.setState({isAnimating: false});
+                }
+            };
+
+            request();
+        }
+    }
+
+    componentWillUnmount() {
+        if (this.tipsContainer) {
+            document.body.removeChild(this.tipsContainer);
+        }
+    }
+
+    createDialogTips(text) {
+        if (this.tips === undefined) {
+            this.tipsContainer = document.createElement('div');
+
+            ReactDOM.render(
+                <DialogTips
+                    accept={this.logout}
+                    title="提示"
+                    text={text}
+                    ref={(dom) => {
+                        this.tips = dom
+                    }}
+                />,
+                document.body.appendChild(this.tipsContainer)
+            );
         } else {
-          this.createDialogTips(`${err.errCode}: ${err.errText}`);
+            this.tips.setText(text);
         }
-      } finally {
-        this.setState({isAnimating: false});
-      }
-    };
 
-    request();
-    mainSize()
-  }
+        this.tips.dialog.modal('show');
+    }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
-      this.setState({isAnimating: true});
-
-      const request = async () => {
-        try {
-          let list = await ajax('/service/customer/student/list.do', {organizationId: nextProps.changedCrmGroup.id});
-
-          this.setState({
-            group: nextProps.changedCrmGroup,
-            list: list
-          });
-        } catch (err) {
-          if (err.errCode === 401) {
-            this.setState({redirectToReferrer: true})
-          } else {
-            this.createDialogTips(`${err.errCode}: ${err.errText}`);
-          }
-        } finally {
-          this.setState({isAnimating: false});
+    render() {
+        if (this.state.redirectToReferrer) {
+            return (
+                <Redirect to={{
+                    pathname: '/login',
+                    state: {from: this.props.location}
+                }}/>
+            )
         }
-      };
 
-      request();
+        return (
+            <div>
+                <h5 id="subNav">
+                    <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                </h5>
+                <div id="main" className="main p-3">
+                    <Progress isAnimating={this.state.isAnimating}/>
+                    {/*<Table list={this.state.list} path={this.props.match.url}/>*/}
+                    <Table
+                        style={{width: '100%'}}
+                        columns={this.state.columns}
+                        data={this.state.list}
+                        border={true}
+                        fit={true}
+                        emptyText={"--"}
+                    />
+                </div>
+            </div>
+        )
     }
-  }
-
-  componentWillUnmount() {
-    if (this.tipsContainer) {
-      document.body.removeChild(this.tipsContainer);
-    }
-  }
-
-  createDialogTips(text) {
-    if (this.tips === undefined) {
-      this.tipsContainer = document.createElement('div');
-
-      ReactDOM.render(
-        <DialogTips
-          accept={this.logout}
-          title="提示"
-          text={text}
-          ref={(dom) => {
-            this.tips = dom
-          }}
-        />,
-        document.body.appendChild(this.tipsContainer)
-      );
-    } else {
-      this.tips.setText(text);
-    }
-
-    this.tips.dialog.modal('show');
-  }
-
-  render() {
-    if (this.state.redirectToReferrer) {
-      return (
-        <Redirect to={{
-          pathname: '/login',
-          state: {from: this.props.location}
-        }}/>
-      )
-    }
-
-    return (
-      <div>
-        <h5 id="subNav">
-          <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
-        </h5>
-        <div id="main" className="main p-3">
-          <Progress isAnimating={this.state.isAnimating}/>
-          <Table list={this.state.list} path={this.props.match.url}/>
-        </div>
-      </div>
-    )
-  }
 }
 
 export default List;

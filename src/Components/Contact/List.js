@@ -257,9 +257,9 @@ class List extends React.Component {
       )
     }
 
-    if (!this.state.canEdit && !this.state.list.length) {
+    /*if (!this.state.canEdit && !this.state.list.length) {
       return null;
-    }
+    }*/
 
     return (
       <div>

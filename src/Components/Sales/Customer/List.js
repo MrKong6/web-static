@@ -11,7 +11,9 @@ import calculateAge from '../../../utils/calculateAge';
 import fmtTitle from '../../../utils/fmtTitle';
 import CONFIG from '../../../utils/config';
 import ajax from "../../../utils/ajax";
+import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
 
+/*
 const Table = ({list, path}) => {
   return (
     <table className="table table-bordered table-sm">
@@ -60,6 +62,7 @@ const TableItem = (data, path) => {
 
   return table;
 };
+*/
 
 class List extends React.Component {
   constructor(props) {
@@ -67,21 +70,74 @@ class List extends React.Component {
 
     this.commands = this.props.commands.filter((command) => (command === 'Add'));
     this.title = fmtTitle(this.props.location.pathname);
-    this.state = {
+      this.createDialogTips = this.createDialogTips.bind(this);
+      this.state = {
       group: this.props.changedCrmGroup,
       list: [],
       ids: [],
       isAnimating: true,
       redirectToReferrer: false,
+      columns:[
+          {
+              label: "序号",
+              type: 'index'
+          },
+          {
+              label: "学员姓名",
+              prop: "name",
+          },
+          {
+              label: "学员编号",
+              prop: "code",
+          },
+          {
+              label: "性别",
+              prop: "genderText",
+              sortable: true
+          },
+          {
+              label: "出生年月",
+              prop: "birthday",
+              sortable: true
+          },
+          {
+              label: "年龄",
+              prop: "age",
+              showOverflowTooltip: true,
+          },
+          {
+              label: "证件类型",
+              prop: "idType",
+          },
+          {
+              label: "证件号码",
+              prop: "idCode",
+          },
+          {
+              label: "在读年级",
+              prop: "schoolGrade",
+          },
+          {
+              label: "所在学校",
+              prop: "schoolName",
+          }
+      ],
     };
-    this.createDialogTips = this.createDialogTips.bind(this);
   }
 
   componentDidMount() {
     const request = async () => {
       try {
         let list = await ajax('/sales/customer/student/list.do', {organizationId: this.state.group.id});
-
+          list.map(item => {
+              if(item.idType != null){
+                  item.idType = CONFIG.DOCUMENT[item.idType];
+              }
+              if(item.birthday != null){
+                  item.age = calculateAge(fmtDate(item.birthday));
+                  item.birthday = fmtDate(item.birthday);
+              }
+          });
         this.setState({list: list});
       } catch (err) {
         if (err.errCode === 401) {
@@ -170,7 +226,15 @@ class List extends React.Component {
         </h5>
         <div id="main" className="main p-3">
           <Progress isAnimating={this.state.isAnimating}/>
-          <Table list={this.state.list} path={this.props.match.url}/>
+          {/*<Table list={this.state.list} path={this.props.match.url}/>*/}
+            <Table
+                style={{width: '100%'}}
+                columns={this.state.columns}
+                data={this.state.list}
+                border={true}
+                fit={true}
+                emptyText={"--"}
+            />
         </div>
       </div>
     )

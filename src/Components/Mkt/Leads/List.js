@@ -395,7 +395,6 @@ class List extends React.Component {
                         data={this.state.list}
                         border={true}
                         fit={false}
-                        emptyText={"--"}
                     />
                     {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={400}

@@ -316,7 +316,7 @@ class Form extends React.Component {
                       </div>
                     </div>
                     <div className="col">
-                      <div className="form-group row">
+                      {/*<div className="form-group row">
                         <label className="col-5 col-form-label font-weight-bold">
                           <em className="text-danger">*</em>类型
                         </label>
@@ -325,7 +325,7 @@ class Form extends React.Component {
                             <option value="2">新招</option>
                           </select>
                         </div>
-                      </div>
+                      </div>*/}
                       <div className="form-group row">
                         <label className="col-5 col-form-label font-weight-bold">
                           <em className="text-danger">*</em>阶段
