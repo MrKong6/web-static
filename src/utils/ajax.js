@@ -2,7 +2,7 @@ import 'whatwg-fetch'
 import {$} from '../vendor';
 
 // 192.168.0.98
-export const AJAX_PATH = 'http://schooloms.com:8082/schoolpal/ajax';
+export const AJAX_PATH = 'http://schooloms.com:8080/schoolpal/ajax';
 
 export default function (url, data) {
   return new Promise((resolve, reject) => {
