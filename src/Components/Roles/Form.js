@@ -111,16 +111,23 @@ class Form extends React.Component {
 
   changedFunc(evt) {
     let tempFunc = [];
-
     if (this.state.selectedFunc.includes(evt.target.value)) {
       if (this.state.selectedRole && this.state.isManger) {
         tempFunc = this.state.selectedFunc.filter((func) => (func !== evt.target.value));
-      }
+      }/*else if (this.state.selectedFunc.indexOf("3") >= 0) {
+          tempFunc = this.state.selectedFunc.filter((func) => (func !== evt.target.value));
+      }*/
     } else {
-      if (this.state.selectedRole && this.state.isManger) {
+      if (this.state.selectedRole && (this.state.isManger)) {
         tempFunc = tempFunc.concat(this.state.selectedFunc);
-      }
-
+      }/*else if(this.state.selectedRole && (!this.state.isManger) && (evt.target.value === "3" || (this.state.selectedFunc.indexOf("3") >= 0))){
+        //处理客服
+          if(this.state.selectedFunc.length < 2){
+              tempFunc = tempFunc.concat(this.state.selectedFunc);
+          }else{
+              tempFunc.push("3");
+          }
+      }*/
       tempFunc.push(evt.target.value);
     }
 

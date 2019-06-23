@@ -11,7 +11,7 @@ import fmtDate from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
+import { Button,Table,Pagination,Message,Input,Tooltip } from 'element-react';
 import './Leads.css'
 
 import {$} from "../../../vendor";
@@ -304,12 +304,18 @@ class List extends React.Component {
     }
 
     componentWillUnmount() {
-        if (this.tipsContainer) {
-            document.body.removeChild(this.tipsContainer);
+        // 卸载异步操作设置状态
+        clearTimeout(this.timeouter)
+        this.setState = (state, callback) => {
+            return
         }
+        /*if (this.tipsContainer) {
+            document.body.removeChild(this.tipsContainer);
+        }*/
     }
 
     createDialogTips(text) {
+        // debugger
         if (this.tips === undefined) {
             this.tipsContainer = document.createElement('div');
 
@@ -343,6 +349,23 @@ class List extends React.Component {
     importAction(content) {
 
     };
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
+    importSuccess() {
+        console.log("sssssssss");
+        this.componentDidMount();
+        this.successMsg("导入成功")
+    };
 
     onChange(key, value) {
         this.setState({
@@ -356,7 +379,8 @@ class List extends React.Component {
             showFileList:false,
             withCredentials:true,
             data:{'aa':document.cookie},
-            action: AJAX_PATH + '/mkt/leads/import.do'
+            action: AJAX_PATH + '/mkt/leads/import.do',
+            onSuccess: (file, fileList) => this.importSuccess(),
         };
         if (this.state.redirectToReferrer) {
             return (

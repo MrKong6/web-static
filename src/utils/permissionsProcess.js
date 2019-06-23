@@ -26,7 +26,6 @@ export default function (data) {
   let tree = [];
 
   if (data.length) {
-    debugger;
     //先遍历查找根节点
     data.map((item) => {
         if (item.cId === item.cRootId) {

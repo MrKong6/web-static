@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
@@ -6,12 +6,12 @@ import Form from "./Form";
 import DialogTips from "../../Dialog/DialogTips";
 import Progress from "../../Progress/Progress"
 
-import mainSize from "../../../utils/mainSize";
 import historyBack from "../../../utils/historyBack";
-import fmtTitle from '../../../utils/fmtTitle';
+import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
+import fmtTitle from "../../../utils/fmtTitle";
 
-class Create extends React.Component {
+class Editor extends React.Component {
   constructor(props) {
     super(props);
 
@@ -22,11 +22,11 @@ class Create extends React.Component {
       redirectToReferrer: false,
       redirectToList: false,
       isAnimating: false,
-      isCreated: false,
-      createdId: null
+      isUpdated: false,
+      id: this.props.match.params.contractId,
     };
     this.createDialogTips = this.createDialogTips.bind(this);
-    this.create = this.create.bind(this);
+    this.updated = this.updated.bind(this);
   }
 
   componentDidMount() {
@@ -67,24 +67,21 @@ class Create extends React.Component {
     this.tips.dialog.modal('show');
   }
 
-  create() {
-    // debugger
-    const query = this.form.getFormValue();
+  updated() {
+    let query = this.form.getFormValue();
 
     if (!query) {
       return;
     }
 
-    query.organizationId = this.state.group.id;
-      query.typeId = 1;
-
     this.setState({isAnimating: true});
+    query.organizationId = this.state.group.id;
+    query.id = this.state.id;
 
     const request = async () => {
       try {
-        let rs = await ajax('/mkt/leads/add.do', query);
-
-        this.setState({isCreated: true, createdId: rs})
+        await ajax('/service/contract/mod.do', query);
+        this.setState({isUpdated: true})
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -111,19 +108,15 @@ class Create extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/mkt/leads"/>
+        <Redirect to="/home/service/contract"/>
       )
     }
 
-    if (this.state.isCreated) {
-      let ids = this.ids;
-
-      ids.push(this.state.createdId);
-
+    if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/mkt/leads/${this.state.createdId}`,
-          state: {ids: ids}
+          pathname: `/home/service/contract/${this.state.id}`,
+          state: {ids: this.ids}
         }}/>
       )
     }
@@ -133,7 +126,7 @@ class Create extends React.Component {
         <h5 id="subNav">
           <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
           &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-          <p className="d-inline text-muted">{this.title.text}创建</p>
+          <p className="d-inline text-muted">{this.title.text}编辑</p>
           <div className="btn-group float-right" role="group">
             <button onClick={() => {
               historyBack(this.props.history)
@@ -142,7 +135,7 @@ class Create extends React.Component {
             <button
               type="submit"
               className="btn btn-primary"
-              onClick={this.create}
+              onClick={this.updated}
               disabled={this.state.isAnimating}
             >
               保存
@@ -154,10 +147,9 @@ class Create extends React.Component {
           <Progress isAnimating={this.state.isAnimating}/>
 
           <Form
-            isEditor={false}
+            isEditor={true}
+            editorId={this.state.id}
             changedCrmGroup={this.state.group}
-            replace={this.props.history.replace}
-            from={this.props.location}
             ref={(dom) => {
               this.form = dom
             }}
@@ -168,4 +160,4 @@ class Create extends React.Component {
   }
 }
 
-export default Create;
+export default Editor;

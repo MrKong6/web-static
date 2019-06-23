@@ -70,7 +70,7 @@ const Table = ({list, changedState, groupId}) => {
                       <Link
                         className="btn btn-link"
                         to={{
-                          pathname: `/permissions`,
+                          pathname: `/home/permissions`,
                           state: {
                             groupId: groupId,
                             roleId: role.cId,

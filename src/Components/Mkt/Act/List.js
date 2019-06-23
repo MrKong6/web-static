@@ -179,7 +179,7 @@ class List extends React.Component {
                     sortable: true
                 },
                 {
-                    label: "签约客户金额",
+                    label: "签约客户量",
                     prop: "contracts",
                     sortable: true
                 },

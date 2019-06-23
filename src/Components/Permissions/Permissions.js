@@ -210,7 +210,6 @@ class Permissions extends React.Component {
 
         if (selectedRole) {
           let selectedRoleDetails = await ajax('/role/query.do', {id: selectedRole});
-          debugger
           selectedFunc = selectedRoleDetails.functions.map(funcs => (funcs.cId));
           const selectedRoleAllFunc = selectedRoleDetails.rootFuncs.map(funcs => (funcs.cId));
           list = await ajax('/func/list.do', {ids: selectedRoleAllFunc.join(',')});
