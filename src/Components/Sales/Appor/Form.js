@@ -150,7 +150,7 @@ class Form extends React.Component {
   }
 
   getFormValue() {
-    if (!this.form.checkValidity() || !this.state.channelId) {
+    if (!this.form.checkValidity()) {/* || !this.state.channelId*/
       return
     }
 
@@ -303,7 +303,7 @@ class Form extends React.Component {
                       </div>
                       <div className="form-group row">
                         <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>具体渠道
+                          {/*<em className="text-danger">*</em>*/}具体渠道
                         </label>
                         <div className="input-group col-7">
                           <input type="text" className="form-control" value={this.state.channelText} readOnly={true}/>

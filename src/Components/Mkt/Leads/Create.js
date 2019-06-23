@@ -68,6 +68,7 @@ class Create extends React.Component {
   }
 
   create() {
+    debugger
     const query = this.form.getFormValue();
 
     if (!query) {
@@ -75,6 +76,7 @@ class Create extends React.Component {
     }
 
     query.organizationId = this.state.group.id;
+      query.typeId = 1;
 
     this.setState({isAnimating: true});
 

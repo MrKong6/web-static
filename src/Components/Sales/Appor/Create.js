@@ -73,6 +73,7 @@ class Create extends React.Component {
     if (!query) {
       return;
     }
+    query.typeId = 2;
 
     query.organizationId = this.state.group.id;
 
