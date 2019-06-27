@@ -141,12 +141,12 @@ class Home extends React.Component {
                           component={SalesContract}{...query}/>
             <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
                           component={SalesCustomer}{...query}/>
+            <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
+                          component={ServiceVisitor}{...query}/>
             <PrivateRoute path="/home/service/contract" changedCrmGroup={this.state.group}
                           component={ServiceContract}{...query}/>
             <PrivateRoute path="/home/service/customer" changedCrmGroup={this.state.group}
                           component={ServiceCustomer}{...query}/>
-            <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
-                          component={ServiceVisitor}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>
             <Route render={(props) => (
               <NoMatch {...props} profile={this.state.profile.profile}/>

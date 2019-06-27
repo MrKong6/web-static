@@ -309,13 +309,13 @@ class StudentView extends React.Component {
               <li className="breadcrumb-item active">学员信息</li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/sales/customer/parent/${this.state.id}`,
+                  pathname: `/home/sales/customer/parent/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>家长信息</Link>
               </li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/sales/customer/contract/${this.state.id}`,
+                  pathname: `/home/sales/customer/contract/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>合同信息</Link>
               </li>

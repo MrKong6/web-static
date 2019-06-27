@@ -309,7 +309,7 @@ class List extends React.Component {
     }
 
     goToDetails(evt) {
-        const url = `${this.props.match.url}/${evt.target.getAttribute('cid')}`;
+        const url = `${this.props.match.url}/${evt}`;
 
         this.props.history.push(url);
     }

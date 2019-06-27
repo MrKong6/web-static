@@ -8,7 +8,6 @@ import Editor from "./Editor";
 
 const Leads = ({commands, location, match, profile, changedCrmGroup}) => {
   const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
-
   return (
     <Switch>
       <Route path={`${match.url}/create`} render={(props) => (

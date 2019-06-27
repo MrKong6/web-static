@@ -193,10 +193,10 @@ class ContractView extends React.Component {
 
             <nav aria-label="breadcrumb">
               <ol className="breadcrumb">
-                <li className="breadcrumb-item"><Link to={`/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
+                <li className="breadcrumb-item"><Link to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
                 <li className="breadcrumb-item">
                   <Link to={{
-                    pathname: `/sales/customer/parent/${this.state.id}`,
+                    pathname: `/home/sales/customer/parent/${this.state.id}`,
                     state: {stuName: this.state.data.name}
                   }}>家长信息</Link>
                 </li>
@@ -290,10 +290,10 @@ class ContractView extends React.Component {
 
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><Link to={`/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
+              <li className="breadcrumb-item"><Link to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/sales/customer/parent/${this.state.id}`,
+                  pathname: `/home/sales/customer/parent/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>家长信息</Link>
               </li>

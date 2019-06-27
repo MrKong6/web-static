@@ -1,0 +1,78 @@
+.leadlist_search {
+  width: 40%;
+  padding-bottom: 10px;
+}
+.leadlist_page {
+  margin-top: 10px;
+}
+.tabletd div div div div{
+  white-space: nowrap !important;
+  word-break: normal !important;
+  text-overflow:ellipsis !important;
+  overflow: hidden;
+  /*display: block;*/
+  /*overflow: hidden;*/
+}
+.el-table .cell {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  text-overflow:ellipsis !important;
+  overflow: hidden;
+}
+
+@media (min-width: 601px) {
+  .login {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .login::before,
+  .login::after {
+    -webkit-box-flex: 1;
+    box-flex: 1;
+    -webkit-flex-grow: 1;
+    flex-grow: 1;
+    content: '';
+    display: block;
+    height: 24px;
+  }
+
+  .login::before {
+    min-height: 30px;
+  }
+
+  .login::after {
+    min-height: 64.8px;
+  }
+
+  .login .card {
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    background: #fff;
+    -webkit-box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14),
+    0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    display: block;
+    margin: 0 auto;
+    min-height: 0;
+    width: 450px;
+  }
+
+  .login .card-body {
+    height: auto;
+    min-height: 500px;
+    overflow-y: auto;
+  }
+}
+
+@media (min-width: 450px) {
+
+}

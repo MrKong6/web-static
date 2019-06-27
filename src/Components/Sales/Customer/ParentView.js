@@ -20,7 +20,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/customer/parent/${ids[curIndex + 1]}`,
+        pathname: `/home/sales/customer/parent/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -40,7 +40,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/customer/parent/${ids[curIndex - 1]}`,
+        pathname: `/home/sales/customer/parent/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -282,11 +282,11 @@ class ParentView extends React.Component {
 
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><Link to={`/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
+              <li className="breadcrumb-item"><Link to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
               <li className="breadcrumb-item active">家长信息</li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/sales/customer/contract/${this.state.id}`,
+                  pathname: `/home/sales/customer/contract/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>合同信息</Link>
               </li>

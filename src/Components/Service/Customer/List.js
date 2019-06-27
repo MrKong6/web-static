@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Redirect} from 'react-router-dom'
+import {Redirect,Link } from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
 import Progress from "../../Progress/Progress"
@@ -9,7 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Table} from 'element-react';
+import {Table,Button} from 'element-react';
 import calculateAge from "../../../utils/calculateAge";
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
@@ -85,6 +85,9 @@ class List extends React.Component {
                 {
                     label: "学员姓名",
                     prop: "name",
+                    render: (row, column, data)=>{
+                        return <span><Link to={`/home/service/customer/student/${row.id}`}>{row.name}</Link></span>
+                    }
                 },
                 {
                     label: "学员编号",
@@ -125,6 +128,17 @@ class List extends React.Component {
         };
         this.createDialogTips = this.createDialogTips.bind(this);
     }
+
+   /* goToDetails(data) {
+
+        const url = `${this.props.match.url}/${data}`;
+        /!*debugger
+        this.props.history.push(url);*!/
+        ReactDOM.render(
+            <Link to={url}></Link>,
+            document.body.appendChild(this.tipsContainer)
+        );
+    }*/
 
     componentDidMount() {
         const request = async () => {

@@ -3,106 +3,117 @@ import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
+import Commands from "../../Commands/Commands";
 import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
+import fmtDate from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
-import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
-import CONFIG from "../../../utils/config";
-import fmtDate from "../../../utils/fmtDate";
+import {AJAX_PATH} from "../../../utils/ajax";
+import { Button,Table,Pagination,Message,Input,Tooltip } from 'element-react';
+import './Visitor.css'
+
+import {$} from "../../../vendor";
 
 /*
 const Table = ({list, goto}) => {
-  return (
-    <table className="table table-bordered table-sm">
-      <thead>
-      <tr>
-        <th>序号</th>
-        <th>创建人</th>
-        <th>创建时间</th>
-        <th>所属组织</th>
-        <th>所属用户</th>
-        <th>合同类型</th>
-        <th>合同编号</th>
-        <th>签约时间</th>
-        <th>到期时间</th>
-        <th>学员姓名</th>
-        <th>家长姓名</th>
-        <th>联系电话</th>
-        <th>课程类别</th>
-        <th>课程</th>
-        <th>合同金额</th>
-        <th>折扣金额</th>
-        <th>应付金额</th>
-        <th>已付金额</th>
-      </tr>
-      </thead>
-      <tbody>{TableItem(list, goto)}</tbody>
-    </table>
-  );
-};
-
-const TableItem = (data, goto) => {
-  let table = [];
-
-  if (data.length === 0) {
-    return table;
-  }
-
-  data.map((item, index) => {
-    table.push(
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{item.creatorName}</td>
-        <td>{fmtDate(item.createTime)}</td>
-        <td>{item.orgName}</td>
-        <td>{item.executiveName}</td>
-        <td>{CONFIG.TYPE_ID[item.typeId]}</td>
-        <td>
-          <a onClick={goto} cid={item.id} href="javascript:;">{item.code}</a>
-        </td>
-        <td>{fmtDate(item.startDate)}</td>
-        <td>{fmtDate(item.endDate)}</td>
-        <td>{item.stuName}</td>
-        <td>{item.parName}</td>
-        <td>{item.parCellphone}</td>
-        <td>{item.courseType}</td>
-        <td>{item.courseName}</td>
-        <td>{item.oriPrice}</td>
-        <td>{item.discPrice}</td>
-        <td>{item.finalPrice}</td>
-        <td>{item.paid}</td>
-      </tr>
+    return (
+        <table className="table table-bordered table-sm">
+            <thead>
+            <tr>
+                <th>创建人</th>
+                <th>创建时间</th>
+                <th>所属组织</th>
+                <th>所属用户</th>
+                <th>来源</th>
+                <th>渠道</th>
+                <th>阶段</th>
+                <th>状态</th>
+                <th>学员姓名</th>
+                <th>性别</th>
+                <th>年龄</th>
+                <th>在读年级</th>
+                <th>所在学校</th>
+                <th>家长姓名</th>
+                <th>与学员关系</th>
+                <th>电话号码</th>
+                <th>微信号</th>
+                <th>家庭住址</th>
+                <th>课程类别</th>
+                <th>课程产品</th>
+                <th>备注</th>
+                <th>沟通记录</th>
+            </tr>
+            </thead>
+            <tbody>{TableItem(list, goto)}</tbody>
+        </table>
     );
-  });
+};
+*/
 
-  return table;
+/*
+const TableItem = (data, goto) => {
+    let table = [];
+
+    if (data.length === 0) {
+        return table;
+    }
+
+    data.map(item => {
+        table.push(
+            <tr key={item.id}>
+                <td>{item.creatorName}</td>
+                <td>{fmtDate(item.createTime)}</td>
+                <td>{item.organizationName}</td>
+                <td>{item.executiveName}</td>
+                <td>{item.sourceName}</td>
+                <td>{item.channelName}</td>
+                <td>{item.stageName}</td>
+                <td>{item.statusName}</td>
+                <td>
+                    <a onClick={goto} lid={item.id} href="javascript:;">{item.student.name}</a>
+                </td>
+                <td>{item.student.genderText !== 'null' ? item.student.genderText : '--'}</td>
+                <td>{item.student.age !== 'null' ? item.student.age : '--'}</td>
+                <td>{item.student.classGrade !== 'null' ? item.student.classGrade : '--'}</td>
+                <td>{item.student.schoolName ? item.student.schoolName : '--'}</td>
+                <td>
+                    <a onClick={goto} lid={item.id} href="javascript:;">{item.parent.name}</a>
+                </td>
+                <td>{item.parent.relation ? item.parent.relation : '--'}</td>
+                <td>{item.parent.cellphone ? item.parent.cellphone : '--'}</td>
+                <td>{item.parent.weichat ? item.parent.weichat : '--'}</td>
+                <td>{item.parent.address ? item.parent.address : '--'}</td>
+                <td>{item.courseType !== 'null' ? item.courseType : '--'}</td>
+                <td>{item.courseName !== 'null' ? item.courseName : '--'}</td>
+                <td>{item.note ? item.note : '--'}</td>
+                <td>--</td>
+            </tr>
+        );
+    });
+
+    return table;
 };
 */
 
 class List extends React.Component {
+
     constructor(props) {
         super(props);
-
-        this.commands = this.props.commands.filter((command) => (command === 'Add'));
+        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
-        this.goToDetails = this.goToDetails.bind(this);
+        // this.goToDetails = this.goToDetails.bind(this);
+        this.addAction = this.addAction.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
             isAnimating: true,
             redirectToReferrer: false,
-            columns: [
-                {
-                    label: "序号",
-                    width: 100,
-                    sortable: true,
-                    type: 'index'
-                },
+            cellphone : '',
+            columns:[
                 {
                     label: "创建人",
                     prop: "creatorName",
@@ -117,7 +128,7 @@ class List extends React.Component {
                 },
                 {
                     label: "所属组织",
-                    prop: "orgName",
+                    prop: "organizationName",
                     width: 175,
                     showOverflowTooltip: true,
                 },
@@ -127,51 +138,92 @@ class List extends React.Component {
                     width: 95
                 },
                 {
-                    label: "合同类型",
-                    prop: "typeId",
+                    label: "来源",
+                    prop: "sourceName",
                     width: 100
                 },
                 {
-                    label: "合同编号",
-                    prop: "code",
-                    width: 130,
-                    render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }
-                },
-                {
-                    label: "签约时间",
-                    prop: "startDate",
+                    label: "渠道",
+                    prop: "channelName",
                     width: 120
                 },
                 {
-                    label: "到期时间",
-                    prop: "endDate",
-                    width: 120
+                    label: "阶段",
+                    prop: "stageName",
+                    width: 150
+                },
+                {
+                    label: "状态",
+                    prop: "statusName",
+                    width: 150
                 },
                 {
                     label: "学员姓名",
-                    prop: "stuName",
+                    prop: "student.name",
                     width: 95,
+                    render: (row, column, data)=>{
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
+                    }
+                    /*render: function(data){
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this,data.id)} lid={data.id}>{data.student.name}</Button></span>
+                    }*/
+                },
+                {
+                    label: "性别",
+                    prop: "student.genderText",
+                    width: 65
+                },
+                {
+                    label: "年龄",
+                    prop: "student.age",
+                    width: 90,
+                    sortable: true
+                },
+                {
+                    label: "在读年级",
+                    prop: "student.classGrade",
+                    width: 95
+                },
+                {
+                    label: "所在学校",
+                    prop: "student.schoolName",
+                    width: 120
                 },
                 {
                     label: "家长姓名",
-                    prop: "parName",
+                    prop: "parent.name",
                     width: 95,
+                    render: (row, column, data)=>{
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent.name}</Button></span>
+                    }
                 },
                 {
-                    label: "联系电话",
-                    prop: "parCellphone",
-                    width: 150,
-                    className: 'tabletd',
+                    label: "与学员关系",
+                    prop: "parent.relation",
+                    width: 110
+                },
+                {
+                    label: "电话号码",
+                    prop: "parent.cellphone",
+                    width: 95,
+                    className:'tabletd',
                     render: function (data) {
-                        return <Tooltip effect="dark" content={data.parCellphone}
+                        return <Tooltip effect="dark" content={data.parent.cellphone}
                                         placement="top-start">
-                            {data.parCellphone}
+                            {data.parent.cellphone}
                         </Tooltip>
                     }
 
+                },
+                {
+                    label: "微信号",
+                    prop: "parent.weichat",
+                    width: 80
+                },
+                {
+                    label: "家庭住址",
+                    prop: "parent.address",
+                    width: 95
                 },
                 {
                     label: "课程类别",
@@ -179,10 +231,10 @@ class List extends React.Component {
                     width: 95
                 },
                 {
-                    label: "课程",
+                    label: "课程产品",
                     prop: "courseName",
                     width: 95,
-                    className: 'tabletd',
+                    className:'tabletd',
                     render: function (data) {
 
                         return <Tooltip effect="dark" content={data.courseName}
@@ -191,48 +243,19 @@ class List extends React.Component {
                         </Tooltip>
                     }
                 },
-                {
-                    label: "合同金额",
-                    prop: "oriPrice",
-                    width: 100
-                },
-                {
-                    label: "折扣金额",
-                    prop: "discPrice",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "应付金额",
-                    prop: "finalPrice",
-                    width: 95
-                },
-                {
-                    label: "已付金额",
-                    prop: "paid",
-                    width: 120
-                }
             ],
         };
+
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
-                const ids = list.map((contract) => (contract.id));
+                let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
+                const ids = list.map((leads) => (leads.id));
                 list.map(item => {
                     if(item.createTime != null){
                         item.createTime = fmtDate(item.createTime);
-                    }
-                    if(item.startDate != null){
-                        item.startDate = fmtDate(item.startDate);
-                    }
-                    if(item.endDate != null){
-                        item.endDate = fmtDate(item.endDate);
-                    }
-                    if(item.typeId != null){
-                        item.typeId = CONFIG.TYPE_ID[item.typeId];
                     }
                 });
                 this.setState({list: list, ids: ids});
@@ -257,8 +280,8 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/service/contract/list.do', {orgId: nextProps.changedCrmGroup.id});
-                    const ids = list.map((contract) => (contract.id));
+                    let list = await ajax('/mkt/leads/list.do', {orgId: nextProps.changedCrmGroup.id});
+                    const ids = list.map((leads) => (leads.id));
 
                     this.setState({
                         group: nextProps.changedCrmGroup,
@@ -281,12 +304,18 @@ class List extends React.Component {
     }
 
     componentWillUnmount() {
-        // if (this.tipsContainer) {
-        //     document.body.removeChild(this.tipsContainer);
-        // }
+        // 卸载异步操作设置状态
+        clearTimeout(this.timeouter)
+        this.setState = (state, callback) => {
+            return
+        }
+        /*if (this.tipsContainer) {
+            document.body.removeChild(this.tipsContainer);
+        }*/
     }
 
     createDialogTips(text) {
+        // debugger
         if (this.tips === undefined) {
             this.tipsContainer = document.createElement('div');
 
@@ -308,13 +337,45 @@ class List extends React.Component {
         this.tips.dialog.modal('show');
     }
 
-    goToDetails(evt) {
-        const url = `${this.props.match.url}/${evt.target.getAttribute('cid')}`;
+    goToDetails(data) {
+        const url = `${this.props.match.url}/${data}`;
+        this.props.history.push(url, {ids: this.state.ids});
+    }
 
-        this.props.history.push(url);
+    addAction() {
+        this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
+    };
+
+    importAction(content) {
+
+    };
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
+    onChange(key, value) {
+        this.setState({
+            cellphone: value
+        });
     }
 
     render() {
+        /*const uploadConfig = {
+            className:"upload-demo",
+            showFileList:false,
+            withCredentials:true,
+            data:{'aa':document.cookie},
+            action: AJAX_PATH + '/mkt/leads/import.do',
+            onSuccess: (file, fileList) => this.importSuccess(),
+        };*/
         if (this.state.redirectToReferrer) {
             return (
                 <Redirect to={{
@@ -328,18 +389,37 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+
+                    <Commands
+                        commands={this.commands}
+                        addAction={this.addAction}
+                        /*importAction={uploadConfig}*/
+                    />
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <Input placeholder="请输入手机号"
+                           className={"leadlist_search"}
+                           value={this.state.cellphone}
+                           style={{width: '20%'}}
+                           onChange={this.onChange.bind(this, 'cellphone')}
+                           append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                    />
+                    {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
-                        fit={true}
-                        emptyText={"--"}
+                        fit={false}
                     />
+                    {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
+                                total={400}
+                                pageSizes={[30, 50, 100]}
+                                pageSize={50}
+                                currentPage={5}
+                                className={"leadlist_page"}/>*/}
                 </div>
             </div>
         )

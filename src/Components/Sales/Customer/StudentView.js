@@ -23,7 +23,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/customer/student/${ids[curIndex + 1]}`,
+        pathname: `/home/sales/customer/student/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -43,7 +43,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/customer/student/${ids[curIndex - 1]}`,
+        pathname: `/home/sales/customer/student/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -313,13 +313,13 @@ class StudentView extends React.Component {
               <li className="breadcrumb-item active">学员信息</li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/sales/customer/parent/${this.state.id}`,
+                  pathname: `/home/sales/customer/parent/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>家长信息</Link>
               </li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/sales/customer/contract/${this.state.id}`,
+                  pathname: `/home/sales/customer/contract/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>合同信息</Link>
               </li>
