@@ -66,11 +66,11 @@ export default function (data) {
     });
 
     func = func.sort((a, b) => {
-        const aid = idToNumber(a.cId);
-        const bid = idToNumber(b.cId);
+        // const aid = idToNumber(a.cOrderByNum);
+        // const bid = idToNumber(b.cOrderByNum);
         let comparison = 0;
 
-        if (aid > bid) {
+        if (a.cOrderByNum > b.cOrderByNum) {
             comparison = 1;
         } else {
             comparison = -1;
@@ -94,7 +94,7 @@ export default function (data) {
             hasChangeGroupBtn = false;
         }
     });
-
+    debugger
     func = unique5(func);
     func.map(item => {
         item.children = unique5(item.children);

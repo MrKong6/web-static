@@ -244,6 +244,8 @@ class List extends React.Component {
                     }
                 },
             ],
+            totalPage:0,
+            currentPage:1,
         };
 
     }
@@ -285,7 +287,11 @@ class List extends React.Component {
                 try {
                     let list = await ajax('/mkt/leads/list.do', {orgId: nextProps.changedCrmGroup.id});
                     const ids = list.map((leads) => (leads.id));
-
+                    list.map(item => {
+                        if(!item.parent){
+                            item.parent = {"cellphone" : "","name" : ""};
+                        }
+                    });
                     this.setState({
                         group: nextProps.changedCrmGroup,
                         list: list,
@@ -376,6 +382,14 @@ class List extends React.Component {
         });
     }
 
+    pageChange(){
+        console.log(2345678);
+    }
+
+    sizeChange(){
+        console.log(2345678);
+    }
+
     render() {
         const uploadConfig = {
             className:"upload-demo",
@@ -423,12 +437,14 @@ class List extends React.Component {
                         border={true}
                         fit={false}
                     />
-                    {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={400}
+                    <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                total={this.state.totalPage}
                                 pageSizes={[30, 50, 100]}
                                 pageSize={50}
-                                currentPage={5}
-                                className={"leadlist_page"}/>*/}
+                                currentPage={this.state.currentPage}
+                                className={"leadlist_page"}
+                                onCurrentChange={this.pageChange.bind(this)}
+                                onSizeChange={this.sizeChange.bind(this)}/>
                 </div>
             </div>
         )

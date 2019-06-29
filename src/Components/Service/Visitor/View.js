@@ -58,7 +58,7 @@ class View extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter(command => (command.name !== 'Add'));
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import'));
         this.ids = this.props.location.state.ids;
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
@@ -172,6 +172,7 @@ class View extends React.Component {
                 replace={this.props.history.replace}
                 from={this.props.location}
                 path="/mkt/leads/listAssignableUsers.do"
+                typeName="1"
                 ref={(dom) => {
                     this.user = dom
                 }}
@@ -218,6 +219,7 @@ class View extends React.Component {
                 defaults={defaults}
                 replace={this.props.history.replace}
                 from={this.props.location}
+                typeName="4"
                 path="/mkt/leads/listAssignableUsers.do"
                 ref={(dom) => {
                     this.user = dom

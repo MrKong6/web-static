@@ -105,6 +105,64 @@ export default {
 
     //服务相关权限配置
     "3": {ICON_CLASS: "fa-cogs"},
+      "3-4": {
+          PATH: "home/service/visitorin",
+          PATH_RULE: /^\/home\/service\/visitorin(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '访客登记',
+          // NAME: '访客'
+      },
+      "3-4-2": {
+          PATH_RULE: /^\/home\/service\/visitorin\/create$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '访客登记',
+          // NAME: '访客'
+      },
+      /*"3-3": {
+          PATH: "home/service/visitor",
+          PATH_RULE: /^\/home\/service\/visitor(((?!create).)*)?$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '访客'
+      },
+      "3-3-2": {
+          PATH_RULE: /^\/home\/service\/visitor\/((?!create).)*\/edit$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '访客'
+      },*/
+      "3-4-5": {
+          PATH_RULE: /^\/home\/service\/visitorin\/((?!create).)*\/edit$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '访客登记'
+      },
+      "3-3": {
+          PATH: "home/service/visitor",
+          PATH_RULE: /^\/home\/service\/visitor(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '访客',
+          // NAME: '访客'
+      },
+      "3-3-2": {
+          PATH_RULE: /^\/home\/service\/visitor\/create$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '访客',
+          // NAME: '访客'
+      },
+      /*"3-3": {
+          PATH: "home/service/visitor",
+          PATH_RULE: /^\/home\/service\/visitor(((?!create).)*)?$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '访客'
+      },
+      "3-3-2": {
+          PATH_RULE: /^\/home\/service\/visitor\/((?!create).)*\/edit$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '访客'
+      },*/
+      "3-3-5": {
+          PATH_RULE: /^\/home\/service\/visitorin\/((?!create).)*\/edit$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '访客'
+      },
     "3-1": {
       PATH: "home/service/contract",
       PATH_RULE: /^\/home\/service\/contract(\/((?!create).)*)?$/,
@@ -131,35 +189,6 @@ export default {
       PATH_RULE: /^\/home\/service\/customer\/parent\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '学员'
-    },
-      "3-3": {
-          PATH: "home/service/visitor",
-          PATH_RULE: /^\/home\/service\/visitor(\/((?!create).)*)?$/,
-          ICON_CLASS: "fa-filter",
-          CATEGORY: '访客',
-          // NAME: '访客'
-      },
-      "3-3-2": {
-          PATH_RULE: /^\/home\/service\/visitor\/create$/,
-          ICON_CLASS: "fa-filter",
-          CATEGORY: '访客',
-          // NAME: '访客'
-      },
-    /*"3-3": {
-        PATH: "home/service/visitor",
-        PATH_RULE: /^\/home\/service\/visitor(((?!create).)*)?$/,
-        ICON_CLASS: "fa-graduation-cap",
-        CATEGORY: '访客'
-    },
-    "3-3-2": {
-        PATH_RULE: /^\/home\/service\/visitor\/((?!create).)*\/edit$/,
-        ICON_CLASS: "fa-graduation-cap",
-        CATEGORY: '访客'
-    },*/
-    "3-3-5": {
-        PATH_RULE: /^\/home\/service\/visitor\/((?!create).)*\/edit$/,
-        ICON_CLASS: "fa-graduation-cap",
-        CATEGORY: '访客'
     },
 
 

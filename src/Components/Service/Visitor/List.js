@@ -257,6 +257,9 @@ class List extends React.Component {
                     if(item.createTime != null){
                         item.createTime = fmtDate(item.createTime);
                     }
+                    if(!item.parent){
+                        item.parent = {"cellphone" : "","name" : ""};
+                    }
                 });
                 this.setState({list: list, ids: ids});
             } catch (err) {
