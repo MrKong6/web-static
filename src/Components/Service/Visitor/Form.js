@@ -194,7 +194,7 @@ class Form extends React.Component {
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     <em className="text-danger">*</em>学员姓名
                                                 </label>
                                                 <div className="col-7">
@@ -202,13 +202,13 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">学员姓别</label>
+                                                <label className="col-5 col-form-label">学员姓别</label>
                                                 <div className="col-7">
                                                     <Gender data={this.state.option.gender}/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     <em className="text-danger">*</em>学员年龄
                                                 </label>
                                                 <div className="col-7">
@@ -216,13 +216,13 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">在读年级</label>
+                                                <label className="col-5 col-form-label">在读年级</label>
                                                 <div className="col-7">
                                                     <Grade/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">所在学校</label>
+                                                <label className="col-5 col-form-label">所在学校</label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="schoolName"/>
                                                 </div>
@@ -230,7 +230,7 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     <em className="text-danger">*</em>家长姓名
                                                 </label>
                                                 <div className="col-7">
@@ -238,7 +238,7 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     <em className="text-danger">*</em>与孩子关系
                                                 </label>
                                                 <div className="col-7">
@@ -246,7 +246,7 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     <em className="text-danger">*</em>联系电话
                                                 </label>
                                                 <div className="col-7">
@@ -254,13 +254,13 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">微信号</label>
+                                                <label className="col-5 col-form-label">微信号</label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="wechat"/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">家庭住址</label>
+                                                <label className="col-5 col-form-label">家庭住址</label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="address"/>
                                                 </div>
@@ -268,13 +268,13 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">课程类别</label>
+                                                <label className="col-5 col-form-label">课程类别</label>
                                                 <div className="col-7">
                                                     <CourseType/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">课程产品</label>
+                                                <label className="col-5 col-form-label">课程产品</label>
                                                 <div className="col-7">
                                                     <CourseName/>
                                                 </div>
@@ -282,7 +282,7 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">备注</label>
+                                                <label className="col-5 col-form-label">备注</label>
                                                 <div className="col-7">
                                                     <textarea className="form-control" rows="3" name="note"/>
                                                 </div>
@@ -293,7 +293,7 @@ class Form extends React.Component {
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     {/*<em className="text-danger">*</em>*/}信息来源
                                                 </label>
                                                 <div className="col-7">
@@ -301,7 +301,7 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     {/*<em className="text-danger">*</em>*/}具体渠道
                                                 </label>
                                                 <div className="input-group col-7">
@@ -316,7 +316,7 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     {/*<em className="text-danger">*</em>*/}线索阶段
                                                 </label>
                                                 <div className="col-7">
@@ -324,7 +324,7 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
+                                                <label className="col-5 col-form-label">
                                                     {/*<em className="text-danger">*</em>*/}线索状态
                                                 </label>
                                                 <div className="col-7">

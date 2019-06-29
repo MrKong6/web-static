@@ -194,7 +194,7 @@ class List extends React.Component {
                     prop: "parent.name",
                     width: 95,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{(row.parent ? "--" : row.parent.name)}</Button></span>
                     }
                 },
                 {
@@ -256,6 +256,9 @@ class List extends React.Component {
                 list.map(item => {
                     if(item.createTime != null){
                         item.createTime = fmtDate(item.createTime);
+                    }
+                    if(!item.parent){
+                        item.parent = {"cellphone" : "","name" : ""};
                     }
                 });
                 this.setState({list: list, ids: ids});

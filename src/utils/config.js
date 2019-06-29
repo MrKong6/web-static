@@ -137,7 +137,7 @@ export default {
           PATH_RULE: /^\/home\/service\/visitor(\/((?!create).)*)?$/,
           ICON_CLASS: "fa-filter",
           CATEGORY: '访客',
-          NAME: '访客'
+          // NAME: '访客'
       },
       "3-3-2": {
           PATH_RULE: /^\/home\/service\/visitor\/create$/,
