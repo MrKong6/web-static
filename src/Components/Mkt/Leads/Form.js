@@ -45,7 +45,9 @@ class Form extends React.Component {
         if (this.props.isEditor) {
           data = await ajax('/mkt/leads/query.do', {id: this.props.editorId});
         }
-
+        if(!data.parent){
+            data.parent = {"cellphone" : "","name" : ""};
+        }
         this.setState({
           option: {status, stage, source, relation, gender},
           data: data
