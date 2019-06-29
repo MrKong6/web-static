@@ -56,8 +56,7 @@ const PrevBtn = ({id, ids}) => {
 class View extends React.Component {
   constructor(props) {
     super(props);
-
-    this.commands = this.props.commands.filter(command => (command.name !== 'Add'));
+    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import'));
     this.ids = this.props.location.state.ids;
     this.title = fmtTitle(this.props.location.pathname);
     this.state = {
@@ -82,8 +81,11 @@ class View extends React.Component {
     const request = async () => {
       try {
         let data = await ajax('/mkt/leads/query.do', {id: this.state.id});
-
+        if(!data.parent){
+            data.parent = {"cellphone" : "","name" : ""};
+        }
         this.setState({data: data});
+
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -112,6 +114,7 @@ class View extends React.Component {
   createDialogTips(text) {
     if (this.tips === undefined) {
       this.tipsContainer = document.createElement('div');
+
 
       ReactDOM.render(
         <DialogTips

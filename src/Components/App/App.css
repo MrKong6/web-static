@@ -478,3 +478,6 @@ main h5 p {
 .ant-upload.ant-upload-select {
    display: flex;
 }
+.font-weight-bold{
+  font-weight: normal!important;
+}

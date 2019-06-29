@@ -194,7 +194,7 @@ class Form extends React.Component {
                   <div className="row">
                     <div className="col">
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
+                        <label className="col-5 col-form-label">
                           <em className="text-danger">*</em>学员姓名
                         </label>
                         <div className="col-7">
