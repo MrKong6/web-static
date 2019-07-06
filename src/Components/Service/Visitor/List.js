@@ -369,13 +369,14 @@ class List extends React.Component {
             groupId: this.state.group.id,
             groupName: this.state.group.name,
             userId: null,
-            userName: null
+            userName: null,
+            type: 1
         };
         this.userContainer = document.createElement('div');
         ReactDOM.render(
             <DialogUser
                 accept={this.assignAccept}
-                title="批量转移给"
+                title="批量转移到"
                 container={this.userContainer}
                 defaults={defaults}
                 replace={this.props.history.replace}
@@ -397,10 +398,9 @@ class List extends React.Component {
      * @param selected
      */
     assignAccept(selected) {
-
         const request = async () => {
             try {
-                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: 1};
+                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: (selected.typeId ? selected.typeId : 1)};
                 await ajax('/service/visitor/batchAssign.do', {"assignVo":JSON.stringify(param)});
                 Message({
                     message: "已转移",

@@ -14,10 +14,14 @@ class DialogUser extends React.Component {
     this.state = {
       groupId: this.props.defaults.groupId,
       groupName: this.props.defaults.groupName,
+      type: this.props.defaults.type,
       list: [],
       userId: '',
       userName: '',
       redirectToReferrer: false,
+        checkLead: false,
+        checkOppor: false,
+      typeId:'',
     };
     this.createGroupsDialog = this.createGroupsDialog.bind(this);
     this.acceptGroupDialog = this.acceptGroupDialog.bind(this);
@@ -25,6 +29,8 @@ class DialogUser extends React.Component {
     this.accept = this.accept.bind(this);
     this.cancel = this.cancel.bind(this);
     this.closed = this.closed.bind(this);
+    this.changedLead = this.changedLead.bind(this);
+    this.changedOppor = this.changedOppor.bind(this);
   }
 
   componentDidMount() {
@@ -116,7 +122,8 @@ class DialogUser extends React.Component {
       user: {
         id: this.state.userId,
         name: this.state.userName
-      }
+      },
+      typeId: this.state.typeId,
     });
     this.dialog.modal('hide');
   }
@@ -132,6 +139,17 @@ class DialogUser extends React.Component {
 
     document.body.removeChild(this.props.container);
   }
+  changedLead(evt){
+      this.state.typeId = evt.target.value;
+  }
+  changedOppor(){
+      this.state.typeId = '2';
+      let checkO = this.state.checkOppor;
+      this.setState({
+          checkOppor: !checkO,
+      })
+
+  }
 
   render() {
     if (this.state.redirectToReferrer) {
@@ -142,52 +160,126 @@ class DialogUser extends React.Component {
         }}/>
       )
     }
-
-    return (
-      <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
-        <div className="modal-dialog" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title">{this.props.title}</h5>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div className="modal-body">
-              {
-                this.state.errText ? <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
-              }
-              <div className="form-group">
-                <label>所属组织</label>
-                <div className="input-group">
-                  <input type="text" className="form-control" value={this.state.groupName} readOnly={true}/>
-                  <span className="input-group-btn">
+    if(this.state.type && this.state.type == 1){
+      /*转移给界面*/
+        return (
+            <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">{this.props.title}</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            {
+                                this.state.errText ? <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
+                            }
+                            <div className="form-group">
+                                <label>所属组织</label>
+                                <div className="input-group">
+                                    <input type="text" className="form-control" value={this.state.groupName} readOnly={true}/>
+                                    <span className="input-group-btn">
                     <button onClick={this.createGroupsDialog} className="btn btn-secondary" type="button">
                       <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
                     </button>
                   </span>
+                                </div>
+                            </div>
+                            {/*<div className="form-group">
+                                <label>所属用户</label>
+                                <select className="form-control" onChange={this.handleSelect} value={this.state.userId}>
+                                    <option value="">请选择</option>
+                                    {
+                                        this.state.list.map((user) => (
+                                            <option value={user.cId}>{user.cRealName}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>*/}
+                            <div className="form-check form-check-inline">
+                                <input
+                                    id="funcAdmin"
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="leadCheck"
+                                    value="1"
+                                    onChange={this.changedLead}
+                                />
+                                <label className="form-check-label" htmlFor="funcAdmin">
+                                    线索池
+                                </label>
+                            </div>
+                            <div className="form-check form-check-inline">
+                                <input
+                                    id="funcAdmin"
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="leadCheck"
+                                    value="2"
+                                    onChange={this.changedLead}
+                                />
+                                <label className="form-check-label" htmlFor="funcAdmin">
+                                    机会池
+                                </label>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={this.cancel} type="button" className="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div className="form-group">
-                <label>所属用户</label>
-                <select className="form-control" onChange={this.handleSelect} value={this.state.userId}>
-                  <option value="">请选择</option>
-                  {
-                    this.state.list.map((user) => (
-                      <option value={user.cId}>{user.cRealName}</option>
-                    ))
-                  }
-                </select>
-              </div>
             </div>
-            <div className="modal-footer">
-              <button onClick={this.cancel} type="button" className="btn btn-secondary" data-dismiss="modal">取消</button>
-              <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
+        )
+    }else{
+        return (
+            <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
+                <div className="modal-dialog" role="document">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">{this.props.title}</h5>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            {
+                                this.state.errText ? <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
+                            }
+                            <div className="form-group">
+                                <label>所属组织</label>
+                                <div className="input-group">
+                                    <input type="text" className="form-control" value={this.state.groupName} readOnly={true}/>
+                                    <span className="input-group-btn">
+                    <button onClick={this.createGroupsDialog} className="btn btn-secondary" type="button">
+                      <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
+                    </button>
+                  </span>
+                                </div>
+                            </div>
+                            <div className="form-group">
+                                <label>所属用户</label>
+                                <select className="form-control" onChange={this.handleSelect} value={this.state.userId}>
+                                    <option value="">请选择</option>
+                                    {
+                                        this.state.list.map((user) => (
+                                            <option value={user.cId}>{user.cRealName}</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button onClick={this.cancel} type="button" className="btn btn-secondary" data-dismiss="modal">取消</button>
+                            <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    )
+        )
+    }
   }
 }
 
