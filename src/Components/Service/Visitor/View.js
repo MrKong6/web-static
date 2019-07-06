@@ -286,6 +286,10 @@ class View extends React.Component {
             )
         }
 
+        let link = "/home/service/visitor/";
+        if(this.props.location.pathname.indexOf("visitorin") != -1){
+            link = "/home/service/visitorin/";
+        }
         if (!this.state.data) {
             return (
                 <div>
@@ -295,7 +299,7 @@ class View extends React.Component {
 
                         <div className="btn-group float-right ml-4" role="group">
                             <button onClick={() => {
-                                this.props.history.push('/home/service/visitor');
+                                this.props.history.push(link);
                             }} type="button" className="btn btn-light">返回
                             </button>
                         </div>
@@ -313,10 +317,7 @@ class View extends React.Component {
                 </div>
             )
         }
-        let link = "/home/service/visitor/";
-        if(this.props.location.pathname.indexOf("visitorin") != -1){
-            link = "/home/service/visitorin/";
-        }
+
         return (
             <div>
                 <h5 id="subNav">
@@ -330,7 +331,8 @@ class View extends React.Component {
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
-                            this.props.history.push('/home/service/visitor');
+                            console.log(link);
+                            this.props.history.push(link);
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
