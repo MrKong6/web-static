@@ -72,7 +72,7 @@ class ParentView extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/sales/customer/student/list.do', {organizationId: this.state.group.id});
+        let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id});
         let parentList = await ajax('/sales/customer/parent/queryListByStudentId.do', {id: this.state.id});
         const ids = list.map((student) => (student.id));
 

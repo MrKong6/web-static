@@ -143,7 +143,7 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/list.do', {organizationId: this.state.group.id});
+                let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id});
                 list.map(item => {
                     if(item.idType != null){
                         item.idType = CONFIG.DOCUMENT[item.idType];
@@ -175,7 +175,7 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/service/customer/student/list.do', {organizationId: nextProps.changedCrmGroup.id});
+                    let list = await ajax('/service/customer/student/list.do', {orgId: nextProps.changedCrmGroup.id});
 
                     this.setState({
                         group: nextProps.changedCrmGroup,

@@ -20,7 +20,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/service/customer/parent/${ids[curIndex + 1]}`,
+        pathname: `/home/service/customer/parent/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -40,7 +40,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/service/customer/parent/${ids[curIndex - 1]}`,
+        pathname: `/home/service/customer/parent/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -72,7 +72,7 @@ class ParentView extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/service/customer/student/list.do', {organizationId: this.state.group.id});
+        let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id});
         let parentList = await ajax('/service/customer/parent/queryListByStudentId.do', {id: this.state.id});
         const ids = list.map((student) => (student.id));
 
@@ -153,7 +153,7 @@ class ParentView extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push(`/service/customer`);
+                this.props.history.push(`/home/service/customer`);
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -185,7 +185,7 @@ class ParentView extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/home/sales/customer');
+              this.props.history.push('/home/service/customer');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>
@@ -282,11 +282,11 @@ class ParentView extends React.Component {
 
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><Link to={`/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
+              <li className="breadcrumb-item"><Link to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
               <li className="breadcrumb-item active">家长信息</li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/home/sales/customer/contract/${this.state.id}`,
+                  pathname: `/home/service/customer/contract/${this.state.id}`,
                   state: {stuName: this.state.data.name}
                 }}>合同信息</Link>
               </li>

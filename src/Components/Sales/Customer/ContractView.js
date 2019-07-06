@@ -70,7 +70,7 @@ class ContractView extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/sales/customer/student/list.do', {organizationId: this.state.group.id});
+        let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id});
         let contractList = await ajax('/sales/contract/queryListByStudentId.do', {id: this.state.id});
         const ids = list.map((student) => (student.id));
         const isEmpty = !contractList.length;

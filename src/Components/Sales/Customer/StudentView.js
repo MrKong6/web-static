@@ -76,7 +76,7 @@ class StudentView extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/sales/customer/student/list.do', {organizationId: this.state.group.id});
+        let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id});
         let data = await ajax('/sales/customer/student/query.do', {id: this.state.id});
         let contractList = await ajax('/sales/contract/queryListByStudentId.do', {id: this.state.id});
         let parentList = await ajax('/sales/customer/parent/queryListByStudentId.do', {id: this.state.id});

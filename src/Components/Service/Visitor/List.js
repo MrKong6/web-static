@@ -373,13 +373,13 @@ class List extends React.Component {
                 let list = await ajax('/mkt/leads/export.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
                 const ids = list.map((leads) => (leads.id));
             } catch (err) {
-                if (err.errCode === 401) {
+                /*if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
                 } else {
                     this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
+                }*/
             } finally {
-                this.setState({isAnimating: false});
+                // this.setState({isAnimating: false});
             }
         };
         request();
