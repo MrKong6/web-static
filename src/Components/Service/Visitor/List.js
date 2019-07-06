@@ -102,7 +102,7 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
-        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'|| command.name === 'Transfer'));
+        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'|| command.name === 'Transfer'|| command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         // this.goToDetails = this.goToDetails.bind(this);
@@ -111,6 +111,7 @@ class List extends React.Component {
         this.assignAccept = this.assignAccept.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
+            userId:this.props.profile.cId,
             list: [],
             ids: [],
             isAnimating: true,
@@ -159,11 +160,11 @@ class List extends React.Component {
                     prop: "channelName",
                     width: 120
                 },
-                {
+                /*{
                     label: "阶段",
                     prop: "stageName",
                     width: 150
-                },
+                },*/
                 {
                     label: "状态",
                     prop: "statusName",
@@ -271,6 +272,9 @@ class List extends React.Component {
                     if(!item.parent){
                         item.parent = {"cellphone" : "","name" : ""};
                     }
+                    if(!item.student){
+                        item.student = {"cellphone" : "","name" : ""};
+                    }
                 });
                 this.setState({list: list, ids: ids});
             } catch (err) {
@@ -358,6 +362,27 @@ class List extends React.Component {
 
     addAction() {
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
+    };
+
+    /**
+     * 导出
+     */
+    exportAction() {
+        const request = async () => {
+            try {
+                let list = await ajax('/mkt/leads/export.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
+                const ids = list.map((leads) => (leads.id));
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+        request();
     };
 
     /**
@@ -458,7 +483,7 @@ class List extends React.Component {
             className:"upload-demo",
             showFileList:false,
             withCredentials:true,
-            data:{'type':4},
+            data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId},
             action: AJAX_PATH + '/mkt/leads/import.do',
             onSuccess: (file, fileList) => this.successMsg("导入成功"),
         };
@@ -482,6 +507,7 @@ class List extends React.Component {
                         assignAction={this.assignAction}
                         assignParams={this.state.chooseRows}
                         importAction={uploadConfig}
+                        exportAction={this.exportAction}
                         /*importAction={uploadConfig}*/
                     />
                 </h5>

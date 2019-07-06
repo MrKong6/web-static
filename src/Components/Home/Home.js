@@ -42,7 +42,6 @@ class Home extends React.Component {
       try {
         let profile = await ajax('/user/profile.do');
         const fmtProfile = profileProcess(profile);
-
         this.setState({
           profile: fmtProfile,
           group: {

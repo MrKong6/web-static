@@ -39,6 +39,10 @@ const Transfer = ({action,param}) => (
     <Button className="el-button-nomargin" type="warning" icon="d-arrow-right" onClick={action} param={param}>转移到</Button>
 );
 
+const Export = ({action}) => (
+    <Button type="warning" icon="document" onClick={action}>下载</Button>
+);
+
 const Commands = (props) => {
     const list = props.commands.map(command => (command.name));
     return (
@@ -56,6 +60,8 @@ const Commands = (props) => {
                             return <Auth key={index} action={props.authAction}/>;
                         case "Import":
                             return <Import key={index} action={props.importAction}/>;
+                        case "Export":
+                            return <Export key={index} action={props.exportAction}/>;
                         case 'Assign':
                             return <Defaults key={index} action={props.assignAction} text="分配给"/>;
                         case 'Convert':

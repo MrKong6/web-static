@@ -24,7 +24,7 @@ const NextBtn = ({id, ids, link}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: (link+`${ids[curIndex + 1]}`),
+                pathname: (link+`/${ids[curIndex + 1]}`),
                 state: {ids: ids}
             }}
         >
@@ -44,7 +44,7 @@ const PrevBtn = ({id, ids, link}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: (link+`${ids[curIndex - 1]}`),
+                pathname: (link+`/${ids[curIndex - 1]}`),
                 state: {ids: ids}
             }}
         >
@@ -160,7 +160,8 @@ class View extends React.Component {
             groupId: this.state.data.organizationId,
             groupName: this.state.data.organizationName,
             userId: this.state.data.executiveId,
-            userName: this.state.data.executiveName
+            userName: this.state.data.executiveName,
+            type: 1
         };
         this.userContainer = document.createElement('div');
         ReactDOM.render(
@@ -208,9 +209,9 @@ class View extends React.Component {
             groupId: this.state.data.organizationId,
             groupName: this.state.data.organizationName,
             userId: this.state.data.executiveId,
-            userName: this.state.data.executiveName
+            userName: this.state.data.executiveName,
+            type: 1
         };
-        debugger
         this.userContainer = document.createElement('div');
         ReactDOM.render(
             <DialogUser
@@ -237,7 +238,7 @@ class View extends React.Component {
         this.setState({isAnimating: true});
         const request = async () => {
             try {
-                await ajax('/service/visitor/assign.do', {id: this.state.id, assigneeId: selected.user.id});
+                await ajax('/service/visitor/assign.do', {id: this.state.id, assigneeId: selected.user.id, type: (selected.typeId ? selected.typeId : 1)});
                 let data = Object.assign({}, this.state.data);
 
                 data.organizationId = selected.group.id;
@@ -286,9 +287,9 @@ class View extends React.Component {
             )
         }
 
-        let link = "/home/service/visitor/";
+        let link = "/home/service/visitor";
         if(this.props.location.pathname.indexOf("visitorin") != -1){
-            link = "/home/service/visitorin/";
+            link = "/home/service/visitorin";
         }
         if (!this.state.data) {
             return (

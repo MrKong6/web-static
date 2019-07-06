@@ -53,6 +53,7 @@ export default function (data) {
     profile.cPhone = data.cPhone;
     profile.cEmail = data.cEmail;
     profile.cQq = data.cQq;
+    profile.cId = data.cId;
     profile.org = {
         cId: data.org.cId,
         cName: data.org.cName
