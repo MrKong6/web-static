@@ -171,6 +171,7 @@ class View extends React.Component {
         title={this.state.data.student.name}
         container={this.userContainer}
         defaults={defaults}
+        typeName="1"
         replace={this.props.history.replace}
         from={this.props.location}
         path="/mkt/leads/listAssignableUsers.do"

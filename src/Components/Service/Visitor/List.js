@@ -155,6 +155,11 @@ class List extends React.Component {
                     width: 120
                 },
                 {
+                    label: "(校区)",
+                    prop: "channelName",
+                    width: 120
+                },
+                {
                     label: "阶段",
                     prop: "stageName",
                     width: 150
