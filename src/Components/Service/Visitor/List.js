@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
+import DialogUser from '../../Dialog/DialogUser';
 import Commands from "../../Commands/Commands";
 import Progress from "../../Progress/Progress"
 
@@ -101,11 +102,13 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
-        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'));
+        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'|| command.name === 'Transfer'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         // this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
+        this.assignAction = this.assignAction.bind(this);
+        this.assignAccept = this.assignAccept.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -113,7 +116,11 @@ class List extends React.Component {
             isAnimating: true,
             redirectToReferrer: false,
             cellphone : '',
+            chooseRows:[],
             columns:[
+                {
+                    type: 'selection'
+                },
                 {
                     label: "创建人",
                     prop: "creatorName",
@@ -245,13 +252,12 @@ class List extends React.Component {
                 },
             ],
         };
-
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
+                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,isIn:(this.props.history.location.pathname === '/home/service/visitorin' ? 1 : 0)});
                 const ids = list.map((leads) => (leads.id));
                 list.map(item => {
                     if(item.createTime != null){
@@ -283,7 +289,7 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/mkt/leads/list.do', {orgId: nextProps.changedCrmGroup.id});
+                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
                     const ids = list.map((leads) => (leads.id));
 
                     this.setState({
@@ -349,9 +355,67 @@ class List extends React.Component {
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
     };
 
-    importAction(content) {
+    /**
+     * 转移给
+     */
+    assignAction() {
+        console.log(this.state.chooseRows);
+        const defaults = {
+            groupId: this.state.group.id,
+            groupName: this.state.group.name,
+            userId: null,
+            userName: null
+        };
+        this.userContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogUser
+                accept={this.assignAccept}
+                title="批量转移给"
+                container={this.userContainer}
+                defaults={defaults}
+                replace={this.props.history.replace}
+                from={this.props.location}
+                typeName="4"
+                path="/mkt/leads/listAssignableUsers.do"
+                ref={(dom) => {
+                    this.user = dom
+                }}
+            />,
+            document.body.appendChild(this.userContainer)
+        );
 
+        this.user.dialog.modal('show');
     };
+
+    /**
+     * 转移给确认
+     * @param selected
+     */
+    assignAccept(selected) {
+
+        const request = async () => {
+            try {
+                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: 1};
+                await ajax('/service/visitor/batchAssign.do', {"assignVo":JSON.stringify(param)});
+                Message({
+                    message: "已分配",
+                    type: 'info'
+                });
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
+    }
+
     successMsg(msg) {
         Message({
             message: msg,
@@ -370,15 +434,29 @@ class List extends React.Component {
         });
     }
 
+    /**
+     * 列表选择
+     * @param value
+     */
+    selectRow(value) {
+        var ids = [];
+        if(value){
+            value.map((leads) => (ids.push(leads.id)));
+        }
+        this.setState({
+            chooseRows: ids
+        });
+    }
+
     render() {
-        /*const uploadConfig = {
+        const uploadConfig = {
             className:"upload-demo",
             showFileList:false,
             withCredentials:true,
-            data:{'aa':document.cookie},
+            data:{'type':4},
             action: AJAX_PATH + '/mkt/leads/import.do',
-            onSuccess: (file, fileList) => this.importSuccess(),
-        };*/
+            onSuccess: (file, fileList) => this.successMsg("导入成功"),
+        };
         if (this.state.redirectToReferrer) {
             return (
                 <Redirect to={{
@@ -396,6 +474,9 @@ class List extends React.Component {
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
+                        assignAction={this.assignAction}
+                        assignParams={this.state.chooseRows}
+                        importAction={uploadConfig}
                         /*importAction={uploadConfig}*/
                     />
                 </h5>
@@ -416,6 +497,7 @@ class List extends React.Component {
                         data={this.state.list}
                         border={true}
                         fit={false}
+                        onSelectChange={(selection) => this.selectRow(selection) }
                     />
                     {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={400}

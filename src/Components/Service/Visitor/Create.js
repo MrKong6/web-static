@@ -14,7 +14,6 @@ import ajax from "../../../utils/ajax";
 class Create extends React.Component {
   constructor(props) {
     super(props);
-
     this.title = fmtTitle(this.props.location.pathname);
     this.ids = this.props.location.state.ids;
     this.state = {
@@ -108,10 +107,13 @@ class Create extends React.Component {
         }}/>
       )
     }
-
+    let link = "/home/service/visitor/";
+    if(this.props.location.pathname.indexOf("visitorin") != -1){
+        link = "/home/service/visitorin/";
+    }
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/service/visitor"/>
+        <Redirect to={link} />
       )
     }
 
@@ -122,7 +124,7 @@ class Create extends React.Component {
 
       return (
         <Redirect to={{
-          pathname: `/home/service/visitor/${this.state.createdId}`,
+          pathname: (link+`${this.state.createdId}`),
           state: {ids: ids}
         }}/>
       )

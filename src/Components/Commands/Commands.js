@@ -35,6 +35,10 @@ const Defaults = ({text, action}) => (
     </button>
 );
 
+const Transfer = ({action,param}) => (
+    <Button className="el-button-nomargin" type="warning" icon="d-arrow-right" onClick={action} param={param}>转移给</Button>
+);
+
 const Commands = (props) => {
     const list = props.commands.map(command => (command.name));
     return (
@@ -59,7 +63,7 @@ const Commands = (props) => {
                         case 'Sign':
                             return <Defaults key={index} action={props.SignAction} text="创建合同"/>;
                         case 'Transfer':
-                            return <Defaults key={index} action={props.assignAction} text="转移给"/>;
+                            return <Transfer key={index} action={props.assignAction} param={props.assignParams} text="转移给"/>;
                         default:
                             return null;
                     }

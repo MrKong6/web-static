@@ -395,7 +395,7 @@ class List extends React.Component {
             className:"upload-demo",
             showFileList:false,
             withCredentials:true,
-            data:{'aa':document.cookie},
+            data:{'type':1},
             action: AJAX_PATH + '/mkt/leads/import.do',
             onSuccess: (file, fileList) => this.importSuccess(),
         };

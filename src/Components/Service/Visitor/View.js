@@ -14,18 +14,17 @@ import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
 import {Message} from "element-react";
 
-const NextBtn = ({id, ids}) => {
+const NextBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
 
     if ((curIndex + 1) === ids.length) {
         return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
     }
-
     return (
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/visitor/${ids[curIndex + 1]}`,
+                pathname: (link+`${ids[curIndex + 1]}`),
                 state: {ids: ids}
             }}
         >
@@ -34,7 +33,7 @@ const NextBtn = ({id, ids}) => {
     )
 };
 
-const PrevBtn = ({id, ids}) => {
+const PrevBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
 
     if (curIndex === 0) {
@@ -45,7 +44,7 @@ const PrevBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/visitor/${ids[curIndex - 1]}`,
+                pathname: (link+`${ids[curIndex - 1]}`),
                 state: {ids: ids}
             }}
         >
@@ -210,6 +209,7 @@ class View extends React.Component {
             userId: this.state.data.executiveId,
             userName: this.state.data.executiveName
         };
+        debugger
         this.userContainer = document.createElement('div');
         ReactDOM.render(
             <DialogUser
@@ -312,7 +312,10 @@ class View extends React.Component {
                 </div>
             )
         }
-
+        let link = "/home/service/visitor/";
+        if(this.props.location.pathname.indexOf("visitorin") != -1){
+            link = "/home/service/visitorin/";
+        }
         return (
             <div>
                 <h5 id="subNav">
@@ -321,8 +324,8 @@ class View extends React.Component {
                     <p className="d-inline text-muted">{this.state.data ? this.state.data.student.name : ''}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
-                        <PrevBtn id={this.state.id} ids={this.ids}/>
-                        <NextBtn id={this.state.id} ids={this.ids}/>
+                        <PrevBtn id={this.state.id} ids={this.ids} link={link}/>
+                        <NextBtn id={this.state.id} ids={this.ids} link={link}/>
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {

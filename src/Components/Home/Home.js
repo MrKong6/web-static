@@ -141,6 +141,8 @@ class Home extends React.Component {
                           component={SalesContract}{...query}/>
             <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
                           component={SalesCustomer}{...query}/>
+            <PrivateRoute path="/home/service/visitorin" changedCrmGroup={this.state.group}
+                          component={ServiceVisitor}{...query} />
             <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
                           component={ServiceVisitor}{...query}/>
             <PrivateRoute path="/home/service/contract" changedCrmGroup={this.state.group}

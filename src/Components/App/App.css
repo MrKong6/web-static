@@ -481,3 +481,6 @@ main h5 p {
 .font-weight-bold{
   font-weight: normal!important;
 }
+.el-button-nomargin{
+  margin-left: 0px!important;
+}

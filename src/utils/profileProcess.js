@@ -94,7 +94,6 @@ export default function (data) {
             hasChangeGroupBtn = false;
         }
     });
-    debugger
     func = unique5(func);
     func.map(item => {
         item.children = unique5(item.children);

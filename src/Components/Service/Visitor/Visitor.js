@@ -9,6 +9,7 @@ import Editor from "./Editor";
 
 const Visitor = ({commands, location, match, profile, changedCrmGroup}) => {
   const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
+
   return (
     <Switch>
         <Route path={`${match.url}/create`} render={(props) => (
@@ -21,8 +22,9 @@ const Visitor = ({commands, location, match, profile, changedCrmGroup}) => {
             <View key={props.match.params.leadsId} {...props} profile={profile} commands={groupCommands.commands}
                   changedCrmGroup={changedCrmGroup}/>
         )}/>
+
         <Route path={`${match.url}`} render={(props) => (
-            <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>
+            <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup} key={location.pathname}/>
         )}/>
     </Switch>
   )
