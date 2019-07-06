@@ -403,7 +403,7 @@ class List extends React.Component {
                 const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: 1};
                 await ajax('/service/visitor/batchAssign.do', {"assignVo":JSON.stringify(param)});
                 Message({
-                    message: "已分配",
+                    message: "已转移",
                     type: 'info'
                 });
                 this.componentDidMount();

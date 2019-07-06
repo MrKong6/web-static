@@ -109,8 +109,8 @@ export default {
           PATH: "home/service/visitorin",
           PATH_RULE: /^\/home\/service\/visitorin(\/((?!create).)*)?$/,
           ICON_CLASS: "fa-child",
-          CATEGORY: '访客登记',
-          // NAME: '访客'
+          CATEGORY: '访客',
+          NAME: '登记'
       },
       "3-4-2": {
           PATH_RULE: /^\/home\/service\/visitorin\/create$/,
