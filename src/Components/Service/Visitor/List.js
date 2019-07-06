@@ -262,7 +262,7 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,isIn:(this.props.history.location.pathname === '/home/service/visitorin' ? 1 : 0)});
+                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1)});
                 const ids = list.map((leads) => (leads.id));
                 list.map(item => {
                     if(item.createTime != null){
