@@ -12,6 +12,7 @@ import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
 import '../../Mkt/Leads/Leads.css'
+import ajaxFile from "../../../utils/ajaxFile";
 
 /*
 const Table = ({list, goto}) => {
@@ -265,6 +266,7 @@ class List extends React.Component {
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
+        this.exportAction = this.exportAction.bind(this);
     }
 
     componentDidMount() {
@@ -373,6 +375,10 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    exportAction() {
+        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:"2"})
+    };
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -391,6 +397,7 @@ class List extends React.Component {
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
+                        exportAction={this.exportAction}
                     />
                 </h5>
                 <div id="main" className="main p-3">

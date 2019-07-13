@@ -40,7 +40,7 @@ const Transfer = ({action,param}) => (
 );
 
 const Export = ({action}) => (
-    <Button type="warning" icon="document" onClick={action}>下载</Button>
+    <Button type="warning" icon="document" onClick={action}>导出</Button>
 );
 
 const Commands = (props) => {

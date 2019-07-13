@@ -290,15 +290,15 @@ class List extends React.Component {
             const request = async () => {
                 try {
                     let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                    const ids = list.map((leads) => (leads.id));
-                    list.map(item => {
+                    const ids = list.data.map((leads) => (leads.id));
+                    list.data.map(item => {
                         if(!item.parent){
                             item.parent = {"cellphone" : "","name" : ""};
                         }
                     });
                     this.setState({
                         group: nextProps.changedCrmGroup,
-                        list: list,
+                        list: list.data,
                         ids: ids,totalPage: list.totalPage,totalCount: list.count
                     });
                 } catch (err) {

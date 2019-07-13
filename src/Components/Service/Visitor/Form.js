@@ -65,7 +65,7 @@ class Form extends React.Component {
                         this.form.courseName.value = this.state.data.courseName ? this.state.data.courseName : '';
                         this.form.note.value = this.state.data.note;
                         this.form.sourceId.value = this.state.data.sourceId;
-                        this.form.stageId.value = this.state.data.stageId;
+                        // this.form.stageId.value = this.state.data.stageId;
                         this.form.statusId.value = this.state.data.statusId;
 
                         this.setState({

@@ -81,7 +81,7 @@ class Create extends React.Component {
 
     const request = async () => {
       try {
-        let rs = await ajax('/mkt/leads/add.do', query);
+        let rs = await ajax('/service/visitor/add.do', query);
 
         this.setState({isCreated: true, createdId: rs})
       } catch (err) {

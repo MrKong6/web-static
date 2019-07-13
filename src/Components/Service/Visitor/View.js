@@ -58,7 +58,7 @@ class View extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import'));
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export'));
         this.ids = this.props.location.state.ids;
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
@@ -353,7 +353,7 @@ class View extends React.Component {
                         <div className="col col-12">
                             <div className="card">
                                 <div className="card-body">
-                                    <p className="ht pb-3 b-b">线索信息</p>
+                                    <p className="ht pb-3 b-b">访客信息</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
@@ -504,7 +504,7 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="ht pt-3 pb-3 b-t b-b">线索进程</p>
+                                    <p className="ht pt-3 pb-3 b-t b-b">访客进程</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
@@ -531,19 +531,19 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                         <div className="col">
+                                            {/*<div className="form-group row">*/}
+                                                {/*<label className="col-5 col-form-label">线索阶段</label>*/}
+                                                {/*<div className="col-7">*/}
+                                                    {/*<input*/}
+                                                        {/*type="text"*/}
+                                                        {/*readOnly={true}*/}
+                                                        {/*className="form-control-plaintext"*/}
+                                                        {/*value={this.state.data ? this.state.data.stageName : ''}*/}
+                                                    {/*/>*/}
+                                                {/*</div>*/}
+                                            {/*</div>*/}
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label">线索阶段</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.stageName : ''}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label">线索状态</label>
+                                                <label className="col-5 col-form-label">访客状态</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"

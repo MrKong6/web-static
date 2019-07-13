@@ -13,9 +13,7 @@ import ajax from "../../../utils/ajax";
 
 class Create extends React.Component {
   constructor(props) {
-    debugger
     super(props);
-    debugger
     this.title = fmtTitle(this.props.location.pathname);
     this.ids = this.props.location.state.ids;
     this.state = {
