@@ -17,6 +17,15 @@ import SalesCustomer from '../Sales/Customer/Customer';
 import ServiceContract from '../Service/Contract/Contract';
 import ServiceCustomer from '../Service/Customer/Customer';
 import ServiceVisitor from '../Service/Visitor/Visitor';
+import FinanceAccount from '../Finance/Account/Account';
+import AcademyCourse from '../Academy/Course/Course';
+import AcademyTeacher from '../Academy/Teacher/Teacher';
+import AcademyClass from '../Academy/Class/Class';
+import AcademyRoom from '../Academy/Room/Room';
+import AcademyAssignClass from '../Academy/AssignClass/AssignClass';
+import EducationClass from '../Education/Class/Class';
+import EducationCourse from '../Education/Course/Course';
+
 import ChangePwd from '../ChangePwd/ChangePwd';
 import NoMatch from "../NoMatch/NoMatch";
 import DialogTips from "../Dialog/DialogTips";
@@ -148,6 +157,22 @@ class Home extends React.Component {
                           component={ServiceContract}{...query}/>
             <PrivateRoute path="/home/service/customer" changedCrmGroup={this.state.group}
                           component={ServiceCustomer}{...query}/>
+            <PrivateRoute path="/home/finance/account" changedCrmGroup={this.state.group}
+                          component={FinanceAccount}{...query}/>
+            <PrivateRoute path="/home/academy/course" changedCrmGroup={this.state.group}
+                          component={AcademyCourse}{...query}/>
+            <PrivateRoute path="/home/academy/teacher" changedCrmGroup={this.state.group}
+                          component={AcademyTeacher}{...query}/>
+            <PrivateRoute path="/home/academy/class" changedCrmGroup={this.state.group}
+                          component={AcademyClass}{...query}/>
+            <PrivateRoute path="/home/academy/room" changedCrmGroup={this.state.group}
+                          component={AcademyRoom}{...query}/>
+            <PrivateRoute path="/home/academy/assignclass" changedCrmGroup={this.state.group}
+                          component={AcademyAssignClass}{...query}/>
+            <PrivateRoute path="/home/education/class" changedCrmGroup={this.state.group}
+                          component={EducationClass}{...query}/>
+            <PrivateRoute path="/home/education/course" changedCrmGroup={this.state.group}
+                          component={EducationCourse}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>
             <Route render={(props) => (
               <NoMatch {...props} profile={this.state.profile.profile}/>
