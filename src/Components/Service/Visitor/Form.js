@@ -298,6 +298,12 @@ class Form extends React.Component {
                                                     <textarea className="form-control" rows="3" name="note"/>
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label">(校区)</label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="schoolArea"/>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <p className="ht pt-3 pb-3 b-t b-b">访客进程</p>

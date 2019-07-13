@@ -502,6 +502,17 @@ class View extends React.Component {
                                                     </p>
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label">(校区)</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data ? this.state.data.schoolArea !== 'null' ? this.state.data.schoolArea : '' : ''}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <p className="ht pt-3 pb-3 b-t b-b">访客进程</p>
