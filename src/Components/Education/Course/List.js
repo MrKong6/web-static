@@ -250,7 +250,7 @@ class List extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
-        request();
+        //request();
         mainSize()
     }
 
@@ -279,7 +279,7 @@ class List extends React.Component {
                 }
             };
 
-            request();
+            //request();
         }
     }
 

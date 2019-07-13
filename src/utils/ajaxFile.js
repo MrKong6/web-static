@@ -26,17 +26,20 @@ export default function (url, data) {
         if (this.status == 200) {
             let responseHeader = xhr.getAllResponseHeaders();
             var blob = this.response;
-            console.log(responseHeader.substr((responseHeader.lastIndexOf(":")+1),responseHeader.length));
-            var filename = responseHeader.substr((responseHeader.lastIndexOf(":")+1),(responseHeader.length-1));
+            console.log(xhr.getResponseHeader("Content-Filename"));
+            // var filename = responseHeader.substr((responseHeader.lastIndexOf(":")+1),(responseHeader.length-1));
+            // filename = decodeURI(filename);
+            // filename = filename.trim();//替换
+            // console.log(filename)
+            var filename = xhr.getResponseHeader("Content-Filename");
             filename = decodeURI(filename);
-            filename = filename.trim();//替换
-            console.log(filename)
             if (window.navigator.msSaveOrOpenBlob) {
                 navigator.msSaveBlob(blob, filename);
             } else {
                 var a = document.createElement('a');
                 var url = createObjectURL(blob);
                 a.href = url;
+                console.log(a.href);
                 a.download = filename;
                 document.body.appendChild(a);
                 a.click();

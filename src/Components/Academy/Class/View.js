@@ -90,7 +90,7 @@ class View extends React.Component {
       }
     };
 
-    request();
+    //request();
     mainSize();
   }
 
@@ -148,7 +148,7 @@ class View extends React.Component {
       }
     };
 
-    request();
+    //request();
   }
 
   render() {
