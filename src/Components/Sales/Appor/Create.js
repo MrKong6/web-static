@@ -107,10 +107,13 @@ class Create extends React.Component {
         }}/>
       )
     }
-
+    let link = "/home/sales/oppor";
+    if(this.props.location.pathname.indexOf("opporpublic") != -1){
+        link = "/home/sales/opporpublic";
+    }
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/sales/oppor"/>
+        <Redirect to={link}/>
       )
     }
 
@@ -121,7 +124,7 @@ class Create extends React.Component {
 
       return (
         <Redirect to={{
-          pathname: `/home/sales/oppor/${this.state.createdId}`,
+          pathname: link + `/${this.state.createdId}`,
           state: {ids: ids}
         }}/>
       )

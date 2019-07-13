@@ -191,7 +191,7 @@ class Form extends React.Component {
             <div className="col col-12">
               <div className="card">
                 <div className="card-body">
-                  <p className="ht pb-3 b-b">线索信息</p>
+                  <p className="ht pb-3 b-b">机会信息</p>
                   <div className="row">
                     <div className="col">
                       <div className="form-group row">
@@ -290,7 +290,7 @@ class Form extends React.Component {
                       </div>
                     </div>
                   </div>
-                  <p className="ht pt-3 pb-3 b-t b-b">线索进程</p>
+                  <p className="ht pt-3 pb-3 b-t b-b">机会进程</p>
                   <div className="row">
                     <div className="col">
                       <div className="form-group row">

@@ -106,16 +106,21 @@ class Editor extends React.Component {
       )
     }
 
+    let link = "/home/sales/oppor";
+    if(this.props.location.pathname.indexOf("opporpublic") != -1){
+        link = "/home/sales/opporpublic";
+    }
+
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/sales/oppor"/>
+        <Redirect to={link}/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/sales/oppor/${this.state.id}`,
+          pathname: link + `/${this.state.id}`,
           state: {ids: this.ids}
         }}/>
       )

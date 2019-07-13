@@ -190,7 +190,7 @@ class Form extends React.Component {
                         <div className="col col-12">
                             <div className="card">
                                 <div className="card-body">
-                                    <p className="ht pb-3 b-b">线索信息</p>
+                                    <p className="ht pb-3 b-b">访客信息</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
@@ -289,7 +289,7 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <p className="ht pt-3 pb-3 b-t b-b">线索进程</p>
+                                    <p className="ht pt-3 pb-3 b-t b-b">访客进程</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
@@ -315,17 +315,17 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="col">
+                                            {/*<div className="form-group row">*/}
+                                                {/*<label className="col-5 col-form-label">*/}
+                                                    {/*/!*<em className="text-danger">*</em>*!/访客阶段*/}
+                                                {/*</label>*/}
+                                                {/*<div className="col-7">*/}
+                                                    {/*<Stages data={this.state.option.stage}/>*/}
+                                                {/*</div>*/}
+                                            {/*</div>*/}
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label">
-                                                    {/*<em className="text-danger">*</em>*/}线索阶段
-                                                </label>
-                                                <div className="col-7">
-                                                    <Stages data={this.state.option.stage}/>
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label">
-                                                    {/*<em className="text-danger">*</em>*/}线索状态
+                                                    {/*<em className="text-danger">*</em>*/}访客状态
                                                 </label>
                                                 <div className="col-7">
                                                     <Status data={this.state.option.status}/>

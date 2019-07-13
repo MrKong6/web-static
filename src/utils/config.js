@@ -25,21 +25,40 @@ export default {
       PATH: "home/mkt/leads",
       PATH_RULE: /^\/home\/mkt\/leads(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-filter",
-      CATEGORY: '销售',
-      NAME: '线索'
+      CATEGORY: '线索',
+      NAME: '私有池'
     },
     "1-2-1": {
       PATH_RULE: /^\/home\/mkt\/leads\/create$/,
       ICON_CLASS: "fa-filter",
-      CATEGORY: '销售',
-      NAME: '线索'
+      CATEGORY: '线索',
+      NAME: '私有池'
     },
     "1-2-2": {
       PATH_RULE: /^\/home\/mkt\/leads\/edit\/((?!create).)*$/,
       ICON_CLASS: "fa-filter",
-      CATEGORY: '销售',
-      NAME: '线索'
+      CATEGORY: '线索',
+      NAME: '私有池'
     },
+      "1-3": {
+          PATH: "home/mkt/leadspublic",
+          PATH_RULE: /^\/home\/mkt\/leadspublic(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '线索',
+          NAME: '公有池'
+      },
+      "1-3-1": {
+          PATH_RULE: /^\/home\/mkt\/leadspublic\/create$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '线索',
+          NAME: '公有池'
+      },
+      "1-3-2": {
+          PATH_RULE: /^\/home\/mkt\/leadspublic\/edit\/((?!create).)*$/,
+          ICON_CLASS: "fa-filter",
+          CATEGORY: '线索',
+          NAME: '公有池'
+      },
 
 
     //销售相关权限配置
@@ -48,21 +67,40 @@ export default {
       PATH: "home/sales/oppor",
       PATH_RULE: /^\/home\/sales\/oppor(\/((?!create).)*)?$/,
       ICON_CLASS: "fa-file-o",
-      CATEGORY: '销售',
-      NAME: '机会'
+      CATEGORY: '机会',
+      NAME: '私有池'
     },
     "2-1-1": {
       PATH_RULE: /^\/home\/sales\/oppor\/create$/,
       ICON_CLASS: "fa-file-o",
-      CATEGORY: '销售',
-      NAME: '机会'
+      CATEGORY: '机会',
+      NAME: '私有池'
     },
     "2-1-2": {
       PATH_RULE: /^\/home\/sales\/oppor\/((?!create).)*\/edit$/,
       ICON_CLASS: "fa-file-o",
-      CATEGORY: '销售',
-      NAME: '机会'
+      CATEGORY: '机会',
+      NAME: '私有池'
     },
+      "2-0": {
+          PATH: "home/sales/opporpublic",
+          PATH_RULE: /^\/home\/sales\/opporpublic(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-file-o",
+          CATEGORY: '机会',
+          NAME: '公有池'
+      },
+      "2-0-1": {
+          PATH_RULE: /^\/home\/sales\/opporpublic\/create$/,
+          ICON_CLASS: "fa-file-o",
+          CATEGORY: '机会',
+          NAME: '公有池'
+      },
+      "2-0-2": {
+          PATH_RULE: /^\/home\/sales\/opporpublic\/((?!create).)*\/edit$/,
+          ICON_CLASS: "fa-file-o",
+          CATEGORY: '机会',
+          NAME: '公有池'
+      },
     "2-2": {
       PATH: "home/sales/contract",
       PATH_RULE: /^\/home\/sales\/contract(\/((?!create).)*)?$/,
@@ -115,8 +153,8 @@ export default {
       "3-4-2": {
           PATH_RULE: /^\/home\/service\/visitorin\/create$/,
           ICON_CLASS: "fa-filter",
-          CATEGORY: '访客登记',
-          // NAME: '访客'
+          CATEGORY: '访客',
+          NAME: '登记'
       },
       /*"3-3": {
           PATH: "home/service/visitor",

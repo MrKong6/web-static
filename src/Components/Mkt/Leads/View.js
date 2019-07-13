@@ -13,7 +13,7 @@ import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
 
-const NextBtn = ({id, ids}) => {
+const NextBtn = ({id, ids, link}) => {
   const curIndex = ids.indexOf(id);
 
   if ((curIndex + 1) === ids.length) {
@@ -24,7 +24,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/home/mkt/leads/${ids[curIndex + 1]}`,
+        pathname: link + `/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -33,7 +33,7 @@ const NextBtn = ({id, ids}) => {
   )
 };
 
-const PrevBtn = ({id, ids}) => {
+const PrevBtn = ({id, ids, link}) => {
   const curIndex = ids.indexOf(id);
 
   if (curIndex === 0) {
@@ -44,7 +44,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/home/mkt/leads/${ids[curIndex - 1]}`,
+        pathname: link + `/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -269,9 +269,14 @@ class View extends React.Component {
       )
     }
 
+    let link = "/home/mkt/leads";
+    if(this.props.location.pathname.indexOf("leadspublic") != -1){
+        link = "/home/mkt/leadspublic";
+    }
+
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/mkt/leads"/>
+        <Redirect to={link}/>
       )
     }
 
@@ -280,6 +285,7 @@ class View extends React.Component {
         <Redirect to={`/home/sales/oppor/${this.state.id}`}/>
       )
     }
+
 
     if (!this.state.data) {
       return (
@@ -290,7 +296,7 @@ class View extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/home/mkt/leads');
+                this.props.history.push(link);
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -317,12 +323,12 @@ class View extends React.Component {
           <p className="d-inline text-muted">{this.state.data ? this.state.data.student.name : ''}</p>
 
           <div className="btn-group float-right ml-4" role="group">
-            <PrevBtn id={this.state.id} ids={this.ids}/>
-            <NextBtn id={this.state.id} ids={this.ids}/>
+            <PrevBtn id={this.state.id} ids={this.ids} link={link}/>
+            <NextBtn id={this.state.id} ids={this.ids} link={link}/>
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/home/mkt/leads');
+              this.props.history.push(link);
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

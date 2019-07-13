@@ -21,7 +21,7 @@ const Appor = ({commands, location, match, profile, changedCrmGroup}) => {
               changedCrmGroup={changedCrmGroup}/>
       )}/>
       <Route path={`${match.url}`} render={(props) => (
-        <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>
+        <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup} key={location.pathname}/>
       )}/>
     </Switch>
   )
