@@ -40,7 +40,7 @@ class Form extends React.Component {
         let data = null;
 
         if (this.props.isEditor) {
-          data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
+          data = await ajax('/service/contract/query.do', {id: this.props.editorId});
         } else {
           data = {
             stuName: this.props.apporData.student.name,

@@ -24,7 +24,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/oppor/${ids[curIndex + 1]}`,
+        pathname: `/home/service/contract/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -44,7 +44,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/oppor/${ids[curIndex - 1]}`,
+        pathname: `/home/service/contract/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -78,7 +78,7 @@ class View extends React.Component {
       try {
         let data = await ajax('/service/contract/query.do', {id: this.state.id});
         let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
-        const ids = list.map((contract) => (contract.id));
+        const ids = list.data.map((contract) => (contract.id));
 
         this.setState({data, ids});
       } catch (err) {
@@ -176,7 +176,7 @@ class View extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/home/sales/contract');
+                this.props.history.push('/home/service/contract');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -208,7 +208,7 @@ class View extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/home/sales/contract');
+              this.props.history.push('/home/service/contract');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

@@ -6,18 +6,31 @@ import DialogTips from "../Dialog/DialogTips";
 import ajax from "../../utils/ajax";
 import objectToArray from "../../utils/objectToArray";
 
-class Gender extends React.Component {
+class Age extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       redirectToReferrer: false,
-      list: objectToArray(this.props.data) || []
+      list: objectToArray(this.props.data) || [],
+      ageYear : [],
+      ageMonth : [],
+      type : this.props.data,
     }
   }
 
   componentDidMount() {
-    if (this.state.list.length) {
+    var ageYear = [];
+    for(let i=1;i<101;i++){
+        ageYear.push(i);
+    }
+    var ageMonth = [];
+    for(let i=1;i<13;i++){
+        ageMonth.push(i);
+    }
+    this.state.ageYear = ageYear;
+    this.state.ageMonth = ageMonth;
+    /*if (this.state.list.length) {
       return;
     }
 
@@ -35,9 +48,9 @@ class Gender extends React.Component {
       } finally {
         this.setState({isAnimating: false});
       }
-    };
+    };*/
 
-    request()
+    /*request()*/
   }
 
   createDialogTips(text) {
@@ -63,7 +76,8 @@ class Gender extends React.Component {
   }
 
   render() {
-    // debugger
+      // debugger
+    this.componentDidMount();
     if (this.state.redirectToReferrer) {
       return (
         <Redirect to={{
@@ -72,18 +86,32 @@ class Gender extends React.Component {
         }}/>
       )
     }
+    if(this.state.type == 1){
+        return (
+            <select className="form-control" name={this.props.name || "studentAgeYear"}>
+                <option value="">年龄</option>
+                {
+                    this.state.ageYear.map(item => (
+                        <option key={item} value={item}>{item}</option>
+                    ))
+                }
+            </select>
+        )
+    }
+      if(this.state.type == 2){
+          return (
+              <select className="form-control" name={this.props.name || "studentAgeMonth"}>
+                  <option value="">月龄</option>
+                  {
+                      this.state.ageMonth.map(item => (
+                          <option key={item} value={item}>{item}</option>
+                      ))
+                  }
+              </select>
+          )
+      }
 
-    return (
-      <select className="form-control" name={this.props.name || "studentGenderId"}>
-        <option value="">请选择</option>
-        {
-          this.state.list.map(item => (
-            <option key={item.id} value={item.id}>{item.name}</option>
-          ))
-        }
-      </select>
-    )
   }
 }
 
-export default Gender;
+export default Age;

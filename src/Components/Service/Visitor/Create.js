@@ -67,11 +67,14 @@ class Create extends React.Component {
   }
 
   create() {
-    // debugger
     const query = this.form.getFormValue();
 
     if (!query) {
       return;
+    }
+    //处理年龄
+    if(query.studentAgeYear || query.studentAgeMonth){
+      query.age = (query.studentAgeYear+"."+query.studentAgeMonth)
     }
 
     query.organizationId = this.state.group.id;

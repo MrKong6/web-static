@@ -73,6 +73,10 @@ class Editor extends React.Component {
         if (!query) {
             return;
         }
+        //处理年龄
+        if(query.studentAgeYear || query.studentAgeMonth){
+            query.age = (query.studentAgeYear+"."+query.studentAgeMonth)
+        }
 
         this.setState({isAnimating: true});
         query.organizationId = this.state.group.id;
@@ -80,7 +84,7 @@ class Editor extends React.Component {
 
         const request = async () => {
             try {
-                await ajax('/mkt/leads/mod.do', query);
+                await ajax('/service/visitor/mod.do', query);
                 this.setState({isUpdated: true})
             } catch (err) {
                 if (err.errCode === 401) {

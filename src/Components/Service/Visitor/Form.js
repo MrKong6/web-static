@@ -14,6 +14,7 @@ import CourseType from '../../Dic/CourseType';
 import CourseName from '../../Dic/CourseName';
 
 import ajax from "../../../utils/ajax";
+import Age from "../../Dic/Age";
 
 class Form extends React.Component {
     constructor(props) {
@@ -43,7 +44,7 @@ class Form extends React.Component {
                 let data = null;
 
                 if (this.props.isEditor) {
-                    data = await ajax('/mkt/leads/query.do', {id: this.props.editorId});
+                    data = await ajax('/service/visitor/query.do', {id: this.props.editorId});
                 }
 
                 this.setState({
@@ -53,7 +54,12 @@ class Form extends React.Component {
                     if (this.props.isEditor) {
                         this.form.studentName.value = this.state.data.student.name;
                         this.form.studentGenderId.value = this.state.data.student.genderId;
-                        this.form.age.value = this.state.data.student.age;
+                        if(this.state.data.student.age){
+                            let split = [];
+                            split = this.state.data.student.age.split(".");
+                            this.form.studentAgeYear.value = (split[0]);
+                            this.form.studentAgeMonth.value = (split[1]);
+                        }
                         this.form.classGrade.value = this.state.data.student.classGrade;
                         this.form.schoolName.value = this.state.data.student.schoolName;
                         this.form.parentName.value = this.state.data.parent.name;
@@ -163,6 +169,8 @@ class Form extends React.Component {
             }
         }
 
+
+
         return query;
     }
 
@@ -202,7 +210,7 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label">学员姓别</label>
+                                                <label className="col-5 col-form-label">学员性别</label>
                                                 <div className="col-7">
                                                     <Gender data={this.state.option.gender}/>
                                                 </div>
@@ -211,8 +219,11 @@ class Form extends React.Component {
                                                 <label className="col-5 col-form-label">
                                                     <em className="text-danger">*</em>学员年龄
                                                 </label>
-                                                <div className="col-7">
-                                                    <input type="text" className="form-control" name="age" required={true}/>
+                                                <div className="col-4" data={this.state.option.gender}>
+                                                    <Age data="1"/>
+                                                </div>
+                                                <div className="col-3.5" data={this.state.option.gender}>
+                                                    <Age data="2"/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
