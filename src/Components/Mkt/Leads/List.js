@@ -15,6 +15,7 @@ import { Button,Table,Pagination,Message,Input,Tooltip } from 'element-react';
 import './Leads.css'
 
 import {$} from "../../../vendor";
+import ajaxFile from "../../../utils/ajaxFile";
 
 /*
 const Table = ({list, goto}) => {
@@ -101,11 +102,12 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
-        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'));
+        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         // this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
+        this.exportAction = this.exportAction.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -246,6 +248,8 @@ class List extends React.Component {
             ],
             totalPage:0,
             currentPage:1,
+            pageSize:10,
+            totalCount:0,
         };
 
     }
@@ -253,9 +257,9 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone});
-                const ids = list.map((leads) => (leads.id));
-                list.map(item => {
+                let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                const ids = list.data.map((leads) => (leads.id));
+                list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = fmtDate(item.createTime);
                     }
@@ -263,7 +267,7 @@ class List extends React.Component {
                         item.parent = {"cellphone" : "","name" : ""};
                     }
                 });
-                this.setState({list: list, ids: ids});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -285,7 +289,7 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/mkt/leads/list.do', {orgId: nextProps.changedCrmGroup.id});
+                    let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
                     const ids = list.map((leads) => (leads.id));
                     list.map(item => {
                         if(!item.parent){
@@ -295,7 +299,7 @@ class List extends React.Component {
                     this.setState({
                         group: nextProps.changedCrmGroup,
                         list: list,
-                        ids: ids
+                        ids: ids,totalPage: list.totalPage,totalCount: list.count
                     });
                 } catch (err) {
                     if (err.errCode === 401) {
@@ -382,13 +386,22 @@ class List extends React.Component {
         });
     }
 
-    pageChange(){
-        console.log(2345678);
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
     }
 
-    sizeChange(){
-        console.log(2345678);
+    sizeChange(pageSize){
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
     }
+
+    exportAction() {
+        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id})
+    };
 
     render() {
         const uploadConfig = {
@@ -417,6 +430,7 @@ class List extends React.Component {
                         commands={this.commands}
                         addAction={this.addAction}
                         importAction={uploadConfig}
+                        exportAction={this.exportAction}
                     />
                 </h5>
                 <div id="main" className="main p-3">
@@ -438,13 +452,14 @@ class List extends React.Component {
                         fit={false}
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={this.state.totalPage}
-                                pageSizes={[30, 50, 100]}
-                                pageSize={50}
+                                total={this.state.totalCount}
+                                pageSizes={[10, 50, 100]}
+                                pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
+                                pageCount={this.state.totalPage}
                                 className={"leadlist_page"}
-                                onCurrentChange={this.pageChange.bind(this)}
-                                onSizeChange={this.sizeChange.bind(this)}/>
+                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
             </div>
         )

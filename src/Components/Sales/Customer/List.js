@@ -122,14 +122,18 @@ class List extends React.Component {
               prop: "schoolName",
           }
       ],
+      totalPage:0,
+      currentPage:1,
+      pageSize:10,
+      totalCount:0,
     };
   }
 
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id});
-          list.map(item => {
+        let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+          list.data.map(item => {
               if(item.idType != null){
                   item.idType = CONFIG.DOCUMENT[item.idType];
               }
@@ -138,7 +142,7 @@ class List extends React.Component {
                   item.birthday = fmtDate(item.birthday);
               }
           });
-        this.setState({list: list});
+        this.setState({list: list.data,totalPage: list.totalPage,totalCount: list.count});
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -160,11 +164,11 @@ class List extends React.Component {
 
       const request = async () => {
         try {
-          let list = await ajax('/sales/customer/student/list.do', {orgId: nextProps.changedCrmGroup.id});
+          let list = await ajax('/sales/customer/student/list.do', {orgId: nextProps.changedCrmGroup.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
 
           this.setState({
             group: nextProps.changedCrmGroup,
-            list: list
+            list: list.data,totalPage: list.totalPage,totalCount: list.count
           });
         } catch (err) {
           if (err.errCode === 401) {
@@ -209,6 +213,19 @@ class List extends React.Component {
     this.tips.dialog.modal('show');
   }
 
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
+    }
+
+    sizeChange(pageSize){
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
+    }
+
   render() {
     if (this.state.redirectToReferrer) {
       return (
@@ -235,6 +252,15 @@ class List extends React.Component {
                 fit={true}
                 emptyText={"--"}
             />
+            <Pagination layout="total, sizes, prev, pager, next, jumper"
+                        total={this.state.totalCount}
+                        pageSizes={[10, 50, 100]}
+                        pageSize={this.state.pageSize}
+                        currentPage={this.state.currentPage}
+                        pageCount={this.state.totalPage}
+                        className={"leadlist_page"}
+                        onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                        onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
         </div>
       </div>
     )

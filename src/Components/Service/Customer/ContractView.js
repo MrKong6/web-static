@@ -72,7 +72,7 @@ class ContractView extends React.Component {
       try {
         let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id});
         let contractList = await ajax('/service/contract/queryListByStudentId.do', {id: this.state.id});
-        const ids = list.map((student) => (student.id));
+        const ids = list.data.map((student) => (student.id));
         const isEmpty = !contractList.length;
 
         this.setState({ids, contractList, isEmpty});
@@ -298,6 +298,12 @@ class ContractView extends React.Component {
                 }}>家长信息</Link>
               </li>
               <li className="breadcrumb-item active">合同信息</li>
+              <li className="breadcrumb-item">
+                  <Link to={{
+                      pathname: `/home/service/customer/account/${this.state.id}`,
+                      state: {stuName: this.state.data.name}
+                  }}>账户信息</Link>
+              </li>
             </ol>
           </nav>
         </div>

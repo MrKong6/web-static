@@ -16,6 +16,7 @@ import { Button,Table,Pagination,Message,Input,Tooltip } from 'element-react';
 import './Visitor.css'
 
 import {$} from "../../../vendor";
+import ajaxFile from "../../../utils/ajaxFile";
 
 /*
 const Table = ({list, goto}) => {
@@ -107,6 +108,7 @@ class List extends React.Component {
         this.createDialogTips = this.createDialogTips.bind(this);
         // this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
+        this.exportAction = this.exportAction.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
         this.state = {
@@ -257,15 +259,19 @@ class List extends React.Component {
                     }
                 },
             ],
+            totalPage:0,
+            currentPage:1,
+            pageSize:10,
+            totalCount:0,
         };
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1)});
-                const ids = list.map((leads) => (leads.id));
-                list.map(item => {
+                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:4,isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1)});
+                const ids = list.data.map((leads) => (leads.id));
+                list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = fmtDate(item.createTime);
                     }
@@ -276,7 +282,7 @@ class List extends React.Component {
                         item.student = {"cellphone" : "","name" : ""};
                     }
                 });
-                this.setState({list: list, ids: ids});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -298,13 +304,13 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
-                    const ids = list.map((leads) => (leads.id));
+                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                    const ids = list.data.map((leads) => (leads.id));
 
                     this.setState({
                         group: nextProps.changedCrmGroup,
-                        list: list,
-                        ids: ids
+                        list: list.data,
+                        ids: ids,totalPage: list.totalPage,totalCount: list.count
                     });
                 } catch (err) {
                     if (err.errCode === 401) {
@@ -368,21 +374,7 @@ class List extends React.Component {
      * 导出
      */
     exportAction() {
-        const request = async () => {
-            try {
-                let list = await ajax('/mkt/leads/export.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4});
-                const ids = list.map((leads) => (leads.id));
-            } catch (err) {
-                /*if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }*/
-            } finally {
-                // this.setState({isAnimating: false});
-            }
-        };
-        request();
+        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:4})
     };
 
     /**
@@ -478,6 +470,19 @@ class List extends React.Component {
         });
     }
 
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
+    }
+
+    sizeChange(pageSize){
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
+    }
+
     render() {
         const uploadConfig = {
             className:"upload-demo",
@@ -530,12 +535,15 @@ class List extends React.Component {
                         fit={false}
                         onSelectChange={(selection) => this.selectRow(selection) }
                     />
-                    {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={400}
-                                pageSizes={[30, 50, 100]}
-                                pageSize={50}
-                                currentPage={5}
-                                className={"leadlist_page"}/>*/}
+                    <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                total={this.state.totalCount}
+                                pageSizes={[10, 50, 100]}
+                                pageSize={this.state.pageSize}
+                                currentPage={this.state.currentPage}
+                                pageCount={this.state.totalPage}
+                                className={"leadlist_page"}
+                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
             </div>
         )

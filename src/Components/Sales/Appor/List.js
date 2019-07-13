@@ -257,6 +257,10 @@ class List extends React.Component {
                 }
 
             ],
+            totalPage:0,
+            currentPage:1,
+            pageSize:10,
+            totalCount:0,
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
@@ -266,14 +270,14 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2});
-                const ids = list.map((leads) => (leads.id));
-                list.map(item => {
+                let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                const ids = list.data.map((leads) => (leads.id));
+                list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = fmtDate(item.createTime);
                     }
                 });
-                this.setState({list: list, ids: ids});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -295,13 +299,13 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/sales/oppor/list.do', {orgId: nextProps.changedCrmGroup.id, typeId: 2});
-                    const ids = list.map((leads) => (leads.id));
+                    let list = await ajax('/sales/oppor/list.do', {orgId: nextProps.changedCrmGroup.id, typeId: 2,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                    const ids = list.data.map((leads) => (leads.id));
 
                     this.setState({
                         group: nextProps.changedCrmGroup,
-                        list: list,
-                        ids: ids
+                        list: list.data,
+                        ids: ids,totalPage: list.totalPage,totalCount: list.count
                     });
                 } catch (err) {
                     if (err.errCode === 401) {
@@ -356,6 +360,19 @@ class List extends React.Component {
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
     }
 
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
+    }
+
+    sizeChange(pageSize){
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -387,6 +404,15 @@ class List extends React.Component {
                         fit={true}
                         emptyText={"--"}
                     />
+                    <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                total={this.state.totalCount}
+                                pageSizes={[10, 50, 100]}
+                                pageSize={this.state.pageSize}
+                                currentPage={this.state.currentPage}
+                                pageCount={this.state.totalPage}
+                                className={"leadlist_page"}
+                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
             </div>
         )

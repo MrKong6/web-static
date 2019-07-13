@@ -7,6 +7,7 @@ import ParentView from './ParentView';
 import ContractView from './ContractView';
 import StudentEditor from './StudentEditor';
 import ParentEditor from './ParentEditor';
+import AccountView from "./AccountView";
 
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
   const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
@@ -31,6 +32,10 @@ const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
         <ContractView key={props.match.params.studentId} {...props} profile={profile} commands={groupCommands.commands}
                       changedCrmGroup={changedCrmGroup}/>
       )}/>
+        <Route path={`${match.url}/account/:studentId`} render={(props) => (
+            <AccountView key={props.match.params.studentId} {...props} profile={profile} commands={groupCommands.commands}
+                          changedCrmGroup={changedCrmGroup}/>
+        )}/>
       <Route path={`${match.url}`} render={(props) => (
         <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>
       )}/>

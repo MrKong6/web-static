@@ -160,7 +160,7 @@ export default {
     },
     "3-2": {
       PATH: "home/service/customer",
-      PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract)\/((?!create).)*)?$/,
+      PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account)\/((?!create).)*)?$/,
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '学员'
     },
@@ -178,15 +178,61 @@ export default {
 
     //财务相关权限配置
     "4": {ICON_CLASS: "fa-money"},
+      "4-1": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/finance\/account(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-credit-card",
+          CATEGORY: '账户'
+      },
 
 
     //教务相关权限配置
     "5": {ICON_CLASS: "fa-calendar-check-o"},
-
+      "5-1": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/academy\/course(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-leanpub",
+          CATEGORY: '课程'
+      },
+      "5-2": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/academy\/teacher(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-user-o",
+          CATEGORY: '教师'
+      },
+      "5-3": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/academy\/room(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-houzz",
+          CATEGORY: '教室'
+      },
+      "5-4": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-users",
+          CATEGORY: '班级'
+      },
+      "5-5": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/academy\/assignclass(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-tasks",
+          CATEGORY: '排课'
+      },
 
     //教学相关权限配置
     "6": {ICON_CLASS: "fa-stack-overflow"},
-
+      "6-1": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/education\/class(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-file-text-o",
+          CATEGORY: '我的班级'
+      },
+      "6-2": {
+          PATH: "home/finance/account",
+          PATH_RULE: /^\/home\/education\/course(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-file-text-o",
+          CATEGORY: '我的课程表'
+      },
 
     //管理员相关权限配置
     "7": {ICON_CLASS: "fa-sitemap"},

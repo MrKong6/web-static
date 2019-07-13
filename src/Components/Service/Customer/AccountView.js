@@ -3,11 +3,11 @@ import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
-import Commands from "../../Commands/Commands";
-
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
+import fmtDate from "../../../utils/fmtDate";
+import CONFIG from "../../../utils/config";
 
 const NextBtn = ({id, ids}) => {
   const curIndex = ids.indexOf(id);
@@ -20,7 +20,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/home/service/customer/parent/${ids[curIndex + 1]}`,
+        pathname: `/home/service/customer/contract/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -40,7 +40,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/home/service/customer/parent/${ids[curIndex - 1]}`,
+        pathname: `/home/service/customer/contract/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -49,34 +49,33 @@ const PrevBtn = ({id, ids}) => {
   )
 };
 
-class ParentView extends React.Component {
+class AccountView extends React.Component {
   constructor(props) {
     super(props);
 
-    this.commands = this.props.commands.filter(command => (command.id === '3-2-5'));
     this.title = fmtTitle(this.props.location.pathname);
     this.state = {
       group: this.props.changedCrmGroup,
       redirectToReferrer: false,
       redirectToList: false,
-      isAnimating: false,
       id: this.props.match.params.studentId,
       ids: [],
       data: {name: this.props.location.state.stuName},
-      parentList: []
+      contractList: [],
+      isEmpty: false
     };
     this.createDialogTips = this.createDialogTips.bind(this);
-    this.modAction = this.modAction.bind(this);
   }
 
   componentDidMount() {
     const request = async () => {
       try {
         let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id});
-        let parentList = await ajax('/service/customer/parent/queryListByStudentId.do', {id: this.state.id});
+        let contractList = await ajax('/service/contract/queryListByStudentId.do', {id: this.state.id});
         const ids = list.data.map((student) => (student.id));
+        const isEmpty = !contractList.length;
 
-        this.setState({ids, parentList});
+        this.setState({ids, contractList, isEmpty});
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -123,11 +122,7 @@ class ParentView extends React.Component {
 
     this.tips.dialog.modal('show');
   }
-
-  modAction() {
-    this.props.history.push(`${this.props.match.url}/edit`, {stuName: this.state.data.name});
-  }
-
+  
   render() {
     if (this.state.redirectToReferrer) {
       return (
@@ -144,7 +139,7 @@ class ParentView extends React.Component {
       )
     }
 
-    if (!this.state.parentList.length) {
+    if (!this.state.isEmpty && !this.state.contractList.length) {
       return (
         <div>
           <h5 id="subNav">
@@ -153,7 +148,7 @@ class ParentView extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push(`/home/service/customer`);
+                this.props.history.push('/home/service/customer');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -167,6 +162,47 @@ class ParentView extends React.Component {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      )
+    }
+
+    if (this.state.isEmpty && !this.state.contractList.length) {
+      return (
+        <div>
+          <h5 id="subNav">
+            <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
+            &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
+
+            <div className="btn-group float-right ml-4" role="group">
+              <button onClick={() => {
+                this.props.history.push('/home/sales/contract');
+              }} type="button" className="btn btn-light">返回
+              </button>
+            </div>
+          </h5>
+
+          <div id="main" className="main p-3">
+            <div className="row justify-content-md-center">
+              <div className="col col-12">
+                <div className="card">
+                  <div className="card-body">无合同记录...</div>
+                </div>
+              </div>
+            </div>
+
+            <nav aria-label="breadcrumb">
+              <ol className="breadcrumb">
+                <li className="breadcrumb-item"><Link to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
+                <li className="breadcrumb-item">
+                  <Link to={{
+                    pathname: `/home/service/customer/parent/${this.state.id}`,
+                    state: {stuName: this.state.data.name}
+                  }}>家长信息</Link>
+                </li>
+                <li className="breadcrumb-item active">合同信息</li>
+              </ol>
+            </nav>
           </div>
         </div>
       )
@@ -189,10 +225,6 @@ class ParentView extends React.Component {
             }} type="button" className="btn btn-light">返回
             </button>
           </div>
-          <Commands
-            commands={this.commands}
-            modAction={this.modAction}
-          />
         </h5>
 
         <div id="main" className="main p-3">
@@ -200,81 +232,57 @@ class ParentView extends React.Component {
             <div className="col col-12">
               <div className="card border-top-0">
                 <div className="card-body">
-                  <p className="ht pb-3 b-b">家长信息</p>
-                  <div className="row">
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">家长姓名</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.parentList[0].name}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">与孩子关系</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.parentList[0].relation}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">联系电话</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.parentList[0].cellphone}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">家庭住址</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.parentList[0].address}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">微信号</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.parentList[0].wechat}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">电子邮箱</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.parentList[0].email}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col"/>
-                    <div className="col"/>
-                  </div>
+                  <p className="ht pb-3 b-b">合同信息</p>
+                  <table className="table table-bordered table-sm table-responsive">
+                    <thead>
+                    <tr>
+                      <th>序号</th>
+                      <th>创建人</th>
+                      <th>创建时间</th>
+                      <th>所属组织</th>
+                      <th>所属用户</th>
+                      <th>合同类型</th>
+                      <th>合同编号</th>
+                      <th>签约时间</th>
+                      <th>到期时间</th>
+                      <th>学员姓名</th>
+                      <th>家长姓名</th>
+                      <th>联系电话</th>
+                      <th>课程类别</th>
+                      <th>课程</th>
+                      <th>合同金额</th>
+                      <th>折扣金额</th>
+                      <th>应付金额</th>
+                      <th>已付金额</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                      this.state.contractList.map((item, index) => (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{item.creatorName}</td>
+                          <td>{fmtDate(item.createTime)}</td>
+                          <td>{item.orgName}</td>
+                          <td>{item.executiveName}</td>
+                          <td>{CONFIG.TYPE_ID[item.type]}</td>
+                          <td>{item.code}</td>
+                          <td>{fmtDate(item.startDate)}</td>
+                          <td>{fmtDate(item.endDate)}</td>
+                          <td>{item.stuName}</td>
+                          <td>{item.parName}</td>
+                          <td>{item.parCellphone}</td>
+                          <td>{item.courseType}</td>
+                          <td>{item.courseName}</td>
+                          <td>{item.oriPrice}</td>
+                          <td>{item.discPrice}</td>
+                          <td>{item.finalPrice}</td>
+                          <td>{item.paid}</td>
+                        </tr>
+                      ))
+                    }
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
@@ -283,18 +291,20 @@ class ParentView extends React.Component {
           <nav aria-label="breadcrumb">
             <ol className="breadcrumb">
               <li className="breadcrumb-item"><Link to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
-              <li className="breadcrumb-item active">家长信息</li>
               <li className="breadcrumb-item">
                 <Link to={{
-                  pathname: `/home/service/customer/contract/${this.state.id}`,
+                  pathname: `/home/service/customer/parent/${this.state.id}`,
                   state: {stuName: this.state.data.name}
-                }}>合同信息</Link>
+                }}>家长信息</Link>
               </li>
               <li className="breadcrumb-item">
                   <Link to={{
-                      pathname: `/home/service/customer/account/${this.state.id}`,
+                      pathname: `/home/service/customer/contract/${this.state.id}`,
                       state: {stuName: this.state.data.name}
-                  }}>账户信息</Link>
+                  }}>合同信息</Link>
+              </li>
+              <li className="breadcrumb-item">
+                  账户信息
               </li>
             </ol>
           </nav>
@@ -304,4 +314,4 @@ class ParentView extends React.Component {
   }
 }
 
-export default ParentView;
+export default AccountView;
