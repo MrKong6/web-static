@@ -11,7 +11,7 @@ import Commands from "../../Commands/Commands";
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import fmtDate from "../../../utils/fmtDate";
+import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
 import config from "../../../utils/config";
 
 const NextBtn = ({id, ids,link}) => {
@@ -549,7 +549,7 @@ class View extends React.Component {
                             type="text"
                             readOnly={true}
                             className="form-control-plaintext"
-                            value={this.state.data ? fmtDate(this.state.data.createTime) : ''}
+                            value={this.state.data ? formatWithTime(this.state.data.createTime) : ''}
                           />
                         </div>
                       </div>

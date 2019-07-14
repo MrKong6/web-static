@@ -7,7 +7,7 @@ import Commands from "../../Commands/Commands";
 import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
-import fmtDate from '../../../utils/fmtDate';
+import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
@@ -261,7 +261,7 @@ class List extends React.Component {
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
-                        item.createTime = fmtDate(item.createTime);
+                        item.createTime = formatWithTime(item.createTime);
                     }
                     if(!item.parent){
                         item.parent = {"cellphone" : "","name" : ""};
