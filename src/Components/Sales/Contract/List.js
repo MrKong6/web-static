@@ -224,7 +224,7 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:1});
                 const ids = list.data.map((contract) => (contract.id));
                 list.data.map(item => {
                     if(item.createTime != null){

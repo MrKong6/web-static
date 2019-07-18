@@ -287,7 +287,7 @@ class Form extends React.Component {
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label">课程产品</label>
                                                 <div className="col-7">
-                                                    <CourseName/>
+                                                    <CourseName typeId={this.form.courseId}/>
                                                 </div>
                                             </div>
                                         </div>

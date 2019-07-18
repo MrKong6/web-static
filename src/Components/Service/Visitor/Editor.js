@@ -101,6 +101,7 @@ class Editor extends React.Component {
     }
 
     render() {
+        debugger
         if (this.state.redirectToReferrer) {
             return (
                 <Redirect to={{

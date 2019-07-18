@@ -116,7 +116,7 @@ class List extends React.Component {
                     label: "创建时间",
                     prop: "createTime",
                     sortable: true,
-                    width: 120,
+                    width: 140,
                 },
                 {
                     label: "所属组织",
@@ -272,7 +272,8 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0)});
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -301,7 +302,8 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/sales/oppor/list.do', {orgId: nextProps.changedCrmGroup.id, typeId: 2,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                    let list = await ajax('/sales/oppor/list.do', {orgId: nextProps.changedCrmGroup.id, typeId: 2,
+                        pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0)});
                     const ids = list.data.map((leads) => (leads.id));
 
                     this.setState({

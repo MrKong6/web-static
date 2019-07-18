@@ -125,7 +125,7 @@ class List extends React.Component {
                 {
                     label: "创建时间",
                     prop: "createTime",
-                    width: 120,
+                    width: 140,
                     sortable: true
                 },
                 {
@@ -257,7 +257,8 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0)});
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -289,7 +290,8 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                    let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                        pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0)});
                     const ids = list.data.map((leads) => (leads.id));
                     list.data.map(item => {
                         if(!item.parent){
