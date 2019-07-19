@@ -51,7 +51,7 @@ class CourseType extends React.Component{
     }
 
     componentWillUnmount() {
-        emitter.removeListener(this.eventEmitter);
+        // emitter.removeListener(this.eventEmitter);
     }
 
     createDialogTips(text) {
@@ -82,7 +82,7 @@ class CourseType extends React.Component{
 
     render() {
         return (
-            <select name={"courseId"} className="form-control" onChange={this.changeType}>
+            <select name="courseTypeId" className="form-control" onChange={this.changeType}>
                 {
                     this.state.list.map(item => (
                         <option key={item.id} value={item.id}>{item.name}</option>

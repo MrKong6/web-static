@@ -14,7 +14,6 @@ import emitter from "../../utils/events";
 class CourseName extends React.Component{
     constructor(props) {
         super(props)
-        debugger
         this.state = {
             redirectToReferrer: false,
             typeId: this.props.typeId,
@@ -29,7 +28,7 @@ class CourseName extends React.Component{
     }
 
     componentDidMount() {
-        debugger;
+        // debugger;
         /*if (this.state.list.length) {
             return;
         }*/
@@ -37,7 +36,7 @@ class CourseName extends React.Component{
         const request = async () => {
 
             try {
-                let list = await ajax('/course/session/queryListByTypeId.do',{id:this.state.typeId ? this.state.typeId : 1});
+                let list = await ajax('/course/session/queryListByTypeId.do',{id:this.state.typeId ? this.state.typeId : 0});
 
                 this.setState({list});
 
@@ -79,7 +78,7 @@ class CourseName extends React.Component{
 
     render() {
         return (
-            <select name={"courseName"} className="form-control">
+            <select name="courseId" className="form-control">
                 {
                     this.state.list.map(item => (
                         <option key={item.id} value={item.id}>{item.name}</option>

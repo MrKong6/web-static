@@ -8,7 +8,6 @@ import Editor from "./Editor";
 
 const Appor = ({commands, location, match, profile, changedCrmGroup}) => {
   const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
-  debugger
   return (
     <Switch>
       <Route path={`${match.url}/create`} render={(props) => (

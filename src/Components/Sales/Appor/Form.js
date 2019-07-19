@@ -40,7 +40,9 @@ class Form extends React.Component {
         let source = await ajax('/mkt/leads/source/list.do', {typeId: 2});
         let relation = await ajax('/mkt/relation/list.do');
         let gender = await ajax('/mkt/gender/list.do');
-        let data = null;
+          let courseTypeId = await ajax('/course/type/list.do');
+          let courseId = await ajax('/course/session/queryListByTypeId.do',{id : 0});
+          let data = null;
 
         if (this.props.isEditor) {
           data = await ajax('/sales/oppor/query.do', {id: this.props.editorId});
@@ -61,8 +63,8 @@ class Form extends React.Component {
             this.form.cellphone.value = this.state.data.parent.cellphone;
             this.form.wechat.value = this.state.data.parent.wechat;
             this.form.address.value = this.state.data.parent.address;
-            this.form.courseId.value = this.state.data.courseId || '';
-            this.form.courseName.value = this.state.data.courseName || '';
+            this.form.courseId.value = this.state.data.courseId ? this.state.data.courseId : '';
+            this.form.courseTypeId.value = this.state.data.courseTypeId ? this.state.data.courseTypeId : '';
             this.form.note.value = this.state.data.note;
             this.form.sourceId.value = this.state.data.sourceId;
             this.form.stageId.value = this.state.data.stageId;
@@ -269,16 +271,16 @@ class Form extends React.Component {
                     </div>
                     <div className="col">
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">课程类别</label>
-                        <div className="col-7">
-                          <CourseType/>
-                        </div>
+                          <label className="col-5 col-form-label">课程类别</label>
+                          <div className="col-7">
+                              <CourseType data={this.state.option.courseTypeId}/>
+                          </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">课程产品</label>
-                        <div className="col-7">
-                          <CourseName/>
-                        </div>
+                          <label className="col-5 col-form-label">课程产品</label>
+                          <div className="col-7">
+                              <CourseName data={this.state.option.courseId} typeId={this.form.courseTypeId}/>
+                          </div>
                       </div>
                     </div>
                     <div className="col">
