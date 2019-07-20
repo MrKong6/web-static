@@ -11,6 +11,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
 import CONFIG from "../../../utils/config";
 import calculateAge from "../../../utils/calculateAge";
+import {Message} from "element-react";
 
 const NextBtn = ({id, ids}) => {
   const curIndex = ids.indexOf(id);
@@ -134,7 +135,31 @@ class StudentView extends React.Component {
     this.props.history.push(`${this.props.match.url}/edit`);
   }
 
-  render() {
+  delAction() {
+      const request = async () => {
+          try {
+              await ajax('/sales/customer/student/del.do', {id: this.state.id});
+              this.props.history.push('/home/sales/customer');
+              Message({
+                  message: "已删除",
+                  type: 'info'
+              });
+          } catch (err) {
+              if (err.errCode === 401) {
+                  this.setState({redirectToReferrer: true})
+              } else {
+                  this.createDialogTips(`${err.errCode}: ${err.errText}`);
+              }
+          } finally {
+              this.setState({isAnimating: false});
+          }
+      };
+
+      request();
+  }
+
+
+    render() {
     if (this.state.redirectToReferrer) {
       return (
         <Redirect to={{
@@ -198,6 +223,7 @@ class StudentView extends React.Component {
           <Commands
             commands={this.commands}
             modAction={this.modAction}
+            delAction={this.delAction}
           />
         </h5>
 

@@ -11,6 +11,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
 import CONFIG from "../../../utils/config";
 import calculateAge from "../../../utils/calculateAge";
+import {Message} from "element-react";
 
 const NextBtn = ({id, ids}) => {
   const curIndex = ids.indexOf(id);
@@ -56,7 +57,7 @@ class StudentView extends React.Component {
   constructor(props) {
     super(props);
 
-    this.commands = this.props.commands.filter(command => (command.id === '3-2-2'));
+    this.commands = this.props.commands.filter(command => (command.id === '3-2-2' || command.id === '3-2-3'));
     this.title = fmtTitle(this.props.location.pathname);
     this.state = {
       group: this.props.changedCrmGroup,
@@ -69,6 +70,7 @@ class StudentView extends React.Component {
     };
     this.createDialogTips = this.createDialogTips.bind(this);
     this.modAction = this.modAction.bind(this);
+    this.delAction = this.delAction.bind(this);
   }
 
   componentDidMount() {
@@ -128,6 +130,29 @@ class StudentView extends React.Component {
 
   modAction() {
     this.props.history.push(`${this.props.match.url}/edit`);
+  }
+
+  delAction() {
+      const request = async () => {
+          try {
+              await ajax('/service/customer/student/del.do', {id: this.state.id});
+              this.props.history.push('/home/service/customer');
+              Message({
+                  message: "已删除",
+                  type: 'info'
+              });
+          } catch (err) {
+              if (err.errCode === 401) {
+                  this.setState({redirectToReferrer: true})
+              } else {
+                  this.createDialogTips(`${err.errCode}: ${err.errText}`);
+              }
+          } finally {
+              this.setState({isAnimating: false});
+          }
+      };
+
+      request();
   }
 
   render() {
@@ -194,6 +219,7 @@ class StudentView extends React.Component {
           <Commands
             commands={this.commands}
             modAction={this.modAction}
+            delAction={this.delAction}
           />
         </h5>
 

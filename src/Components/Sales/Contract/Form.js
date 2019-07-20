@@ -15,6 +15,7 @@ import Document from '../../Dic/Document';
 import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
+import { DatePicker } from 'element-react';
 
 class Form extends React.Component {
   constructor(props) {
@@ -38,10 +39,11 @@ class Form extends React.Component {
         let relation = await ajax('/mkt/relation/list.do');
         let gender = await ajax('/mkt/gender/list.do');
         let data = null;
-
         if (this.props.isEditor) {
           data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
         } else {
+
+          debugger
           data = {
             stuName: this.props.apporData.student.name,
             stuGrade: this.props.apporData.student.classGrade,
@@ -54,18 +56,19 @@ class Form extends React.Component {
             parWechat: this.props.apporData.parent.wechat || '',
             parAddress: this.props.apporData.parent.address,
             courseId: this.props.apporData.courseId || '',
-            courseName: this.props.apporData.courseName || ''
+            courseName: this.props.apporData.courseName || '',
+            age: this.props.apporData.student.age,
           }
         }
 
-        const birthday = new Date(data.stuBirthday);
-        const age = calculateAge(birthday);
+        // const birthday = new Date(data.stuBirthday);
+        // const age = calculateAge(birthday);
 
         this.setState({
           option: {relation, gender},
           data,
-          birthday,
-          age
+          /*birthday,
+          age*/
         }, () => {
           const keys = Object.keys(data);
 
@@ -202,15 +205,17 @@ class Form extends React.Component {
                           <em className="text-danger">*</em>出生年月
                         </label>
                         <div className="col-7">
-                          <DayPickerInput
-                            value={this.state.birthday}
-                            dayPickerProps={{
-                              initialMonth: this.state.birthday
-                            }}
-                            onDayChange={day => {
-                              this.changeBirthday(day)
-                            }}
-                          />
+                            <DatePicker
+                                name="createTime"
+                                value={this.state.birthday}
+                                isShowTime={true}
+                                placeholder="选择日期"
+                                format="yyyy-MM-dd"
+                                onChange={date=>{
+                                    console.debug('DatePicker1 changed: ', date)
+                                    this.setState({birthday: date})
+                                }}
+                            />
                         </div>
                       </div>
                       <div className="form-group row">
@@ -219,7 +224,7 @@ class Form extends React.Component {
                         </label>
                         <div className="col-7">
                           <input type="text" className="form-control" name="stuAge"
-                                 value={this.state.age ? this.state.age : ''} readOnly={true}/>
+                                 value={this.state.data.age ? this.state.data.age : ''}/>
                         </div>
                       </div>
                       <div className="form-group row">

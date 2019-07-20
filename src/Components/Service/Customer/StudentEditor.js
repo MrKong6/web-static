@@ -166,7 +166,6 @@ class StudentEditor extends React.Component {
         }}/>
       )
     }
-
     if (!this.state.option || (!this.state.data)) {
       return (
         <div>
