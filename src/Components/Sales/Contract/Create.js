@@ -74,8 +74,12 @@ class Create extends React.Component {
       return;
     }
 
+    debugger
     query.orgId = this.state.group.id;
     query.oriId = this.state.oriId;
+    query.stuBirthday = query.stuBirthday ? (new Date(query.stuBirthday).getTime()) : null;
+    query.startDate = query.startDate ? (new Date(query.startDate).getTime()) : null;
+    query.endDate = query.endDate ? (new Date(query.endDate).getTime()) : null;
 
     this.setState({isAnimating: true});
 

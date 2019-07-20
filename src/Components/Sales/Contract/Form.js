@@ -136,7 +136,7 @@ class Form extends React.Component {
   }
 
   getFormValue() {
-    if (!this.form.checkValidity() || !this.form.stuGrade.value || !this.form.courseId.value || !this.form.courseName.value) {
+    if (!this.form.checkValidity() || !this.form.stuGrade.value || !this.form.courseId.value) {
       return
     }
 

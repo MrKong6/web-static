@@ -73,7 +73,9 @@ class Editor extends React.Component {
     if (!query) {
       return;
     }
-
+    query.stuBirthday = query.stuBirthday ? (new Date(query.stuBirthday).getTime()) : null;
+    query.startDate = query.startDate ? (new Date(query.startDate).getTime()) : null;
+    query.endDate = query.endDate ? (new Date(query.endDate).getTime()) : null;
     this.setState({isAnimating: true});
     query.organizationId = this.state.group.id;
     query.id = this.state.id;
