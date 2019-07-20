@@ -74,7 +74,7 @@ class Editor extends React.Component {
       return;
     }
 
-    query.createTime = this.form.state.createTime;
+    query.createTime = this.form.state.createTime ? this.form.state.createTime.getTime() : "";;
 
     this.setState({isAnimating: true});
     query.organizationId = this.state.group.id;

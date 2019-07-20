@@ -74,7 +74,7 @@ class Create extends React.Component {
     if (!query) {
       return;
     }
-
+    query.createTime = this.form.state.createTime ? this.form.state.createTime.getTime() : "";
     query.organizationId = this.state.group.id;
       query.typeId = 1;
 
