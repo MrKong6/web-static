@@ -21,11 +21,11 @@ class Age extends React.Component {
 
   componentDidMount() {
     var ageYear = [];
-    for(let i=1;i<101;i++){
+    for(let i=0;i<19;i++){
         ageYear.push(i);
     }
     var ageMonth = [];
-    for(let i=1;i<13;i++){
+    for(let i=0;i<13;i++){
         ageMonth.push(i);
     }
     this.state.ageYear = ageYear;

@@ -237,7 +237,7 @@ class View extends React.Component {
     this.setState({isAnimating: true});
     const request = async () => {
       try {
-        await ajax('/mkt/leads/assign.do', {id: this.state.id, assigneeId: selected.user.id});
+        await ajax('/mkt/leads/assign.do', {id: this.state.id, assigneeId: selected.user.id, type:1});
         let data = Object.assign({}, this.state.data);
 
         data.organizationId = selected.group.id;

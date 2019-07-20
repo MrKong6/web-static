@@ -27,6 +27,7 @@ class Create extends React.Component {
     };
     this.createDialogTips = this.createDialogTips.bind(this);
     this.create = this.create.bind(this);
+    this.state.group.cRealName = this.props.profile.cRealname;
   }
 
   componentDidMount() {

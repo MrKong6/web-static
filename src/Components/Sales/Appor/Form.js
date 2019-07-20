@@ -12,6 +12,7 @@ import Relation from '../../Dic/Relation';
 import Grade from '../../Dic/Grade';
 import CourseType from '../../Dic/CourseType';
 import CourseName from '../../Dic/CourseName';
+import { DatePicker } from 'element-react';
 
 import ajax from "../../../utils/ajax";
 
@@ -24,7 +25,8 @@ class Form extends React.Component {
       channelId: null,
       channelText: null,
       option: null,
-      data: null
+      data: null,
+        createTime:new Date()
     };
     this.createDialogTips = this.createDialogTips.bind(this);
     this.createActDialog = this.createActDialog.bind(this);
@@ -69,6 +71,7 @@ class Form extends React.Component {
             this.form.sourceId.value = this.state.data.sourceId;
             this.form.stageId.value = this.state.data.stageId;
             this.form.statusId.value = this.state.data.statusId;
+            this.state.createTime = new Date(this.state.data.createTime)
 
             this.setState({
               channelId: this.state.data.channelId,
@@ -345,7 +348,35 @@ class Form extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className="col"/>
+                      <div className="col">
+                          <div className="form-group row">
+                              <label className="col-5 col-form-label">创建人</label>
+                              <div className="col-7">
+                                  <input
+                                      type="text"
+                                      readOnly={true}
+                                      className="form-control-plaintext"
+                                      value={this.state.data ? this.state.data.creatorName : this.state.group.cRealName}
+                                  />
+                              </div>
+                          </div>
+                          <div className="form-group row">
+                              <label className="col-5 col-form-label">创建时间</label>
+                              <div className="col-7">
+                                  <DatePicker
+                                      name="createTime"
+                                      value={this.state.createTime}
+                                      isShowTime={true}
+                                      placeholder="选择日期"
+                                      format="yyyy-MM-dd HH:mm"
+                                      onChange={date=>{
+                                          console.debug('DatePicker1 changed: ', date)
+                                          this.setState({createTime: date})
+                                      }}
+                                  />
+                              </div>
+                          </div>
+                      </div>
                     <div className="col"/>
                   </div>
                   {

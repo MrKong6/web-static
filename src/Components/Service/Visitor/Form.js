@@ -15,17 +15,20 @@ import CourseName from '../../Dic/CourseName';
 
 import ajax from "../../../utils/ajax";
 import Age from "../../Dic/Age";
+import {formatWithTime} from "../../../utils/fmtDate";
+import { DatePicker } from 'element-react';
 
 class Form extends React.Component {
     constructor(props) {
         super(props)
-
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             channelId: null,
             channelText: null,
             option: null,
-            data: null
+            data: null,
+            createTime:new Date()
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.createActDialog = this.createActDialog.bind(this);
@@ -75,7 +78,7 @@ class Form extends React.Component {
                         this.form.sourceId.value = this.state.data.sourceId;
                         // this.form.stageId.value = this.state.data.stageId;
                         this.form.statusId.value = this.state.data.statusId;
-
+                        this.state.createTime = new Date(this.state.data.createTime)
                         this.setState({
                             channelId: this.state.data.channelId,
                             channelText: this.state.data.channelName
@@ -326,10 +329,10 @@ class Form extends React.Component {
                                                 <div className="input-group col-7">
                                                     <input type="text" className="form-control" value={this.state.channelText} readOnly={true}/>
                                                     <span className="input-group-btn">
-                            <button onClick={this.createActDialog} className="btn btn-secondary" type="button">
-                              <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
-                            </button>
-                          </span>
+                                                        <button onClick={this.createActDialog} className="btn btn-secondary" type="button">
+                                                          <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
+                                                        </button>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
@@ -351,7 +354,41 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col"/>
+                                        <div className="col">
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label">创建人</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data ? this.state.data.creatorName : this.state.group.cRealName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label">创建时间</label>
+                                                <div className="col-7">
+                                                    {/*<input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data ? formatWithTime(this.state.data.createTime) : ''}
+                                                    />*/}
+                                                    <DatePicker
+                                                        name="createTime"
+                                                        value={this.state.createTime}
+                                                        isShowTime={true}
+                                                        placeholder="选择日期"
+                                                        format="yyyy-MM-dd HH:mm"
+                                                        onChange={date=>{
+                                                            console.debug('DatePicker1 changed: ', date)
+                                                            this.setState({createTime: date})
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div className="col"/>
                                     </div>
                                     {
