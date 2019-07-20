@@ -7,6 +7,8 @@ import {
 
 import "bootstrap/dist/css/bootstrap.min.css"
 import "./App.css"
+import '../../../node_modules/@fullcalendar/core/main.css';
+import '../../../node_modules/@fullcalendar/daygrid/main.css';
 import "bootstrap/dist/js/bootstrap"
 
 import Home from "../Home/Home";

@@ -25,7 +25,7 @@ class Age extends React.Component {
         ageYear.push(i);
     }
     var ageMonth = [];
-    for(let i=0;i<13;i++){
+    for(let i=0;i<12;i++){
         ageMonth.push(i);
     }
     this.state.ageYear = ageYear;

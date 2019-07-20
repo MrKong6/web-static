@@ -75,7 +75,10 @@ class Editor extends React.Component {
     }
 
     query.createTime = this.form.state.createTime ? this.form.state.createTime.getTime() : "";
-
+    //处理年龄
+    if(query.studentAgeYear || query.studentAgeMonth){
+        query.age = (query.studentAgeYear+"."+query.studentAgeMonth)
+    }
     this.setState({isAnimating: true});
     query.organizationId = this.state.group.id;
     query.id = this.state.id;

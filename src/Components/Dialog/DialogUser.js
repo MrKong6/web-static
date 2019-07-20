@@ -208,7 +208,7 @@ class DialogUser extends React.Component {
                                     onChange={this.changedLead}
                                 />
                                 <label className="form-check-label" htmlFor="funcAdmin">
-                                    线索池
+                                    线索公有池
                                 </label>
                             </div>
                             <div className="form-check form-check-inline">
@@ -221,7 +221,7 @@ class DialogUser extends React.Component {
                                     onChange={this.changedLead}
                                 />
                                 <label className="form-check-label" htmlFor="funcAdmin">
-                                    机会池
+                                    机会公有池
                                 </label>
                             </div>
                         </div>
