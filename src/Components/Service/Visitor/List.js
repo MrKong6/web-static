@@ -466,13 +466,6 @@ class List extends React.Component {
                            onChange={this.onChange.bind(this, 'cellphone')}
                            append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
                     />
-                    <Select value={this.state.chooseStageName} placeholder="请选择阶段" clearable={true} onChange={this.chooseStageSearch} className={"leftMargin"}>
-                        {
-                            this.state.stageName.map(el => {
-                                return <Select.Option key={el.id} label={el.name} value={el.id} />
-                            })
-                        }
-                    </Select>
                     <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
                         {
                             this.state.statusName.map(el => {
