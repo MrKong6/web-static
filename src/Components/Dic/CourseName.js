@@ -27,6 +27,11 @@ class CourseName extends React.Component{
         });
     }
 
+    componentWillUnmount() {
+        emitter.removeListener(this.eventEmitter);
+    }
+
+
     componentDidMount() {
         // debugger;
         /*if (this.state.list.length) {
