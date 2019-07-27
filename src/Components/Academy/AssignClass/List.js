@@ -2,121 +2,128 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
-import DialogTips from "../../Dialog/DialogTips";
-import {$} from "../../../vendor";
-
-import mainSize from "../../../utils/mainSize";
-import fmtTitle from '../../../utils/fmtTitle';
-import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 import './AssignClass.css'
+import DialogForEvent from "../../Dialog/DialogForEvent";
+import fmtDate from "../../../utils/fmtDate";
+import {Card, Message, MessageBox, Popover, Tooltip} from "element-react";
 
 
 class List extends React.Component {
+
+    calendarComponentRef = React.createRef();
     constructor(props) {
         super(props);
-
-        this.commands = this.props.commands.filter((command) => (command === 'Add'));
-        this.title = fmtTitle(this.props.location.pathname);
-        this.createDialogTips = this.createDialogTips.bind(this);
-        this.goToDetails = this.goToDetails.bind(this);
-        this.state = {
-            group: this.props.changedCrmGroup,
-            list: [],
-            ids: [],
-            isAnimating: true,
-            redirectToReferrer: false,
+        this.state={
             calendarWeekends: true,
+            droppable: false,
+            editable: false,
             calendarEvents: [ // initial event data
-                {title: 'Event Now', start: new Date()}
-            ],
-        }
-    }
-
-    componentDidMount() {
-
-    }
-
-    componentWillReceiveProps(nextProps) {
-        if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
-            this.setState({isAnimating: true});
-
-            const request = async () => {
-                try {
-                    let list = await ajax('/service/contract/list.do', {orgId: nextProps.changedCrmGroup.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                    const ids = list.data.map((contract) => (contract.id));
-
-                    this.setState({
-                        group: nextProps.changedCrmGroup,
-                        list: list.data,
-                        ids: ids,totalPage: list.totalPage,totalCount: list.count
-                    });
-                } catch (err) {
-                    if (err.errCode === 401) {
-                        this.setState({redirectToReferrer: true})
-                    } else {
-                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                    }
-                } finally {
-                    this.setState({isAnimating: false});
+                {   title: 'K101  Teacher Zhou',
+                    start: new Date("2019-07-22 10:00"),
+                    end: new Date("2019-07-22 18:00"),
+                    color: "#123456",
+                    textColor: "#fff",
+                    id: "aaa"
+                },
+                {   title: 'Teacher Ashely',
+                    start: new Date("2019-07-22 10:00"),
+                    end: new Date("2019-07-22 15:00"),
+                    color: "#456326",
+                    textColor: "#fff",
+                    id: "bbb"
+                },
+                {   title: 'Teacher Ashely Yu',
+                    start: new Date("2019-07-23 9:00"),
+                    end: new Date("2019-07-22 11:00"),
+                    color: "#675432",
+                    textColor: "#fff",
+                    id: "bbb"
                 }
-            };
-
-            //request();
+            ],
+            eventCommont:'',
         }
+        this.eventMouseEnter = this.eventMouseEnter.bind(this);
+        this.eventMouseLeave = this.eventMouseLeave.bind(this);
     }
 
-    componentWillUnmount() {
-        if (this.tipsContainer) {
-            document.body.removeChild(this.tipsContainer);
-        }
+
+
+    toggleWeekends = () => {
+        this.setState({ // update a property
+            calendarWeekends: !this.state.calendarWeekends
+        })
     }
 
-    createDialogTips(text) {
-        if (this.tips === undefined) {
-            this.tipsContainer = document.createElement('div');
-
-            ReactDOM.render(
-                <DialogTips
-                    accept={this.logout}
-                    title="提示"
-                    text={text}
-                    ref={(dom) => {
-                        this.tips = dom
-                    }}
-                />,
-                document.body.appendChild(this.tipsContainer)
-            );
-        } else {
-            this.tips.setText(text);
-        }
-
-        this.tips.dialog.modal('show');
+    gotoPast = () => {
+        let calendarApi = this.calendarComponentRef.current.getApi()
+        calendarApi.gotoDate('2000-01-01') // call a method on the Calendar object
     }
 
-    goToDetails(evt) {
-        const url = `${this.props.match.url}/${evt}`;
-
-        this.props.history.push(url);
+    eventOnClick = (evt) => {
+        MessageBox.confirm('此操作将永久删除该日程, 是否继续?', '提示', {
+            type: 'warning'
+        }).then(() => {
+            evt.event.remove()
+            Message({
+                type: 'success',
+                message: '删除成功!'
+            });
+        }).catch(() => {
+            Message({
+                type: 'info',
+                message: '已取消删除'
+            });
+        });
     }
 
-    pageChange(currentPage){
-        console.log(currentPage);
-        this.state.currentPage = currentPage;
-        // this.setState({currentPage:currentPage});
-        this.componentDidMount();
-    }
+    handleDateClick = (arg) => {
+        console.log(234562345);
+        this.userContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogForEvent
+                container={this.userContainer}
+                typeName="1"
+                replace={this.props.history.replace}
+                from={this.props.location}
+                ref={(dom) => {
+                    this.user = dom
+                }}
+            />,
+            document.body.appendChild(this.userContainer)
 
-    sizeChange(pageSize){
-        console.log(pageSize);
-        this.state.pageSize = pageSize;
-        this.componentDidMount();
+        );
+        this.user.dialog.modal('show');
+        // if (confirm('Would you like to add an event to ' + arg.dateStr + ' ?')) {
+        //     this.setState({  // add new event data
+        //         calendarEvents: this.state.calendarEvents.concat({ // creates a new array
+        //             title: 'New Event',
+        //             start: arg.date,
+        //             allDay: arg.allDay
+        //         })
+        //     })
+        // }
     }
-
+    windowResize(view){
+        console.log(1234565432);
+    }
+    titleF(date){
+        return fmtDate(date.start.marker) + '-----' + fmtDate(date.end.marker);
+    }
+    eventMouseEnter(mouseEnterInfo ){
+        this.setState({
+            eventCommont: mouseEnterInfo.event.title
+        })
+    }
+    eventMouseLeave(mouseEnterInfo ){
+        this.setState({
+            eventCommont: ''
+        })
+    }
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -127,46 +134,42 @@ class List extends React.Component {
             )
         }
 
+
         return (
-            <div>
-                <h5 id="subNav">
-                    <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
-                </h5>
-                <div id="main" className="main p-3">
-                    {/*<FullCalendar dateClick={this.handleDateClick} plugins={[ dayGridPlugin ]} />*/}
-                    <div className="full-container"></div>
+            <div className='demo-app'>
+                <div className='demo-app-top'>
+                    {/*<span>事件详情：</span>
+                    <span>{this.state.eventCommont}</span>*/}
+                    <Card className="box-card">
+                        <div className="text item">事件内容：</div>
+                        <div className="text item">{this.state.eventCommont}</div>
+                    </Card>
+                </div>
+                <div className='demo-app-calendar'>
                     <FullCalendar
-                        defaultView="dayGridMonth"
+                        defaultView="timeGridWeek"
                         header={{
-                            left: 'prev,next today',
+                            left: 'prev,next',/*prev,next today*/
                             center: 'title',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                            right: 'timeGridWeek,timeGridDay,listWeek'
                         }}
                         plugins={[ dayGridPlugin, timeGridPlugin, interactionPlugin ]}
                         ref={ this.calendarComponentRef }
                         weekends={ this.state.calendarWeekends }
                         events={ this.state.calendarEvents }
                         dateClick={ this.handleDateClick }
+                        editable={false}
+                        timeZone='local'
+                        eventClick={this.eventOnClick}
+                        minTime='07:00:00'
+                        maxTime='22:00:00'
+                        titleFormat={this.titleF}
+                        eventMouseEnter={this.eventMouseEnter}
+                        eventMouseLeave={this.eventMouseLeave}
+                        /*handleWindowResize={false}
+                        windowReSize={this.windowResize}
+                        aspectRatio={1.1}*/
                     />
-                    {/*<Progress isAnimating={this.state.isAnimating}/>*/}
-                    {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    {/*<Table
-                        style={{width: '100%'}}
-                        columns={this.state.columns}
-                        data={this.state.list}
-                        border={true}
-                        fit={true}
-                        emptyText={"--"}
-                    />
-                    <Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={this.state.totalCount}
-                                pageSizes={[10, 50, 100]}
-                                pageSize={this.state.pageSize}
-                                currentPage={this.state.currentPage}
-                                pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
-                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
                 </div>
             </div>
         )

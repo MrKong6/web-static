@@ -253,10 +253,10 @@ class DialogUser extends React.Component {
                                 <div className="input-group">
                                     <input type="text" className="form-control" value={this.state.groupName} readOnly={true}/>
                                     <span className="input-group-btn">
-                    <button onClick={this.createGroupsDialog} className="btn btn-secondary" type="button">
-                      <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
-                    </button>
-                  </span>
+                                        <button onClick={this.createGroupsDialog} className="btn btn-secondary" type="button">
+                                          <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                             <div className="form-group">
