@@ -10,7 +10,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
+import { Button,Table,Pagination,Upload,Input,Tooltip, Select } from 'element-react';
 import '../../Mkt/Leads/Leads.css'
 import ajaxFile from "../../../utils/ajaxFile";
 
@@ -262,25 +262,35 @@ class List extends React.Component {
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            stageName:[],
+            chooseStageName:"",
+            statusName:[],
+            chooseStatusName:""
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
         this.exportAction = this.exportAction.bind(this);
+        this.chooseStageSearch = this.chooseStageSearch.bind(this);
+        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,
-                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0)});
+                let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,fromWay:3,
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,cellphone:this.state.cellphone,
+                    isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0),
+                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                let status = await ajax('/mkt/leads/status/list.do', {typeId: 1});
+                let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 1});
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = formatWithTime(item.createTime);
                     }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,statusName:status});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -302,7 +312,7 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/sales/oppor/list.do', {orgId: nextProps.changedCrmGroup.id, typeId: 2,
+                    let list = await ajax('/sales/oppor/list.do', {orgId: nextProps.changedCrmGroup.id, typeId: 2,fromWay:3,
                         pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0)});
                     const ids = list.data.map((leads) => (leads.id));
 
@@ -381,6 +391,23 @@ class List extends React.Component {
         ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:"2"})
     };
 
+    onChange(key, value) {
+        this.setState({
+            cellphone: value
+        });
+    }
+
+    chooseStageSearch(chooseStageName){
+        // debugger;
+        this.state.chooseStageName = chooseStageName;
+        this.componentDidMount();
+    }
+    chooseStatusSearch(chooseStatusName){
+        // debugger;
+        this.state.chooseStatusName = chooseStatusName;
+        this.componentDidMount();
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -404,6 +431,27 @@ class List extends React.Component {
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
+                    <Input placeholder="请输入手机号"
+                           className={"leadlist_search"}
+                           value={this.state.cellphone}
+                           style={{width: '20%'}}
+                           onChange={this.onChange.bind(this, 'cellphone')}
+                           append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                    />
+                    <Select value={this.state.chooseStageName} placeholder="请选择阶段" clearable={true} onChange={this.chooseStageSearch} className={"leftMargin"}>
+                        {
+                            this.state.stageName.map(el => {
+                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                            })
+                        }
+                    </Select>
+                    <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
+                        {
+                            this.state.statusName.map(el => {
+                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                            })
+                        }
+                    </Select>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     <Table
                         style={{width: '100%'}}

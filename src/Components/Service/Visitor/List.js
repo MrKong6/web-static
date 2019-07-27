@@ -12,92 +12,11 @@ import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
-import { Button,Table,Pagination,Message,Input,Tooltip } from 'element-react';
+import { Button,Table,Pagination,Message,Input,Tooltip, Select } from 'element-react';
 import './Visitor.css'
 
 import {$} from "../../../vendor";
 import ajaxFile from "../../../utils/ajaxFile";
-
-/*
-const Table = ({list, goto}) => {
-    return (
-        <table className="table table-bordered table-sm">
-            <thead>
-            <tr>
-                <th>创建人</th>
-                <th>创建时间</th>
-                <th>所属组织</th>
-                <th>所属用户</th>
-                <th>来源</th>
-                <th>渠道</th>
-                <th>阶段</th>
-                <th>状态</th>
-                <th>学员姓名</th>
-                <th>性别</th>
-                <th>年龄</th>
-                <th>在读年级</th>
-                <th>所在学校</th>
-                <th>家长姓名</th>
-                <th>与学员关系</th>
-                <th>电话号码</th>
-                <th>微信号</th>
-                <th>家庭住址</th>
-                <th>课程类别</th>
-                <th>课程产品</th>
-                <th>备注</th>
-                <th>沟通记录</th>
-            </tr>
-            </thead>
-            <tbody>{TableItem(list, goto)}</tbody>
-        </table>
-    );
-};
-*/
-
-/*
-const TableItem = (data, goto) => {
-    let table = [];
-
-    if (data.length === 0) {
-        return table;
-    }
-
-    data.map(item => {
-        table.push(
-            <tr key={item.id}>
-                <td>{item.creatorName}</td>
-                <td>{fmtDate(item.createTime)}</td>
-                <td>{item.organizationName}</td>
-                <td>{item.executiveName}</td>
-                <td>{item.sourceName}</td>
-                <td>{item.channelName}</td>
-                <td>{item.stageName}</td>
-                <td>{item.statusName}</td>
-                <td>
-                    <a onClick={goto} lid={item.id} href="javascript:;">{item.student.name}</a>
-                </td>
-                <td>{item.student.genderText !== 'null' ? item.student.genderText : '--'}</td>
-                <td>{item.student.age !== 'null' ? item.student.age : '--'}</td>
-                <td>{item.student.classGrade !== 'null' ? item.student.classGrade : '--'}</td>
-                <td>{item.student.schoolName ? item.student.schoolName : '--'}</td>
-                <td>
-                    <a onClick={goto} lid={item.id} href="javascript:;">{item.parent.name}</a>
-                </td>
-                <td>{item.parent.relation ? item.parent.relation : '--'}</td>
-                <td>{item.parent.cellphone ? item.parent.cellphone : '--'}</td>
-                <td>{item.parent.weichat ? item.parent.weichat : '--'}</td>
-                <td>{item.parent.address ? item.parent.address : '--'}</td>
-                <td>{item.courseType !== 'null' ? item.courseType : '--'}</td>
-                <td>{item.courseName !== 'null' ? item.courseName : '--'}</td>
-                <td>{item.note ? item.note : '--'}</td>
-                <td>--</td>
-            </tr>
-        );
-    });
-
-    return table;
-};
-*/
 
 class List extends React.Component {
 
@@ -263,13 +182,23 @@ class List extends React.Component {
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            stageName:[],
+            chooseStageName:"",
+            statusName:[],
+            chooseStatusName:""
         };
+        this.chooseStageSearch = this.chooseStageSearch.bind(this);
+        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:4,isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1)});
+                let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:4,fromWay:1,
+                    isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1),
+                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                let status = await ajax('/mkt/leads/status/list.do', {typeId: 1});
+                let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 1});
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -282,7 +211,7 @@ class List extends React.Component {
                         item.student = {"cellphone" : "","name" : ""};
                     }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,statusName:status});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -304,7 +233,7 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,fromWay:1,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
                     const ids = list.data.map((leads) => (leads.id));
 
                     this.setState({
@@ -456,6 +385,17 @@ class List extends React.Component {
         });
     }
 
+    chooseStageSearch(chooseStageName){
+        // debugger;
+        this.state.chooseStageName = chooseStageName;
+        this.componentDidMount();
+    }
+    chooseStatusSearch(chooseStatusName){
+        // debugger;
+        this.state.chooseStatusName = chooseStatusName;
+        this.componentDidMount();
+    }
+
     /**
      * 列表选择
      * @param value
@@ -526,6 +466,20 @@ class List extends React.Component {
                            onChange={this.onChange.bind(this, 'cellphone')}
                            append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
                     />
+                    <Select value={this.state.chooseStageName} placeholder="请选择阶段" clearable={true} onChange={this.chooseStageSearch} className={"leftMargin"}>
+                        {
+                            this.state.stageName.map(el => {
+                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                            })
+                        }
+                    </Select>
+                    <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
+                        {
+                            this.state.statusName.map(el => {
+                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                            })
+                        }
+                    </Select>
                     {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
                     <Table
                         style={{width: '100%'}}

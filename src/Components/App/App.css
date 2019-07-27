@@ -484,3 +484,6 @@ main h5 p {
 .el-button-nomargin{
   margin-left: 0px!important;
 }
+.leftMargin{
+  margin-left: 5px;
+}

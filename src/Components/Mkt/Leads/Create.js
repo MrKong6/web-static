@@ -77,6 +77,7 @@ class Create extends React.Component {
     query.createTime = this.form.state.createTime ? this.form.state.createTime.getTime() : "";
     query.organizationId = this.state.group.id;
     query.typeId = 1;
+    query.fromWay = 2;
     //处理年龄
     if(query.studentAgeYear || query.studentAgeMonth){
         query.age = (query.studentAgeYear+"."+query.studentAgeMonth)
