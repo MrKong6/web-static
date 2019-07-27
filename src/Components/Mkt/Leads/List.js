@@ -270,6 +270,10 @@ class List extends React.Component {
                     stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
                 let status = await ajax('/mkt/leads/status/list.do', {typeId: 1});
                 let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 1});
+                if(this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1){
+                    //线索私有池
+                    status = status.filter(sta => !(sta.id == 2 || sta.id == 3));
+                }
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){

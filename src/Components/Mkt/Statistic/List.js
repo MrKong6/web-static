@@ -127,7 +127,7 @@ class List extends React.Component {
             }
         };
 
-        request();
+        // request();
         mainSize()
     }
 
@@ -156,7 +156,7 @@ class List extends React.Component {
                 }
             };
 
-            request();
+            // request();
         }
     }
 
@@ -214,7 +214,7 @@ class List extends React.Component {
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
                 </h5>
                 <div id="main" className="main p-3">
-                    <Tabs activeName="2" onTabClick={ (tab) => console.log(tab.props.name) }>
+                    <Tabs activeName="1" onTabClick={ (tab) => console.log(tab.props.name) }>
                         <Tabs.Pane label="市场活动" name="1"></Tabs.Pane>
                         {/*<Tabs.Pane label="配置管理" name="2"></Tabs.Pane>
                         <Tabs.Pane label="角色管理" name="3"></Tabs.Pane>

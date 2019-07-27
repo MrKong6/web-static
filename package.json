@@ -22,6 +22,7 @@
     "customize-cra": "^0.2.13",
     "dotenv": "4.0.0",
     "echarts": "^3.8.5",
+    "echarts-for-react": "^2.0.15-beta.0",
     "element-react": "^1.4.34",
     "element-theme-default": "^1.4.13",
     "eslint": "4.10.0",
