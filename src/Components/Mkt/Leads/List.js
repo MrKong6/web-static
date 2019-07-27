@@ -140,26 +140,6 @@ class List extends React.Component {
                     width: 95
                 },
                 {
-                    label: "来源",
-                    prop: "sourceName",
-                    width: 100
-                },
-                {
-                    label: "渠道",
-                    prop: "channelName",
-                    width: 120
-                },
-                {
-                    label: "阶段",
-                    prop: "stageName",
-                    width: 150
-                },
-                {
-                    label: "状态",
-                    prop: "statusName",
-                    width: 150
-                },
-                {
                     label: "学员姓名",
                     prop: "student.name",
                     width: 95,
@@ -244,6 +224,26 @@ class List extends React.Component {
                             {data.courseName}
                         </Tooltip>
                     }
+                },
+                {
+                    label: "来源",
+                    prop: "sourceName",
+                    width: 100
+                },
+                {
+                    label: "渠道",
+                    prop: "channelName",
+                    width: 120
+                },
+                {
+                    label: "阶段",
+                    prop: "stageName",
+                    width: 150
+                },
+                {
+                    label: "状态",
+                    prop: "statusName",
+                    width: 150
                 },
             ],
             totalPage:0,

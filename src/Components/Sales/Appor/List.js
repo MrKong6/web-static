@@ -131,37 +131,6 @@ class List extends React.Component {
                     width: 100,
                 },
                 {
-                    label: "来源",
-                    prop: "sourceName",
-                    sortable: true,
-                    width: 100,
-                },
-                {
-                    label: "渠道",
-                    prop: "channelName",
-                    sortable: true,
-                    width: 100,
-                },
-                {
-                    label: "阶段",
-                    prop: "stageName",
-                    sortable: true,
-                    width: 120,
-                    className:'tabletd',
-                    render: function (data) {
-                        return <Tooltip effect="dark" content={data.stageName}
-                                        placement="top-start">
-                                    {data.stageName}
-                                </Tooltip>
-                    }
-                },
-                {
-                    label: "状态",
-                    prop: "statusName",
-                    sortable: true,
-                    width: 150
-                },
-                {
                     label: "学员姓名",
                     prop: "student.name",
                     sortable: true,
@@ -255,6 +224,37 @@ class List extends React.Component {
                     label: "备注",
                     prop: "note",
                     sortable: true
+                },
+                {
+                    label: "来源",
+                    prop: "sourceName",
+                    sortable: true,
+                    width: 100,
+                },
+                {
+                    label: "渠道",
+                    prop: "channelName",
+                    sortable: true,
+                    width: 100,
+                },
+                {
+                    label: "阶段",
+                    prop: "stageName",
+                    sortable: true,
+                    width: 120,
+                    className:'tabletd',
+                    render: function (data) {
+                        return <Tooltip effect="dark" content={data.stageName}
+                                        placement="top-start">
+                            {data.stageName}
+                        </Tooltip>
+                    }
+                },
+                {
+                    label: "状态",
+                    prop: "statusName",
+                    sortable: true,
+                    width: 150
                 }
 
             ],
