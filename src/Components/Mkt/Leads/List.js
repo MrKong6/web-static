@@ -418,11 +418,13 @@ class List extends React.Component {
     chooseStageSearch(chooseStageName){
         // debugger;
         this.state.chooseStageName = chooseStageName;
+        this.state.currentPage = 1;
         this.componentDidMount();
     }
     chooseStatusSearch(chooseStatusName){
         // debugger;
         this.state.chooseStatusName = chooseStatusName;
+        this.state.currentPage = 1;
         this.componentDidMount();
     }
 
