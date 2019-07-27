@@ -5,7 +5,7 @@ export default {
       "1-0": {
           PATH: "home/mkt/statistic",
           PATH_RULE: /^\/home\/mkt\/statistic(\/((?!create).)*)?$/,
-          ICON_CLASS: "fa-pie-chart",
+          ICON_CLASS: "fa-area-chart",
           CATEGORY: '仪表盘',
           // NAME: '活动'
       },
@@ -149,7 +149,7 @@ export default {
       "2-4": {
           PATH: "home/sales/statistic",
           PATH_RULE: /^\/home\/sales\/statistic(\/(student|parent|contract)\/((?!create).)*)?$/,
-          ICON_CLASS: "fa-graduation-cap",
+          ICON_CLASS: "fa-area-chart",
           CATEGORY: '仪表盘',
       },
 
@@ -228,7 +228,7 @@ export default {
       "3-5": {
           PATH: "home/service/statistic",
           PATH_RULE: /^\/home\/service\/statistic(\/((?!create).)*)?$/,
-          ICON_CLASS: "fa-file-text-o",
+          ICON_CLASS: "fa-area-chart",
           CATEGORY: '仪表盘'
       },
 
