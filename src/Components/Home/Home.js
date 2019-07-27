@@ -32,6 +32,9 @@ import DialogTips from "../Dialog/DialogTips";
 
 import ajax from "../../utils/ajax";
 import profileProcess from "../../utils/profileProcess";
+import Statistic from "../Mkt/Statistic/Statistic";
+import SaleStatistic from "../Sales/SaleStatistic/SaleStatistic";
+import ServiceStatistic from "../Service/ServiceStatistic/ServiceStatistic";
 
 class Home extends React.Component {
   constructor(props) {
@@ -151,12 +154,14 @@ class Home extends React.Component {
             <PrivateRoute path="/home/mkt/act" changedCrmGroup={this.state.group} component={Act}{...query}/>
             <PrivateRoute path="/home/mkt/leads" changedCrmGroup={this.state.group} component={Leads}{...query}/>
             <PrivateRoute path="/home/mkt/leadspublic" changedCrmGroup={this.state.group} component={Leads}{...query}/>
+            <PrivateRoute path="/home/mkt/statistic" changedCrmGroup={this.state.group} component={Statistic}{...query}/>
             <PrivateRoute path="/home/sales/oppor" changedCrmGroup={this.state.group} component={Appor}{...query}/>
             <PrivateRoute path="/home/sales/opporpublic" changedCrmGroup={this.state.group} component={Appor}{...query}/>
             <PrivateRoute path="/home/sales/contract" changedCrmGroup={this.state.group}
                           component={SalesContract}{...query}/>
             <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
                           component={SalesCustomer}{...query}/>
+            <PrivateRoute path="/home/sales/statistic" changedCrmGroup={this.state.group} component={SaleStatistic}{...query}/>
             <PrivateRoute path="/home/service/visitorin" changedCrmGroup={this.state.group}
                           component={ServiceVisitor}{...query} />
             <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
@@ -165,6 +170,7 @@ class Home extends React.Component {
                           component={ServiceContract}{...query}/>
             <PrivateRoute path="/home/service/customer" changedCrmGroup={this.state.group}
                           component={ServiceCustomer}{...query}/>
+            <PrivateRoute path="/home/service/statistic" changedCrmGroup={this.state.group} component={ServiceStatistic}{...query}/>
             <PrivateRoute path="/home/finance/account" changedCrmGroup={this.state.group}
                           component={FinanceAccount}{...query}/>
             <PrivateRoute path="/home/academy/course" changedCrmGroup={this.state.group}

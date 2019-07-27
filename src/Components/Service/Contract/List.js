@@ -9,78 +9,9 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs} from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
-
-/*
-const Table = ({list, goto}) => {
-  return (
-    <table className="table table-bordered table-sm">
-      <thead>
-      <tr>
-        <th>序号</th>
-        <th>创建人</th>
-        <th>创建时间</th>
-        <th>所属组织</th>
-        <th>所属用户</th>
-        <th>合同类型</th>
-        <th>合同编号</th>
-        <th>签约时间</th>
-        <th>到期时间</th>
-        <th>学员姓名</th>
-        <th>家长姓名</th>
-        <th>联系电话</th>
-        <th>课程类别</th>
-        <th>课程</th>
-        <th>合同金额</th>
-        <th>折扣金额</th>
-        <th>应付金额</th>
-        <th>已付金额</th>
-      </tr>
-      </thead>
-      <tbody>{TableItem(list, goto)}</tbody>
-    </table>
-  );
-};
-
-const TableItem = (data, goto) => {
-  let table = [];
-
-  if (data.length === 0) {
-    return table;
-  }
-
-  data.map((item, index) => {
-    table.push(
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{item.creatorName}</td>
-        <td>{fmtDate(item.createTime)}</td>
-        <td>{item.orgName}</td>
-        <td>{item.executiveName}</td>
-        <td>{CONFIG.TYPE_ID[item.typeId]}</td>
-        <td>
-          <a onClick={goto} cid={item.id} href="javascript:;">{item.code}</a>
-        </td>
-        <td>{fmtDate(item.startDate)}</td>
-        <td>{fmtDate(item.endDate)}</td>
-        <td>{item.stuName}</td>
-        <td>{item.parName}</td>
-        <td>{item.parCellphone}</td>
-        <td>{item.courseType}</td>
-        <td>{item.courseName}</td>
-        <td>{item.oriPrice}</td>
-        <td>{item.discPrice}</td>
-        <td>{item.finalPrice}</td>
-        <td>{item.paid}</td>
-      </tr>
-    );
-  });
-
-  return table;
-};
-*/
 
 class List extends React.Component {
     constructor(props) {
@@ -348,23 +279,47 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <Table
-                        style={{width: '100%'}}
-                        columns={this.state.columns}
-                        data={this.state.list}
-                        border={true}
-                        fit={true}
-                        emptyText={"--"}
-                    />
-                    <Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={this.state.totalCount}
-                                pageSizes={[10, 50, 100]}
-                                pageSize={this.state.pageSize}
-                                currentPage={this.state.currentPage}
-                                pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
-                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+
+                    <Tabs activeName="2" onTabClick={ (tab) => console.log(tab.props.name) }>
+                        <Tabs.Pane label="自招" name="1">
+                            <Table
+                                style={{width: '100%'}}
+                                columns={this.state.columns}
+                                data={this.state.list}
+                                border={true}
+                                fit={true}
+                                emptyText={"--"}
+                            />
+                            <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                        total={this.state.totalCount}
+                                        pageSizes={[10, 50, 100]}
+                                        pageSize={this.state.pageSize}
+                                        currentPage={this.state.currentPage}
+                                        pageCount={this.state.totalPage}
+                                        className={"leadlist_page"}
+                                        onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                        onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+                        </Tabs.Pane>
+                        <Tabs.Pane label="续报" name="2">
+                            <Table
+                                style={{width: '100%'}}
+                                columns={this.state.columns}
+                                data={this.state.list}
+                                border={true}
+                                fit={true}
+                                emptyText={"--"}
+                            />
+                            <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                        total={this.state.totalCount}
+                                        pageSizes={[10, 50, 100]}
+                                        pageSize={this.state.pageSize}
+                                        currentPage={this.state.currentPage}
+                                        pageCount={this.state.totalPage}
+                                        className={"leadlist_page"}
+                                        onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                        onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+                        </Tabs.Pane>
+                    </Tabs>
                 </div>
             </div>
         )
