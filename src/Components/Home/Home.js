@@ -36,7 +36,7 @@ import profileProcess from "../../utils/profileProcess";
 class Home extends React.Component {
   constructor(props) {
     super(props);
-
+    // debugger
     this.state = {
       profile: null,
       group: null,
@@ -69,6 +69,12 @@ class Home extends React.Component {
 
     request();
   }
+
+    componentWillUnmount() {
+        if (this.tipsContainer) {
+            document.body.removeChild(this.tipsContainer);
+        }
+    }
 
   createDialogTips(text) {
     if (this.tips === undefined) {

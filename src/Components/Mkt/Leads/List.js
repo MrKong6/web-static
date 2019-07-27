@@ -178,7 +178,7 @@ class List extends React.Component {
                     prop: "parent.name",
                     width: 95,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{(row.parent ? "--" : row.parent.name)}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{(row.parent ? row.parent.name : "--")}</Button></span>
                     }
                 },
                 {

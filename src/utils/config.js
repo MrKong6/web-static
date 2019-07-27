@@ -2,6 +2,13 @@ export default {
   AUTH: {
     //市场相关权限配置
     "1": {ICON_CLASS: "fa-balance-scale"},
+      "1-0": {
+          PATH: "home/mkt/statistic",
+          PATH_RULE: /^\/home\/mkt\/statistic(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-pie-chart",
+          CATEGORY: '仪表盘',
+          // NAME: '活动'
+      },
     "1-1": {
       PATH: "home/mkt/act",
       PATH_RULE: /^\/home\/mkt\/act(\/((?!create).)*)?$/,
@@ -139,6 +146,12 @@ export default {
       CATEGORY: '我的',
       NAME: '学员'
     },
+      "2-4": {
+          PATH: "home/sales/statistic",
+          PATH_RULE: /^\/home\/sales\/statistic(\/(student|parent|contract)\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-graduation-cap",
+          CATEGORY: '仪表盘',
+      },
 
 
     //服务相关权限配置
@@ -212,6 +225,12 @@ export default {
       ICON_CLASS: "fa-graduation-cap",
       CATEGORY: '学员'
     },
+      "3-5": {
+          PATH: "home/service/statistic",
+          PATH_RULE: /^\/home\/service\/statistic(\/((?!create).)*)?$/,
+          ICON_CLASS: "fa-file-text-o",
+          CATEGORY: '仪表盘'
+      },
 
 
     //财务相关权限配置

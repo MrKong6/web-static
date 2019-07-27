@@ -27,10 +27,10 @@ class CourseName extends React.Component{
         });
     }
 
-    componentWillUnmount() {
+   /* componentWillUnmount() {
         emitter.removeListener(this.eventEmitter);
     }
-
+*/
 
     componentDidMount() {
         // debugger;

@@ -197,8 +197,8 @@ class List extends React.Component {
                 let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:4,fromWay:1,
                     isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1),
                     stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
-                let status = await ajax('/mkt/leads/status/list.do', {typeId: 1});
-                let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 1});
+                let status = await ajax('/mkt/leads/status/list.do', {typeId: 4});
+                let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 4});
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
