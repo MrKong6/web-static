@@ -377,12 +377,12 @@ class Form extends React.Component {
                       </div>
                     <div className="col"/>
                   </div>
-                  {/*<ContactList
+                  <ContactList
                       id={this.state.data ? this.state.data.id : '0'}
                       canEdit={true}
                       groupName={this.props.contactOrgName}
                       userName={this.props.contactUserName}
-                    />*/}
+                    />
                 </div>
               </div>
             </div>

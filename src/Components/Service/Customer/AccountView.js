@@ -167,47 +167,6 @@ class AccountView extends React.Component {
       )
     }
 
-    if (this.state.isEmpty && !this.state.contractList.length) {
-      return (
-        <div>
-          <h5 id="subNav">
-            <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
-            &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-
-            <div className="btn-group float-right ml-4" role="group">
-              <button onClick={() => {
-                this.props.history.push('/home/sales/contract');
-              }} type="button" className="btn btn-light">返回
-              </button>
-            </div>
-          </h5>
-
-          <div id="main" className="main p-3">
-            <div className="row justify-content-md-center">
-              <div className="col col-12">
-                <div className="card">
-                  <div className="card-body">无合同记录...</div>
-                </div>
-              </div>
-            </div>
-
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item"><Link to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
-                <li className="breadcrumb-item">
-                  <Link to={{
-                    pathname: `/home/service/customer/parent/${this.state.id}`,
-                    state: {stuName: this.state.data.name}
-                  }}>家长信息</Link>
-                </li>
-                <li className="breadcrumb-item active">合同信息</li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-      )
-    }
-
     return (
       <div>
         <h5 id="subNav">
@@ -233,54 +192,110 @@ class AccountView extends React.Component {
               <div className="card border-top-0">
                 <div className="card-body">
                   <p className="ht pb-3 b-b">合同信息</p>
-                  <table className="table table-bordered table-sm table-responsive">
+                  <table className="table table-bordered table-sm noBorder tableWidth">
                     <thead>
                     <tr>
+                      <th>项目</th>
                       <th>序号</th>
-                      <th>创建人</th>
-                      <th>创建时间</th>
-                      <th>所属组织</th>
-                      <th>所属用户</th>
-                      <th>合同类型</th>
-                      <th>合同编号</th>
-                      <th>签约时间</th>
-                      <th>到期时间</th>
-                      <th>学员姓名</th>
-                      <th>家长姓名</th>
-                      <th>联系电话</th>
-                      <th>课程类别</th>
-                      <th>课程</th>
-                      <th>合同金额</th>
-                      <th>折扣金额</th>
-                      <th>应付金额</th>
-                      <th>已付金额</th>
+
+                      <th>日期</th>
+                      <th>摘要</th>
+                      <th>收入</th>
+                      <th>支出</th>
+                      <th>余额</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {
-                      this.state.contractList.map((item, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{item.creatorName}</td>
-                          <td>{fmtDate(item.createTime)}</td>
-                          <td>{item.orgName}</td>
-                          <td>{item.executiveName}</td>
-                          <td>{CONFIG.TYPE_ID[item.type]}</td>
-                          <td>{item.code}</td>
-                          <td>{fmtDate(item.startDate)}</td>
-                          <td>{fmtDate(item.endDate)}</td>
-                          <td>{item.stuName}</td>
-                          <td>{item.parName}</td>
-                          <td>{item.parCellphone}</td>
-                          <td>{item.courseType}</td>
-                          <td>{item.courseName}</td>
-                          <td>{item.oriPrice}</td>
-                          <td>{item.discPrice}</td>
-                          <td>{item.finalPrice}</td>
-                          <td>{item.paid}</td>
-                        </tr>
-                      ))
-                    }
+                      <tr>
+                          <td style={{"border":0}}>初始建账主账户</td>
+                          <td style={{"border":0}}>1</td>
+                          <td style={{"border":0}}>2019/01/26</td>
+                          <td style={{"border":0}}>结转定金</td>
+                          <td style={{"border":0}}>¥0.00</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>2</td>
+                          <td style={{"border":0}}>2019/01/26</td>
+                          <td style={{"border":0}}>结转定金</td>
+                          <td style={{"border":0}}>¥0.00</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>2</td>
+                          <td style={{"border":0}}>2019/01/26</td>
+                          <td style={{"border":0}}>结转定金</td>
+                          <td style={{"border":0}}>¥0.00</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>2</td>
+                          <td style={{"border":0}}>2019/01/26</td>
+                          <td style={{"border":0}}>结转定金</td>
+                          <td style={{"border":0}}>¥0.00</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>¥0.00</td>
+                      </tr>
+                      <tr style={{"border-top": "1px solid black","border-bottom": "1px solid black"}}>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>¥0.00</td>
+                          <td style={{"border":0}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0,"border-top": "hidden"}}>课时消耗子账户</td>
+                          <td style={{"border":0,"border-left":"1px solid black"}}>0</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}>课时费</td>
+                          <td style={{"border":0}}>¥6210.00</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-right":"1px solid black"}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-left":"1px solid black"}}>1</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-right":"1px solid black"}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-left":"1px solid black"}}>2</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-right":"1px solid black"}}>¥0.00</td>
+                      </tr>
+                      <tr>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-left":"1px solid black"}}>3</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-right":"1px solid black"}}>¥0.00</td>
+                      </tr>
+                      <tr style={{"border-bottom": "1px solid black","border-bottom": "1px solid black"}}>
+                          <td style={{"border":0,"border-bottom": "hidden"}}></td>
+                          <td style={{"border":0,"border-left":"1px solid black"}}>4</td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0}}></td>
+                          <td style={{"border":0,"border-right":"1px solid black"}}>¥0.00</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>

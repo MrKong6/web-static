@@ -487,3 +487,10 @@ main h5 p {
 .leftMargin{
   margin-left: 5px;
 }
+.noBorder{
+  border: 0;
+}
+.tableWidth{
+  width: 80%;
+  text-align: center;
+}

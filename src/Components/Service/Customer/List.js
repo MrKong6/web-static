@@ -7,12 +7,14 @@ import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
-import ajax from "../../../utils/ajax";
+import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Table,Pagination} from 'element-react';
+import {Table, Pagination, Message} from 'element-react';
 import calculateAge from "../../../utils/calculateAge";
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
+import ajaxFile from "../../../utils/ajaxFile";
+import Commands from "../../Commands/Commands";
 
 /*
 const Table = ({list, path}) => {
@@ -69,10 +71,11 @@ class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command === 'Add'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
+            userId:this.props.profile.cId,
             list: [],
             ids: [],
             isAnimating: true,
@@ -131,6 +134,7 @@ class List extends React.Component {
             totalCount:0,
         };
         this.createDialogTips = this.createDialogTips.bind(this);
+        this.exportAction = this.exportAction.bind(this);
     }
 
    /* goToDetails(data) {
@@ -240,6 +244,25 @@ class List extends React.Component {
         this.state.pageSize = pageSize;
         this.componentDidMount();
     }
+    /**
+     * 导出
+     */
+    exportAction() {
+        ajaxFile('/service/customer/student/export.do',{orgId: this.state.group.id,typeId:4})
+    };
+
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -250,11 +273,24 @@ class List extends React.Component {
                 }}/>
             )
         }
+        const uploadConfig = {
+            className:"upload-demo",
+            showFileList:false,
+            withCredentials:true,
+            data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId},
+            action: AJAX_PATH + '/service/customer/student/import.do',
+            onSuccess: (file, fileList) => this.successMsg("导入成功"),
+        };
 
         return (
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                    <Commands
+                        commands={this.commands}
+                        importAction={uploadConfig}
+                        exportAction={this.exportAction}
+                    />
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
