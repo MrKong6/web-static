@@ -494,3 +494,17 @@ main h5 p {
   width: 80%;
   text-align: center;
 }
+
+.page_bottom{
+  position:fixed;
+  background-color:#dfe6ec;
+  width:100%;
+  bottom:0px;
+  z-index:100;
+}
+.location_bottom{
+  position:fixed;
+  bottom:0px;
+  background-color:#dfe6ec;
+  width:100%;
+}

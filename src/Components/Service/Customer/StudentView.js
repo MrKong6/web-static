@@ -331,7 +331,7 @@ class StudentView extends React.Component {
           </div>
 
           <nav aria-label="breadcrumb">
-            <ol className="breadcrumb">
+            <ol className="breadcrumb location_bottom">
               <li className="breadcrumb-item active">学员信息</li>
               <li className="breadcrumb-item">
                 <Link to={{

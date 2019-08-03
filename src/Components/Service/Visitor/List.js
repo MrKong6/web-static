@@ -41,7 +41,13 @@ class List extends React.Component {
             chooseRows:[],
             columns:[
                 {
-                    type: 'selection'
+                    type: 'selection',
+                    width: 20,
+                },
+                {
+                    label: "序号",
+                    type: 'index',
+                    width: 20,
                 },
                 {
                     label: "创建人",
@@ -477,7 +483,7 @@ class List extends React.Component {
                     </Select>
                     {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
                     <Table
-                        style={{width: '100%'}}
+                        style={{width: '100%',"margin-bottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
@@ -490,9 +496,10 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
+                                className={"page_bottom"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}
+                    />
                 </div>
             </div>
         )

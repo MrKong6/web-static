@@ -21,7 +21,7 @@ import { DatePicker } from 'element-react';
 class Form extends React.Component {
     constructor(props) {
         super(props)
-        debugger
+
         this.state = {
             group: this.props.changedCrmGroup,
             channelId: null,
@@ -180,6 +180,10 @@ class Form extends React.Component {
     }
 
     render() {
+        let link = false;
+        if(this.props.from.pathname.indexOf("visitorin") != -1){
+            link = true;
+        }
         if (!this.state.option || (this.props.isEditor && !this.state.data)) {
             return (
                 <form ref={(dom) => {
@@ -350,7 +354,7 @@ class Form extends React.Component {
                                                     {/*<em className="text-danger">*</em>*/}访客状态
                                                 </label>
                                                 <div className="col-7">
-                                                    <Status data={this.state.option.status}/>
+                                                    <Status data={this.state.option.status} dis={link}/>
                                                 </div>
                                             </div>
                                         </div>

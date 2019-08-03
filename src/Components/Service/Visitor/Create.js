@@ -16,7 +16,6 @@ class Create extends React.Component {
     super(props);
     this.title = fmtTitle(this.props.location.pathname);
     this.ids = this.props.location.state.ids;
-    debugger
     this.state = {
       group: this.props.changedCrmGroup,
       redirectToReferrer: false,

@@ -14,85 +14,6 @@ import { Button,Table,Pagination,Upload,Input,Tooltip, Select } from 'element-re
 import '../../Mkt/Leads/Leads.css'
 import ajaxFile from "../../../utils/ajaxFile";
 
-/*
-const Table = ({list, goto}) => {
-    return (
-        <table className="table table-bordered table-sm">
-            <thead>
-            <tr>
-                <th>创建人</th>
-                <th>创建时间</th>
-                <th>所属组织</th>
-                <th>所属用户</th>
-                <th>来源</th>
-                <th>渠道</th>
-                <th>阶段</th>
-                <th>状态</th>
-                <th>学员姓名</th>
-                <th>性别</th>
-                <th>年龄</th>
-                <th>在读年级</th>
-                <th>所在学校</th>
-                <th>家长姓名</th>
-                <th>与学员关系</th>
-                <th>电话号码</th>
-                <th>微信号</th>
-                <th>家庭住址</th>
-                <th>课程类别</th>
-                <th>课程产品</th>
-                <th>备注</th>
-                <th>沟通记录</th>
-            </tr>
-            </thead>
-            <tbody>{TableItem(list, goto)}</tbody>
-        </table>
-    );
-};
-
-const TableItem = (data, goto) => {
-    let table = [];
-
-    if (data.length === 0) {
-        return table;
-    }
-
-    data.map(item => {
-        table.push(
-            <tr key={item.id}>
-                <td>{item.creatorName}</td>
-                <td>{fmtDate(item.createTime)}</td>
-                <td>{item.organizationName}</td>
-                <td>{item.executiveName}</td>
-                <td>{item.sourceName}</td>
-                <td>{item.channelName}</td>
-                <td>{item.stageName}</td>
-                <td>{item.statusName}</td>
-                <td>
-                    <a onClick={goto} lid={item.id} href="javascript:;">{item.student.name}</a>
-                </td>
-                <td>{item.student.genderText !== 'null' ? item.student.genderText : '--'}</td>
-                <td>{item.student.age !== 'null' ? item.student.age : '--'}</td>
-                <td>{item.student.classGrade !== 'null' ? item.student.classGrade : '--'}</td>
-                <td>{item.student.schoolName ? item.student.schoolName : '--'}</td>
-                <td>
-                    <a onClick={goto} lid={item.id} href="javascript:;">{item.parent.name}</a>
-                </td>
-                <td>{item.parent.relation ? item.parent.relation : '--'}</td>
-                <td>{item.parent.cellphone ? item.parent.cellphone : '--'}</td>
-                <td>{item.parent.weichat ? item.parent.weichat : '--'}</td>
-                <td>{item.parent.address ? item.parent.address : '--'}</td>
-                <td>{item.courseType !== 'null' ? item.courseType : '--'}</td>
-                <td>{item.courseName !== 'null' ? item.courseName : '--'}</td>
-                <td>{item.note ? item.note : '--'}</td>
-                <td>--</td>
-            </tr>
-        );
-    });
-
-    return table;
-};
-*/
-
 class List extends React.Component {
     constructor(props) {
         super(props);
@@ -106,6 +27,10 @@ class List extends React.Component {
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
+                {
+                    label: "序号",
+                    type: 'index'
+                },
                 {
                     label: "创建人",
                     prop: "creatorName",
@@ -469,7 +394,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
+                                className={"leadlist_page page_bottom"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

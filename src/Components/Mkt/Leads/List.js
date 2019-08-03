@@ -119,6 +119,10 @@ class List extends React.Component {
             cellphone : '',
             columns:[
                 {
+                    label: "序号",
+                    type: 'index'
+                },
+                {
                     label: "创建人",
                     prop: "creatorName",
                     width: 100,
@@ -500,7 +504,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
+                                className={"leadlist_page page_bottom"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

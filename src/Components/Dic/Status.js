@@ -11,7 +11,8 @@ class Status extends React.Component {
 
     this.state = {
       redirectToReferrer: false,
-      list: this.props.data || []
+      list: this.props.data || [],
+      disable: this.props.dis
     }
   }
 
@@ -74,16 +75,28 @@ class Status extends React.Component {
         }}/>
       )
     }
+    if(this.state.disable){
+        return (
+            <select className="form-control" name="statusId" disabled="disabled">
+                {
+                    this.state.list.map(item => (
+                        <option key={item.id} value={item.id}>{item.name}</option>
+                    ))
+                }
+            </select>
+        )
+    }else{
+        return (
+            <select className="form-control" name="statusId">
+                {
+                    this.state.list.map(item => (
+                        <option key={item.id} value={item.id}>{item.name}</option>
+                    ))
+                }
+            </select>
+        )
+    }
 
-    return (
-      <select className="form-control" name="statusId">
-        {
-          this.state.list.map(item => (
-            <option key={item.id} value={item.id}>{item.name}</option>
-          ))
-        }
-      </select>
-    )
   }
 }
 

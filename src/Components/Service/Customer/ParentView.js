@@ -281,7 +281,7 @@ class ParentView extends React.Component {
           </div>
 
           <nav aria-label="breadcrumb">
-            <ol className="breadcrumb">
+            <ol className="breadcrumb location_bottom">
               <li className="breadcrumb-item"><Link to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
               <li className="breadcrumb-item active">家长信息</li>
               <li className="breadcrumb-item">

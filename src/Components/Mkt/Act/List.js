@@ -131,6 +131,10 @@ class List extends React.Component {
             redirectToReferrer: false,
             columns:[
                 {
+                    label: "序号",
+                    type: 'index'
+                },
+                {
                     label: "创建人",
                     prop: "creatorName",
                     sortable: true

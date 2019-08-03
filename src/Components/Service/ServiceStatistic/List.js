@@ -36,11 +36,11 @@ class List extends React.Component {
                 legend: {
                     orient: 'vertical',
                     x: 'left',
-                    data:['直达','营销广告','搜索引擎','邮件营销','联盟广告','视频广告','百度','谷歌','必应','其他']
+                    data:['未转移','已转移']
                 },
                 series: [
-                    {
-                        name:'访问来源',
+                    /*{
+                        name:'合计',
                         type:'pie',
                         selectedMode: 'single',
                         radius: [0, '30%'],
@@ -60,9 +60,9 @@ class List extends React.Component {
                             {value:679, name:'营销广告'},
                             {value:1548, name:'搜索引擎'}
                         ]
-                    },
+                    },*/
                     {
-                        name:'访问来源',
+                        name:'访客',
                         type:'pie',
                         radius: ['40%', '55%'],
                         label: {
@@ -110,14 +110,8 @@ class List extends React.Component {
                             }
                         },
                         data:[
-                            {value:335, name:'直达'},
-                            {value:310, name:'邮件营销'},
-                            {value:234, name:'联盟广告'},
-                            {value:135, name:'视频广告'},
-                            {value:1048, name:'百度'},
-                            {value:251, name:'谷歌'},
-                            {value:147, name:'必应'},
-                            {value:102, name:'其他'}
+                            {value:335, name:'未转移'},
+                            {value:310, name:'已转移'}
                         ]
                     }
                 ]
@@ -246,7 +240,7 @@ class List extends React.Component {
                         <Tabs.Pane label="合同" name="2"></Tabs.Pane>
                         <Tabs.Pane label="学员" name="3"></Tabs.Pane>
                     </Tabs>
-                    <Progress isAnimating={this.state.isAnimating}/>
+                    {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     <ReactEcharts
                         option={this.state.option}
                         style={{height: '350px', width: '1000px'}}
