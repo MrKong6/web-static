@@ -83,7 +83,10 @@ class View extends React.Component {
         const request = async () => {
             try {
                 let data = await ajax('/service/visitor/query.do', {id: this.state.id});
+                if(data.statusId != 19){
+                    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export' && command.name !== 'Mod'));
 
+                }
                 this.setState({data: data});
             } catch (err) {
                 if (err.errCode === 401) {

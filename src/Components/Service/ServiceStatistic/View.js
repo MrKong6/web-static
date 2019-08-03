@@ -136,6 +136,8 @@ class View extends React.Component {
           roi: data.roi
         });
 
+        // if(data.)
+
         chartInit({
           contracts: data.contracts,
           leads: data.leads,

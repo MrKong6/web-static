@@ -84,6 +84,9 @@ class View extends React.Component {
         if(!data.parent){
             data.parent = {"cellphone" : "","name" : ""};
         }
+        if(data.statusId > 7){
+            this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import'&& command.name !== 'Export'&& command.name !== 'Mod'));
+        }
         this.setState({data: data});
 
       } catch (err) {
@@ -267,6 +270,10 @@ class View extends React.Component {
           state: {from: this.props.location}
         }}/>
       )
+    }
+      debugger
+      if(this.state.data && this.state.data.statusId > 7){
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import'&& command.name !== 'Export'&& command.name !== 'Mod'));
     }
 
     let link = "/home/mkt/leads";

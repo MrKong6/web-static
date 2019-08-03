@@ -29,37 +29,15 @@ class List extends React.Component {
             columns: [
                 {
                     label: "序号",
-                    type: 'index'
-                },
-                {
-                    label: "创建人",
-                    prop: "creatorName",
-                    sortable: true,
-                    width: 100,
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    sortable: true,
-                    width: 140,
-                },
-                {
-                    label: "所属组织",
-                    prop: "organizationName",
-                    sortable: true,
-                    width: 175,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    sortable: true,
-                    width: 100,
+                    type: 'index',
+                    fixed: 'left',
                 },
                 {
                     label: "学员姓名",
                     prop: "student.name",
                     sortable: true,
                     width: 100,
+                    fixed: 'left',
                     render: (row, column, data)=>{
                         return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
                     }
@@ -180,7 +158,31 @@ class List extends React.Component {
                     prop: "statusName",
                     sortable: true,
                     width: 150
-                }
+                },
+                {
+                    label: "所属组织",
+                    prop: "organizationName",
+                    sortable: true,
+                    width: 175,
+                },
+                {
+                    label: "所属用户",
+                    prop: "executiveName",
+                    sortable: true,
+                    width: 100,
+                },
+                {
+                    label: "创建人",
+                    prop: "creatorName",
+                    sortable: true,
+                    width: 100,
+                },
+                {
+                    label: "创建时间",
+                    prop: "createTime",
+                    sortable: true,
+                    width: 140,
+                },
 
             ],
             totalPage:0,
@@ -381,12 +383,13 @@ class List extends React.Component {
                     </Select>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     <Table
-                        style={{width: '100%'}}
+                        style={{width: '100%',"margin-bottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
                         fit={true}
                         emptyText={"--"}
+                        height='80%'
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}

@@ -48,34 +48,7 @@ class List extends React.Component {
                     label: "序号",
                     type: 'index',
                     width: 20,
-                },
-                {
-                    label: "创建人",
-                    prop: "creatorName",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 140,
-                    sortable: true
-                },
-                {
-                    label: "所属组织",
-                    prop: "organizationName",
-                    width: 175,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "(校区)",
-                    prop: "schoolArea",
-                    width: 120
+                    fixed: 'left',
                 },
                 /*{
                     label: "阶段",
@@ -86,6 +59,7 @@ class List extends React.Component {
                     label: "学员姓名",
                     prop: "student.name",
                     width: 95,
+                    fixed: 'left',
                     render: (row, column, data)=>{
                         return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
                     }
@@ -182,6 +156,34 @@ class List extends React.Component {
                     label: "状态",
                     prop: "statusName",
                     width: 150
+                },
+                {
+                    label: "所属组织",
+                    prop: "organizationName",
+                    width: 175,
+                    showOverflowTooltip: true,
+                },
+                {
+                    label: "所属用户",
+                    prop: "executiveName",
+                    width: 95
+                },
+                {
+                    label: "(校区)",
+                    prop: "schoolArea",
+                    width: 120
+                },
+                {
+                    label: "创建人",
+                    prop: "creatorName",
+                    width: 100,
+                    sortable: true
+                },
+                {
+                    label: "创建时间",
+                    prop: "createTime",
+                    width: 140,
+                    sortable: true
                 },
             ],
             totalPage:0,
@@ -489,6 +491,7 @@ class List extends React.Component {
                         border={true}
                         fit={false}
                         onSelectChange={(selection) => this.selectRow(selection) }
+                        height='80%'
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}
