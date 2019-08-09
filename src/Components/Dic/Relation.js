@@ -71,16 +71,28 @@ class Relation extends React.Component {
         }}/>
       )
     }
+    if(this.props.type == 1){
+        return (
+            <select className="form-control" name="relationTwo">
+                {
+                    this.state.list.map(item => (
+                        <option key={item.id} value={item.name}>{item.name}</option>
+                    ))
+                }
+            </select>
+        )
+    }else{
+        return (
+            <select className="form-control" name="relation">
+                {
+                    this.state.list.map(item => (
+                        <option key={item.id} value={item.name}>{item.name}</option>
+                    ))
+                }
+            </select>
+        )
+    }
 
-    return (
-      <select className="form-control" name="relation">
-        {
-          this.state.list.map(item => (
-            <option key={item.id} value={item.name}>{item.name}</option>
-          ))
-        }
-      </select>
-    )
   }
 }
 

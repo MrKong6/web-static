@@ -270,6 +270,12 @@ export default {
           ICON_CLASS: "fa-users",
           CATEGORY: '班级'
       },
+      "5-4-1": {
+          PATH_RULE: /^\/home\/academy\/class\/create$/,
+          ICON_CLASS: "fa-houzz",
+          CATEGORY: '班级',
+          NAME:''
+      },
       "5-5": {
           PATH: "home/academy/assignclass",
           PATH_RULE: /^\/home\/academy\/assignclass(\/((?!create).)*)?$/,

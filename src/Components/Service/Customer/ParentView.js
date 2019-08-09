@@ -272,7 +272,41 @@ class ParentView extends React.Component {
                         </div>
                       </div>
                     </div>
-                    <div className="col"/>
+                    <div className="col">
+                        <div className="form-group row">
+                            <label className="col-5 col-form-label font-weight-bold">家长姓名</label>
+                            <div className="col-7">
+                                <input
+                                    type="text"
+                                    readOnly={true}
+                                    className="form-control-plaintext"
+                                    value={this.state.parentList.length > 1 ? this.state.parentList[1].name : ""}
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label className="col-5 col-form-label font-weight-bold">与孩子关系</label>
+                            <div className="col-7">
+                                <input
+                                    type="text"
+                                    readOnly={true}
+                                    className="form-control-plaintext"
+                                    value={this.state.parentList.length > 1 ? this.state.parentList[1].relation : ""}
+                                />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label className="col-5 col-form-label font-weight-bold">联系电话</label>
+                            <div className="col-7">
+                                <input
+                                    type="text"
+                                    readOnly={true}
+                                    className="form-control-plaintext"
+                                    value={this.state.parentList.length > 1 ? this.state.parentList[1].cellphone : ""}
+                                />
+                            </div>
+                        </div>
+                    </div>
                     <div className="col"/>
                   </div>
                 </div>

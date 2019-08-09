@@ -9,69 +9,18 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Table, Pagination, Message} from 'element-react';
+import {Table, Pagination, Message, Input, Select, Button} from 'element-react';
 import calculateAge from "../../../utils/calculateAge";
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import ajaxFile from "../../../utils/ajaxFile";
 import Commands from "../../Commands/Commands";
 
-/*
-const Table = ({list, path}) => {
-  return (
-    <table className="table table-bordered table-sm">
-      <thead>
-      <tr>
-        <th>序号</th>
-        <th>学员姓名</th>
-        <th>学员编号</th>
-        <th>性别</th>
-        <th>出生年月</th>
-        <th>年龄</th>
-        <th>证件类型</th>
-        <th>证件号码</th>
-        <th>在读年级</th>
-        <th>所在学校</th>
-      </tr>
-      </thead>
-      <tbody>{TableItem(list, path)}</tbody>
-    </table>
-  );
-};
-
-const TableItem = (data, path) => {
-  let table = [];
-
-  if (data.length === 0) {
-    return table;
-  }
-
-  data.map((item, index) => {
-    table.push(
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td><Link to={`${path}/student/${item.id}`}>{item.name}</Link></td>
-        <td>{item.code}</td>
-        <td>{item.genderText}</td>
-        <td>{fmtDate(item.birthday)}</td>
-        <td>{calculateAge(fmtDate(item.birthday))}</td>
-        <td>{CONFIG.DOCUMENT[item.idType]}</td>
-        <td>{item.idCode}</td>
-        <td>{item.schoolGrade}</td>
-        <td>{item.schoolName}</td>
-      </tr>
-    );
-  });
-
-  return table;
-};
-*/
-
 class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export'|| command.id === '3-2-3'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -81,6 +30,10 @@ class List extends React.Component {
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
+                {
+                    type: 'selection',
+                    width: 20,
+                },
                 {
                     label: "序号",
                     type: 'index'
@@ -93,8 +46,19 @@ class List extends React.Component {
                     }
                 },
                 {
+                    label: "英文名",
+                    prop: "en_name",
+                    render: (row, column, data)=>{
+                        return <span><Link to={`/home/service/customer/student/${row.id}`}>{row.enName}</Link></span>
+                    }
+                },
+                {
                     label: "学员编号",
                     prop: "code",
+                },
+                {
+                    label: "状态",
+                    prop: "classStatus",
                 },
                 {
                     label: "性别",
@@ -124,6 +88,10 @@ class List extends React.Component {
                     prop: "schoolGrade",
                 },
                 {
+                    label: "学校类型",
+                    prop: "schoolType",
+                },
+                {
                     label: "所在学校",
                     prop: "schoolName",
                 }
@@ -132,9 +100,15 @@ class List extends React.Component {
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            chooseRows:[],
+            statusName:[],
+            chooseStatusName:"",
+            cellphone:null
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.exportAction = this.exportAction.bind(this);
+        this.delAction = this.delAction.bind(this);
+        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
     }
 
    /* goToDetails(data) {
@@ -151,7 +125,9 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
+                    pageSize:this.state.pageSize,cellphone:this.state.cellphone,classStatus:this.state.chooseStatusName});
+                let statusList = await ajax('/service/customer/student/classStatus.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
                 list.data.map(item => {
                     if(item.idType != null){
                         item.idType = CONFIG.DOCUMENT[item.idType];
@@ -161,7 +137,7 @@ class List extends React.Component {
                         item.birthday = fmtDate(item.birthday);
                     }
                 });
-                this.setState({list: list.data,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data,totalPage: list.totalPage,totalCount: list.count,statusName:statusList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -264,6 +240,56 @@ class List extends React.Component {
         });
     }
 
+    /**
+     * 列表选择
+     * @param value
+     */
+    selectRow(value) {
+        var ids = [];
+        if(value){
+            value.map((leads) => (ids.push(leads.id)));
+        }
+        this.setState({
+            chooseRows: ids
+        });
+    }
+    delAction(){
+        console.log(this.state.chooseRows);
+        if(!this.state.chooseRows || this.state.chooseRows.length <= 0){
+            this.errorMsg("请先选择要删除的对象！")
+        }else{
+            const request = async () => {
+                try {
+                    const param={ids: this.state.chooseRows};
+
+                    await ajax('/service/customer/student/batchDel.do', {"assignVo":JSON.stringify(param)});
+                    this.successMsg("删除成功！")
+                    this.componentDidMount();
+                } catch (err) {
+                    if (err.errCode === 401) {
+                        this.setState({redirectToReferrer: true})
+                    } else {
+                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    }
+                } finally {
+                    this.setState({isAnimating: false});
+                }
+            };
+
+            request();
+        }
+    }
+    onChange(key, value) {
+        this.setState({
+            cellphone: value
+        });
+    }
+    chooseStatusSearch(chooseStatusName){
+        // debugger;
+        this.state.chooseStatusName = chooseStatusName;
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -290,11 +316,26 @@ class List extends React.Component {
                         commands={this.commands}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
+                        delAction={this.delAction}
                     />
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} path={this.props.match.url}/>*/}
+                    <Input placeholder="请输入学生姓名"
+                           className={"leadlist_search"}
+                           value={this.state.cellphone}
+                           style={{width: '20%'}}
+                           onChange={this.onChange.bind(this, 'cellphone')}
+                           append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                    />
+                    <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
+                        {
+                            this.state.statusName.map(el => {
+                                return <Select.Option key={el.code} label={el.name} value={el.code} />
+                            })
+                        }
+                    </Select>
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}
@@ -303,6 +344,7 @@ class List extends React.Component {
                         fit={true}
                         emptyText={"--"}
                         height='80%'
+                        onSelectChange={(selection) => this.selectRow(selection) }
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}

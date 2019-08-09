@@ -116,7 +116,8 @@ export default function (data) {
             if (index + 1) {
                 commands[index].commands.push({
                     id: item.cId,
-                    name: item.CommandCode
+                    name: item.CommandCode,
+                    fullName: item.cNameLong
                 });
             }
         }

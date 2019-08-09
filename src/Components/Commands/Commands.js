@@ -44,32 +44,34 @@ const Export = ({action}) => (
 );
 
 const Commands = (props) => {
-    const list = props.commands.map(command => (command.name));
+    // const list = props.commands.map(command => (command.name));
+
     return (
         <div className="btn-group float-right" role="group">
             {
-                list.map((command, index) => {
-                    switch (command) {
+                props.commands.map((item) => {
+
+                    switch (item.name) {
                         case "Add":
-                            return <Add key={index} action={props.addAction}/>;
+                            return <Add key={item.id} action={props.addAction}/>;
                         case "Mod":
-                            return <Mod key={index} action={props.modAction}/>;
+                            return <Mod key={item.id} action={props.modAction}/>;
                         case "Del":
-                            return <Del key={index} action={props.delAction}/>;
+                            return <Del key={item.id} action={props.delAction}/>;
                         case "Auth":
-                            return <Auth key={index} action={props.authAction}/>;
+                            return <Auth key={item.id} action={props.authAction}/>;
                         case "Import":
-                            return <Import key={index} action={props.importAction}/>;
+                            return <Import key={item.id} action={props.importAction}/>;
                         case "Export":
-                            return <Export key={index} action={props.exportAction}/>;
+                            return <Export key={item.id} action={props.exportAction}/>;
                         case 'Assign':
-                            return <Defaults key={index} action={props.assignAction} text="分配给"/>;
+                            return <Defaults key={item.id} action={props.assignAction} text={item.fullName}/>;
                         case 'Convert':
-                            return <Defaults key={index} action={props.convertAction} text="转化为"/>;
+                            return <Defaults key={item.id} action={props.convertAction} text="转化为"/>;
                         case 'Sign':
-                            return <Defaults key={index} action={props.SignAction} text="创建合同"/>;
+                            return <Defaults key={item.id} action={props.SignAction} text="创建合同"/>;
                         case 'Transfer':
-                            return <Transfer key={index} action={props.assignAction} param={props.assignParams} text="转移到"/>;
+                            return <Transfer key={item.id} action={props.assignAction} param={props.assignParams} text="转移到"/>;
                         default:
                             return null;
                     }

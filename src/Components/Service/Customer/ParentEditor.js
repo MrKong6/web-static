@@ -12,6 +12,7 @@ import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
 
 class StudentEditor extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -23,7 +24,8 @@ class StudentEditor extends React.Component {
       isAnimating: false,
       isUpdated: false,
       id: this.props.match.params.studentId,
-      data: null
+      data: null,
+      dataTwo: null,
     };
     this.createDialogTips = this.createDialogTips.bind(this);
     this.updated = this.updated.bind(this);
@@ -37,15 +39,20 @@ class StudentEditor extends React.Component {
 
         this.setState({
           option: {relation},
-          data: data[0]
+          data: data[0],
+          dataTwo: (data.length > 1 ? data[1] : null)
         }, () => {
           const keys = Object.keys(data[0]);
-
           keys.map(key => {
             if (this.form[key]) {
               this.form[key].value = data[0][key];
             }
           })
+          if(data.length > 1){
+              this.form["nameTwo"].value = data[1]["name"];
+              this.form["cellphoneTwo"].value = data[1]["cellphone"];
+              this.form["relationTwo"].value = data[1]["relation"];
+          }
         });
       } catch (err) {
         if (err.errCode === 401) {
@@ -105,6 +112,7 @@ class StudentEditor extends React.Component {
 
     query.studentId = this.state.id;
     query.id = this.state.data.id;
+    query.idTwo = this.state.dataTwo == null ? null : this.state.dataTwo.id;
 
     for (let i = 0; i < this.form.length; i++) {
       if (this.form[i].name) {
@@ -241,7 +249,7 @@ class StudentEditor extends React.Component {
                             <em className="text-danger">*</em>与孩子关系
                           </label>
                           <div className="col-7">
-                            <Relation data={this.state.option.relation}/>
+                            <Relation data={this.state.option.relation} type={0}/>
                           </div>
                         </div>
                         <div className="form-group row">
@@ -273,7 +281,32 @@ class StudentEditor extends React.Component {
                           </div>
                         </div>
                       </div>
-                      <div className="col"/>
+                      <div className="col">
+                          <div className="form-group row">
+                              <label className="col-5 col-form-label font-weight-bold">
+                                  <em className="text-danger">*</em>家长姓名
+                              </label>
+                              <div className="col-7">
+                                  <input type="text" className="form-control" name="nameTwo" required={true}/>
+                              </div>
+                          </div>
+                          <div className="form-group row">
+                              <label className="col-5 col-form-label font-weight-bold">
+                                  <em className="text-danger">*</em>与孩子关系
+                              </label>
+                              <div className="col-7">
+                                  <Relation data={this.state.option.relation} type={1}/>
+                              </div>
+                          </div>
+                          <div className="form-group row">
+                              <label className="col-5 col-form-label font-weight-bold">
+                                  <em className="text-danger">*</em>联系电话
+                              </label>
+                              <div className="col-7">
+                                  <input type="text" className="form-control" name="cellphoneTwo" required={true}/>
+                              </div>
+                          </div>
+                      </div>
                       <div className="col"/>
                     </div>
                   </div>

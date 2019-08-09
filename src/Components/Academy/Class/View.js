@@ -24,7 +24,7 @@ const NextBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/oppor/${ids[curIndex + 1]}`,
+        pathname: `/home/academy/class/${ids[curIndex + 1]}`,
         state: {ids: ids}
       }}
     >
@@ -44,7 +44,7 @@ const PrevBtn = ({id, ids}) => {
     <Link
       className="btn btn-light"
       to={{
-        pathname: `/sales/oppor/${ids[curIndex - 1]}`,
+        pathname: `/home/academy/class/${ids[curIndex - 1]}`,
         state: {ids: ids}
       }}
     >
@@ -57,7 +57,7 @@ class View extends React.Component {
   constructor(props) {
     super(props);
 
-    this.commands = this.props.commands.filter(command => (command.name !== 'Add'));
+    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Assign'));
     this.title = fmtTitle(this.props.location.pathname);
     this.state = {
       group: this.props.changedCrmGroup,
@@ -76,11 +76,9 @@ class View extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let data = await ajax('/service/contract/query.do', {id: this.state.id});
-        let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
-        const ids = list.map((contract) => (contract.id));
-
-        this.setState({data, ids});
+        let data = await ajax('/academy/class/query.do', {id: this.state.id});
+        this.setState({data: data.data});
+        console.log(data.data)
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -90,7 +88,7 @@ class View extends React.Component {
       }
     };
 
-    //request();
+    request();
     mainSize();
   }
 
@@ -163,7 +161,7 @@ class View extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/service/contract"/>
+        <Redirect to="/home/academy/class"/>
       )
     }
 
@@ -176,7 +174,7 @@ class View extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/home/sales/contract');
+                this.props.history.push('/home/academy/class');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -208,7 +206,7 @@ class View extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/home/sales/contract');
+              this.props.history.push('/home/academy/class');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>
@@ -230,263 +228,7 @@ class View extends React.Component {
                   <div className="row">
                     <div className="col">
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">学员姓名</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.stuName}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">学员姓别</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.stuGenderText}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">出生年月</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={fmtDate(this.state.data.stuBirthday)}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">学员年龄</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={calculateAge(this.state.data.stuBirthday)}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">在读年级</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.stuGrade}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">所在学校</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.stuSchoolName}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">证件类型</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={CONFIG.DOCUMENT[this.state.data.stuIdType]}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">证件号码</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.stuIdCode}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">家长姓名</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.parName}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">与孩子关系</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.relation}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">联系电话</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.parCellphone}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">微信号</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.parWechat}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">电子邮箱</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.parEmail}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">家庭住址</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.parAddress}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col"/>
-                  </div>
-                  <p className="ht pt-3 pb-3 b-t b-b">合同信息</p>
-                  <div className="row">
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">课程类别</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.courseType}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">课程产品</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.courseName}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">课时</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.courseHours}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">课次</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.courseTimes}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">合同金额</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.oriPrice}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">折扣金额</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.discPrice}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">应付金额</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.finalPrice}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">已付金额</label>
-                        <div className="col-7">
-                          <input
-                            type="text"
-                            readOnly={true}
-                            className="form-control-plaintext"
-                            value={this.state.data.paid}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">合同编号</label>
+                        <label className="col-5 col-form-label font-weight-bold">班级编号</label>
                         <div className="col-7">
                           <input
                             type="text"
@@ -497,18 +239,64 @@ class View extends React.Component {
                         </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">合同类型</label>
+                        <label className="col-5 col-form-label font-weight-bold">升学前班级</label>
                         <div className="col-7">
                           <input
                             type="text"
                             readOnly={true}
                             className="form-control-plaintext"
-                            value={CONFIG.TYPE_ID[this.state.data.typeId]}
+                            value={this.state.data.beforeClassCode}
                           />
                         </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">签约日期</label>
+                        <label className="col-5 col-form-label font-weight-bold">班级类型</label>
+                        <div className="col-7">
+                          <input
+                            type="text"
+                            readOnly={true}
+                            className="form-control-plaintext"
+                            value={this.state.data.typeName}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <label className="col-5 col-form-label font-weight-bold">班级类别</label>
+                        <div className="col-7">
+                          <input
+                            type="text"
+                            readOnly={true}
+                            className="form-control-plaintext"
+                            value={this.state.data.rangeName}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <label className="col-5 col-form-label font-weight-bold">校区</label>
+                        <div className="col-7">
+                          <input
+                            type="text"
+                            readOnly={true}
+                            className="form-control-plaintext"
+                            value={this.state.data.schoolArea}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <label className="col-5 col-form-label font-weight-bold">班级状态</label>
+                        <div className="col-7">
+                          <input
+                            type="text"
+                            readOnly={true}
+                            className="form-control-plaintext"
+                            value={this.state.data.classStatusName}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="col">
+                      <div className="form-group row">
+                        <label className="col-5 col-form-label font-weight-bold">开班日期</label>
                         <div className="col-7">
                           <input
                             type="text"
@@ -519,7 +307,7 @@ class View extends React.Component {
                         </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">到期日期</label>
+                        <label className="col-5 col-form-label font-weight-bold">结班日期</label>
                         <div className="col-7">
                           <input
                             type="text"
@@ -532,35 +320,57 @@ class View extends React.Component {
                     </div>
                     <div className="col">
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">所属组织</label>
+                        <label className="col-5 col-form-label font-weight-bold">主教</label>
                         <div className="col-7">
                           <input
                             type="text"
                             readOnly={true}
                             className="form-control-plaintext"
-                            value={this.state.data.orgName}
+                            value={this.state.data.mainTeacher}
                           />
                         </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">所属用户</label>
+                        <label className="col-5 col-form-label font-weight-bold">教务</label>
                         <div className="col-7">
                           <input
                             type="text"
                             readOnly={true}
                             className="form-control-plaintext"
-                            value={this.state.data.executiveName}
+                            value={this.state.data.registrar}
                           />
                         </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                        <label className="col-5 col-form-label font-weight-bold">计划人数</label>
                         <div className="col-7">
                           <input
                             type="text"
                             readOnly={true}
                             className="form-control-plaintext"
-                            value={this.state.data.creatorName}
+                            value={this.state.data.planNum}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <label className="col-5 col-form-label font-weight-bold">开班人数</label>
+                        <div className="col-7">
+                          <input
+                            type="text"
+                            readOnly={true}
+                            className="form-control-plaintext"
+                            value={this.state.data.startNum}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <label className="col-5 col-form-label font-weight-bold">实际人数</label>
+                        <div className="col-7">
+                          <input
+                            type="text"
+                            readOnly={true}
+                            className="form-control-plaintext"
+                            value={this.state.data.factNum}
                           />
                         </div>
                       </div>
@@ -571,16 +381,48 @@ class View extends React.Component {
                             type="text"
                             readOnly={true}
                             className="form-control-plaintext"
-                            value={fmtDate(this.state.data.createTime)}
+                            value={fmtDate(this.state.data.createOn)}
                           />
                         </div>
                       </div>
+                      <div className="form-group row">
+                          <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                          <div className="col-7">
+                              <input
+                                  type="text"
+                                  readOnly={true}
+                                  className="form-control-plaintext"
+                                  value={this.state.data.createBy}
+                              />
+                          </div>
+                      </div>
                     </div>
+                    <div className="col"/>
                   </div>
                 </div>
               </div>
             </div>
           </div>
+          <nav aria-label="breadcrumb">
+              <ol className="breadcrumb location_bottom">
+                  <li className="breadcrumb-item">班级基本信息</li>
+                  <li className="breadcrumb-item active"><Link to={`/home/academy/class/student/${this.state.id}`}>班级学员信息</Link></li>
+                  <li className="breadcrumb-item">
+                      <Link to={{
+                          pathname: ``,
+                          state: {stuName: this.state.data.name}
+                      }}>班级教师信息</Link>
+                  </li>
+                  <li className="breadcrumb-item">
+                      <Link to={{
+                          pathname: ``,
+                          state: {stuName: this.state.data.name}
+                      }}>班级课程表</Link>
+                  </li>
+                  <li className="breadcrumb-item"><Link to={``}>班级考勤信息</Link></li>
+                  <li className="breadcrumb-item"><Link to={``}>班级异动信息</Link></li>
+              </ol>
+          </nav>
         </div>
       </div>
     )
