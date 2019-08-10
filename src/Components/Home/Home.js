@@ -14,6 +14,7 @@ import Leads from '../Mkt/Leads/Leads';
 import Appor from '../Sales/Appor/Appor';
 import SalesContract from '../Sales/Contract/Contract';
 import SalesCustomer from '../Sales/Customer/Customer';
+import ServiceThrough from '../Service/Through/Through';
 import ServiceContract from '../Service/Contract/Contract';
 import ServiceCustomer from '../Service/Customer/Customer';
 import ServiceVisitor from '../Service/Visitor/Visitor';
@@ -33,7 +34,8 @@ import DialogTips from "../Dialog/DialogTips";
 import ajax from "../../utils/ajax";
 import profileProcess from "../../utils/profileProcess";
 import Statistic from "../Mkt/Statistic/Statistic";
-import SaleStatistic from "../Sales/SaleStatistic/SaleStatistic";
+import AllStatistic from "../Statistic/SaleStatistic/SaleStatistic";
+import SaleStatistic from "../Statistic/SaleStatistic/SaleStatistic";
 import ServiceStatistic from "../Service/ServiceStatistic/ServiceStatistic";
 
 class Home extends React.Component {
@@ -162,8 +164,10 @@ class Home extends React.Component {
             <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
                           component={SalesCustomer}{...query}/>
             <PrivateRoute path="/home/sales/statistic" changedCrmGroup={this.state.group} component={SaleStatistic}{...query}/>
+            <PrivateRoute path="/home/service/through" changedCrmGroup={this.state.group}
+                          component={ServiceThrough}{...query} />
             <PrivateRoute path="/home/service/visitorin" changedCrmGroup={this.state.group}
-                          component={ServiceVisitor}{...query} />
+                        component={ServiceVisitor}{...query} />
             <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
                           component={ServiceVisitor}{...query}/>
             <PrivateRoute path="/home/service/contract" changedCrmGroup={this.state.group}
@@ -187,6 +191,8 @@ class Home extends React.Component {
                           component={EducationClass}{...query}/>
             <PrivateRoute path="/home/education/course" changedCrmGroup={this.state.group}
                           component={EducationCourse}{...query}/>
+            <PrivateRoute path="/home/statistic" changedCrmGroup={this.state.group}
+                          component={AllStatistic}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>
             <Route render={(props) => (
               <NoMatch {...props} profile={this.state.profile.profile}/>

@@ -43,7 +43,6 @@ class Form extends React.Component {
           data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
         } else {
 
-          debugger
           data = {
             stuName: this.props.apporData.student.name,
             stuGrade: this.props.apporData.student.classGrade,

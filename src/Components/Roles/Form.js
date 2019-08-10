@@ -36,7 +36,7 @@ class Form extends React.Component {
         let funcDic = await ajax('/func/listAllFuncs.do');
         let rankDic = await ajax('/role/ranks.do');
 
-        funcDic = funcDic.filter(func => (func.cId === func.cRootId && func.cId !== this.FUNC_ADMIN));
+        funcDic = funcDic.filter(func => (func.cId === func.cRootId && func.cId !== this.FUNC_ADMIN && func.cId !== "8"));
         rankDic = rankDic.filter(rank => (rank.cId !== this.RANK_ADMIN));
 
         this.setState({funcDic, rankDic})
@@ -111,6 +111,7 @@ class Form extends React.Component {
 
   changedFunc(evt) {
     let tempFunc = [];
+
     if (this.state.selectedFunc.includes(evt.target.value)) {
       if (this.state.selectedRole && this.state.isManger) {
         tempFunc = this.state.selectedFunc.filter((func) => (func !== evt.target.value));
@@ -180,6 +181,7 @@ class Form extends React.Component {
   }
 
   render() {
+
     if (this.props.isEditor && !this.props.data) {
       return (
         <form ref={(dom) => {
@@ -195,6 +197,7 @@ class Form extends React.Component {
         </form>
       )
     } else {
+      this.state.isManger = this.props.data.cRankId === this.RANK_MANGER;
       return (
         <form ref={(dom) => {
           this.form = dom

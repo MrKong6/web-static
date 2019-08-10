@@ -254,12 +254,10 @@ class StudentAssignView extends React.Component {
     }
 
     assignAction() {
-        debugger
         this.props.history.push(`${this.props.match.url}/assign/`, {ids: this.ids});
     }
 
     renderFunc(option) {
-        debugger
         return <span>{ option.key } - { option.label }</span>;
     }
 

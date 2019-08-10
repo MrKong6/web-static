@@ -18,7 +18,6 @@ class Editor extends React.Component {
       isAnimating: false,
       isUpdated: false,
       id: this.props.match.params.roleId,
-
       data: null
     };
     this.createDialogTips = this.createDialogTips.bind(this);

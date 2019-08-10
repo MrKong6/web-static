@@ -16,15 +16,16 @@ class Create extends React.Component {
     super(props);
 
     this.title = fmtTitle(this.props.location.pathname);
+    this.ids = this.props.location.state.ids;
     this.state = {
       group: this.props.changedCrmGroup,
-      oriId: this.props.location.state.oriId,
       redirectToReferrer: false,
       redirectToList: false,
       isAnimating: false,
       isCreated: false,
-      createdId: null,
+      createdId: null
     };
+    this.state.group.cRealName = this.props.profile.cRealname;
     this.createDialogTips = this.createDialogTips.bind(this);
     this.create = this.create.bind(this);
   }
@@ -73,18 +74,15 @@ class Create extends React.Component {
     if (!query) {
       return;
     }
-
+    //处理年龄
+    query.throughTime = this.form.state.createTime ? this.form.state.createTime.getTime() : "";
     query.orgId = this.state.group.id;
-    query.oriId = this.state.oriId;
-    query.stuBirthday = query.stuBirthday ? (new Date(query.stuBirthday).getTime()) : null;
-    query.startDate = query.startDate ? (new Date(query.startDate).getTime()) : null;
-    query.endDate = query.endDate ? (new Date(query.endDate).getTime()) : null;
 
     this.setState({isAnimating: true});
 
     const request = async () => {
       try {
-        let rs = await ajax('/sales/contract/add.do', query);
+        let rs = await ajax('/service/visitor/add.do', query);
 
         this.setState({isCreated: true, createdId: rs})
       } catch (err) {
@@ -102,25 +100,12 @@ class Create extends React.Component {
   }
 
   render() {
+
     if (this.state.redirectToReferrer) {
       return (
         <Redirect to={{
           pathname: '/login',
           state: {from: this.props.location}
-        }}/>
-      )
-    }
-
-    if (this.state.redirectToList) {
-      return (
-        <Redirect to="/home/sales/contract"/>
-      )
-    }
-
-    if (this.state.isCreated) {
-      return (
-        <Redirect to={{
-          pathname: `/home/sales/contract/${this.state.createdId}`,
         }}/>
       )
     }
@@ -153,7 +138,8 @@ class Create extends React.Component {
           <Form
             isEditor={false}
             changedCrmGroup={this.state.group}
-            apporData={this.props.location.state.data}
+            replace={this.props.history.replace}
+            from={this.props.location}
             ref={(dom) => {
               this.form = dom
             }}

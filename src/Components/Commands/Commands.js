@@ -35,6 +35,12 @@ const Defaults = ({text, action}) => (
     </button>
 );
 
+const Show = ({text, action}) => (
+    <button onClick={action} type="button" className="btn btn-primary" id="btnChoose" style={{"background": "none","color": "black","border": "none"}}>
+        {text}
+    </button>
+);
+
 const Transfer = ({action,param}) => (
     <Button className="el-button-nomargin" type="warning" icon="d-arrow-right" onClick={action} param={param}>转移到</Button>
 );
@@ -72,6 +78,8 @@ const Commands = (props) => {
                             return <Defaults key={item.id} action={props.SignAction} text="创建合同"/>;
                         case 'Transfer':
                             return <Transfer key={item.id} action={props.assignAction} param={props.assignParams} text="转移到"/>;
+                        case 'Show':
+                            return <Show key={item.id} action={props.modAction} text={item.fullName}/>;
                         default:
                             return null;
                     }

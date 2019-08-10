@@ -24,7 +24,7 @@ class Status extends React.Component {
     const request = async () => {
       try {
         let list = await ajax('/mkt/leads/status/list.do', {typeId: this.props.typeId});
-        debugger
+
         if(this.props.typeId == 1 && this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1){
             //线索私有池
             list = list.filter(sta => !(sta.id == 2 || sta.id == 3));

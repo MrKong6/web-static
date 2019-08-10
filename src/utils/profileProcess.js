@@ -60,7 +60,6 @@ export default function (data) {
     };
     profile.roles = [];
 
-
     data.roles.map(item => {
         func = func.concat(item.functions);
         profile.roles.push(item.cName);
