@@ -37,30 +37,30 @@ class List extends React.Component {
                 },
                 {
                     label: "体验课场次",
-                    prop: "creatorName",
+                    prop: "code",
                     sortable: true
                 },
                 {
                     label: "状态",
-                    prop: "createTime",
+                    prop: "throughStatusName",
                     sortable: true
                 },
                 {
                     label: "时间",
-                    prop: "orgName",
+                    prop: "throughTime",
                     showOverflowTooltip: true,
                 },
                 {
                     label: "主教",
-                    prop: "executiveName",
+                    prop: "mainTeacher",
                 },
                 {
                     label: "主教",
-                    prop: "typeId",
+                    prop: "assistant",
                 },
                 {
                     label: "课程顾问",
-                    prop: "courseType",
+                    prop: "adviser",
                     width: 95
                 },
             ],
@@ -74,23 +74,15 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                const ids = list.data.map((contract) => (contract.id));
-                list.data.map(item => {
-                    if(item.createTime != null){
-                        item.createTime = fmtDate(item.createTime);
-                    }
-                    if(item.startDate != null){
-                        item.startDate = fmtDate(item.startDate);
-                    }
-                    if(item.endDate != null){
-                        item.endDate = fmtDate(item.endDate);
-                    }
-                    if(item.typeId != null){
-                        item.typeId = CONFIG.TYPE_ID[item.typeId];
+                let list = await ajax('/service/through/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                debugger
+                const ids = list.data.item.map((contract) => (contract.id));
+                list.data.item.map(item => {
+                    if(item.throughTime != null){
+                        item.throughTime = fmtDate(item.throughTime);
                     }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data.item, ids: ids,totalPage: list.totalPage,totalCount: list.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})

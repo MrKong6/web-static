@@ -74,7 +74,7 @@ class Create extends React.Component {
     if (!query) {
       return;
     }
-    //处理年龄
+    debugger
     query.throughTime = this.form.state.createTime ? this.form.state.createTime.getTime() : "";
     query.orgId = this.state.group.id;
 
@@ -82,12 +82,12 @@ class Create extends React.Component {
 
     const request = async () => {
       try {
-        let rs = await ajax('/service/visitor/add.do', query);
+        let rs = await ajax('/service/through/add.do', query);
+        this.setState({isCreated: true, createdId: rs});
 
-        this.setState({isCreated: true, createdId: rs})
       } catch (err) {
         if (err.errCode === 401) {
-          this.setState({redirectToReferrer: true})
+          this.setState({redirectToReferrer: true,redirectToList:true})
         } else {
           this.createDialogTips(`${err.errCode}: ${err.errText}`);
         }
@@ -109,6 +109,11 @@ class Create extends React.Component {
         }}/>
       )
     }
+      if (this.state.redirectToList) {
+          return (
+              <Redirect to= "/home/service/through" />
+          )
+      }
 
     return (
       <div>

@@ -311,7 +311,7 @@ class List extends React.Component {
      * 导出
      */
     exportAction() {
-        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:4})
+        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:4,fromWay:1})
     };
 
     /**
