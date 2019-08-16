@@ -10,6 +10,7 @@ import ajax from "../../../utils/ajax";
 import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs} from 'element-react';
 import ReactEcharts from 'echarts-for-react';
 import Commands from "../../Commands/Commands";
+import {getBarOption} from "../../../utils/const";
 
 class List extends React.Component {
     constructor(props) {
@@ -17,6 +18,7 @@ class List extends React.Component {
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.changePanel = this.changePanel.bind(this);
+        this.changeRepportType = this.changeRepportType.bind(this);
         this.modAction = this.modAction.bind(this);
         this.commands = this.props.commands.filter(command => (command.name === 'Show'));
         this.title = fmtTitle(this.props.location.pathname);
@@ -27,6 +29,8 @@ class List extends React.Component {
             type : 2,
             isAnimating: true,
             redirectToReferrer: false,
+            optionBar:getBarOption(),
+            reportType:1,
             option: {
                 tooltip: {
                     trigger: 'item',
@@ -412,6 +416,7 @@ class List extends React.Component {
             try {
                 let list = await ajax('/mkt/leads/getStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
                     fromWay:fromWay,typeId:typeId,isIn:0});
+
                 if(list){
                     let out = [];
                     let inside = [];
@@ -505,8 +510,88 @@ class List extends React.Component {
                             ]
                         }});
                 }
-
-
+                debugger
+                if(typeId == 2){
+                    let listTwo = await ajax('/mkt/leads/getStatisticCountByDay.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                        fromWay:fromWay,typeId:typeId,isIn:0,reportType:this.state.reportType});
+                    if(listTwo){
+                        let dataOne = [],dataTwo = [],dataThree = [],dataFour = [],xAxis=[];
+                        listTwo.dataOne.map(item => {
+                            dataOne.push(item.code);xAxis.push(item.showStr);
+                            this.state.optionBar.xAxis[0].data.push(item.showStr);
+                            this.state.optionBar.series[0].data.push();
+                        });
+                        listTwo.dataTwo.map(item => {
+                            dataTwo.push(item.code);
+                            this.state.optionBar.series[0].data.push(item.code);
+                        });
+                        listTwo.dataThree.map(item => {
+                            dataThree.push(item.code);
+                            this.state.optionBar.series[0].data.push(item.code);
+                        });
+                        listTwo.dataFour.map(item => {
+                            dataFour.push(item.code);
+                            this.state.optionBar.series[0].data.push(item.code);
+                        });
+                        this.setState({optionBar: {
+                                tooltip : {
+                                    trigger: 'axis',
+                                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                                    }
+                                },
+                                legend: {
+                                    orient: 'vertical',
+                                    x: 'left',
+                                    data:['访客->线索->机会','线索->机会','访客->机会','创建机会'],
+                                },
+                                grid: {
+                                    left: '20%',
+                                    right: '4%',
+                                    bottom: '3%',
+                                    top: '3%',
+                                    containLabel: true
+                                },
+                                xAxis : [
+                                    {
+                                        type : 'category',
+                                        data : xAxis
+                                    }
+                                ],
+                                yAxis : [
+                                    {
+                                        type : 'value'
+                                    }
+                                ],
+                                series : [
+                                    {
+                                        name:'访客->线索->机会',
+                                        type:'bar',
+                                        stack: '机会',
+                                        data:dataOne
+                                    },
+                                    {
+                                        name:'线索->机会',
+                                        type:'bar',
+                                        stack: '机会',
+                                        data:dataTwo
+                                    },
+                                    {
+                                        name:'访客->机会',
+                                        type:'bar',
+                                        stack: '机会',
+                                        data:dataThree
+                                    },
+                                    {
+                                        name:'创建机会',
+                                        type:'bar',
+                                        stack: '机会',
+                                        data:dataFour
+                                    }
+                                ]
+                            }});
+                    }
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -535,7 +620,14 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    changeRepportType(reportType){
+        this.state.reportType = reportType;
+        let tab= {'props':{'name':2}};
+        this.changePanel(tab);
+    }
+
     render() {
+
         if (this.state.redirectToReferrer) {
             return (
                 <Redirect to={{
@@ -572,7 +664,7 @@ class List extends React.Component {
                         />
                     </h5>
                     <div id="main" className="main p-3">
-                        <Tabs activeName="1" onTabClick={ this.changePanel }>
+                        <Tabs activeName="1" onTabClick={this.changePanel }>
                             <Tabs.Pane label="线索" name="1">
                                 <ReactEcharts
                                     option={this.state.option}
@@ -582,6 +674,14 @@ class List extends React.Component {
                             <Tabs.Pane label="机会" name="2">
                                 <ReactEcharts
                                     option={this.state.option}
+                                    style={{height: '350px', width: '1000px'}}
+                                    className='react_for_echarts' />
+                                <br/><br/>
+                                <Button type="primary" size="small" onClick={this.changeRepportType.bind(this,1)}>近一周</Button>
+                                <Button type="primary" size="small" onClick={this.changeRepportType.bind(this,2)}>近一月</Button>
+                                <Button type="primary" size="small" onClick={this.changeRepportType.bind(this,3)}>近一年</Button>
+                                <ReactEcharts
+                                    option={this.state.optionBar}
                                     style={{height: '350px', width: '1000px'}}
                                     className='react_for_echarts' />
                             </Tabs.Pane>

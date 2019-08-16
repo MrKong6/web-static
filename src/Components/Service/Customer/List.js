@@ -36,11 +36,18 @@ class List extends React.Component {
                 },
                 {
                     label: "序号",
-                    type: 'index'
+                    type: 'index',
+                    fixed: 'left',
+                },
+                {
+                    label: "学员编号",
+                    prop: "code",
+                    fixed: 'left',
                 },
                 {
                     label: "学员姓名",
                     prop: "name",
+                    fixed: 'left',
                     render: (row, column, data)=>{
                         return <span><Link to={`/home/service/customer/student/${row.id}`}>{row.name}</Link></span>
                     }
@@ -48,13 +55,10 @@ class List extends React.Component {
                 {
                     label: "英文名",
                     prop: "en_name",
+                    fixed: 'left',
                     render: (row, column, data)=>{
                         return <span><Link to={`/home/service/customer/student/${row.id}`}>{row.enName}</Link></span>
                     }
-                },
-                {
-                    label: "学员编号",
-                    prop: "code",
                 },
                 {
                     label: "状态",

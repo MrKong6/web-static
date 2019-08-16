@@ -26,6 +26,7 @@ import AcademyRoom from '../Academy/Room/Room';
 import AcademyAssignClass from '../Academy/AssignClass/AssignClass';
 import EducationClass from '../Education/Class/Class';
 import EducationCourse from '../Education/Course/Course';
+import EducationThrough from '../Education/Through/Through';
 
 import ChangePwd from '../ChangePwd/ChangePwd';
 import NoMatch from "../NoMatch/NoMatch";
@@ -191,6 +192,8 @@ class Home extends React.Component {
                           component={EducationClass}{...query}/>
             <PrivateRoute path="/home/education/course" changedCrmGroup={this.state.group}
                           component={EducationCourse}{...query}/>
+            <PrivateRoute path="/home/education/through" changedCrmGroup={this.state.group}
+                          component={EducationThrough}{...query}/>
             <PrivateRoute path="/home/statistic" changedCrmGroup={this.state.group}
                           component={AllStatistic}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>

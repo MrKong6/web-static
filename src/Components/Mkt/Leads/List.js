@@ -102,6 +102,7 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
+        let storage = window.sessionStorage;
         this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -116,7 +117,7 @@ class List extends React.Component {
             ids: [],
             isAnimating: true,
             redirectToReferrer: false,
-            cellphone : '',
+            cellphone : storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
             columns:[
                 {
                     label: "序号",
@@ -253,15 +254,21 @@ class List extends React.Component {
                     width: 140,
                     sortable: true
                 },
+                {
+                    label: "转移时间",
+                    prop: "transTime",
+                    width: 140,
+                    sortable: true
+                },
             ],
             totalPage:0,
             currentPage:1,
-            pageSize:10,
+            pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],
-            chooseStageName:"",
+            chooseStageName:storage.getItem("chooseStageName") ? storage.getItem("chooseStageName") : '',
             statusName:[],
-            chooseStatusName:""
+            chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
 
         };
 
@@ -284,6 +291,9 @@ class List extends React.Component {
                 list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = formatWithTime(item.createTime);
+                    }
+                    if(item.transTime != null){
+                        item.transTime = formatWithTime(item.transTime);
                     }
                     if(!item.parent){
                         item.parent = {"cellphone" : "","name" : ""};
@@ -317,6 +327,9 @@ class List extends React.Component {
                     list.data.map(item => {
                         if(!item.parent){
                             item.parent = {"cellphone" : "","name" : ""};
+                        }
+                        if(item.transTime != null){
+                            item.transTime = formatWithTime(item.transTime);
                         }
                     });
                     this.setState({
@@ -407,6 +420,7 @@ class List extends React.Component {
         this.setState({
             cellphone: value
         });
+        window.sessionStorage.setItem("cellphone",value);
     }
 
     pageChange(currentPage){
@@ -423,17 +437,20 @@ class List extends React.Component {
     }
 
     exportAction() {
-        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id})
+        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,fromWay:2,
+            isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0)})
     };
     chooseStageSearch(chooseStageName){
         // debugger;
         this.state.chooseStageName = chooseStageName;
         this.state.currentPage = 1;
+        window.sessionStorage.setItem("chooseStageName",chooseStageName);
         this.componentDidMount();
     }
     chooseStatusSearch(chooseStatusName){
         // debugger;
         this.state.chooseStatusName = chooseStatusName;
+        window.sessionStorage.setItem("chooseStatusName",chooseStatusName);
         this.state.currentPage = 1;
         this.componentDidMount();
     }

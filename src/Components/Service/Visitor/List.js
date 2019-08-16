@@ -22,6 +22,7 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
+        let storage = window.sessionStorage;
         this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'|| command.name === 'Transfer'|| command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -37,7 +38,7 @@ class List extends React.Component {
             ids: [],
             isAnimating: true,
             redirectToReferrer: false,
-            cellphone : '',
+            cellphone : storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
             chooseRows:[],
             columns:[
                 {
@@ -188,12 +189,12 @@ class List extends React.Component {
             ],
             totalPage:0,
             currentPage:1,
-            pageSize:10,
+            pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],
-            chooseStageName:"",
+            chooseStageName:storage.getItem("chooseStageName") ? storage.getItem("chooseStageName") : '',
             statusName:[],
-            chooseStatusName:""
+            chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
         };
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
@@ -212,6 +213,7 @@ class List extends React.Component {
                     if(item.createTime != null){
                         item.createTime = formatWithTime(item.createTime);
                     }
+
                     if(!item.parent){
                         item.parent = {"cellphone" : "","name" : ""};
                     }
@@ -241,7 +243,9 @@ class List extends React.Component {
 
             const request = async () => {
                 try {
-                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,typeId:4,fromWay:1,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                    let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                        typeId:4,fromWay:1,pageNum:this.state.currentPage,pageSize:this.state.pageSize,
+                        isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1)});
                     const ids = list.data.map((leads) => (leads.id));
 
                     this.setState({
@@ -391,17 +395,20 @@ class List extends React.Component {
         this.setState({
             cellphone: value
         });
+        window.sessionStorage.setItem("cellphone",value);
     }
 
     chooseStageSearch(chooseStageName){
         // debugger;
         this.state.chooseStageName = chooseStageName;
+        window.sessionStorage.setItem("chooseStageName",chooseStageName);
         this.state.currentPage = 1;
         this.componentDidMount();
     }
     chooseStatusSearch(chooseStatusName){
         // debugger;
         this.state.chooseStatusName = chooseStatusName;
+        window.sessionStorage.setItem("chooseStatusName",chooseStatusName);
         this.state.currentPage = 1;
         this.componentDidMount();
     }
@@ -430,6 +437,8 @@ class List extends React.Component {
     sizeChange(pageSize){
         console.log(pageSize);
         this.state.pageSize = pageSize;
+        this.state.currentPage = 1;
+        window.sessionStorage.setItem("pageSize",pageSize);
         this.componentDidMount();
     }
 

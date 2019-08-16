@@ -1,0 +1,8 @@
+.el-date-editor {
+    position: relative;
+    display: inline-block;
+    width:100%;
+}
+.el-date-editor.el-input{
+    width: 100% !important;
+}

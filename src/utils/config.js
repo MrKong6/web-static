@@ -147,11 +147,11 @@ export default {
             NAME: '学员'
         },
         "2-4": {
-            PATH: "home/sales/statistic",
-            PATH_RULE: /^\/home\/sales\/statistic(\/(student|parent|contract)\/((?!create).)*)?$/,
-            ICON_CLASS: "fa-area-chart",
-            CATEGORY: '',
-            NAME: '仪表盘'
+            PATH: "home/education/through",
+            PATH_RULE: /^\/home\/sales\/through(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-desktop",
+            CATEGORY: '我的',
+            NAME: '体验课'
         },
 
 
@@ -308,6 +308,13 @@ export default {
             ICON_CLASS: "fa-leanpub",
             CATEGORY: '我的',
             NAME: '课程表'
+        },
+        "6-3": {
+            PATH: "home/education/through",
+            PATH_RULE: /^\/home\/education\/through(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-desktop",
+            CATEGORY: '我的',
+            NAME: '体验课'
         },
 
         //管理员相关权限配置

@@ -17,6 +17,7 @@ import ajaxFile from "../../../utils/ajaxFile";
 class List extends React.Component {
     constructor(props) {
         super(props);
+        let storage = window.sessionStorage;
 
         this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
@@ -183,16 +184,29 @@ class List extends React.Component {
                     sortable: true,
                     width: 140,
                 },
+                {
+                    label: "转移时间",
+                    prop: "transTime",
+                    sortable: true,
+                    width: 140,
+                },
+                {
+                    label: "转化时间",
+                    prop: "assignTime",
+                    sortable: true,
+                    width: 140,
+                },
 
             ],
             totalPage:0,
             currentPage:1,
-            pageSize:10,
+            pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],
-            chooseStageName:"",
+            chooseStageName:storage.getItem("chooseStageName") ? storage.getItem("chooseStageName") : '',
             statusName:[],
-            chooseStatusName:""
+            chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
+            cellphone:storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
@@ -215,6 +229,12 @@ class List extends React.Component {
                 list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = formatWithTime(item.createTime);
+                    }
+                    if(item.transTime != null){
+                        item.transTime = formatWithTime(item.transTime);
+                    }
+                    if(item.assignTime != null){
+                        item.assignTime = formatWithTime(item.assignTime);
                     }
                 });
                 this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,statusName:status});
@@ -315,24 +335,27 @@ class List extends React.Component {
     }
 
     exportAction() {
-        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:"2"})
+        ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,typeId:"2",fromWay:3,isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0)})
     };
 
     onChange(key, value) {
         this.setState({
             cellphone: value
         });
+        window.sessionStorage.setItem("cellphone",value);
     }
 
     chooseStageSearch(chooseStageName){
         // debugger;
         this.state.chooseStageName = chooseStageName;
+        window.sessionStorage.setItem("chooseStageName",chooseStageName);
         this.state.currentPage = 1;
         this.componentDidMount();
     }
     chooseStatusSearch(chooseStatusName){
         // debugger;
         this.state.chooseStatusName = chooseStatusName;
+        window.sessionStorage.setItem("chooseStatusName",chooseStatusName);
         this.state.currentPage = 1;
         this.componentDidMount();
     }

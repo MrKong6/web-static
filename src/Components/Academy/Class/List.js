@@ -18,8 +18,8 @@ class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command !== 'Add'));
-
+        this.commands = this.props.commands.filter((command) => (command.name === 'Add'));
+        debugger
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);

@@ -133,8 +133,9 @@ class View extends React.Component {
   delAction() {
     const request = async () => {
       try {
-        await ajax('/service/contract/del.do', {id: this.state.id});
+        await ajax('/academy/class/del.do', {id: this.state.id});
         this.setState({redirectToList: true});
+        this.createDialogTips('删除成功');
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -146,7 +147,7 @@ class View extends React.Component {
       }
     };
 
-    //request();
+    request();
   }
 
   render() {
