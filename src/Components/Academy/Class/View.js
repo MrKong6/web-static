@@ -199,7 +199,7 @@ class View extends React.Component {
         <h5 id="subNav">
           <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
           &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-          <p className="d-inline text-muted">{this.state.data.stuName}</p>
+          <p className="d-inline text-muted">{this.state.data.code}</p>
 
           <div className="btn-group float-right ml-4" role="group">
             <PrevBtn id={this.state.id} ids={this.state.ids}/>
@@ -407,17 +407,20 @@ class View extends React.Component {
           <nav aria-label="breadcrumb">
               <ol className="breadcrumb location_bottom">
                   <li className="breadcrumb-item">班级基本信息</li>
-                  <li className="breadcrumb-item active"><Link to={`/home/academy/class/student/${this.state.id}`}>班级学员信息</Link></li>
+                  <li className="breadcrumb-item active">
+                      <Link to={{pathname:`/home/academy/class/student/${this.state.id}`,
+                              state:{stuName:this.state.data.code}}}>班级学员信息</Link>
+                  </li>
                   <li className="breadcrumb-item">
                       <Link to={{
                           pathname: ``,
-                          state: {stuName: this.state.data.name}
+                          state: {stuName: this.state.data.code}
                       }}>班级教师信息</Link>
                   </li>
                   <li className="breadcrumb-item">
                       <Link to={{
                           pathname: ``,
-                          state: {stuName: this.state.data.name}
+                          state: {stuName: this.state.data.code}
                       }}>班级课程表</Link>
                   </li>
                   <li className="breadcrumb-item"><Link to={``}>班级考勤信息</Link></li>

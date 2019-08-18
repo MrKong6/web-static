@@ -5,189 +5,209 @@ import {$} from "../../vendor";
 
 import DialogGroup from './DialogGroup';
 import ajax from "../../utils/ajax";
+import {Select} from "element-react";
 
 class DialogUser extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.dialogId = `d-${new Date().getTime()}`;
-    this.state = {
-      groupId: this.props.defaults.groupId,
-      groupName: this.props.defaults.groupName,
-      type: this.props.defaults.type,
-      list: [],
-      userId: '',
-      userName: '',
-      redirectToReferrer: false,
-        checkLead: false,
-        checkOppor: false,
-      typeId:'',
-    };
-    this.createGroupsDialog = this.createGroupsDialog.bind(this);
-    this.acceptGroupDialog = this.acceptGroupDialog.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
-    this.accept = this.accept.bind(this);
-    this.cancel = this.cancel.bind(this);
-    this.closed = this.closed.bind(this);
-    this.changedLead = this.changedLead.bind(this);
-    this.changedOppor = this.changedOppor.bind(this);
-  }
+        this.dialogId = `d-${new Date().getTime()}`;
+        this.state = {
+            groupId: this.props.defaults.groupId,
+            groupName: this.props.defaults.groupName,
+            type: this.props.defaults.type,
+            list: [],
+            userId: '',
+            userName: '',
+            redirectToReferrer: false,
+            checkLead: false,
+            checkOppor: false,
+            typeId: '',
+            option: [],
+            throughId:null
+        };
+        this.createGroupsDialog = this.createGroupsDialog.bind(this);
+        this.acceptGroupDialog = this.acceptGroupDialog.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.accept = this.accept.bind(this);
+        this.cancel = this.cancel.bind(this);
+        this.closed = this.closed.bind(this);
+        this.changedLead = this.changedLead.bind(this);
+        this.changedOppor = this.changedOppor.bind(this);
+        this.chooseThroughClas = this.chooseThroughClas.bind(this);
+    }
 
-  componentDidMount() {
-    this.dialog = $(`#${this.dialogId}`);
-    this.dialog.on('hidden.bs.modal', () => {
-      this.closed();
-    });
-
-    const request = async () => {
-      try {
-        let list = await ajax(this.props.path, {orgId: this.state.groupId,typeId: this.props.typeName});
-
-        this.setState({
-          list: list,
-          userId: this.props.defaults.userId,
-          userName: this.props.defaults.userName
+    componentDidMount() {
+        this.dialog = $(`#${this.dialogId}`);
+        this.dialog.on('hidden.bs.modal', () => {
+            this.closed();
         });
-      } catch (err) {
-        if (err.errCode === 401) {
-          this.dialog.modal('hide');
-          this.props.replace('/login', {from: this.props.from})
-        } else {
-          this.setState({errText: `${err.errCode}: ${err.errText}`});
+
+        const request = async () => {
+            try {
+                let list = await ajax(this.props.path, {orgId: this.state.groupId, typeId: this.props.typeName});
+                let listThrough = await ajax(this.props.path, {orgId: this.state.groupId});
+
+                if(listThrough && listThrough.data.items.length > 0){
+                    this.state.throughId = listThrough.data.items[0].id;
+                }
+                this.setState({
+                    list: list,
+                    userId: this.props.defaults.userId,
+                    userName: this.props.defaults.userName,
+                    option:listThrough.data.items
+                });
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.dialog.modal('hide');
+                    this.props.replace('/login', {from: this.props.from})
+                } else {
+                    this.setState({errText: `${err.errCode}: ${err.errText}`});
+                }
+            }
+        };
+
+        request();
+    }
+
+    createGroupsDialog() {
+        if (this.group === undefined) {
+            this.groupContainer = document.createElement('div');
+            ReactDOM.render(
+                <DialogGroup
+                    accept={this.acceptGroupDialog}
+                    defaults={this.state.groupId}
+                    replace={this.props.replace}
+                    from={this.props.from}
+                    ref={(dom) => {
+                        this.group = dom
+                    }}
+                />,
+                document.body.appendChild(this.groupContainer)
+            );
         }
-      }
-    };
 
-    request();
-  }
-
-  createGroupsDialog() {
-    if (this.group === undefined) {
-      this.groupContainer = document.createElement('div');
-      ReactDOM.render(
-        <DialogGroup
-          accept={this.acceptGroupDialog}
-          defaults={this.state.groupId}
-          replace={this.props.replace}
-          from={this.props.from}
-          ref={(dom) => {
-            this.group = dom
-          }}
-        />,
-        document.body.appendChild(this.groupContainer)
-      );
+        this.group.dialog.modal('show');
     }
 
-    this.group.dialog.modal('show');
-  }
+    acceptGroupDialog(selected) {
+        this.setState({
+            groupId: selected.id,
+            groupName: selected.name,
+            userId: '',
+            userName: ''
+        });
 
-  acceptGroupDialog(selected) {
-    this.setState({
-      groupId: selected.id,
-      groupName: selected.name,
-      userId: '',
-      userName: ''
-    });
+        const request = async () => {
+            try {
+                let list = await ajax('/org/listUsers.do', {id: selected.id});
 
-    const request = async () => {
-      try {
-        let list = await ajax('/org/listUsers.do', {id: selected.id});
+                this.setState({list: list});
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.setState({errText: `${err.errCode}: ${err.errText}`});
+                }
+            }
+        };
 
-        this.setState({list: list});
-      } catch (err) {
-        if (err.errCode === 401) {
-          this.setState({redirectToReferrer: true})
-        } else {
-          this.setState({errText: `${err.errCode}: ${err.errText}`});
+        request();
+    }
+
+    handleSelect(evt) {
+        this.setState({
+            userId: evt.target.value,
+            userName: evt.target.options[evt.target.selectedIndex].text
+        })
+    }
+
+    accept() {
+        this.props.accept({
+            group: {
+                id: this.state.groupId,
+                name: this.state.groupName
+            },
+            user: {
+                id: this.state.userId,
+                name: this.state.userName
+            },
+            typeId: this.state.typeId,
+            throughId:this.state.throughId
+
+        });
+        this.dialog.modal('hide');
+    }
+
+    cancel() {
+        this.dialog.modal('hide');
+    }
+
+    closed() {
+        if (this.groupContainer) {
+            document.body.removeChild(this.groupContainer);
         }
-      }
-    };
 
-    request();
-  }
-
-  handleSelect(evt) {
-    this.setState({
-      userId: evt.target.value,
-      userName: evt.target.options[evt.target.selectedIndex].text
-    })
-  }
-
-  accept() {
-    this.props.accept({
-      group: {
-        id: this.state.groupId,
-        name: this.state.groupName
-      },
-      user: {
-        id: this.state.userId,
-        name: this.state.userName
-      },
-      typeId: this.state.typeId,
-    });
-    this.dialog.modal('hide');
-  }
-
-  cancel() {
-    this.dialog.modal('hide');
-  }
-
-  closed() {
-    if (this.groupContainer) {
-      document.body.removeChild(this.groupContainer);
+        document.body.removeChild(this.props.container);
     }
 
-    document.body.removeChild(this.props.container);
-  }
-  changedLead(evt){
-      this.state.typeId = evt.target.value;
-  }
-  changedOppor(){
-      this.state.typeId = '2';
-      let checkO = this.state.checkOppor;
-      this.setState({
-          checkOppor: !checkO,
-      })
-
-  }
-
-  render() {
-    if (this.state.redirectToReferrer) {
-      return (
-        <Redirect to={{
-          pathname: '/login',
-          state: {from: this.props.location}
-        }}/>
-      )
+    changedLead(evt) {
+        this.state.typeId = evt.target.value;
     }
-    if(this.state.type && this.state.type == 1){
-      /*转移给界面*/
-        return (
-            <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{this.props.title}</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div className="modal-body">
-                            {
-                                this.state.errText ? <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
-                            }
-                            <div className="form-group">
-                                <label>所属组织</label>
-                                <div className="input-group">
-                                    <input type="text" className="form-control" value={this.state.groupName} readOnly={true}/>
-                                    <span className="input-group-btn">
+
+    changedOppor() {
+        this.state.typeId = '2';
+        let checkO = this.state.checkOppor;
+        this.setState({
+            checkOppor: !checkO,
+        })
+
+    }
+
+    chooseThroughClas(value){
+        debugger
+        this.state.throughId = value;
+    }
+
+    render() {
+        if (this.state.redirectToReferrer) {
+            return (
+                <Redirect to={{
+                    pathname: '/login',
+                    state: {from: this.props.location}
+                }}/>
+            )
+        }
+        if (this.state.type && this.state.type == 1) {
+            /*转移给界面*/
+            return (
+                <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">{this.props.title}</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                {
+                                    this.state.errText ? <div className="alert alert-danger"
+                                                              role="alert">{this.state.errText}</div> : null
+                                }
+                                <div className="form-group">
+                                    <label>所属组织</label>
+                                    <div className="input-group">
+                                        <input type="text" className="form-control" value={this.state.groupName}
+                                               readOnly={true}/>
+                                        <span className="input-group-btn">
                     <button onClick={this.createGroupsDialog} className="btn btn-secondary" type="button">
                       <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
                     </button>
                   </span>
+                                    </div>
                                 </div>
-                            </div>
-                            {/*<div className="form-group">
+                                {/*<div className="form-group">
                                 <label>所属用户</label>
                                 <select className="form-control" onChange={this.handleSelect} value={this.state.userId}>
                                     <option value="">请选择</option>
@@ -198,89 +218,138 @@ class DialogUser extends React.Component {
                                     }
                                 </select>
                             </div>*/}
-                            <div className="form-check form-check-inline">
-                                <input
-                                    id="funcAdmin"
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="leadCheck"
-                                    value="1"
-                                    onChange={this.changedLead}
-                                />
-                                <label className="form-check-label" htmlFor="funcAdmin">
-                                    线索公有池
-                                </label>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        id="funcAdmin"
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="leadCheck"
+                                        value="1"
+                                        onChange={this.changedLead}
+                                    />
+                                    <label className="form-check-label" htmlFor="funcAdmin">
+                                        线索公有池
+                                    </label>
+                                </div>
+                                <div className="form-check form-check-inline">
+                                    <input
+                                        id="funcAdmin"
+                                        className="form-check-input"
+                                        type="radio"
+                                        name="leadCheck"
+                                        value="2"
+                                        onChange={this.changedLead}
+                                    />
+                                    <label className="form-check-label" htmlFor="funcAdmin">
+                                        机会公有池
+                                    </label>
+                                </div>
                             </div>
-                            <div className="form-check form-check-inline">
-                                <input
-                                    id="funcAdmin"
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="leadCheck"
-                                    value="2"
-                                    onChange={this.changedLead}
-                                />
-                                <label className="form-check-label" htmlFor="funcAdmin">
-                                    机会公有池
-                                </label>
+                            <div className="modal-footer">
+                                <button onClick={this.cancel} type="button" className="btn btn-secondary"
+                                        data-dismiss="modal">取消
+                                </button>
+                                <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
                             </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button onClick={this.cancel} type="button" className="btn btn-secondary" data-dismiss="modal">取消</button>
-                            <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
                         </div>
                     </div>
                 </div>
-            </div>
-        )
-    }else{
-        return (
-            <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{this.props.title}</h5>
-                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
+            )
+        } else if (this.state.type && this.state.type == 30) {
+            //邀约体验课界面
+            return (
+                <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">{this.props.title}</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                {
+                                    this.state.errText ?
+                                        <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
+                                }
+                                <div className="form-group">
+                                    <label>体验课场次</label>
+                                    <div className="input-group">
+                                        <Select value={this.state.value} style={{width:'100%'}} onChange={this.chooseThroughClas}>
+                                            {
+                                                this.state.option.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code}
+                                                                          value={el.id}/>
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button onClick={this.cancel} type="button" className="btn btn-secondary"
+                                        data-dismiss="modal">取消
+                                </button>
+                                <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
+                            </div>
                         </div>
-                        <div className="modal-body">
-                            {
-                                this.state.errText ? <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
-                            }
-                            <div className="form-group">
-                                <label>所属组织</label>
-                                <div className="input-group">
-                                    <input type="text" className="form-control" value={this.state.groupName} readOnly={true}/>
-                                    <span className="input-group-btn">
-                                        <button onClick={this.createGroupsDialog} className="btn btn-secondary" type="button">
+                    </div>
+                </div>
+            )
+        } else {
+            return (
+                <div id={this.dialogId} className="modal fade" tabIndex="-1" role="dialog">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">{this.props.title}</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                                {
+                                    this.state.errText ? <div className="alert alert-danger"
+                                                              role="alert">{this.state.errText}</div> : null
+                                }
+                                <div className="form-group">
+                                    <label>所属组织</label>
+                                    <div className="input-group">
+                                        <input type="text" className="form-control" value={this.state.groupName}
+                                               readOnly={true}/>
+                                        <span className="input-group-btn">
+                                        <button onClick={this.createGroupsDialog} className="btn btn-secondary"
+                                                type="button">
                                           <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
                                         </button>
                                     </span>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>所属用户</label>
+                                    <select className="form-control" onChange={this.handleSelect}
+                                            value={this.state.userId}>
+                                        <option value="">请选择</option>
+                                        {
+                                            this.state.list.map((user) => (
+                                                <option value={user.cId}>{user.cRealName}</option>
+                                            ))
+                                        }
+                                    </select>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>所属用户</label>
-                                <select className="form-control" onChange={this.handleSelect} value={this.state.userId}>
-                                    <option value="">请选择</option>
-                                    {
-                                        this.state.list.map((user) => (
-                                            <option value={user.cId}>{user.cRealName}</option>
-                                        ))
-                                    }
-                                </select>
+                            <div className="modal-footer">
+                                <button onClick={this.cancel} type="button" className="btn btn-secondary"
+                                        data-dismiss="modal">取消
+                                </button>
+                                <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
                             </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button onClick={this.cancel} type="button" className="btn btn-secondary" data-dismiss="modal">取消</button>
-                            <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
                         </div>
                     </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
-  }
 }
 
 export default DialogUser;

@@ -580,13 +580,13 @@ class List extends React.Component {
                                         name:'访客->机会',
                                         type:'bar',
                                         stack: '机会',
-                                        data:dataThree
+                                        data:dataFour
                                     },
                                     {
                                         name:'创建机会',
                                         type:'bar',
                                         stack: '机会',
-                                        data:dataFour
+                                        data:dataThree
                                     }
                                 ]
                             }});

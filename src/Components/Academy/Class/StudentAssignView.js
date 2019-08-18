@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
-import {Button, Transfer} from 'element-react';
+import {Button, Message, Table, Tooltip, Transfer} from 'element-react';
 
 import DialogTips from "../../Dialog/DialogTips";
 import Commands from "../../Commands/Commands";
@@ -9,6 +9,9 @@ import Commands from "../../Commands/Commands";
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
+import CONFIG from "../../../utils/config";
+import calculateAge from "../../../utils/calculateAge";
+import fmtDate from "../../../utils/fmtDate";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -62,161 +65,144 @@ class StudentAssignView extends React.Component {
             redirectToList: false,
             isAnimating: false,
             id: this.props.match.params.contractId,
-            data: [
-                {
-                    key: 1234,
-                    label: `备选项`,
-                }
-            ],
+            data: [],
+            dataRight: [],
             ids: [],
             columns: [
                 {
-                    label: "序号",
-                    width: 100,
-                    sortable: true,
-                    type: 'index'
+                    type: 'selection'
                 },
                 {
-                    label: "校区名称",
-                    prop: "schoolArea",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "班级编号",
-                    prop: "code",
-                    width: 120,
-                    sortable: true,
-                    render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }
-                },
-                {
-                    label: "升学前班级",
-                    prop: "beforeClassCode",
-                    width: 95,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "班级类型",
-                    prop: "typeName",
-                    width: 95
-                },
-                {
-                    label: "班级类别",
-                    prop: "rangeName",
-                    width: 100
-                },
-                {
-                    label: "班级状态",
+                    label: "(状态)",
                     prop: "classStatusName",
-                    width: 130,
-                    /*render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }*/
                 },
                 {
-                    label: "开班日期",
-                    prop: "startDate",
-                    width: 120
+                    label: "学员姓名",
+                    prop: "name",
                 },
                 {
-                    label: "结班日期",
-                    prop: "endDate",
-                    width: 120
+                    label: "性别",
+                    prop: "genderText",
                 },
                 {
-                    label: "主教",
-                    prop: "mainTeacher",
-                    width: 95,
+                    label: "出生年月",
+                    prop: "birthday",
                 },
                 {
-                    label: "教务",
-                    prop: "registrar",
-                    width: 95,
+                    label: "年龄",
+                    prop: "age",
                 },
                 {
-                    label: "计划人数",
-                    prop: "planNum",
-                    // className: 'tabletd',
-                    // render: function (data) {
-                    //     return <Tooltip effect="dark" content={data.parCellphone}
-                    //                     placement="top-start">
-                    //         {data.parCellphone}
-                    //     </Tooltip>
-                    // }
-
+                    label: "在读年级",
+                    prop: "classGrade",
                 },
                 {
-                    label: "开班人数",
-                    prop: "startNum",
-                },
-                {
-                    label: "实际人数",
-                    prop: "factNum",
-                    /*className: 'tabletd',
+                    label: "所在学校",
+                    prop: "schoolName",
+                    className:'tabletd',
                     render: function (data) {
 
-                        return <Tooltip effect="dark" content={data.courseName}
+                        return <Tooltip effect="dark" content={data.schoolName}
                                         placement="top-start">
-                            {data.courseName}
+                            {data.schoolName}
                         </Tooltip>
-                    }*/
+                    }
+                }
+            ],
+            columnsFrom: [
+                {
+                    type: 'selection'
                 },
                 {
-                    label: "创建人",
-                    prop: "createBy",
-                    width: 100
+                    label: "(状态)",
+                    prop: "classStatusName",
                 },
                 {
-                    label: "创建时间",
-                    prop: "createOn",
-                    width: 100,
-                    sortable: true
-                },
-                /*
-                {
-                    label: "应付金额",
-                    prop: "finalPrice",
-                    width: 95
+                    label: "学员姓名",
+                    prop: "name",
                 },
                 {
-                    label: "已付金额",
-                    prop: "paid",
-                    width: 120
-                }*/
+                    label: "性别",
+                    prop: "genderText",
+                },
+                {
+                    label: "出生年月",
+                    prop: "birthday",
+                },
+                {
+                    label: "年龄",
+                    prop: "age",
+                },
+                {
+                    label: "在读年级",
+                    prop: "classGrade",
+                },
+                {
+                    label: "所在学校",
+                    prop: "schoolName",
+                    className:'tabletd',
+                    render: function (data) {
+
+                        return <Tooltip effect="dark" content={data.schoolName}
+                                        placement="top-start">
+                            {data.schoolName}
+                        </Tooltip>
+                    }
+                }
             ],
             totalPage: 0,
             currentPage: 1,
             pageSize: 10,
             totalCount: 0,
-            value: null
+            value: null,
+            chooseLeftRows:[],
+            chooseRightRows:[],
         };
-        this.createDialogTips = this.createDialogTips.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.renderFunc = this.renderFunc.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.reqListData = this.reqListData.bind(this);
     }
 
     componentDidMount() {
-        // const request = async () => {
-        //     try {
-        //         let data = await ajax('/academy/class/query.do', {id: this.state.id});
-        //
-        //         console.log(data.data)
-        //     } catch (err) {
-        //         if (err.errCode === 401) {
-        //             this.setState({redirectToReferrer: true})
-        //         } else {
-        //             this.createDialogTips(`${err.errCode}: ${err.errText}`);
-        //         }
-        //     }
-        // };
-        //
-        // request();
+        this.reqListData();
         mainSize();
+    }
+    reqListData(){
+        const request = async () => {
+            try {
+                let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,classStatus:1,exceptAssign:1,id:this.state.id});
+                let listRight = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,id:this.state.id});
+                if(list){
+                    list.data.map(item => {
+                        if(item.idType != null){
+                            item.idType = CONFIG.DOCUMENT[item.idType];
+                        }
+                        if(item.birthday != null){
+                            item.age = calculateAge(fmtDate(item.birthday));
+                            item.birthday = fmtDate(item.birthday);
+                        }
+                    });
+                    this.setState({data:list.data})
+                }
+                if(listRight){
+                    listRight.data.map(item => {
+                        if(item.idType != null){
+                            item.idType = CONFIG.DOCUMENT[item.idType];
+                        }
+                        if(item.birthday != null){
+                            item.age = calculateAge(fmtDate(item.birthday));
+                            item.birthday = fmtDate(item.birthday);
+                        }
+                    });
+                    this.setState({dataRight:listRight.data})
+                }
+            } catch (err) {
+                this.errorMsg("请求失败");
+            }
+        };
+
+        request();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -231,28 +217,6 @@ class StudentAssignView extends React.Component {
         }
     }
 
-    createDialogTips(text) {
-        if (this.tips === undefined) {
-            this.tipsContainer = document.createElement('div');
-
-            ReactDOM.render(
-                <DialogTips
-                    accept={this.logout}
-                    title="提示"
-                    text={text}
-                    ref={(dom) => {
-                        this.tips = dom
-                    }}
-                />,
-                document.body.appendChild(this.tipsContainer)
-            );
-        } else {
-            this.tips.setText(text);
-        }
-
-        this.tips.dialog.modal('show');
-    }
-
     assignAction() {
         this.props.history.push(`${this.props.match.url}/assign/`, {ids: this.ids});
     }
@@ -263,6 +227,72 @@ class StudentAssignView extends React.Component {
 
     handleChange(value) {
         this.setState({value})
+    }
+    //确认分配  1分配  2取消分配
+    toRight(type){
+        const param={ids: [], assigneeId: this.state.id, type: type};
+
+        if(type == 1){
+            if(!this.state.chooseLeftRows || this.state.chooseLeftRows.length <= 0){
+                this.errorMsg("请先选择学员");
+                return ;
+            }
+            param.ids = this.state.chooseLeftRows;
+        }else{
+            if(!this.state.chooseRightRows || this.state.chooseRightRows.length <= 0){
+                this.errorMsg("请先选择学员");
+                return ;
+            }
+            param.ids = this.state.chooseRightRows;
+        }
+
+        const request = async () => {
+            try {
+                let data = await ajax('/academy/class/assignStu.do', {"assignVo":JSON.stringify(param)});
+                if(data.code == 200){
+                    this.successMsg("操作成功")
+                }else{
+                   this.errorMsg(data.detail)
+                }
+                this.reqListData();
+            } catch (err) {
+                this.errorMsg(err.msg ? err.msg : "请求失败");
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
+    }
+    //列表选择
+    selectRow(value,type) {
+        var ids = [];
+        if(value){
+            value.map((leads) => (ids.push(leads.id)));
+        }
+        if(type == 1){
+            this.setState({
+                chooseLeftRows: ids
+            });
+        }else{
+            this.setState({
+                chooseRightRows: ids
+            });
+        }
+
+    }
+
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
     }
 
     render() {
@@ -282,31 +312,30 @@ class StudentAssignView extends React.Component {
             )
         }
 
-
         return (
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <div className="btn-group float-right ml-4" role="group">
+                    {/*<div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
-                    </div>
+                    </div>*/}
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
                             this.props.history.push('/home/academy/class');
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
-                    <Commands
+                    {/*<Commands
                         commands={this.commands}
                         assignAction={this.assignAction}
-                    />
+                    />*/}
                 </h5>
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <p>班级学员信息</p>
+                    {/*<p>班级学员信息</p>*/}
                     <div className="row justify-content-md-center" style={{"height":"80%"}}>
                         {/*<Transfer
                             value={this.state.data}
@@ -316,11 +345,19 @@ class StudentAssignView extends React.Component {
                             data={this.state.data}
                         >
                         </Transfer>*/}
-
-                            <div className="col col-5" style={{"margin-right":"20px"}}>
+                            {/*<div className="col col-5" style={{"margin-right":"20px"}}>
                                 <div className="row">所有学员</div>
                                 <div className="row" style={{"height":"100%"}}>
-                                    <div className="col col-12" style={{"height":"100%","border":"1px solid"}}></div>
+                                    <div className="col col-12" style={{"height":"100%","border":"1px solid"}}>
+                                        <Table
+                                            style={{width: '100%'}}
+                                            columns={this.state.columns}
+                                            data={this.state.list}
+                                            border={true}
+                                            fit={true}
+                                            emptyText={"--暂无数据--"}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div className="col col-5">
@@ -328,8 +365,40 @@ class StudentAssignView extends React.Component {
                                 <div className="row" style={{"height":"100%"}}>
                                     <div className="col col-12" style={{"height":"100%","border":"1px solid"}}></div>
                                 </div>
+                            </div>*/}
+                            {/*<div className="row" style={{"height":"100%"}}>*/}
+                                <div className="col col-6">
+                                    <div className="row" style={{paddingLeft:'15px',paddingBottom:'5px',color:'#868e96'}}>所有学员</div>
+                                    <Table
+                                        style={{width: '90%'}}
+                                        height='90%'
+                                        columns={this.state.columnsFrom}
+                                        data={this.state.data}
+                                        border={true}
+                                        fit={true}
+                                        emptyText={"--暂无数据--"}
+                                        onSelectChange={(selection,type) => this.selectRow(selection,1) }
+                                    />
+                                </div>
+                                <div className="col col-1" style={{paddingTop:'15%'}}>
+                                    <Button className="el-button-nomargin" type="primary" icon="d-arrow-right" size="large" onClick={this.toRight.bind(this,1)} />
+                                    <br/><br/>
+                                    <Button className="el-button-nomargin" type="warning" icon="d-arrow-left" size="large" onClick={this.toRight.bind(this,2)} />
+                                </div>
+                                <div className="col col-5">
+                                    <div className="row" style={{paddingLeft:'15px',paddingBottom:'5px',color:'#868e96'}}>分班学员</div>
+                                    <Table
+                                        style={{width: '100%'}}
+                                        columns={this.state.columns}
+                                        data={this.state.dataRight}
+                                        border={true}
+                                        fit={true}
+                                        emptyText={"--暂无数据--"}
+                                        onSelectChange={(selection,type) => this.selectRow(selection,2) }
+                                    />
+                                </div>
                             </div>
-                    </div>
+                        {/*</div>*/}
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
                             <li className="breadcrumb-item"><Link

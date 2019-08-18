@@ -456,6 +456,7 @@ class List extends React.Component {
     }
 
     render() {
+
         const uploadConfig = {
             className:"upload-demo",
             showFileList:false,

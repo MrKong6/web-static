@@ -63,7 +63,6 @@ class List extends React.Component {
                 {
                     label: "课程顾问",
                     prop: "adviser",
-                    width: 95
                 },
             ],
             totalPage:0,
@@ -77,14 +76,16 @@ class List extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax('/service/through/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                if(list.data && list.data.items){
+                    const ids = list.data.items.map((contract) => (contract.id));
+                    list.data.items.map(item => {
+                        if(item.throughTime != null){
+                            item.throughTime = formatWithTime(item.throughTime);
+                        }
+                    });
+                    this.setState({list: list.data.items, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                }
 
-                const ids = list.data.items.map((contract) => (contract.id));
-                list.data.items.map(item => {
-                    if(item.throughTime != null){
-                        item.throughTime = formatWithTime(item.throughTime);
-                    }
-                });
-                this.setState({list: list.data.items, ids: ids,totalPage: list.totalPage,totalCount: list.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})

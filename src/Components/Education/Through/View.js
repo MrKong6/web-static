@@ -22,7 +22,7 @@ const NextBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/through/${ids[curIndex + 1]}`,
+                pathname: `/home/education/through/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -42,7 +42,7 @@ const PrevBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/through/${ids[curIndex - 1]}`,
+                pathname: `/home/education/through/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -160,7 +160,7 @@ class View extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/service/through"/>
+                <Redirect to="/home/education/through"/>
             )
         }
 
@@ -173,7 +173,7 @@ class View extends React.Component {
 
                         <div className="btn-group float-right ml-4" role="group">
                             <button onClick={() => {
-                                this.props.history.push('/home/service/through');
+                                this.props.history.push('/home/education/through');
                             }} type="button" className="btn btn-light">返回
                             </button>
                         </div>
@@ -205,7 +205,7 @@ class View extends React.Component {
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
-                            this.props.history.push('/home/service/through');
+                            this.props.history.push('/home/education/through');
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>

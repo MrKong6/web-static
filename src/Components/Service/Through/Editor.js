@@ -79,6 +79,7 @@ class Editor extends React.Component {
     this.setState({isAnimating: true});
     query.organizationId = this.state.group.id;
     query.id = this.state.id;
+    query.adviserIds = this.form.state.value.toString();
 
     const request = async () => {
       try {

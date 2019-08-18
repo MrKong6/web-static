@@ -54,7 +54,7 @@ class List extends React.Component {
                 },
                 {
                     label: "英文名",
-                    prop: "en_name",
+                    prop: "enName",
                     fixed: 'left',
                     render: (row, column, data)=>{
                         return <span><Link to={`/home/service/customer/student/${row.id}`}>{row.enName}</Link></span>
@@ -62,7 +62,7 @@ class List extends React.Component {
                 },
                 {
                     label: "状态",
-                    prop: "classStatus",
+                    prop: "classStatusName",
                 },
                 {
                     label: "性别",
@@ -89,7 +89,7 @@ class List extends React.Component {
                 },
                 {
                     label: "在读年级",
-                    prop: "schoolGrade",
+                    prop: "classGrade",
                 },
                 {
                     label: "学校类型",

@@ -76,6 +76,7 @@ class Create extends React.Component {
         }
         query.throughTime = this.form.state.throughTime ? this.form.state.throughTime.getTime() : "";
         query.orgId = this.state.group.id;
+        query.adviserIds = this.form.state.value.toString();
 
         this.setState({isAnimating: true});
 

@@ -10,6 +10,9 @@ import Commands from "../../Commands/Commands";
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
+import CONFIG from "../../../utils/config";
+import calculateAge from "../../../utils/calculateAge";
+import fmtDate from "../../../utils/fmtDate";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -55,7 +58,7 @@ class StudentView extends React.Component {
   constructor(props) {
     super(props);
 
-    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod'));
+    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod'&& command.name !== 'Del'));
     this.title = fmtTitle(this.props.location.pathname);
     this.state = {
       group: this.props.changedCrmGroup,
@@ -64,6 +67,7 @@ class StudentView extends React.Component {
       isAnimating: false,
       id: this.props.match.params.contractId,
       data: null,
+      stuName:this.props.location.state.stuName,
       ids: [],
       columns: [
           {
@@ -73,116 +77,50 @@ class StudentView extends React.Component {
               type: 'index'
           },
           {
-              label: "校区名称",
-              prop: "schoolArea",
-              width: 100,
-              sortable: true
+              label: "学员",
+              prop: "name",
           },
           {
-              label: "班级编号",
-              prop: "code",
-              width: 120,
-              sortable: true,
-              render: (row, column, data) => {
-                  return <span><Button type="text" size="small"
-                                       onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-              }
+              label: "英文名",
+              prop: "enName",
           },
           {
-              label: "升学前班级",
-              prop: "beforeClassCode",
-              width: 95,
-              showOverflowTooltip: true,
+              label: "性别",
+              prop: "genderText",
           },
           {
-              label: "班级类型",
-              prop: "typeName",
-              width: 95
+              label: "出生年月",
+              prop: "birthday",
           },
           {
-              label: "班级类别",
-              prop: "rangeName",
-              width: 100
+              label: "年龄",
+              prop: "age",
           },
           {
-              label: "班级状态",
+              label: "家长姓名",
+              prop: "parent.name",
+          },
+          {
+              label: "与学员关系",
+              prop: "parent.relation",
+          },
+          {
+              label: "缴费总课时",
+              prop: "",
+          },
+          {
+              label: "剩余课时",
+              prop: "",
+          },
+          {
+              label: "是否升学",
+              prop: "",
+          },
+          {
+              label: "状态",
               prop: "classStatusName",
-              width: 130,
-              /*render: (row, column, data) => {
-                  return <span><Button type="text" size="small"
-                                       onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-              }*/
-          },
-          {
-              label: "开班日期",
-              prop: "startDate",
-              width: 120
-          },
-          {
-              label: "结班日期",
-              prop: "endDate",
-              width: 120
-          },
-          {
-              label: "主教",
-              prop: "mainTeacher",
-              width: 95,
-          },
-          {
-              label: "教务",
-              prop: "registrar",
-              width: 95,
-          },
-          {
-              label: "计划人数",
-              prop: "planNum",
-              // className: 'tabletd',
-              // render: function (data) {
-              //     return <Tooltip effect="dark" content={data.parCellphone}
-              //                     placement="top-start">
-              //         {data.parCellphone}
-              //     </Tooltip>
-              // }
 
           },
-          {
-              label: "开班人数",
-              prop: "startNum",
-          },
-          {
-              label: "实际人数",
-              prop: "factNum",
-              /*className: 'tabletd',
-              render: function (data) {
-
-                  return <Tooltip effect="dark" content={data.courseName}
-                                  placement="top-start">
-                      {data.courseName}
-                  </Tooltip>
-              }*/
-          },
-          {
-              label: "创建人",
-              prop: "createBy",
-              width: 100
-          },
-          {
-              label: "创建时间",
-              prop: "createOn",
-              width: 100,
-              sortable: true
-          },
-          /*
-          {
-              label: "应付金额",
-              prop: "finalPrice",
-              width: 95
-          },
-          {
-              label: "已付金额",
-              prop: "paid",
-              width: 120
-          }*/
       ],
       totalPage:0,
       currentPage:1,
@@ -196,9 +134,19 @@ class StudentView extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let data = await ajax('/academy/class/query.do', {id: this.state.id});
-        this.setState({data: data.data});
-        console.log(data.data)
+          let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
+              pageSize:this.state.pageSize,id:this.state.id,needParent:1});
+          list.data.map(item => {
+              if(item.idType != null){
+                  item.idType = CONFIG.DOCUMENT[item.idType];
+              }
+              if(item.birthday != null){
+                  item.age = calculateAge(fmtDate(item.birthday));
+                  item.birthday = fmtDate(item.birthday);
+              }
+          });
+          console.log(list.data);
+          this.setState({list: list.data,totalPage: list.totalPage,totalCount: list.count});
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -208,7 +156,7 @@ class StudentView extends React.Component {
       }
     };
 
-    // request();
+    request();
     mainSize();
   }
 
@@ -273,6 +221,7 @@ class StudentView extends React.Component {
             <h5 id="subNav">
                 <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                 &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
+                <p className="d-inline text-muted">{this.state.stuName}</p>
                 <div className="btn-group float-right ml-4" role="group">
                     <PrevBtn id={this.state.id} ids={this.state.ids}/>
                     <NextBtn id={this.state.id} ids={this.state.ids}/>
@@ -292,14 +241,14 @@ class StudentView extends React.Component {
                 {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                 {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                 <p>班级学员信息</p>
-                <div className="row justify-content-md-center">
+                <div className="row">
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
                         fit={true}
-                        emptyText={"--"}
+                        emptyText={"暂无数据"}
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}

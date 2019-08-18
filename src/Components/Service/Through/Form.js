@@ -7,7 +7,7 @@ import DialogTips from "../../Dialog/DialogTips";
 import ajax from "../../../utils/ajax";
 import formatWithTime from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {DatePicker} from "element-react";
+import {DatePicker, Select} from "element-react";
 import './Through.css'
 
 class Form extends React.Component {
@@ -20,22 +20,27 @@ class Form extends React.Component {
             age: 0,
             option: null,
             data: null,
-            throughTime: null
+            throughTime: null,
+            options:[],
+            userOptions:[],
+            value: []
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
+        this.chooseUser = this.chooseUser.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
+                let advisorList = [];
                 let throughStatus = await ajax('/service/through/throughStatus.do');
+                advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
                 let data = null;
 
                 if (this.props.isEditor) {
                     data = await ajax('/service/through/query.do', {id: this.props.editorId});
-                    debugger
                     data = data.data;
                 }
 
@@ -49,6 +54,14 @@ class Form extends React.Component {
                             if (key === 'throughTime') {
                                 this.state.throughTime = new Date(data[key]);
                             }
+                            if (key === 'adviserIds') {
+                                debugger
+                                if(data[key].indexOf(',') != -1){
+                                    this.state.value = data[key].split(",");
+                                }else{
+                                    this.state.value = this.state.value.push(data[key]);
+                                }
+                            }
                             if (this.form[key]) {
                                 if (key === 'throughTime') {
                                     this.form[key].value = formatWithTime(data[key]);
@@ -60,6 +73,7 @@ class Form extends React.Component {
                         })
                     }
                 });
+                this.setState({userOptions:advisorList,value:this.state.value});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -132,6 +146,10 @@ class Form extends React.Component {
         }
 
         return query;
+    }
+
+    chooseUser(data){
+        this.state.value = data;
     }
 
     render() {
@@ -207,13 +225,28 @@ class Form extends React.Component {
                                                        required={true}/>
                                             </div>
                                         </div>
-                                        <div className="form-group row">
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>课程顾问
                                             </label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="adviser"
                                                        required={true}/>
+                                            </div>
+                                        </div>*/}
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>课程顾问
+                                            </label>
+                                            <div className="col-7">
+                                                <Select value={this.state.value} multiple={true} style={{width:'100%'}} onChange={this.chooseUser}>
+                                                    {
+                                                         this.state.userOptions.map(el => {
+                                                             return <Select.Option key={el.cId} label={el.cRealName}
+                                                                                   value={el.cId}/>
+                                                         })
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
                                     </div>

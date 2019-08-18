@@ -117,7 +117,7 @@ class ThroughStudentView extends React.Component {
                 let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,fromWay:3,
                     pageNum:this.state.currentPage,pageSize:this.state.pageSize,cellphone:this.state.cellphone,
                     isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0),
-                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName,throughId:this.state.id,through:1});
                 list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = formatWithTime(item.createTime);
