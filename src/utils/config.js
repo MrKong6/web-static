@@ -147,7 +147,7 @@ export default {
             NAME: '学员'
         },
         "2-4": {
-            PATH: "home/education/through",
+            PATH: "home/sales/through",
             PATH_RULE: /^\/home\/sales\/through(\/((?!create).)*)?$/,
             ICON_CLASS: "fa-desktop",
             CATEGORY: '我的',

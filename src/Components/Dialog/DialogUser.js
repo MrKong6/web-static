@@ -46,16 +46,20 @@ class DialogUser extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax(this.props.path, {orgId: this.state.groupId, typeId: this.props.typeName});
-                let listThrough = await ajax(this.props.path, {orgId: this.state.groupId});
+                let listThrough = null;
+                if(this.state.type && this.state.type == 30){
+                    listThrough = await ajax(this.props.path, {orgId: this.state.groupId});
 
-                if(listThrough && listThrough.data.items.length > 0){
-                    this.state.throughId = listThrough.data.items[0].id;
+                    if(listThrough && listThrough.data.items.length > 0){
+                        this.state.throughId = listThrough.data.items[0].id;
+                    }
                 }
+
                 this.setState({
                     list: list,
                     userId: this.props.defaults.userId,
                     userName: this.props.defaults.userName,
-                    option:listThrough.data.items
+                    option:listThrough ? listThrough.data.items : null
                 });
             } catch (err) {
                 if (err.errCode === 401) {

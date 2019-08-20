@@ -14,7 +14,7 @@ import Leads from '../Mkt/Leads/Leads';
 import Appor from '../Sales/Appor/Appor';
 import SalesContract from '../Sales/Contract/Contract';
 import SalesCustomer from '../Sales/Customer/Customer';
-import ServiceThrough from '../Service/Through/Through';
+import SalesThrough from '../Sales/Through/Through';
 import ServiceContract from '../Service/Contract/Contract';
 import ServiceCustomer from '../Service/Customer/Customer';
 import ServiceVisitor from '../Service/Visitor/Visitor';
@@ -165,8 +165,8 @@ class Home extends React.Component {
             <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
                           component={SalesCustomer}{...query}/>
             <PrivateRoute path="/home/sales/statistic" changedCrmGroup={this.state.group} component={SaleStatistic}{...query}/>
-            <PrivateRoute path="/home/service/through" changedCrmGroup={this.state.group}
-                          component={ServiceThrough}{...query} />
+            <PrivateRoute path="/home/sales/through" changedCrmGroup={this.state.group}
+                          component={SalesThrough}{...query} />
             <PrivateRoute path="/home/service/visitorin" changedCrmGroup={this.state.group}
                         component={ServiceVisitor}{...query} />
             <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}

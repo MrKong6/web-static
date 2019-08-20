@@ -10,7 +10,7 @@ import ajax from "../../../utils/ajax";
 import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs} from 'element-react';
 import ReactEcharts from 'echarts-for-react';
 import Commands from "../../Commands/Commands";
-import {getBarOption} from "../../../utils/const";
+import {getBarOption,getChartOption,getFuuelChartOption} from "../../../utils/const";
 
 class List extends React.Component {
     constructor(props) {
@@ -31,96 +31,8 @@ class List extends React.Component {
             redirectToReferrer: false,
             optionBar:getBarOption(),
             reportType:1,
-            option: {
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b}: {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'left',
-                    data:['未分配','未处理','进行中','已转化（机会）','已关闭']
-                },
-                series: [
-                    {
-                        name:'合计',
-                        type:'pie',
-                        selectedMode: 'single',
-                        radius: [0, '30%'],
-
-                        label: {
-                            normal: {
-                                position: 'inner'
-                            }
-                        },
-                        labelLine: {
-                            normal: {
-                                show: false
-                            }
-                        },
-                        data:[
-                            {value:0, name:'未分配', selected:true},
-                            {value:0, name:'已分配'},
-                        ]
-                    },
-                    {
-                        name:'线索',
-                        type:'pie',
-                        radius: ['40%', '55%'],
-                        label: {
-                            normal: {
-                                formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
-                                backgroundColor: '#eee',
-                                borderColor: '#aaa',
-                                borderWidth: 1,
-                                borderRadius: 4,
-                                // shadowBlur:3,
-                                // shadowOffsetX: 2,
-                                // shadowOffsetY: 2,
-                                // shadowColor: '#999',
-                                // padding: [0, 7],
-                                rich: {
-                                    a: {
-                                        color: '#999',
-                                        lineHeight: 22,
-                                        align: 'center'
-                                    },
-                                    // abg: {
-                                    //     backgroundColor: '#333',
-                                    //     width: '100%',
-                                    //     align: 'right',
-                                    //     height: 22,
-                                    //     borderRadius: [4, 4, 0, 0]
-                                    // },
-                                    hr: {
-                                        borderColor: '#aaa',
-                                        width: '100%',
-                                        borderWidth: 0.5,
-                                        height: 0
-                                    },
-                                    b: {
-                                        fontSize: 16,
-                                        lineHeight: 33
-                                    },
-                                    per: {
-                                        color: '#eee',
-                                        backgroundColor: '#334455',
-                                        padding: [2, 4],
-                                        borderRadius: 2
-                                    }
-                                }
-                            }
-                        },
-                        data:[
-                            {value:0, name:'未处理'},
-                            {value:0, name:'已转移'},
-                            {value:0, name:'进行中'},
-                            {value:0, name:'已转化（机会）'},
-                            {value:0, name:'已关闭'},
-                        ]
-                    }
-                ]
-            }
+            option: getChartOption(),
+            optionLeadFunnel: getFuuelChartOption(),
         };
 
     }
@@ -185,24 +97,12 @@ class List extends React.Component {
                                                 borderColor: '#aaa',
                                                 borderWidth: 1,
                                                 borderRadius: 4,
-                                                // shadowBlur:3,
-                                                // shadowOffsetX: 2,
-                                                // shadowOffsetY: 2,
-                                                // shadowColor: '#999',
-                                                // padding: [0, 7],
                                                 rich: {
                                                     a: {
                                                         color: '#999',
                                                         lineHeight: 22,
                                                         align: 'center'
                                                     },
-                                                    // abg: {
-                                                    //     backgroundColor: '#333',
-                                                    //     width: '100%',
-                                                    //     align: 'right',
-                                                    //     height: 22,
-                                                    //     borderRadius: [4, 4, 0, 0]
-                                                    // },
                                                     hr: {
                                                         borderColor: '#aaa',
                                                         width: '100%',
@@ -223,6 +123,72 @@ class List extends React.Component {
                                             }
                                         },
                                         data:out
+                                    }
+                                ]
+                            }});
+                    }
+                    //线索漏斗图
+                    let listStage = await ajax('/mkt/leads/getStageStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                        pageNum:this.state.currentPage,pageSize:this.state.pageSize,fromWay:2,typeId:1,
+                        isIn:0});
+                    if(listStage){
+                        // debugger
+                        this.setState({optionLeadFunnel: {
+                                title: {
+                                    text: '线索阶段漏斗图',
+                                    // subtext: '纯属虚构'
+                                },
+                                tooltip: {
+                                    trigger: 'item',
+                                    formatter: "{a} <br/>{b} : {c}%"
+                                },
+                                legend: {
+                                    data: listStage.legend
+                                },
+                                calculable: true,
+                                series: [
+                                    {
+                                        name:'漏斗图',
+                                        type:'funnel',
+                                        left: '10%',
+                                        top: 60,
+                                        bottom: 60,
+                                        width: '80%',
+                                        sort: 'descending',
+                                        gap: 2,
+                                        label: {
+                                            show: true,
+                                            normal: {
+                                                position: 'inside',
+                                                formatter: '{c}',
+                                            },
+                                            emphasis: {
+                                                position: 'inside',
+                                                formatter: '{c}'
+                                            }
+                                        },
+                                        /*label: {
+                                            show: true,
+                                            position: 'inside',
+                                            formatter: '{c}',
+                                        },*/
+                                        /*emphasis: {
+                                            label: {
+                                                fontSize: 20
+                                            }
+                                        },*/
+                                        labelLine: {
+                                            length: 10,
+                                            lineStyle: {
+                                                width: 1,
+                                                type: 'solid'
+                                            }
+                                        },
+                                        itemStyle: {
+                                            borderColor: '#fff',
+                                            borderWidth: 1
+                                        },
+                                        data: listStage.data
                                     }
                                 ]
                             }});
@@ -510,7 +476,6 @@ class List extends React.Component {
                             ]
                         }});
                 }
-                debugger
                 if(typeId == 2){
                     let listTwo = await ajax('/mkt/leads/getStatisticCountByDay.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
                         fromWay:fromWay,typeId:typeId,isIn:0,reportType:this.state.reportType});
@@ -592,6 +557,79 @@ class List extends React.Component {
                             }});
                     }
                 }
+
+                //线索漏斗图  机会漏斗图
+                let listStage = await ajax('/mkt/leads/getStageStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,fromWay:fromWay,typeId:typeId,
+                    isIn:0});
+                if(listStage){
+                    // debugger
+                    this.setState({optionLeadFunnel: {
+                            title: {
+                                text: text+'阶段漏斗图',
+                                // subtext: '纯属虚构'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: "{a} <br/>{b} : {c}%"
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                x: 'left',
+                                data: listStage.legend,
+                                top: '10%',
+                            },
+                            calculable: true,
+                            grid: {
+                                top: '10%',
+                            },
+                            series: [
+                                {
+                                    name:'漏斗图',
+                                    type:'funnel',
+                                    left: '20%',
+                                    top: 60,
+                                    bottom: 60,
+                                    width: '80%',
+                                    sort: 'descending',
+                                    gap: 2,
+                                    label: {
+                                        show: true,
+                                        normal: {
+                                            position: 'inside',
+                                            formatter: '{c}',
+                                        },
+                                        emphasis: {
+                                            position: 'inside',
+                                            formatter: '{c}'
+                                        }
+                                    },
+                                    /*label: {
+                                        show: true,
+                                        position: 'inside',
+                                        formatter: '{c}',
+                                    },*/
+                                    /*emphasis: {
+                                        label: {
+                                            fontSize: 20
+                                        }
+                                    },*/
+                                    labelLine: {
+                                        length: 10,
+                                        lineStyle: {
+                                            width: 1,
+                                            type: 'solid'
+                                        }
+                                    },
+                                    itemStyle: {
+                                        borderColor: '#fff',
+                                        borderWidth: 1
+                                    },
+                                    data: listStage.data
+                                }
+                            ]
+                        }});
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -670,6 +708,11 @@ class List extends React.Component {
                                     option={this.state.option}
                                     style={{height: '350px', width: '1000px'}}
                                     className='react_for_echarts' />
+                                <br/><br/>
+                                <ReactEcharts
+                                    option={this.state.optionLeadFunnel}
+                                    style={{maxWidth: '50%'}}
+                                    className='react_for_echarts' />
                             </Tabs.Pane>
                             <Tabs.Pane label="机会" name="2">
                                 <ReactEcharts
@@ -683,6 +726,11 @@ class List extends React.Component {
                                 <ReactEcharts
                                     option={this.state.optionBar}
                                     style={{height: '350px', width: '1000px'}}
+                                    className='react_for_echarts' />
+                                <br/><br/>
+                                <ReactEcharts
+                                    option={this.state.optionLeadFunnel}
+                                    style={{maxWidth: '50%'}}
                                     className='react_for_echarts' />
                             </Tabs.Pane>
                         </Tabs>
