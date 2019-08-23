@@ -6,9 +6,6 @@ export function getBarOption() {
                 type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
             }
         },
-        legend: {
-            data:['直接访问','邮件营销','联盟广告']
-        },
         grid: {
             left: '3%',
             right: '4%',
@@ -28,6 +25,12 @@ export function getBarOption() {
         ],
         series : [
             {
+                name:'无',
+                type:'bar',
+                stack: '无',
+                data:[0, 0, 0, 0, 0, 0, 0]
+            },
+            /*{
                 name:'直接访问',
                 type:'bar',
                 stack: '广告',
@@ -44,7 +47,7 @@ export function getBarOption() {
                 type:'bar',
                 stack: '广告',
                 data:[220, 182, 191, 234, 290, 330, 310]
-            }
+            }*/
         ]
     }
     return OPTION_BAR;
@@ -213,4 +216,70 @@ export function getFuuelChartOption() {
     };
     return OPTION_BAR;
 }
+//多Y轴  簇状图
+export function getMulYOption() {
+    const OPTION_BAR = {
+        title : {
+            text: '',
+            subtext: ''
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:[]
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                data : ['星期一','星期二','星期三','星期四','星期五','星期六','星期七']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            /*{
+                name:'',
+                type:'bar',
+                data:[0,0,0,0,0,0,0],
+                // markPoint : {
+                //     data : [
+                //         {type : 'max', name: '最大值'},
+                //         {type : 'min', name: '最小值'}
+                //     ]
+                // },
+                // markLine : {
+                //     data : [
+                //         {type : 'average', name: '平均值'}
+                //     ]
+                // }
+            },
+            {
+                name:'降水量',
+                type:'bar',
+                data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3],
+                // markPoint : {
+                //     data : [
+                //         {name : '年最高', value : 182.2, xAxis: 7, yAxis: 183},
+                //         {name : '年最低', value : 2.3, xAxis: 11, yAxis: 3}
+                //     ]
+                // },
+                // markLine : {
+                //     data : [
+                //         {type : 'average', name : '平均值'}
+                //     ]
+                // }
+            }*/
+        ]
+    };
+    return OPTION_BAR;
+}
+
+
+
+
 
