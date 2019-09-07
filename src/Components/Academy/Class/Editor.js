@@ -78,6 +78,7 @@ class Editor extends React.Component {
     query.createOn = this.form.state.createOn ? this.form.state.createOn.getTime() : "";
     query.startDate = this.form.state.startTime ? this.form.state.startTime.getTime() : "";
     query.endDate = this.form.state.endTime ? this.form.state.endTime.getTime() : "";
+    query.classColor = this.form.state.classColor.hex;
     query.orgId = this.state.group.id;
     query.id = this.state.id;
 

@@ -35,7 +35,6 @@ class Form extends React.Component {
 
                 if (this.props.isEditor) {
                     data = await ajax('/service/through/query.do', {id: this.props.editorId});
-                    debugger
                     data = data.data;
                 }
 

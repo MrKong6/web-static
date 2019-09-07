@@ -697,10 +697,14 @@ class List extends React.Component {
         const requestSix = async (rt) => {
             //机会数量堆积图
             let listFive = await ajax('/mkt/leads/getSalesNumByPerson.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
-                fromWay:this.state.fromWay,typeId:this.state.typeId,isIn:0,reportType:rt ? rt : this.state.reportType});
+                fromWay:this.state.fromWay,typeId:this.state.typeId,isIn:0,reportType:rt ? rt : this.state.reportType,statusId:13});
             if(listFive && listFive.dataOne && listFive.dataOne.length > 0){
                 debugger
                 this.setState({optionOpporNumBar: {
+                        title : {
+                            text: '机会已转化数量堆积图',
+                            // subtext: ''
+                        },
                         tooltip : {
                             trigger: 'axis',
                             axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -1107,7 +1111,7 @@ class List extends React.Component {
             }
             //机会数量堆积图
             let listFive = await ajax('/mkt/leads/getSalesNumByPerson.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
-                fromWay:this.state.fromWay,typeId:this.state.typeId,isIn:0,reportType:opporReportType ? opporReportType : this.state.reportType});
+                fromWay:this.state.fromWay,typeId:this.state.typeId,isIn:0,reportType:opporReportType ? opporReportType : this.state.reportType,statusId:13});
             if(listFive){
                 this.setState({optionOpporNumBar: {
                         title : {
@@ -1150,8 +1154,8 @@ class List extends React.Component {
         };
         request();
     }
-    panelVisitorReq(){
-        const request = async () => {
+    panelVisitorReq(type,reportType){
+        const request = async (rt) => {
             let list = await ajax('/mkt/leads/getStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
                 pageNum:this.state.currentPage,pageSize:this.state.pageSize,fromWay:1,
                 isIn:0,typeId:4});
@@ -1196,7 +1200,7 @@ class List extends React.Component {
                                 data:inside
                             },
                             {
-                                name:'线索',
+                                name:'访客',
                                 type:'pie',
                                 radius: ['40%', '55%'],
                                 label: {
@@ -1250,6 +1254,54 @@ class List extends React.Component {
             }
         };
         request();
+        const requestTwo = async (rt) => {
+            //机会数量簇状图
+            let listThree = await ajax('/mkt/leads/getAllCountByDay.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
+                pageNum:this.state.currentPage,pageSize:this.state.pageSize,fromWay:this.state.fromWay,typeId:5,
+                reportType:rt ? rt : this.state.reportType,
+                isIn:0});
+            if(listThree && listThree.dataOne){
+                let data = [],xAxis = [];
+                listThree.dataOne.map(item => {
+                    xAxis.push(item.showStr);
+                    data.push(item.code);
+                });
+                this.setState({optionBar:{
+                    tooltip : {
+                        trigger: 'axis',
+                        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '20%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis : [
+                        {
+                            type : 'category',
+                            data : xAxis
+                        }
+                    ],
+                    yAxis : [
+                        {
+                            type : 'value'
+                        }
+                    ],
+                    series : [
+                        {
+                            name:'访客数量',
+                            type:'bar',
+                            stack: '无',
+                            data: data
+                        },
+                    ]
+                }});
+            }
+        };
+        requestTwo(reportType)
     }
 
     changePanel(tab) {
@@ -1420,8 +1472,17 @@ class List extends React.Component {
                                     option={this.state.option}
                                     style={{height: '350px', width: '1000px'}}
                                     className='react_for_echarts' />
+                                <br/><br/>
+                                <Button type="primary" size="small" onClick={this.panelVisitorReq.bind(this,4,1)}>近一周</Button>
+                                <Button type="primary" size="small" onClick={this.panelVisitorReq.bind(this,4,2)}>近一月</Button>
+                                <Button type="primary" size="small" onClick={this.panelVisitorReq.bind(this,4,3)}>近一年</Button>
+                                <ReactEcharts
+                                    option={this.state.optionBar}
+                                    style={{height: '350px', width: '1000px'}}
+                                    className='react_for_echarts' />
                             </Tabs.Pane>
-                            <Tabs.Pane label="合同" name="2"></Tabs.Pane>
+                            <Tabs.Pane label="合同" name="2">
+                            </Tabs.Pane>
                             <Tabs.Pane label="学员" name="3"></Tabs.Pane>
                         </Tabs>
                     </div>

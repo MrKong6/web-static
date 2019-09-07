@@ -80,7 +80,7 @@ class Editor extends React.Component {
 
     const request = async () => {
       try {
-        await ajax('/service/contract/mod.do', query);
+        await ajax('/academy/room/mod.do', query);
         this.setState({isUpdated: true})
       } catch (err) {
         if (err.errCode === 401) {
@@ -108,14 +108,14 @@ class Editor extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/service/contract"/>
+        <Redirect to="/home/academy/room"/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/service/contract/${this.state.id}`,
+          pathname: `/home/academy/room/${this.state.id}`,
           state: {ids: this.ids}
         }}/>
       )

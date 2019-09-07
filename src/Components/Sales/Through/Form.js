@@ -55,7 +55,6 @@ class Form extends React.Component {
                                 this.state.throughTime = new Date(data[key]);
                             }
                             if (key === 'adviserIds') {
-                                debugger
                                 if(data[key].indexOf(',') != -1){
                                     this.state.value = data[key].split(",");
                                 }else{

@@ -511,3 +511,6 @@ main h5 p {
 .allWidth{
   width:100%;
 }
+.el-menu{
+    background-color: inherit!important;
+}

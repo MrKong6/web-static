@@ -24,5 +24,10 @@
 
 .demo-app-calendar {
   margin: 0 auto;
-  max-width: 900px;
+  /*max-width: 900px;*/
+}
+
+.room-bot{
+  border-bottom: 1px dotted;
+  margin-bottom: 10px;
 }

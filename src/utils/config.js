@@ -268,11 +268,23 @@ export default {
             ICON_CLASS: "fa-user-o",
             CATEGORY: '教师'
         },
+        "5-2-1": {
+            PATH_RULE: /^\/home\/academy\/teacher\/create$/,
+            ICON_CLASS: "fa-user-o",
+            CATEGORY: '教师',
+            // NAME: '访客'
+        },
         "5-3": {
             PATH: "home/academy/room",
             PATH_RULE: /^\/home\/academy\/room(\/((?!create).)*)?$/,
             ICON_CLASS: "fa-houzz",
             CATEGORY: '教室'
+        },
+        "5-3-1": {
+            PATH_RULE: /^\/home\/academy\/room\/create$/,
+            ICON_CLASS: "fa-houzz",
+            CATEGORY: '教室',
+            // NAME: '访客'
         },
         "5-4": {
             PATH: "home/academy/class",

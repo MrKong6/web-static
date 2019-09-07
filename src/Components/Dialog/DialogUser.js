@@ -24,7 +24,7 @@ class DialogUser extends React.Component {
             checkOppor: false,
             typeId: '',
             option: [],
-            throughId:null
+            throughId: null
         };
         this.createGroupsDialog = this.createGroupsDialog.bind(this);
         this.acceptGroupDialog = this.acceptGroupDialog.bind(this);
@@ -47,10 +47,10 @@ class DialogUser extends React.Component {
             try {
                 let list = await ajax(this.props.path, {orgId: this.state.groupId, typeId: this.props.typeName});
                 let listThrough = null;
-                if(this.state.type && this.state.type == 30){
+                if (this.state.type && this.state.type == 30) {
                     listThrough = await ajax(this.props.path, {orgId: this.state.groupId});
 
-                    if(listThrough && listThrough.data.items.length > 0){
+                    if (listThrough && listThrough.data.items.length > 0) {
                         this.state.throughId = listThrough.data.items[0].id;
                     }
                 }
@@ -59,7 +59,7 @@ class DialogUser extends React.Component {
                     list: list,
                     userId: this.props.defaults.userId,
                     userName: this.props.defaults.userName,
-                    option:listThrough ? listThrough.data.items : null
+                    option: listThrough ? listThrough.data.items : null
                 });
             } catch (err) {
                 if (err.errCode === 401) {
@@ -137,7 +137,7 @@ class DialogUser extends React.Component {
                 name: this.state.userName
             },
             typeId: this.state.typeId,
-            throughId:this.state.throughId
+            throughId: this.state.throughId
 
         });
         this.dialog.modal('hide');
@@ -168,8 +168,7 @@ class DialogUser extends React.Component {
 
     }
 
-    chooseThroughClas(value){
-        debugger
+    chooseThroughClas(value) {
         this.state.throughId = value;
     }
 
@@ -274,12 +273,14 @@ class DialogUser extends React.Component {
                             <div className="modal-body">
                                 {
                                     this.state.errText ?
-                                        <div className="alert alert-danger" role="alert">{this.state.errText}</div> : null
+                                        <div className="alert alert-danger"
+                                             role="alert">{this.state.errText}</div> : null
                                 }
                                 <div className="form-group">
                                     <label>体验课场次</label>
                                     <div className="input-group">
-                                        <Select value={this.state.value} style={{width:'100%'}} onChange={this.chooseThroughClas}>
+                                        <Select value={this.state.value} style={{width: '100%'}}
+                                                onChange={this.chooseThroughClas}>
                                             {
                                                 this.state.option.map(el => {
                                                     return <Select.Option key={el.id} label={el.code}

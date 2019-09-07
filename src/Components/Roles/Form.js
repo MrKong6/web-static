@@ -197,7 +197,7 @@ class Form extends React.Component {
         </form>
       )
     } else {
-      this.state.isManger = this.props.data.cRankId === this.RANK_MANGER;
+      this.state.isManger = (this.props.data && this.props.data.cRankId) ? (this.props.data.cRankId === this.RANK_MANGER) : false;
       return (
         <form ref={(dom) => {
           this.form = dom

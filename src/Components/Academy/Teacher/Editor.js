@@ -77,10 +77,12 @@ class Editor extends React.Component {
     this.setState({isAnimating: true});
     query.organizationId = this.state.group.id;
     query.id = this.state.id;
+    query.birthday = this.form.state.birthday ? this.form.state.birthday.getTime() : "";
 
-    const request = async () => {
+
+      const request = async () => {
       try {
-        await ajax('/service/contract/mod.do', query);
+        await ajax('/academy/teacher/mod.do', query);
         this.setState({isUpdated: true})
       } catch (err) {
         if (err.errCode === 401) {
@@ -108,14 +110,14 @@ class Editor extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/service/contract"/>
+        <Redirect to="/home/academy/teacher"/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/service/contract/${this.state.id}`,
+          pathname: `/home/academy/teacher/${this.state.id}`,
           state: {ids: this.ids}
         }}/>
       )

@@ -10,8 +10,7 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
-import CONFIG from "../../../utils/config";
-import calculateAge from "../../../utils/calculateAge";
+import {Message,MessageBox} from "element-react";
 
 const NextBtn = ({id, ids}) => {
   const curIndex = ids.indexOf(id);
@@ -131,23 +130,34 @@ class View extends React.Component {
   }
 
   delAction() {
-    const request = async () => {
-      try {
-        await ajax('/academy/class/del.do', {id: this.state.id});
-        this.setState({redirectToList: true});
-        this.createDialogTips('删除成功');
-      } catch (err) {
-        if (err.errCode === 401) {
-          this.setState({redirectToReferrer: true})
-        } else {
-          this.createDialogTips(`${err.errCode}: ${err.errText}`);
-        }
-      } finally {
-        this.setState({isAnimating: false});
-      }
-    };
-
-    request();
+      MessageBox.confirm('此操作将永久删除教师, 是否继续?', '提示', {
+          type: 'warning'
+      }).then(() => {
+          request();
+      }).catch(() => {
+          Message({
+              type: 'info',
+              message: '已取消删除'
+          });
+      });
+      const request = async () => {
+          try {
+              await ajax('/academy/class/del.do', {id: this.state.id});
+              this.setState({redirectToList: true});
+              Message({
+                  type: 'success',
+                  message: '删除成功!'
+              });
+          } catch (err) {
+              if (err.errCode === 401) {
+                  this.setState({redirectToReferrer: true})
+              } else {
+                  this.createDialogTips(`${err.errCode}: ${err.errText}`);
+              }
+          } finally {
+              this.setState({isAnimating: false});
+          }
+      };
   }
 
   render() {
@@ -293,6 +303,17 @@ class View extends React.Component {
                             value={this.state.data.classStatusName}
                           />
                         </div>
+                      </div>
+                      <div className="form-group row">
+                          <label className="col-5 col-form-label font-weight-bold">色块</label>
+                          <div
+                              style={{
+                                  width: 50,
+                                  height: 50,
+                                  marginTop: 20,
+                                  backgroundColor: this.state.data.classColor ? this.state.data.classColor : null
+                              }}
+                          />
                       </div>
                     </div>
                     <div className="col">

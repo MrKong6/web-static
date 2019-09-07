@@ -8,6 +8,7 @@ import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {ColorPicker, DatePicker} from "element-react";
+import InputColor from 'react-input-color';
 
 class Form extends React.Component {
     constructor(props) {
@@ -22,14 +23,17 @@ class Form extends React.Component {
             option: null,
             startTime: null,
             endTime: null,
-            createOn: null
+            createOn: null,
+            classColor: null
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
+        this.changeColor = this.changeColor.bind(this);
     }
 
     componentDidMount() {
+        // $(".el-color-dropdown__btn").setAttribute('type',"button");
         const request = async () => {
             try {
 
@@ -165,6 +169,10 @@ class Form extends React.Component {
         return query;
     }
 
+    changeColor(evt){
+        this.setState({classColor:evt});
+    }
+
     render() {
 
         // if (!this.state.option || (this.props.isEditor && !this.state.data)) {
@@ -185,7 +193,7 @@ class Form extends React.Component {
         return (
             <form ref={(dom) => {
                 this.form = dom
-            }}>
+            }} encType='multipart/form-data'>
                 <div className="row justify-content-md-center">
                     <div className="col col-12">
                         <div className="card">
@@ -260,8 +268,24 @@ class Form extends React.Component {
                                                 <em className="text-danger">*</em>色块
                                             </label>
                                             <div className="col-7">
-                                                <ColorPicker value={this.state.classColor ? this.state.classColor : ''}
-                                                             name="classColor"></ColorPicker>
+                                                {/*<ColorPicker ref='myInput' value={this.state.classColor ? this.state.classColor : null}
+                                                             onChange={this.changeColor}
+                                                ></ColorPicker>*/}
+                                                <div>
+                                                    <InputColor
+                                                        initialHexColor="#5e72e4"
+                                                        onChange={this.changeColor}
+                                                        placement="right"
+                                                    />
+                                                    <div
+                                                        style={{
+                                                            width: 50,
+                                                            height: 50,
+                                                            marginTop: 20,
+                                                            backgroundColor: this.state.classColor ? this.state.classColor.hex : null
+                                                        }}
+                                                    />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -58,7 +58,6 @@ const PrevBtn = ({id, ids, link}) => {
 class View extends React.Component {
     constructor(props) {
         super(props);
-
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
