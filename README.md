@@ -18,3 +18,6 @@ import antd into schoolpal
 add [https://www.ctolib.com/react-input-color.html]
 - [npm install react-input-color --save]
 - [yarn add react-input-color]
+
+add [漏斗图 HighChart] 
+- [https://jshare.com.cn/demos/hhhhiu/2]

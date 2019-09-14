@@ -266,9 +266,9 @@ class List extends React.Component {
             pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],
-            chooseStageName:storage.getItem("chooseStageName") ? storage.getItem("chooseStageName") : '',
+            chooseStageNameLeads:storage.getItem("chooseStageNameLeads") ? storage.getItem("chooseStageNameLeads") : '',
             statusName:[],
-            chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
+            chooseStatusNameLeads:storage.getItem("chooseStatusNameLeads") ? Number(storage.getItem("chooseStatusNameLeads")) : '',
 
         };
 
@@ -280,7 +280,7 @@ class List extends React.Component {
                 let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
                     pageNum:this.state.currentPage,pageSize:this.state.pageSize,fromWay:2,
                     isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0),
-                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                    stageId:this.state.chooseStageNameLeads,statusId:this.state.chooseStatusNameLeads});
                 let status = await ajax('/mkt/leads/status/list.do', {typeId: 1});
                 let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 1});
                 if(this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1){
@@ -411,7 +411,6 @@ class List extends React.Component {
         });
     }
     importSuccess() {
-        console.log("sssssssss");
         this.componentDidMount();
         this.successMsg("导入成功")
     };
@@ -440,17 +439,17 @@ class List extends React.Component {
         ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,fromWay:2,
             isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0)})
     };
-    chooseStageSearch(chooseStageName){
+    chooseStageSearch(chooseStageNameLeads){
         // debugger;
-        this.state.chooseStageName = chooseStageName;
+        this.state.chooseStageNameLeads = chooseStageNameLeads;
         this.state.currentPage = 1;
-        window.sessionStorage.setItem("chooseStageName",chooseStageName);
+        window.sessionStorage.setItem("chooseStageNameLeads",chooseStageNameLeads);
         this.componentDidMount();
     }
-    chooseStatusSearch(chooseStatusName){
+    chooseStatusSearch(chooseStatusNameLeads){
         // debugger;
-        this.state.chooseStatusName = chooseStatusName;
-        window.sessionStorage.setItem("chooseStatusName",chooseStatusName);
+        this.state.chooseStatusNameLeads = chooseStatusNameLeads;
+        window.sessionStorage.setItem("chooseStatusNameLeads",chooseStatusNameLeads);
         this.state.currentPage = 1;
         this.componentDidMount();
     }
@@ -496,14 +495,14 @@ class List extends React.Component {
                            onChange={this.onChange.bind(this, 'cellphone')}
                            append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
                             />
-                    <Select value={this.state.chooseStageName} placeholder="请选择阶段" clearable={true} onChange={this.chooseStageSearch} className={"leftMargin"}>
+                    <Select value={this.state.chooseStageNameLeads} placeholder="请选择阶段" clearable={true} onChange={this.chooseStageSearch} className={"leftMargin"}>
                         {
                             this.state.stageName.map(el => {
                                 return <Select.Option key={el.id} label={el.name} value={el.id} />
                             })
                         }
                     </Select>
-                    <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
+                    <Select value={this.state.chooseStatusNameLeads} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
                         {
                             this.state.statusName.map(el => {
                                 return <Select.Option key={el.id} label={el.name} value={el.id} />

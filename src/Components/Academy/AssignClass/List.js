@@ -210,6 +210,7 @@ class List extends React.Component {
         }
         const request = async () => {
             try {
+                debugger
                 let param =  {classId: selected.chooseClass,
                     teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,
                     startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate};

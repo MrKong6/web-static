@@ -10,7 +10,7 @@ import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
 import {Button, Table, Pagination} from 'element-react';
-import formatWithTime from "../../../utils/fmtDate";
+import {formatWithTime} from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 
 class List extends React.Component {
@@ -57,7 +57,7 @@ class List extends React.Component {
                     prop: "mainTeacher",
                 },
                 {
-                    label: "主教",
+                    label: "助教",
                     prop: "assistant",
                 },
                 {

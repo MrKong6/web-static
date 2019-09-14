@@ -14,7 +14,6 @@ import {Message,MessageBox} from "element-react";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
-    debugger
     if ((curIndex + 1) === ids.length) {
         return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
     }
@@ -336,6 +335,17 @@ class View extends React.Component {
                                                         readOnly={true}
                                                         className="form-control-plaintext"
                                                         value={this.state.data.age}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">关联账户</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.cLoginName}
                                                     />
                                                 </div>
                                             </div>

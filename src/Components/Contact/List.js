@@ -7,7 +7,7 @@ import DialogTips from "../Dialog/DialogTips";
 import Approach from '../Dic/Approach';
 import ajax from "../../utils/ajax";
 import {DatePicker} from "element-react";
-import fmtDate, {formatWithTime} from '../../utils/fmtDate';
+import {formatWithTime} from '../../utils/fmtDate';
 
 const TableTitle = ({canEdit}) => {
     const base = [
@@ -64,7 +64,6 @@ const TableItems = ({list, canEdit, action}) => {
     if (!list.length) {
         return null;
     }
-    debugger
     list.map((item, index) => {
         if (item.datetime) {
             item.datetime = new Date(item.datetime);
@@ -109,7 +108,7 @@ const TableItems = ({list, canEdit, action}) => {
                         <input type="text" className="form-control summ" name="summary"/>
                     </div>
                 </td>
-                {
+                {/*{
                     canEdit ? <td>
                         <button
                             type="button"
@@ -127,7 +126,25 @@ const TableItems = ({list, canEdit, action}) => {
                         >保存
                         </button>
                     </td> : null
-                }
+                }*/}
+                <div className="view">
+                    {canEdit ? <button
+                        type="button"
+                        className="btn btn-primary"
+                        aid={item.approachId}
+                        summary={item.summary}
+                        onClick={toggleEditor}
+                    >编辑
+                    </button> : null}
+                </div>
+                <div className="edit" style={{display: 'none'}}>
+                    <button
+                        type="button"
+                        className="btn btn-primary saveBtn"
+                        onClick={action}
+                    >保存
+                    </button>
+                </div>
             </tr>
         ))
     )
@@ -144,6 +161,7 @@ const toggleEditor = (evt) => {
     elem.find('.edit').toggle();
     elem.find('select').val(aid);
     elem.find('.summ').val(summary);
+    elem.find('saveBtn').show();
 };
 
 class List extends React.Component {
@@ -257,7 +275,6 @@ class List extends React.Component {
 
                     return item;
                 });
-
                 this.setState({list}, () => {
                     $(evt.target).toggle();
                     $(evt.target).siblings().toggle();

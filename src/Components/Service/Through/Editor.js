@@ -80,6 +80,9 @@ class Editor extends React.Component {
     query.organizationId = this.state.group.id;
     query.id = this.state.id;
     query.adviserIds = this.form.state.value.toString();
+    query.mainTeacherIds = this.form.state.mainTeacherIds.toString();
+    query.assistantIds = this.form.state.assistantIds.toString();
+    query.roomIds = this.form.state.roomIds.toString();
 
     const request = async () => {
       try {

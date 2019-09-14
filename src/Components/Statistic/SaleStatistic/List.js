@@ -119,7 +119,7 @@ class List extends React.Component {
 
         this.props.history.push(url, {ids: this.state.ids});
     }
-
+    //线索的数据渲染
     panelLeadReq(){
         const request = async () => {
             let list = await ajax('/mkt/leads/getStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
@@ -224,7 +224,7 @@ class List extends React.Component {
                         legend: {
                             data: listStage.legend
                         },
-                        calculable: true,
+                        calculable: false,
                         series: [
                             {
                                 name:'漏斗图',
@@ -233,7 +233,7 @@ class List extends React.Component {
                                 top: 60,
                                 bottom: 60,
                                 width: '80%',
-                                sort: 'descending',
+                                sort: 'none', //descending
                                 gap: 2,
                                 label: {
                                     show: true,
@@ -331,8 +331,7 @@ class List extends React.Component {
         };
         request();
     }
-
-
+    //机会数据渲染
     panelOpporReqSplit(type,reportType){
         //type  60是全更新
         const requestOne = async (rt) => {
@@ -537,7 +536,7 @@ class List extends React.Component {
                                 top: 60,
                                 bottom: 60,
                                 width: '80%',
-                                sort: 'descending',
+                                sort: 'none',
                                 gap: 2,
                                 label: {
                                     show: true,
@@ -699,7 +698,6 @@ class List extends React.Component {
             let listFive = await ajax('/mkt/leads/getSalesNumByPerson.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
                 fromWay:this.state.fromWay,typeId:this.state.typeId,isIn:0,reportType:rt ? rt : this.state.reportType,statusId:13});
             if(listFive && listFive.dataOne && listFive.dataOne.length > 0){
-                debugger
                 this.setState({optionOpporNumBar: {
                         title : {
                             text: '机会已转化数量堆积图',
@@ -1154,6 +1152,7 @@ class List extends React.Component {
         };
         request();
     }
+    //访客渲染
     panelVisitorReq(type,reportType){
         const request = async (rt) => {
             let list = await ajax('/mkt/leads/getStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,

@@ -14,7 +14,6 @@ import ajax from "../../../utils/ajax";
 class Create extends React.Component {
     constructor(props) {
         super(props);
-
         this.title = fmtTitle(this.props.location.pathname);
         this.ids = this.props.location.state.ids;
         this.state = {
@@ -74,23 +73,22 @@ class Create extends React.Component {
         if (!query) {
             return;
         }
-        query.throughTime = this.form.state.throughTime ? this.form.state.throughTime.getTime() : "";
+
+        query.createOn = this.form.state.createOn ? this.form.state.createOn.getTime() : "";
+        query.startDate = this.form.state.startTime ? this.form.state.startTime.getTime() : "";
+        query.endDate = this.form.state.endTime ? this.form.state.endTime.getTime() : "";
         query.orgId = this.state.group.id;
-        query.adviserIds = this.form.state.value.toString();
-        query.mainTeacherIds = this.form.state.mainTeacherIds.toString();
-        query.assistantIds = this.form.state.assistantIds.toString();
-        query.roomIds = this.form.state.roomIds.toString();
 
         this.setState({isAnimating: true});
 
         const request = async () => {
             try {
-                let rs = await ajax('/service/through/add.do', query);
-                this.setState({isCreated: true, createdId: rs, redirectToList: true});
+                let rs = await ajax('/academy/class/add.do', query);
 
+                this.setState({isCreated: true, createdId: rs})
             } catch (err) {
                 if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true, redirectToList: true})
+                    this.setState({redirectToReferrer: true})
                 } else {
                     this.createDialogTips(`${err.errCode}: ${err.errText}`);
                 }
@@ -103,7 +101,6 @@ class Create extends React.Component {
     }
 
     render() {
-
         if (this.state.redirectToReferrer) {
             return (
                 <Redirect to={{
@@ -113,9 +110,22 @@ class Create extends React.Component {
             )
         }
 
-        if (this.state.redirectToList) {
+        /*if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/service/through"/>
+                <Redirect to={link}/>
+            )
+        }*/
+
+        if (this.state.isCreated) {
+            let ids = this.ids;
+
+            ids.push(this.state.createdId);
+
+            return (
+                <Redirect to={{
+                    pathname: ('/home/academy/class'),
+                    state: {ids: ids}
+                }}/>
             )
         }
 

@@ -54,6 +54,7 @@ export default function (data) {
     profile.cEmail = data.cEmail;
     profile.cQq = data.cQq;
     profile.cId = data.cId;
+    profile.teacherId = data.teacherId;
     profile.org = {
         cId: data.org.cId,
         cName: data.org.cName

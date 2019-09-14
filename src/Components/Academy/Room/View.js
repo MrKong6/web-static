@@ -35,7 +35,6 @@ const NextBtn = ({id, ids}) => {
 };
 
 const PrevBtn = ({id, ids}) => {
-  debugger
   const curIndex = ids.indexOf(id);
 
   if (curIndex === 0) {

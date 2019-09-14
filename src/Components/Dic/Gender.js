@@ -9,10 +9,10 @@ import objectToArray from "../../utils/objectToArray";
 class Gender extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       redirectToReferrer: false,
-      list: objectToArray(this.props.data) || []
+      list: objectToArray(this.props.data) || [],
+      type: this.props.type ? this.props.type : null,  //有值代表过滤未知性别
     }
   }
 
@@ -23,7 +23,7 @@ class Gender extends React.Component {
 
     const request = async () => {
       try {
-        let list = await ajax('/mkt/gender/list.do');
+        let list = await ajax('/mkt/gender/list.do',{filterNone:this.state.type});
 
         this.setState({list: objectToArray(list)});
       } catch (err) {

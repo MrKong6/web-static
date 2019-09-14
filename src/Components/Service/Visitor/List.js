@@ -12,7 +12,7 @@ import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
-import { Button,Table,Pagination,Message,Input,Tooltip, Select } from 'element-react';
+import {Button, Table, Pagination, Message, Input, Tooltip, Select, DateRangePicker} from 'element-react';
 import './Visitor.css'
 
 import {$} from "../../../vendor";
@@ -195,9 +195,13 @@ class List extends React.Component {
             chooseStageName:storage.getItem("chooseStageName") ? storage.getItem("chooseStageName") : '',
             statusName:[],
             chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
+            createOnRange:[],
+            createOnStart:null,
+            createOnEnd:null,
         };
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
+        this.changeTimeSearch = this.changeTimeSearch.bind(this);
     }
 
     componentDidMount() {
@@ -205,7 +209,8 @@ class List extends React.Component {
             try {
                 let list = await ajax('/service/visitor/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:4,fromWay:1,
                     isIn:((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1),
-                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName,orderByCreateOn:2,
+                    createStart:this.state.createOnStart,createEnd:this.state.createOnEnd});
                 let status = await ajax('/mkt/leads/status/list.do', {typeId: 4});
                 let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 4});
                 const ids = list.data.map((leads) => (leads.id));
@@ -441,6 +446,20 @@ class List extends React.Component {
         window.sessionStorage.setItem("pageSize",pageSize);
         this.componentDidMount();
     }
+    //时间搜索
+    changeTimeSearch(data){
+        if(data){
+            this.state.createOnStart = data[0].getTime();
+            this.state.createOnEnd = data[1].getTime();
+            this.setState({createOnRange:data})
+        }else{
+            this.state.createOnStart = null;
+            this.state.createOnEnd = null;
+            this.setState({createOnRange:null})
+        }
+
+        this.componentDidMount();
+    }
 
     render() {
         const uploadConfig = {
@@ -478,20 +497,33 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <Input placeholder="请输入手机号"
-                           className={"leadlist_search"}
-                           value={this.state.cellphone}
-                           style={{width: '20%'}}
-                           onChange={this.onChange.bind(this, 'cellphone')}
-                           append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
-                    />
-                    <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
-                        {
-                            this.state.statusName.map(el => {
-                                return <Select.Option key={el.id} label={el.name} value={el.id} />
-                            })
-                        }
-                    </Select>
+                    <div class="row">
+                        <div class="col-3">
+                            <Input placeholder="请输入手机号"
+                                   className={"leadlist_search"}
+                                   value={this.state.cellphone}
+                                   onChange={this.onChange.bind(this, 'cellphone')}
+                                   append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                            />
+                        </div>
+                        <div class="col-2">
+                            <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch}>
+                                {
+                                    this.state.statusName.map(el => {
+                                        return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                    })
+                                }
+                            </Select>
+                        </div>
+                        <div class="col-3">
+                            <DateRangePicker
+                                value={this.state.createOnRange}
+                                placeholder="选择创建日期范围"
+                                onChange={this.changeTimeSearch}
+                            />
+                        </div>
+                    </div>
+
                     {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
                     <Table
                         style={{width: '100%',"margin-bottom":"30px"}}

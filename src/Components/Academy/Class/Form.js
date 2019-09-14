@@ -20,9 +20,10 @@ class Form extends React.Component {
             age: 0,
             option: null,
             data: null,
-            option: null,
             startTime: null,
             endTime: null,
+            courseStartTime: null,
+            courseEndTime: null,
             createOn: null,
             classColor: null
         };
@@ -37,10 +38,11 @@ class Form extends React.Component {
         const request = async () => {
             try {
 
-                let allClass = await ajax('/academy/class/classList.do', {orgId: this.state.group.id});
+                /*let allClass = await ajax('/academy/class/classList.do', {orgId: this.state.group.id});*/
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
                 let allClassType = await ajax('/academy/class/classType.do');
                 let allClassRange = await ajax('/academy/class/classRange.do');
+                let allClassCourseType = await ajax('/academy/class/classCourseType.do');
                 let gender = await ajax('/mkt/gender/list.do');
                 let data = null;
 
@@ -69,7 +71,7 @@ class Form extends React.Component {
                 // const age = calculateAge(birthday);
 
                 this.setState({
-                    option: {allClass, allClassStatus, allClassType, allClassRange}
+                    option: {allClassStatus, allClassType, allClassRange, allClassCourseType}
                 }, () => {
                     if (this.props.isEditor) {
 
@@ -211,13 +213,37 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">升学前班级</label>
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>色块
+                                            </label>
+                                            <div className="col-7">
+                                                {/*<ColorPicker ref='myInput' value={this.state.classColor ? this.state.classColor : null}
+                                                             onChange={this.changeColor}
+                                                ></ColorPicker>*/}
+                                                <div>
+                                                    <InputColor
+                                                        initialHexColor="#5e72e4"
+                                                        onChange={this.changeColor}
+                                                        placement="right"
+                                                    />
+                                                    <div
+                                                        style={{
+                                                            width: 50,
+                                                            height: 50,
+                                                            marginTop: 20,
+                                                            backgroundColor: this.state.classColor ? this.state.classColor.hex : null
+                                                        }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">班级状态</label>
                                             <div className="col-7">
                                                 <select className="form-control"
-                                                        name={this.props.name || "beforeClassCode"}>
-                                                    <option value="">请选择</option>
+                                                        name={this.props.classStatus || "classStatus"}>
                                                     {
-                                                        this.state.option ? this.state.option.allClass.map(item => (
+                                                        this.state.option ? this.state.option.allClassStatus.map(item => (
                                                             <option key={item.code}
                                                                     value={item.code}>{item.name}</option>
                                                         )) : null
@@ -263,47 +289,9 @@ class Form extends React.Component {
                                                 <input type="text" className="form-control" name="schoolArea"/>
                                             </div>
                                         </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>色块
-                                            </label>
-                                            <div className="col-7">
-                                                {/*<ColorPicker ref='myInput' value={this.state.classColor ? this.state.classColor : null}
-                                                             onChange={this.changeColor}
-                                                ></ColorPicker>*/}
-                                                <div>
-                                                    <InputColor
-                                                        initialHexColor="#5e72e4"
-                                                        onChange={this.changeColor}
-                                                        placement="right"
-                                                    />
-                                                    <div
-                                                        style={{
-                                                            width: 50,
-                                                            height: 50,
-                                                            marginTop: 20,
-                                                            backgroundColor: this.state.classColor ? this.state.classColor.hex : null
-                                                        }}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
+
                                     </div>
                                     <div className="col">
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">班级状态</label>
-                                            <div className="col-7">
-                                                <select className="form-control"
-                                                        name={this.props.classStatus || "classStatus"}>
-                                                    {
-                                                        this.state.option ? this.state.option.allClassStatus.map(item => (
-                                                            <option key={item.code}
-                                                                    value={item.code}>{item.name}</option>
-                                                        )) : null
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">开班日期</label>
                                             <div className="col-7">
@@ -337,20 +325,6 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">主教</label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="mainTeacher"/>
-                                            </div>
-                                        </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">教务</label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="registrar"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col">
-                                        <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>计划人数
                                             </label>
@@ -359,7 +333,7 @@ class Form extends React.Component {
                                                        required={true}/>
                                             </div>
                                         </div>
-                                        <div className="form-group row">
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>开班人数
                                             </label>
@@ -367,7 +341,7 @@ class Form extends React.Component {
                                                 <input type="text" className="form-control" name="startNum"
                                                        required={true}/>
                                             </div>
-                                        </div>
+                                        </div>*/}
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>实际人数
@@ -377,6 +351,57 @@ class Form extends React.Component {
                                                        required={true}/>
                                             </div>
                                         </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">主教</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="mainTeacher"/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">客服</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="registrar"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col">
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>课程类别
+                                            </label>
+                                            <div className="col-7">
+                                                <select className="form-control" name={this.props.name || "courseType"}>
+                                                    {
+                                                        this.state.option ? this.state.option.allClassCourseType.map(item => (
+                                                            <option key={item.code}
+                                                                    value={item.code}>{item.name}</option>
+                                                        )) : null
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>课程阶段
+                                            </label>
+                                            <div className="col-7">
+                                                <select className="form-control" name={this.props.name || "courseRange"}>
+                                                    {
+                                                        this.state.option ? this.state.option.allClassType.map(item => (
+                                                            <option key={item.code}
+                                                                    value={item.code}>{item.name}</option>
+                                                        )) : null
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">课程表</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="course"/>
+                                            </div>
+                                        </div>
+                                        {/*
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">创建时间</label>
                                             <div className="col-7">
@@ -389,9 +414,58 @@ class Form extends React.Component {
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="createBy"/>
                                             </div>
+                                        </div>*/}
+                                    </div>
+                                    <div className="col">
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">开课日期</label>
+                                            <div className="col-7">
+                                                <DatePicker
+                                                    name="createTime"
+                                                    value={this.state.courseStartTime}
+                                                    isShowTime={false}
+                                                    placeholder="选择日期"
+                                                    format="yyyy-MM-dd"
+                                                    onChange={date => {
+                                                        console.debug('DatePicker1 changed: ', date)
+                                                        this.setState({courseStartTime: date})
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">结课日期</label>
+                                            <div className="col-7">
+                                                <DatePicker
+                                                    name="createTime"
+                                                    value={this.state.courseEndTime}
+                                                    isShowTime={false}
+                                                    placeholder="选择日期"
+                                                    format="yyyy-MM-dd"
+                                                    onChange={date => {
+                                                        console.debug('DatePicker1 changed: ', date)
+                                                        this.setState({courseEndTime: date})
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">备注</label>
+                                            <div className="col-7">
+                                                {/*<select className="form-control"
+                                                        name={this.props.name || "beforeClassCode"}>
+                                                    <option value="">请选择</option>
+                                                    {
+                                                        this.state.option ? this.state.option.allClass.map(item => (
+                                                            <option key={item.code}
+                                                                    value={item.code}>{item.name}</option>
+                                                        )) : null
+                                                    }
+                                                </select>*/}
+                                                <input type="text" className="form-control" name="beforeClassCode"/>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="col"/>
                                 </div>
                             </div>
                         </div>

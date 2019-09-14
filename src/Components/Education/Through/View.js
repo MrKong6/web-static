@@ -63,6 +63,7 @@ class View extends React.Component {
             redirectToList: false,
             isAnimating: false,
             id: this.props.match.params.contractId,
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
             data: null,
             ids: []
         };
@@ -75,8 +76,8 @@ class View extends React.Component {
         const request = async () => {
             try {
                 let data = await ajax('/service/through/query.do', {id: this.state.id});
-                let list = await ajax('/service/through/list.do', {id: this.state.id});
-                const ids = list.data.items.map((contract) => (contract.id));
+                let list = await ajax('/service/through/list.do', {orgId: this.state.group.id,teacherId:this.state.teacherId,type:3});
+                const ids = list.data.items.map((contract) => (contract.id+''));
                 this.setState({data: data.data, ids});
             } catch (err) {
                 if (err.errCode === 401) {

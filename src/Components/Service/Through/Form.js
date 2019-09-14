@@ -22,21 +22,35 @@ class Form extends React.Component {
             data: null,
             throughTime: null,
             options:[],
+            mainTeacher:[],
+            helpTeacher:[],
             userOptions:[],
-            value: []
+            roomData:[],
+            value: [],
+            mainTeacherIds: [],
+            assistantIds: [],
+            roomIds: [],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
         this.chooseUser = this.chooseUser.bind(this);
+        this.chooseHelpTeacher = this.chooseHelpTeacher.bind(this);
+        this.chooseMainTeacher = this.chooseMainTeacher.bind(this);
+        this.chooseRoom = this.chooseRoom.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let advisorList = [];
+                let advisorList = [],mainTeacher=[],helpTeacher=[],chooseMain=[],chooseassistant=[],
+                    chooseMainTwo=[],chooseassistantTwo=[],roomDataTwo=[];
                 let throughStatus = await ajax('/service/through/throughStatus.do');
                 advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
+                let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
+                let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:2});  //助教
+                let roomData = await ajax('/academy/room/list.do', {orgId: this.state.group.id});  //助教
+
                 let data = null;
 
                 if (this.props.isEditor) {
@@ -44,8 +58,18 @@ class Form extends React.Component {
                     data = data.data;
                 }
 
+                if(mainTeacherData){
+                    mainTeacher = mainTeacherData.data.items;
+                }
+                if(helpTeacherData){
+                    helpTeacher = helpTeacherData.data.items;
+                }
+                if(roomData){
+                    roomDataTwo = roomData.data.items;
+                }
+
                 this.setState({
-                    option: {throughStatus}
+                    option: {throughStatus},
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -55,11 +79,24 @@ class Form extends React.Component {
                                 this.state.throughTime = new Date(data[key]);
                             }
                             if (key === 'adviserIds') {
-                                debugger
                                 if(data[key].indexOf(',') != -1){
                                     this.state.value = data[key].split(",");
                                 }else{
                                     this.state.value = this.state.value.push(data[key]);
+                                }
+                            }
+                            if (key === 'mainTeacherIds') {
+                                if(data[key].indexOf(',') != -1){
+                                    chooseMain = data[key].split(",");
+                                }else{
+                                    chooseMain.push(Number(data[key]));
+                                }
+                            }
+                            if (key === 'assistantIds') {
+                                if(data[key].indexOf(',') != -1){
+                                    chooseassistant = data[key].split(",");
+                                }else{
+                                    chooseassistant.push(data[key]);
                                 }
                             }
                             if (this.form[key]) {
@@ -73,7 +110,24 @@ class Form extends React.Component {
                         })
                     }
                 });
-                this.setState({userOptions:advisorList,value:this.state.value});
+                if(chooseassistant){
+                    chooseassistant.map(item => {
+                        chooseassistantTwo.push(Number(item));
+                    })
+                }
+                if(chooseMain){
+                    chooseMain.map(item => {
+                        chooseMainTwo.push(Number(item));
+                    })
+                }
+
+                this.setState({userOptions:advisorList,
+                                mainTeacher:mainTeacher,
+                                helpTeacher:helpTeacher,
+                                roomData:roomDataTwo,
+                                value:this.state.value,
+                                mainTeacherIds:chooseMainTwo,
+                                assistantIds:chooseassistantTwo});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -151,6 +205,15 @@ class Form extends React.Component {
     chooseUser(data){
         this.state.value = data;
     }
+    chooseHelpTeacher(data){
+        this.state.assistantIds = data;
+    }
+    chooseMainTeacher(data){
+        this.state.mainTeacherIds = data;
+    }
+    chooseRoom(data){
+        this.state.roomIds = data;
+    }
 
     render() {
         return (
@@ -209,11 +272,32 @@ class Form extends React.Component {
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>教室
+                                            </label>
+                                            <div className="col-7">
+                                                <Select value={this.state.roomIds} multiple={true} style={{width:'100%'}} onChange={this.chooseRoom}>
+                                                    {
+                                                        this.state.roomData.map(el => {
+                                                            return <Select.Option key={el.id} label={el.code}
+                                                                                  value={el.id}/>
+                                                        })
+                                                    }
+                                                </Select>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>主教
                                             </label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="mainTeacher"
-                                                       required={true} />
+                                                <Select value={this.state.mainTeacherIds} multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
+                                                    {
+                                                        this.state.mainTeacher.map(el => {
+                                                            return <Select.Option key={el.id} label={el.name}
+                                                                                  value={el.id}/>
+                                                        })
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -221,19 +305,16 @@ class Form extends React.Component {
                                                 <em className="text-danger">*</em>助教
                                             </label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="assistant"
-                                                       required={true}/>
+                                                <Select value={this.state.assistantIds} multiple={true} style={{width:'100%'}} onChange={this.chooseHelpTeacher}>
+                                                    {
+                                                        this.state.helpTeacher.map(el => {
+                                                            return <Select.Option key={el.id} label={el.name}
+                                                                                  value={el.id}/>
+                                                        })
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
-                                        {/*<div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>课程顾问
-                                            </label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="adviser"
-                                                       required={true}/>
-                                            </div>
-                                        </div>*/}
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>课程顾问

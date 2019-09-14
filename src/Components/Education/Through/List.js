@@ -26,11 +26,11 @@ class List extends React.Component {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
                 {
-                    label: "ID",
                     sortable: true,
                     type: 'index'
                 },
@@ -76,15 +76,17 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/through/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-
-                const ids = list.data.items.map((contract) => (contract.id));
-                list.data.items.map(item => {
-                    if(item.throughTime != null){
-                        item.throughTime = formatWithTime(item.throughTime);
-                    }
-                });
-                this.setState({list: list.data.items, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                let list = await ajax('/service/through/list.do', {orgId: this.state.group.id,
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,teacherId:this.state.teacherId,type:3});
+                if(list && list.data && list.data.items){
+                    const ids = list.data.items.map((contract) => (contract.id));
+                    list.data.items.map(item => {
+                        if(item.throughTime != null){
+                            item.throughTime = formatWithTime(item.throughTime);
+                        }
+                    });
+                    this.setState({list: list.data.items, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})

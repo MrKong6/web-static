@@ -21,7 +21,7 @@ class Form extends React.Component {
             group: this.props.changedCrmGroup,
             birthday: null,
             age: 0,
-            option: {'gender':[],'positionList':[],'typeList':[],'rangeList':[]},
+            option: {'gender':[],'positionList':[],'typeList':[],'rangeList':[],'accountTeacherList':[]},
             data: null
         };
         this.changeBirthday = this.changeBirthday.bind(this);
@@ -32,10 +32,11 @@ class Form extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let gender = await ajax('/mkt/gender/list.do');
+                let gender = await ajax('/mkt/gender/list.do',{filterNone:'1'});
                 let typeList = await ajax('/academy/teacher/teacherTypeList.do');
                 let rangeList = await ajax('/academy/teacher/teacherRangeList.do');
                 let positionList = await ajax('/academy/teacher/teacherPosition.do');
+                let accountTeacherList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:2});
                 let data = null;
                 if (this.props.isEditor) {
                     data = await ajax('/academy/teacher/query.do', {id: this.props.editorId});
@@ -64,9 +65,8 @@ class Form extends React.Component {
                     birthday = data.birthday  ? new Date((data.birthday)) : new Date();
                     age = calculateAge(birthday);
                 }
-
                 this.setState({
-                    option: {gender,typeList,rangeList,positionList},
+                    option: {gender,typeList,rangeList,positionList,accountTeacherList},
                     data,
                     birthday,
                     age
@@ -201,7 +201,7 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">性别</label>
                                             <div className="col-7">
-                                                <Gender data={this.state.option.gender} name="genderId"/>
+                                                <Gender data={this.state.option.gender} name="genderId" type={"1"}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -270,11 +270,26 @@ class Form extends React.Component {
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>学员年龄
+                                                <em className="text-danger">*</em>年龄
                                             </label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="age"
                                                        value={this.state.age ? this.state.age : ''} readOnly={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">关联账户</label>
+                                            <div className="col-7">
+                                                <select className="form-control"
+                                                        name={this.props.name || "userId"}>
+                                                    <option value="">请选择</option>
+                                                    {
+                                                        this.state.option ? this.state.option.accountTeacherList.map(item => (
+                                                            <option key={item.cId}
+                                                                    value={item.cId}>{item.cRealName}({item.cLoginName})</option>
+                                                        )) : null
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="form-group row">

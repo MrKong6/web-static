@@ -2,244 +2,64 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
-import DialogTips from "../../Dialog/DialogTips";
-import Progress from "../../Progress/Progress"
-
-import mainSize from "../../../utils/mainSize";
-import fmtTitle from '../../../utils/fmtTitle';
-import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
-import CONFIG from "../../../utils/config";
+import FullCalendar from '@fullcalendar/react'
+import dayGridPlugin from '@fullcalendar/daygrid'
+import timeGridPlugin from '@fullcalendar/timegrid'
+import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
+import './Course.css'
+import DialogForEvent from "../../Dialog/DialogForEvent";
 import fmtDate from "../../../utils/fmtDate";
+import {Card, Menu, Message, MessageBox} from "element-react";
+import mainSize from "../../../utils/mainSize";
+import ajax from "../../../utils/ajax";
+import fmtTitle from "../../../utils/fmtTitle";
 
-/*
-const Table = ({list, goto}) => {
-  return (
-    <table className="table table-bordered table-sm">
-      <thead>
-      <tr>
-        <th>序号</th>
-        <th>创建人</th>
-        <th>创建时间</th>
-        <th>所属组织</th>
-        <th>所属用户</th>
-        <th>合同类型</th>
-        <th>合同编号</th>
-        <th>签约时间</th>
-        <th>到期时间</th>
-        <th>学员姓名</th>
-        <th>家长姓名</th>
-        <th>联系电话</th>
-        <th>课程类别</th>
-        <th>课程</th>
-        <th>合同金额</th>
-        <th>折扣金额</th>
-        <th>应付金额</th>
-        <th>已付金额</th>
-      </tr>
-      </thead>
-      <tbody>{TableItem(list, goto)}</tbody>
-    </table>
-  );
-};
-
-const TableItem = (data, goto) => {
-  let table = [];
-
-  if (data.length === 0) {
-    return table;
-  }
-
-  data.map((item, index) => {
-    table.push(
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{item.creatorName}</td>
-        <td>{fmtDate(item.createTime)}</td>
-        <td>{item.orgName}</td>
-        <td>{item.executiveName}</td>
-        <td>{CONFIG.TYPE_ID[item.typeId]}</td>
-        <td>
-          <a onClick={goto} cid={item.id} href="javascript:;">{item.code}</a>
-        </td>
-        <td>{fmtDate(item.startDate)}</td>
-        <td>{fmtDate(item.endDate)}</td>
-        <td>{item.stuName}</td>
-        <td>{item.parName}</td>
-        <td>{item.parCellphone}</td>
-        <td>{item.courseType}</td>
-        <td>{item.courseName}</td>
-        <td>{item.oriPrice}</td>
-        <td>{item.discPrice}</td>
-        <td>{item.finalPrice}</td>
-        <td>{item.paid}</td>
-      </tr>
-    );
-  });
-
-  return table;
-};
-*/
 
 class List extends React.Component {
+
+    calendarComponentRef = React.createRef();
+
     constructor(props) {
         super(props);
-
-        this.commands = this.props.commands.filter((command) => (command === 'Add'));
-        this.title = fmtTitle(this.props.location.pathname);
-        this.createDialogTips = this.createDialogTips.bind(this);
-        this.goToDetails = this.goToDetails.bind(this);
         this.state = {
+            calendarWeekends: true,
+            droppable: false,
+            editable: false,
+            roomList: [],
+            classList: [],
+            teacherList: [],
             group: this.props.changedCrmGroup,
-            list: [],
-            ids: [],
-            isAnimating: true,
-            redirectToReferrer: false,
-            columns: [
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
+            calendarEvents: [ // initial event data
                 {
-                    label: "序号",
-                    width: 100,
-                    sortable: true,
-                    type: 'index'
-                },
-                {
-                    label: "创建人",
-                    prop: "creatorName",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 120,
-                    sortable: true
-                },
-                {
-                    label: "所属组织",
-                    prop: "orgName",
-                    width: 175,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "合同类型",
-                    prop: "typeId",
-                    width: 100
-                },
-                {
-                    label: "合同编号",
-                    prop: "code",
-                    width: 130,
-                    render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }
-                },
-                {
-                    label: "签约时间",
-                    prop: "startDate",
-                    width: 120
-                },
-                {
-                    label: "到期时间",
-                    prop: "endDate",
-                    width: 120
-                },
-                {
-                    label: "学员姓名",
-                    prop: "stuName",
-                    width: 95,
-                },
-                {
-                    label: "家长姓名",
-                    prop: "parName",
-                    width: 95,
-                },
-                {
-                    label: "联系电话",
-                    prop: "parCellphone",
-                    width: 150,
-                    className: 'tabletd',
-                    render: function (data) {
-                        return <Tooltip effect="dark" content={data.parCellphone}
-                                        placement="top-start">
-                            {data.parCellphone}
-                        </Tooltip>
-                    }
-
-                },
-                {
-                    label: "课程类别",
-                    prop: "courseType",
-                    width: 95
-                },
-                {
-                    label: "课程",
-                    prop: "courseName",
-                    width: 95,
-                    className: 'tabletd',
-                    render: function (data) {
-
-                        return <Tooltip effect="dark" content={data.courseName}
-                                        placement="top-start">
-                            {data.courseName}
-                        </Tooltip>
-                    }
-                },
-                {
-                    label: "合同金额",
-                    prop: "oriPrice",
-                    width: 100
-                },
-                {
-                    label: "折扣金额",
-                    prop: "discPrice",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "应付金额",
-                    prop: "finalPrice",
-                    width: 95
-                },
-                {
-                    label: "已付金额",
-                    prop: "paid",
-                    width: 120
+                    title: 'K101  Teacher Zhou',
+                    start: new Date("2019-07-22 10:00"),
+                    end: new Date("2019-07-22 18:00"),
+                    color: "#123456",
+                    textColor: "#fff",
+                    id: "aaa"
                 }
             ],
-            totalPage:0,
-            currentPage:1,
-            pageSize:10,
-            totalCount:0,
-        };
+            eventCommont: '',
+            chooseRoom: null,
+            chooseClass: null,
+            chooseTeacher: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
+        }
+        this.title = fmtTitle(this.props.location.pathname);
+        this.title.name  = this.title.name ? this.title.name : "All"
+        this.eventMouseEnter = this.eventMouseEnter.bind(this);
+        this.eventMouseLeave = this.eventMouseLeave.bind(this);
+        this.chooseTopCondition = this.chooseTopCondition.bind(this);
+        this.addCustomeEvent = this.addCustomeEvent.bind(this);
+        this.delAssignClass = this.delAssignClass.bind(this);
+        this.mid = this.mid.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                const ids = list.data.map((contract) => (contract.id));
-                list.data.map(item => {
-                    if(item.createTime != null){
-                        item.createTime = fmtDate(item.createTime);
-                    }
-                    if(item.startDate != null){
-                        item.startDate = fmtDate(item.startDate);
-                    }
-                    if(item.endDate != null){
-                        item.endDate = fmtDate(item.endDate);
-                    }
-                    if(item.typeId != null){
-                        item.typeId = CONFIG.TYPE_ID[item.typeId];
-                    }
-                });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.refreshAssignClass();
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -250,84 +70,197 @@ class List extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
-        //request();
+        request();
         mainSize()
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
-            this.setState({isAnimating: true});
+    toggleWeekends = () => {
+        this.setState({ // update a property
+            calendarWeekends: !this.state.calendarWeekends
+        })
+    }
 
-            const request = async () => {
-                try {
-                    let list = await ajax('/service/contract/list.do', {orgId: nextProps.changedCrmGroup.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                    const ids = list.data.map((contract) => (contract.id));
+    gotoPast = () => {
+        let calendarApi = this.calendarComponentRef.current.getApi()
+        calendarApi.gotoDate('2000-01-01') // call a method on the Calendar object
+    }
 
-                    this.setState({
-                        group: nextProps.changedCrmGroup,
-                        list: list.data,
-                        ids: ids,totalPage: list.totalPage,totalCount: list.count
-                    });
-                } catch (err) {
-                    if (err.errCode === 401) {
-                        this.setState({redirectToReferrer: true})
-                    } else {
-                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                    }
-                } finally {
-                    this.setState({isAnimating: false});
+    eventOnClick = (evt) => {
+        this.state.chooseEvent = evt.event;
+        this.handleDateClick();
+
+    }
+
+    windowResize(view) {
+        console.log(1234565432);
+    }
+
+    titleF(date) {
+        return fmtDate(date.start.marker) + '-----' + fmtDate(date.end.marker);
+    }
+
+    eventMouseEnter(mouseEnterInfo) {
+        this.setState({
+            eventCommont: mouseEnterInfo.event.title
+        })
+    }
+
+    eventMouseLeave(mouseEnterInfo) {
+        this.setState({
+            eventCommont: ''
+        })
+    }
+
+    //type:1代表班级 2教师  3教室   evt:里面的id值
+    chooseTopCondition(type, evt) {
+
+        switch (type) {
+            case(1): {
+                this.state.chooseTeacher = null;
+                this.state.chooseRoom = null;
+                this.state.chooseClass = evt.id;
+                this.title.name = evt.code;
+                break;
+            }
+            case(2): {
+                this.state.chooseTeacher = evt.id;
+                this.state.chooseRoom = null;
+                this.state.chooseClass = null;
+                this.title.name = evt.name;
+                break;
+            }
+            case(3): {
+                this.state.chooseRoom = evt.id;
+                this.state.chooseTeacher = null;
+                this.state.chooseClass = null;
+                this.title.name = evt.code;
+                break;
+            }
+        }
+        this.refreshAssignClass();
+    }
+    //添加自定义事件
+    handleDateClick = (arg) => {
+
+        // if(this.state.chooseClass && this.state.chooseRoom && this.state.chooseTeacher){
+        this.userContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogForEvent
+                accept={this.addCustomeEvent}
+                refresh={this.mid}
+                container={this.userContainer}
+                typeName="1"
+                changedCrmGroup={this.state.group}
+                chooseStartDate={(arg && arg.date) ? arg.date : (this.state.chooseEvent ? this.state.chooseEvent.startTime : new Date())}
+                data = {this.state.chooseEvent}
+                replace={this.props.history.replace}
+                from={this.props.location}
+                ref={(dom) => {
+                    this.user = dom
+                }}
+            />,
+            document.body.appendChild(this.userContainer)
+        );
+        this.user.dialog.modal('show');
+        // if (confirm('Would you like to add an event to ' + arg.dateStr + ' ?')) {
+        //     this.setState({  // add new event data
+        //         calendarEvents: this.state.calendarEvents.concat({ // creates a new array
+        //             title: 'New Event',
+        //             start: arg.date,
+        //             allDay: arg.allDay
+        //         })
+        //     })
+        // }
+        /*}else{
+            Message({
+                message: "请先选择班级、教师、教室",
+                type: 'error'
+            });
+        }*/
+    }
+    //确认添加自定义事件
+    addCustomeEvent(selected){
+        if(selected.id){
+            this.delAssignClass(selected.id);
+        }
+        const request = async () => {
+            try {
+                let param =  {classId: selected.chooseClass,
+                    teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,
+                    startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate};
+                await ajax('/academy/class/assignClass.do',{"assignVo":JSON.stringify(param)});
+                Message({
+                    message: "成功",
+                    type: 'info'
+                });
+                this.refreshAssignClass();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
                 }
-            };
-
-            //request();
-        }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+        request();
+        this.state.chooseEvent = null;
     }
-
-    componentWillUnmount() {
-        if (this.tipsContainer) {
-            document.body.removeChild(this.tipsContainer);
-        }
+    mid(){
+        this.refreshAssignClass();
+        this.state.chooseEvent = null;
     }
-
-    createDialogTips(text) {
-        if (this.tips === undefined) {
-            this.tipsContainer = document.createElement('div');
-
-            ReactDOM.render(
-                <DialogTips
-                    accept={this.logout}
-                    title="提示"
-                    text={text}
-                    ref={(dom) => {
-                        this.tips = dom
-                    }}
-                />,
-                document.body.appendChild(this.tipsContainer)
-            );
-        } else {
-            this.tips.setText(text);
-        }
-
-        this.tips.dialog.modal('show');
+    //刷新事件列表
+    refreshAssignClass() {
+        const request = async () => {
+            try {
+                //事件列表
+                let assignClassList = await ajax('/academy/class/assignClassList.do', {orgId: this.state.group.id,classId:this.state.chooseClass,
+                        teacherId:this.state.chooseTeacher,roomId:this.state.chooseRoom});
+                if(assignClassList && assignClassList.data){
+                    let calendarEvents = [];
+                    assignClassList.data.map(item => {
+                        calendarEvents.push({
+                            title: '班级：' + item.classCode + '\n教师：' + item.teacherName + '\n教室：' + item.roomCode,
+                            start: new Date(item.startTime),
+                            end: new Date(item.endTime),
+                            color: item.classColor ? item.classColor : "#123456",
+                            textColor: "#fff",
+                            id: item.id
+                        });
+                    });
+                    this.setState({calendarEvents : calendarEvents})
+                }
+            } catch (err) {
+                // if (err.errCode === 401) {
+                //     this.setState({redirectToReferrer: true})
+                // } else {
+                //     this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                // }
+            } finally {
+                // this.setState({isAnimating: false});
+            }
+        };
+        request();
     }
-
-    goToDetails(evt) {
-        const url = `${this.props.match.url}/${evt}`;
-
-        this.props.history.push(url);
-    }
-
-    pageChange(currentPage){
-        console.log(currentPage);
-        this.state.currentPage = currentPage;
-        // this.setState({currentPage:currentPage});
-        this.componentDidMount();
-    }
-
-    sizeChange(pageSize){
-        console.log(pageSize);
-        this.state.pageSize = pageSize;
-        this.componentDidMount();
+    //删除事件列表
+    delAssignClass(id) {
+        const request = async () => {
+            try {
+                //事件列表
+                let assignClassList = await ajax('/academy/class/delAssignClass.do', {id: id});
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+        request();
     }
 
     render() {
@@ -339,36 +272,47 @@ class List extends React.Component {
                 }}/>
             )
         }
-
         return (
             <div>
                 <h5 id="subNav">
-                    <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                    <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}|&nbsp;&nbsp;{this.props.profile.cRealName}
                 </h5>
                 <div id="main" className="main p-3">
-                    <Progress isAnimating={this.state.isAnimating}/>
-                    {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    {/*<Table
-                        style={{width: '100%'}}
-                        columns={this.state.columns}
-                        data={this.state.list}
-                        border={true}
-                        fit={true}
-                        emptyText={"--"}
-                    />
-                    <Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={this.state.totalCount}
-                                pageSizes={[10, 50, 100]}
-                                pageSize={this.state.pageSize}
-                                currentPage={this.state.currentPage}
-                                pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
-                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
+                    <div className='demo-app'>
+                        <div className="row">
+                            <div className='demo-app-calendar'>
+                                <FullCalendar
+                                    defaultView="timeGridWeek"
+                                    header={{
+                                        left: 'prev,next', /*prev,next today*/
+                                        center: 'title',
+                                        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                                    }}
+                                    plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                                    ref={this.calendarComponentRef}
+                                    weekends={this.state.calendarWeekends}
+                                    events={this.state.calendarEvents}
+                                    /*dateClick={this.handleDateClick}*/
+                                    editable={false}
+                                    timeZone='local'
+                                    /*eventClick={this.eventOnClick}*/
+                                    minTime='07:00:00'
+                                    maxTime='22:00:00'
+                                    titleFormat={this.titleF}
+                                    eventMouseEnter={this.eventMouseEnter}
+                                    eventMouseLeave={this.eventMouseLeave}
+                                    /*handleWindowResize={false}
+                                    windowReSize={this.windowResize}
+                                    aspectRatio={1.1}*/
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
     }
+
 }
 
 export default List;

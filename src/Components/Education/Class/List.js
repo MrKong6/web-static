@@ -9,91 +9,25 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
+import { Button,Table,Pagination } from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
-
-/*
-const Table = ({list, goto}) => {
-  return (
-    <table className="table table-bordered table-sm">
-      <thead>
-      <tr>
-        <th>序号</th>
-        <th>创建人</th>
-        <th>创建时间</th>
-        <th>所属组织</th>
-        <th>所属用户</th>
-        <th>合同类型</th>
-        <th>合同编号</th>
-        <th>签约时间</th>
-        <th>到期时间</th>
-        <th>学员姓名</th>
-        <th>家长姓名</th>
-        <th>联系电话</th>
-        <th>课程类别</th>
-        <th>课程</th>
-        <th>合同金额</th>
-        <th>折扣金额</th>
-        <th>应付金额</th>
-        <th>已付金额</th>
-      </tr>
-      </thead>
-      <tbody>{TableItem(list, goto)}</tbody>
-    </table>
-  );
-};
-
-const TableItem = (data, goto) => {
-  let table = [];
-
-  if (data.length === 0) {
-    return table;
-  }
-
-  data.map((item, index) => {
-    table.push(
-      <tr key={index}>
-        <td>{index + 1}</td>
-        <td>{item.creatorName}</td>
-        <td>{fmtDate(item.createTime)}</td>
-        <td>{item.orgName}</td>
-        <td>{item.executiveName}</td>
-        <td>{CONFIG.TYPE_ID[item.typeId]}</td>
-        <td>
-          <a onClick={goto} cid={item.id} href="javascript:;">{item.code}</a>
-        </td>
-        <td>{fmtDate(item.startDate)}</td>
-        <td>{fmtDate(item.endDate)}</td>
-        <td>{item.stuName}</td>
-        <td>{item.parName}</td>
-        <td>{item.parCellphone}</td>
-        <td>{item.courseType}</td>
-        <td>{item.courseName}</td>
-        <td>{item.oriPrice}</td>
-        <td>{item.discPrice}</td>
-        <td>{item.finalPrice}</td>
-        <td>{item.paid}</td>
-      </tr>
-    );
-  });
-
-  return table;
-};
-*/
+import Commands from "../../Commands/Commands";
 
 class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command === 'Add'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Add'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.addAction = this.addAction.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
@@ -104,104 +38,106 @@ class List extends React.Component {
                     type: 'index'
                 },
                 {
-                    label: "创建人",
-                    prop: "creatorName",
+                    label: "校区名称",
+                    prop: "schoolArea",
                     width: 100,
                     sortable: true
                 },
                 {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 120,
-                    sortable: true
-                },
-                {
-                    label: "所属组织",
-                    prop: "orgName",
-                    width: 175,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "合同类型",
-                    prop: "typeId",
-                    width: 100
-                },
-                {
-                    label: "合同编号",
+                    label: "班级编号",
                     prop: "code",
-                    width: 130,
+                    width: 120,
+                    sortable: true,
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
                 },
                 {
-                    label: "签约时间",
+                    label: "升学前班级",
+                    prop: "beforeClassCode",
+                    width: 95,
+                    showOverflowTooltip: true,
+                },
+                {
+                    label: "班级类型",
+                    prop: "typeName",
+                    width: 95
+                },
+                {
+                    label: "班级类别",
+                    prop: "rangeName",
+                    width: 100
+                },
+                {
+                    label: "班级状态",
+                    prop: "classStatusName",
+                    width: 130,
+                    /*render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                    }*/
+                },
+                {
+                    label: "开班日期",
                     prop: "startDate",
                     width: 120
                 },
                 {
-                    label: "到期时间",
+                    label: "结班日期",
                     prop: "endDate",
                     width: 120
                 },
                 {
-                    label: "学员姓名",
-                    prop: "stuName",
+                    label: "主教",
+                    prop: "mainTeacher",
                     width: 95,
                 },
                 {
-                    label: "家长姓名",
-                    prop: "parName",
+                    label: "教务",
+                    prop: "registrar",
                     width: 95,
                 },
                 {
-                    label: "联系电话",
-                    prop: "parCellphone",
-                    width: 150,
-                    className: 'tabletd',
-                    render: function (data) {
-                        return <Tooltip effect="dark" content={data.parCellphone}
-                                        placement="top-start">
-                            {data.parCellphone}
-                        </Tooltip>
-                    }
+                    label: "计划人数",
+                    prop: "planNum",
+                    // className: 'tabletd',
+                    // render: function (data) {
+                    //     return <Tooltip effect="dark" content={data.parCellphone}
+                    //                     placement="top-start">
+                    //         {data.parCellphone}
+                    //     </Tooltip>
+                    // }
 
                 },
                 {
-                    label: "课程类别",
-                    prop: "courseType",
-                    width: 95
+                    label: "开班人数",
+                    prop: "startNum",
                 },
                 {
-                    label: "课程",
-                    prop: "courseName",
-                    width: 95,
-                    className: 'tabletd',
+                    label: "实际人数",
+                    prop: "factNum",
+                    /*className: 'tabletd',
                     render: function (data) {
 
                         return <Tooltip effect="dark" content={data.courseName}
                                         placement="top-start">
                             {data.courseName}
                         </Tooltip>
-                    }
+                    }*/
                 },
                 {
-                    label: "合同金额",
-                    prop: "oriPrice",
+                    label: "创建人",
+                    prop: "createBy",
                     width: 100
                 },
                 {
-                    label: "折扣金额",
-                    prop: "discPrice",
+                    label: "创建时间",
+                    prop: "createOn",
                     width: 100,
                     sortable: true
                 },
+                /*
                 {
                     label: "应付金额",
                     prop: "finalPrice",
@@ -211,7 +147,7 @@ class List extends React.Component {
                     label: "已付金额",
                     prop: "paid",
                     width: 120
-                }
+                }*/
             ],
             totalPage:0,
             currentPage:1,
@@ -223,11 +159,13 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                const ids = list.data.map((contract) => (contract.id));
-                list.data.map(item => {
-                    if(item.createTime != null){
-                        item.createTime = fmtDate(item.createTime);
+                let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
+                    pageSize:this.state.pageSize,csTeacherId:this.state.teacherId});
+
+                const ids = list.data.items.map((contract) => (contract.id+''));
+                list.data.items.map(item => {
+                    if(item.createOn != null){
+                        item.createOn = fmtDate(item.createOn);
                     }
                     if(item.startDate != null){
                         item.startDate = fmtDate(item.startDate);
@@ -235,11 +173,8 @@ class List extends React.Component {
                     if(item.endDate != null){
                         item.endDate = fmtDate(item.endDate);
                     }
-                    if(item.typeId != null){
-                        item.typeId = CONFIG.TYPE_ID[item.typeId];
-                    }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -250,7 +185,7 @@ class List extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
-        //request();
+        request();
         mainSize()
     }
 
@@ -261,7 +196,7 @@ class List extends React.Component {
             const request = async () => {
                 try {
                     let list = await ajax('/service/contract/list.do', {orgId: nextProps.changedCrmGroup.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                    const ids = list.data.map((contract) => (contract.id));
+                    const ids = list.data.map((contract) => (contract.id+""));
 
                     this.setState({
                         group: nextProps.changedCrmGroup,
@@ -330,6 +265,10 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    addAction(){
+        this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -344,11 +283,15 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                    <Commands
+                        commands={this.commands}
+                        addAction={this.addAction}
+                    />
                 </h5>
                 <div id="main" className="main p-3">
-                    <Progress isAnimating={this.state.isAnimating}/>
+                    {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    {/*<Table
+                    <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}
                         data={this.state.list}
@@ -364,7 +307,7 @@ class List extends React.Component {
                                 pageCount={this.state.totalPage}
                                 className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
             </div>
         )
