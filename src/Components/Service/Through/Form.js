@@ -45,7 +45,7 @@ class Form extends React.Component {
         const request = async () => {
             try {
                 let advisorList = [],mainTeacher=[],helpTeacher=[],chooseMain=[],chooseassistant=[],
-                    chooseMainTwo=[],chooseassistantTwo=[],roomDataTwo=[];
+                    chooseMainTwo=[],chooseassistantTwo=[],roomDataTwo=[],chooseRoomIds = [],chooseRoomIdsTwo = [],chooseAdvisitorList = [],advisorListTwo = [];
                 let throughStatus = await ajax('/service/through/throughStatus.do');
                 advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
                 let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
@@ -73,16 +73,16 @@ class Form extends React.Component {
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
-
+                        debugger
                         keys.map(key => {
                             if (key === 'throughTime') {
                                 this.state.throughTime = new Date(data[key]);
                             }
                             if (key === 'adviserIds') {
                                 if(data[key].indexOf(',') != -1){
-                                    this.state.value = data[key].split(",");
+                                    chooseAdvisitorList = data[key].split(",");
                                 }else{
-                                    this.state.value = this.state.value.push(data[key]);
+                                    chooseAdvisitorList.push(data[key]);
                                 }
                             }
                             if (key === 'mainTeacherIds') {
@@ -90,6 +90,13 @@ class Form extends React.Component {
                                     chooseMain = data[key].split(",");
                                 }else{
                                     chooseMain.push(Number(data[key]));
+                                }
+                            }
+                            if (key === 'roomIds') {
+                                if(data[key].indexOf(',') != -1){
+                                    chooseRoomIds = data[key].split(",");
+                                }else{
+                                    chooseRoomIds.push(Number(data[key]));
                                 }
                             }
                             if (key === 'assistantIds') {
@@ -103,6 +110,9 @@ class Form extends React.Component {
                                 if (key === 'throughTime') {
                                     this.form[key].value = formatWithTime(data[key]);
                                     this.state.throughTime = formatWithTime(data[key]);
+                                }else if (key === 'throughEndTime') {
+                                    this.form[key].value = formatWithTime(data[key]);
+                                    this.state.throughEndTime = formatWithTime(data[key]);
                                 } else {
                                     this.form[key].value = data[key];
                                 }
@@ -110,6 +120,7 @@ class Form extends React.Component {
                         })
                     }
                 });
+                debugger
                 if(chooseassistant){
                     chooseassistant.map(item => {
                         chooseassistantTwo.push(Number(item));
@@ -121,13 +132,20 @@ class Form extends React.Component {
                     })
                 }
 
+                if(chooseRoomIds){
+                    chooseRoomIds.map(item => {
+                        chooseRoomIdsTwo.push(Number(item));
+                    })
+                }
+
                 this.setState({userOptions:advisorList,
                                 mainTeacher:mainTeacher,
                                 helpTeacher:helpTeacher,
                                 roomData:roomDataTwo,
-                                value:this.state.value,
+                                value:chooseAdvisitorList,
                                 mainTeacherIds:chooseMainTwo,
-                                assistantIds:chooseassistantTwo});
+                                assistantIds:chooseassistantTwo,
+                                roomIds:chooseRoomIdsTwo});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -348,6 +366,15 @@ class Form extends React.Component {
                                                          }) : null
                                                     }
                                                 </Select>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>体验课人数
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="num"
+                                                       required={true}/>
                                             </div>
                                         </div>
                                     </div>

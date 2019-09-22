@@ -198,6 +198,20 @@ class StudentView extends React.Component {
     this.props.history.push(`/home/academy/class/student/assign/${this.state.id}`, {ids: this.ids});
   }
 
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
+    }
+
+    sizeChange(pageSize){
+        debugger
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
+    }
+
   render() {
 
     if (this.state.redirectToReferrer) {
@@ -241,13 +255,15 @@ class StudentView extends React.Component {
                 {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                 {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                 <p>班级学员信息</p>
-                <div className="row">
+                <div className="row" style={{"height":'80%'}}>
                     <Table
                         style={{width: '100%'}}
+                        className="leadlist_search"
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
                         fit={true}
+                        height='80%'
                         emptyText={"暂无数据"}
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"

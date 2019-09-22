@@ -109,6 +109,8 @@ class ThroughStudentView extends React.Component {
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.sizeChange = this.sizeChange.bind(this);
+        this.pageChange = this.pageChange.bind(this);
     }
 
     componentDidMount() {
@@ -173,6 +175,20 @@ class ThroughStudentView extends React.Component {
 
     goToDetails(id) {
         this.props.history.push(`/home/sales/opporpublic/${id}`, {ids: this.ids});
+    }
+
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
+    }
+
+    sizeChange(pageSize){
+        debugger
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
     }
 
     render() {

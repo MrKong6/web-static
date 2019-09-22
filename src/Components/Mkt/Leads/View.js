@@ -12,6 +12,7 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
+import {Message, MessageBox} from "element-react";
 
 const NextBtn = ({id, ids, link}) => {
   const curIndex = ids.indexOf(id);
@@ -142,6 +143,16 @@ class View extends React.Component {
   }
 
   delAction() {
+      MessageBox.confirm('此操作将永久删除该线索信息, 是否继续?', '提示', {
+          type: 'warning'
+      }).then(() => {
+          request();
+      }).catch(() => {
+          Message({
+              type: 'info',
+              message: '已取消删除'
+          });
+      });
     const request = async () => {
       try {
         await ajax('/mkt/leads/del.do', {id: this.state.id});
@@ -157,7 +168,6 @@ class View extends React.Component {
       }
     };
 
-    request();
   }
 
   convertAction() {

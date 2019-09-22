@@ -377,6 +377,7 @@ class StudentAssignView extends React.Component {
                                         border={true}
                                         fit={true}
                                         emptyText={"--暂无数据--"}
+                                        height={'80%'}
                                         onSelectChange={(selection,type) => this.selectRow(selection,1) }
                                     />
                                 </div>
@@ -394,6 +395,7 @@ class StudentAssignView extends React.Component {
                                         border={true}
                                         fit={true}
                                         emptyText={"--暂无数据--"}
+                                        height={'80%'}
                                         onSelectChange={(selection,type) => this.selectRow(selection,2) }
                                     />
                                 </div>

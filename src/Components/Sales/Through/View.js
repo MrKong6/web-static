@@ -291,6 +291,17 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">体验课人数</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.num}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

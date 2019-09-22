@@ -10,7 +10,8 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import formatWithTime from "../../../utils/fmtDate";
-import {Button, Pagination, Table} from "element-react";
+import {Button, Message, Pagination, Table} from "element-react";
+import {MessageBox} from "element-react";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -101,6 +102,14 @@ class ThroughStudentView extends React.Component {
                     label: "电话号码",
                     prop: "parent.cellphone",
                 },
+                {
+                    label: "操作",
+                    width: 120,
+                    fixed: 'right',
+                    render: (row, column, index)=>{
+                        return <span><Button type="danger" size="small" onClick={this.deleteRow.bind(this, row.id)}>移除</Button></span>
+                    }
+                }
             ],
             totalPage:0,
             currentPage:1,
@@ -109,6 +118,7 @@ class ThroughStudentView extends React.Component {
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.deleteRow = this.deleteRow.bind(this);
     }
 
     componentDidMount() {
@@ -172,7 +182,32 @@ class ThroughStudentView extends React.Component {
     }
 
     goToDetails(id) {
-        this.props.history.push(`/home/sales/opporpublic/${id}`, {ids: this.ids});
+        this.props.history.push(`/home/sales/oppor/${id}`);
+    }
+
+    deleteRow(columnId){
+        MessageBox.confirm('此操作将从体验课移除该学员, 是否继续?', '提示', {
+            type: 'warning'
+        }).then(() => {
+            request();
+        }).catch(() => {
+            Message({
+                type: 'info',
+                message: '已取消删除'
+            });
+        });
+        const request = async () => {
+            try {
+                let list = await ajax('/sales/oppor/removeThAssign.do', {id:columnId,throughId:this.state.id,type:2});
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            }
+        };
     }
 
     render() {
