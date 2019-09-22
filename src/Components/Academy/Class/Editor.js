@@ -83,6 +83,7 @@ class Editor extends React.Component {
     query.classColor = this.form.state.classColor.hex;
     query.orgId = this.state.group.id;
     query.id = this.state.id;
+    query.mainTeacher = this.form.state.mainTeacherIds.toString();
 
     const request = async () => {
       try {

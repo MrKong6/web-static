@@ -9,7 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination } from 'element-react';
+import {Button, Table, Pagination, Tooltip, Select} from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
@@ -23,25 +23,26 @@ class List extends React.Component {
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
+        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            classStatus: [],
+            chooseStatusName: null,
             teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
                 {
-                    label: "序号",
                     width: 100,
                     sortable: true,
                     type: 'index'
                 },
                 {
-                    label: "校区名称",
+                    label: "(校区名称)",
                     prop: "schoolArea",
-                    width: 100,
-                    sortable: true
+                    width: 120,
                 },
                 {
                     label: "班级编号",
@@ -54,10 +55,13 @@ class List extends React.Component {
                     }
                 },
                 {
-                    label: "升学前班级",
-                    prop: "beforeClassCode",
+                    label: "班级状态",
+                    prop: "classStatusName",
                     width: 95,
-                    showOverflowTooltip: true,
+                    /*render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                    }*/
                 },
                 {
                     label: "班级类型",
@@ -67,16 +71,7 @@ class List extends React.Component {
                 {
                     label: "班级类别",
                     prop: "rangeName",
-                    width: 100
-                },
-                {
-                    label: "班级状态",
-                    prop: "classStatusName",
-                    width: 130,
-                    /*render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }*/
+                    width: 95
                 },
                 {
                     label: "开班日期",
@@ -89,42 +84,81 @@ class List extends React.Component {
                     width: 120
                 },
                 {
-                    label: "主教",
-                    prop: "mainTeacher",
-                    width: 95,
-                },
-                {
-                    label: "教务",
-                    prop: "registrar",
-                    width: 95,
-                },
-                {
                     label: "计划人数",
                     prop: "planNum",
-                    // className: 'tabletd',
-                    // render: function (data) {
-                    //     return <Tooltip effect="dark" content={data.parCellphone}
-                    //                     placement="top-start">
-                    //         {data.parCellphone}
-                    //     </Tooltip>
-                    // }
-
-                },
-                {
-                    label: "开班人数",
-                    prop: "startNum",
+                    width: 95
                 },
                 {
                     label: "实际人数",
                     prop: "factNum",
-                    /*className: 'tabletd',
+                    width: 95
+                },
+                {
+                    label: "主教",
+                    prop: "mainTeacherName",
+                    width: 95,
+                },
+                {
+                    label: "客服",
+                    prop: "registrar",
+                    width: 95,
+                },
+                {
+                    label: "课程类别",
+                    prop: "courseTypeName",
+                    width: 95
+                },
+                {
+                    label: "课程阶段",
+                    prop: "courseRangeName",
+                    width: 100
+                },
+                {
+                    label: "课程表",
+                    prop: "course",
+                    width: 100
+                },
+                {
+                    label: "开课日期",
+                    prop: "courseStartDate",
+                    width: 120
+                },
+                {
+                    label: "结课日期",
+                    prop: "courseEndDate",
+                    width: 120
+                },
+                {
+                    label: "课程进度",
+                    prop: "courseProcess",
+                    width: 120
+                },
+                {
+                    label: "总课时",
+                    prop: "classHour",
+                    width: 120
+                },
+                {
+                    label: "消耗课时",
+                    prop: "useCourseHour",
+                    width: 120
+                },
+                {
+                    label: "剩余课时",
+                    prop: "noUseCourseHour",
+                    width: 120
+                },
+                {
+                    label: "备注",
+                    prop: "beforeClassCode",
+                    width: 95,
+                    className:'tabletd',
                     render: function (data) {
-
-                        return <Tooltip effect="dark" content={data.courseName}
+                        return <Tooltip effect="dark" content={data.beforeClassCode}
                                         placement="top-start">
-                            {data.courseName}
+                            {data.beforeClassCode}
                         </Tooltip>
-                    }*/
+                    }
                 },
                 {
                     label: "创建人",
@@ -134,20 +168,9 @@ class List extends React.Component {
                 {
                     label: "创建时间",
                     prop: "createOn",
-                    width: 100,
+                    width: 130,
                     sortable: true
                 },
-                /*
-                {
-                    label: "应付金额",
-                    prop: "finalPrice",
-                    width: 95
-                },
-                {
-                    label: "已付金额",
-                    prop: "paid",
-                    width: 120
-                }*/
             ],
             totalPage:0,
             currentPage:1,
@@ -159,8 +182,9 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
-                    pageSize:this.state.pageSize,csTeacherId:this.state.teacherId});
+                let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageIndex:this.state.currentPage,
+                    limit:this.state.pageSize,csTeacherId:this.state.teacherId,statusId:this.state.chooseStatusName});
+                let allClassStatus = await ajax('/academy/class/classStatus.do');
 
                 const ids = list.data.items.map((contract) => (contract.id+''));
                 list.data.items.map(item => {
@@ -173,8 +197,14 @@ class List extends React.Component {
                     if(item.endDate != null){
                         item.endDate = fmtDate(item.endDate);
                     }
+                    if(item.courseStartDate != null){
+                        item.courseStartDate = fmtDate(item.courseStartDate);
+                    }
+                    if(item.courseEndDate != null){
+                        item.courseEndDate = fmtDate(item.courseEndDate);
+                    }
                 });
-                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
+                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,classStatus:allClassStatus});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -268,6 +298,13 @@ class List extends React.Component {
     addAction(){
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
     }
+    chooseStatusSearch(chooseStatusName){
+        // debugger;
+        this.state.chooseStatusName = chooseStatusName;
+        /*window.sessionStorage.setItem("chooseStatusName",chooseStatusName);*/
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -291,13 +328,26 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <div className="row">
+                        <div className="col-2">
+                            <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true}
+                                    onChange={this.chooseStatusSearch}>
+                                {
+                                    this.state.classStatus.map(el => {
+                                        return <Select.Option key={el.code} label={el.name} value={el.code}/>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                    </div>
                     <Table
-                        style={{width: '100%'}}
+                        style={{width: '100%',"margin-bottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
                         fit={true}
                         emptyText={"--"}
+                        height='80%'
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}
@@ -305,7 +355,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page"}
+                                className={"page_bottom"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

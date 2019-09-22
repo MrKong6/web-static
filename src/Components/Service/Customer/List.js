@@ -309,7 +309,15 @@ class List extends React.Component {
             withCredentials:true,
             data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId},
             action: AJAX_PATH + '/service/customer/student/import.do',
-            onSuccess: (file, fileList) => this.successMsg("导入成功"),
+            onSuccess: (response, file, fileList) => {
+                debugger
+                if(response.code && response.code == 200){
+                    this.successMsg("导入成功");
+                    this.componentDidMount();
+                }else{
+                    this.errorMsg(response.detail);
+                }
+            }
         };
 
         return (

@@ -75,6 +75,7 @@ class Create extends React.Component {
             return;
         }
         query.throughTime = this.form.state.throughTime ? this.form.state.throughTime.getTime() : "";
+        query.throughEndTime = this.form.state.throughEndTime ? this.form.state.throughEndTime.getTime() : "";
         query.orgId = this.state.group.id;
         query.adviserIds = this.form.state.value.toString();
         query.mainTeacherIds = this.form.state.mainTeacherIds.toString();

@@ -9,8 +9,8 @@ import Progress from "../../Progress/Progress"
 import mainSize from "../../../utils/mainSize";
 import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
-import ajax from "../../../utils/ajax";
-import { Button,Table,Pagination,Upload,Input,Tooltip, Select } from 'element-react';
+import ajax, {AJAX_PATH} from "../../../utils/ajax";
+import {Button, Table, Pagination, Upload, Input, Tooltip, Select, Message} from 'element-react';
 import '../../Mkt/Leads/Leads.css'
 import ajaxFile from "../../../utils/ajaxFile";
 
@@ -199,7 +199,7 @@ class List extends React.Component {
 
             ],
             totalPage:0,
-            currentPage:1,
+            currentPage:storage.getItem("opporCurrentPage") ? Number(storage.getItem("opporCurrentPage")) : 10,
             pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],
@@ -324,6 +324,7 @@ class List extends React.Component {
     pageChange(currentPage){
         console.log(currentPage);
         this.state.currentPage = currentPage;
+        window.sessionStorage.setItem("opporCurrentPage",currentPage);
         // this.setState({currentPage:currentPage});
         this.componentDidMount();
     }
@@ -331,6 +332,7 @@ class List extends React.Component {
     sizeChange(pageSize){
         console.log(pageSize);
         this.state.pageSize = pageSize;
+        window.sessionStorage.setItem("pageSize",pageSize);
         this.componentDidMount();
     }
 
@@ -360,6 +362,23 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
+    importSuccess() {
+        this.componentDidMount();
+        this.successMsg("导入成功")
+    };
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -369,7 +388,14 @@ class List extends React.Component {
                 }}/>
             )
         }
-
+        const uploadConfig = {
+            className:"upload-demo",
+            showFileList:false,
+            withCredentials:true,
+            data:{'type':2,'orgId':this.state.group.id},
+            action: AJAX_PATH + '/mkt/leads/import.do',
+            onSuccess: (file, fileList) => this.importSuccess(),
+        };
         return (
             <div>
                 <h5 id="subNav">
@@ -379,6 +405,7 @@ class List extends React.Component {
                         commands={this.commands}
                         addAction={this.addAction}
                         exportAction={this.exportAction}
+                        importAction={uploadConfig}
                     />
                 </h5>
                 <div id="main" className="main p-3">

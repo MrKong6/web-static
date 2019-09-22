@@ -7,7 +7,7 @@ import DialogTips from "../../Dialog/DialogTips";
 import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {ColorPicker, DatePicker} from "element-react";
+import {ColorPicker, DatePicker, Select} from "element-react";
 import InputColor from 'react-input-color';
 
 class Form extends React.Component {
@@ -25,12 +25,15 @@ class Form extends React.Component {
             courseStartTime: null,
             courseEndTime: null,
             createOn: null,
-            classColor: null
+            classColor: null,
+            mainTeacherIds: [],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
         this.changeColor = this.changeColor.bind(this);
+        this.chooseMainTeacher = this.chooseMainTeacher.bind(this);
+
     }
 
     componentDidMount() {
@@ -43,8 +46,13 @@ class Form extends React.Component {
                 let allClassType = await ajax('/academy/class/classType.do');
                 let allClassRange = await ajax('/academy/class/classRange.do');
                 let allClassCourseType = await ajax('/academy/class/classCourseType.do');
+                let mainTeacher = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
                 let gender = await ajax('/mkt/gender/list.do');
                 let data = null;
+
+                if(mainTeacher){
+                    mainTeacher = mainTeacher.data.items;
+                }
 
                 if (this.props.isEditor) {
                     data = await ajax('/academy/class/query.do', {id: this.props.editorId});
@@ -69,12 +77,21 @@ class Form extends React.Component {
                 //
                 // const birthday = new Date(data.stuBirthday);
                 // const age = calculateAge(birthday);
-
+                let main = [];
+                if(data && data.mainTeacher){
+                    if(data.mainTeacher.indexOf(",") != -1){
+                        data.mainTeacher.split(",").map(item => {
+                            main.push(Number(item))
+                        });
+                    }else {
+                        main.push(Number(data.mainTeacher));
+                    }
+                }
                 this.setState({
-                    option: {allClassStatus, allClassType, allClassRange, allClassCourseType}
+                    option: {allClassStatus, allClassType, allClassRange, allClassCourseType,mainTeacher},
+                    mainTeacherIds: main,
                 }, () => {
                     if (this.props.isEditor) {
-
                         const keys = Object.keys(data);
                         keys.map(key => {
                             if (this.form[key]) {
@@ -173,6 +190,10 @@ class Form extends React.Component {
 
     changeColor(evt){
         this.setState({classColor:evt});
+    }
+
+    chooseMainTeacher(data){
+        this.state.mainTeacherIds = data;
     }
 
     render() {
@@ -283,7 +304,7 @@ class Form extends React.Component {
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>校区
+                                                校区
                                             </label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="schoolArea"/>
@@ -354,7 +375,15 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">主教</label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="mainTeacher"/>
+                                                {/*<input type="text" className="form-control" name="mainTeacher"/>*/}
+                                                <Select value={this.state.mainTeacherIds} multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
+                                                    {
+                                                        (this.state.option && this.state.option.mainTeacher) ? this.state.option.mainTeacher.map(el => {
+                                                            return <Select.Option key={el.id} label={el.name}
+                                                                                  value={el.id}/>
+                                                        }) : null
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
                                         <div className="form-group row">

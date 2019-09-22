@@ -21,6 +21,7 @@ class Form extends React.Component {
             option: null,
             data: null,
             throughTime: null,
+            throughEndTime: null,
             options:[],
             mainTeacher:[],
             helpTeacher:[],
@@ -48,7 +49,7 @@ class Form extends React.Component {
                 let throughStatus = await ajax('/service/through/throughStatus.do');
                 advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
                 let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
-                let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:2});  //助教
+                let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});  //助教   ,position:2
                 let roomData = await ajax('/academy/room/list.do', {orgId: this.state.group.id});  //助教
 
                 let data = null;
@@ -57,7 +58,6 @@ class Form extends React.Component {
                     data = await ajax('/service/through/query.do', {id: this.props.editorId});
                     data = data.data;
                 }
-
                 if(mainTeacherData){
                     mainTeacher = mainTeacherData.data.items;
                 }
@@ -242,7 +242,7 @@ class Form extends React.Component {
                                                 <select className="form-control"
                                                         name={this.props.throughStatus || "throughStatus"}>
                                                     {
-                                                        this.state.option ? this.state.option.throughStatus.map(item => (
+                                                        (this.state.option && this.state.option.throughStatus) ? this.state.option.throughStatus.map(item => (
                                                             <option key={item.code}
                                                                     value={item.code}>{item.name}</option>
                                                         )) : null
@@ -252,7 +252,7 @@ class Form extends React.Component {
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>时间
+                                                <em className="text-danger">*</em>开始时间
                                             </label>
                                             <div className="col-7">
                                                 <DatePicker
@@ -272,15 +272,35 @@ class Form extends React.Component {
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>结束时间
+                                            </label>
+                                            <div className="col-7">
+                                                <DatePicker
+                                                    name="throughTime"
+                                                    value={this.state.throughEndTime}
+                                                    width="100%"
+                                                    className="allWidth"
+                                                    isShowTime={true}
+                                                    placeholder="选择日期"
+                                                    format="yyyy-MM-dd HH:mm"
+                                                    onChange={date => {
+                                                        console.debug('DatePicker1 changed: ', date)
+                                                        this.setState({throughEndTime: date})
+                                                    }}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>教室
                                             </label>
                                             <div className="col-7">
                                                 <Select value={this.state.roomIds} multiple={true} style={{width:'100%'}} onChange={this.chooseRoom}>
                                                     {
-                                                        this.state.roomData.map(el => {
+                                                        this.state.roomData ? this.state.roomData.map(el => {
                                                             return <Select.Option key={el.id} label={el.code}
                                                                                   value={el.id}/>
-                                                        })
+                                                        }) : null
                                                     }
                                                 </Select>
                                             </div>
@@ -292,10 +312,10 @@ class Form extends React.Component {
                                             <div className="col-7">
                                                 <Select value={this.state.mainTeacherIds} multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
                                                     {
-                                                        this.state.mainTeacher.map(el => {
+                                                        this.state.mainTeacher ? this.state.mainTeacher.map(el => {
                                                             return <Select.Option key={el.id} label={el.name}
                                                                                   value={el.id}/>
-                                                        })
+                                                        }) : null
                                                     }
                                                 </Select>
                                             </div>
@@ -307,10 +327,10 @@ class Form extends React.Component {
                                             <div className="col-7">
                                                 <Select value={this.state.assistantIds} multiple={true} style={{width:'100%'}} onChange={this.chooseHelpTeacher}>
                                                     {
-                                                        this.state.helpTeacher.map(el => {
+                                                        this.state.helpTeacher ? this.state.helpTeacher.map(el => {
                                                             return <Select.Option key={el.id} label={el.name}
                                                                                   value={el.id}/>
-                                                        })
+                                                        }) : null
                                                     }
                                                 </Select>
                                             </div>
@@ -322,10 +342,10 @@ class Form extends React.Component {
                                             <div className="col-7">
                                                 <Select value={this.state.value} multiple={true} style={{width:'100%'}} onChange={this.chooseUser}>
                                                     {
-                                                         this.state.userOptions.map(el => {
+                                                        this.state.userOptions ? this.state.userOptions.map(el => {
                                                              return <Select.Option key={el.cId} label={el.cRealName}
                                                                                    value={el.cId}/>
-                                                         })
+                                                         }) : null
                                                     }
                                                 </Select>
                                             </div>

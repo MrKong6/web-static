@@ -258,13 +258,24 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">升学前班级</label>
+                                                <label className="col-5 col-form-label font-weight-bold">色块</label>
+                                                <div
+                                                    style={{
+                                                        width: 50,
+                                                        height: 50,
+                                                        marginTop: 20,
+                                                        backgroundColor: this.state.data.classColor ? this.state.data.classColor : null
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">班级状态</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.beforeClassCode}
+                                                        value={this.state.data.classStatusName}
                                                     />
                                                 </div>
                                             </div>
@@ -301,28 +312,6 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">班级状态</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data.classStatusName}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">色块</label>
-                                                <div
-                                                    style={{
-                                                        width: 50,
-                                                        height: 50,
-                                                        marginTop: 20,
-                                                        backgroundColor: this.state.data.classColor ? this.state.data.classColor : null
-                                                    }}
-                                                />
-                                            </div>
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
@@ -347,30 +336,6 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">主教</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data.mainTeacher}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">教务</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data.registrar}
-                                                    />
-                                                </div>
-                                            </div>
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">计划人数</label>
                                                 <div className="col-7">
@@ -379,17 +344,6 @@ class View extends React.Component {
                                                         readOnly={true}
                                                         className="form-control-plaintext"
                                                         value={this.state.data.planNum}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">开班人数</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data.startNum}
                                                     />
                                                 </div>
                                             </div>
@@ -405,29 +359,98 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">创建时间</label>
+                                                <label className="col-5 col-form-label font-weight-bold">主教</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={fmtDate(this.state.data.createOn)}
+                                                        value={this.state.data.mainTeacherName}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                                                <label className="col-5 col-form-label font-weight-bold">客服</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.createBy}
+                                                        value={this.state.data.registrar}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col"/>
+                                        <div className="col">
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">课程类别</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.courseTypeName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">课程阶段</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.courseRangeName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">课程表</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.course}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">开课日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={fmtDate(this.state.data.courseStartDate)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">结课日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={fmtDate(this.state.data.courseEndDate)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">备注</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.beforeClassCode}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

@@ -262,7 +262,7 @@ class List extends React.Component {
                 },
             ],
             totalPage:0,
-            currentPage:1,
+            currentPage:storage.getItem("leadCurrentPage") ? Number(storage.getItem("leadCurrentPage")) : 10,
             pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],
@@ -425,6 +425,7 @@ class List extends React.Component {
     pageChange(currentPage){
         console.log(currentPage);
         this.state.currentPage = currentPage;
+        window.sessionStorage.setItem("leadCurrentPage",currentPage);
         // this.setState({currentPage:currentPage});
         this.componentDidMount();
     }
@@ -432,6 +433,7 @@ class List extends React.Component {
     sizeChange(pageSize){
         console.log(pageSize);
         this.state.pageSize = pageSize;
+        window.sessionStorage.setItem("pageSize",pageSize);
         this.componentDidMount();
     }
 

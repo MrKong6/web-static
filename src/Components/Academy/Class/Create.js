@@ -80,6 +80,7 @@ class Create extends React.Component {
         query.courseStartDate = this.form.state.courseStartTime ? this.form.state.courseStartTime.getTime() : "";
         query.courseEndDate = this.form.state.courseEndTime ? this.form.state.courseEndTime.getTime() : "";
         query.orgId = this.state.group.id;
+        query.mainTeacher = this.form.state.mainTeacherIds.toString();
 
         this.setState({isAnimating: true});
 

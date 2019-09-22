@@ -4,7 +4,7 @@ import {$} from "../../vendor";
 
 import DialogGroup from './DialogGroup';
 import ajax from "../../utils/ajax";
-import {DatePicker, DateRangePicker, Message, MessageBox} from "element-react";
+import {DatePicker, DateRangePicker, Message, MessageBox, Select} from "element-react";
 import DialogTips from "./DialogTips";
 
 class DialogForEvent extends React.Component {
@@ -19,6 +19,7 @@ class DialogForEvent extends React.Component {
         this.closed = this.closed.bind(this);
         this.changedLead = this.changedLead.bind(this);
         this.changedOppor = this.changedOppor.bind(this);
+        this.chooseClass = this.chooseClass.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             startTime: this.props.chooseStartDate,
@@ -48,7 +49,7 @@ class DialogForEvent extends React.Component {
 
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
-                let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id});
+                let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
                 let data = null;
                 if(this.state.id){
                     //即编辑
@@ -58,7 +59,6 @@ class DialogForEvent extends React.Component {
                     }
 
                 }
-
                 this.setState({
                     classList: classList.data.items,
                     teacherList: teacherList.data.items,
@@ -67,9 +67,9 @@ class DialogForEvent extends React.Component {
                     comment: data ? data.comment: null,
                     startTime: data ? new Date(data.startTime): this.props.chooseStartDate,
                     endTime: data ? new Date(data.endTime): this.props.chooseStartDate,
-                    chooseTeacher: data ? data.teacherId: null,
+                    chooseTeacher: data ? Number(data.teacherId): null,
                     chooseClass: data ? data.classId: null,
-                    chooseRoom: data ? data.roomId: null,
+                    chooseRoom: data ? Number(data.roomId): null,
                 });
 
             } catch (err) {
@@ -115,22 +115,67 @@ class DialogForEvent extends React.Component {
             userName: ''
         });
     }
+    //选择班级后关联教师
+    /*chooseClass(data){
+        if(data && data.mainTeacher){
+            if(data.mainTeacher.indexOf(",") != -1){
+                this.setState({
+                    chooseTeacher: data.mainTeacher.split(",")[0]
+                });
+            }else{
+                this.setState({
+                    chooseTeacher: data.mainTeacher
+                });
+            }
+        }
+    }*/
+    chooseClass(id){
+        const request = async () => {
+            try {
+
+                let data = await ajax('/academy/class/query.do', {id: id});
+                data = data.data;
+                if(data && data.mainTeacher){
+                    if(data.mainTeacher.indexOf(",") != -1){
+                        this.setState({
+                            chooseTeacher: data.mainTeacher.split(",")[0]
+                        });
+                    }else{
+                        this.setState({
+                            chooseTeacher: data.mainTeacher
+                        });
+                    }
+                }
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+        request();
+    }
 
     handleSelect(type, evt) {
+        // debugger
         switch (type) {
             case(1): {
-                this.setState({chooseClass:evt.target.value});
-                this.state.chooseClass = evt.target.value;
+                this.chooseClass(evt);
+                this.setState({chooseClass:evt});
+                this.state.chooseClass = evt;
                 break;
             }
             case(2): {
-                this.setState({chooseTeacher:evt.target.value});
-                this.state.chooseTeacher = evt.target.value;
+                this.setState({chooseTeacher:evt});
+                this.state.chooseTeacher = evt;
                 break;
             }
             case(3): {
-                this.setState({chooseRoom:evt.target.value});
-                this.state.chooseRoom = evt.target.value;
+                this.setState({chooseRoom:evt});
+                this.state.chooseRoom = evt;
                 break;
             }
             case(4): {
@@ -147,6 +192,7 @@ class DialogForEvent extends React.Component {
 
     accept() {
         //校验是否都选择了
+        // debugger
         if (!(this.state.chooseClass && this.state.chooseRoom && this.state.chooseTeacher)) {
             this.createGroupsDialog(`请先选择班级、教师、教室`);
             return;
@@ -246,22 +292,29 @@ class DialogForEvent extends React.Component {
                         <div className="modal-body">
                             <div className="form-group row">
                                 <label className="col-3 col-form-label">班级</label>
-                                <div className="col-6 input-group">
-                                    <select className="form-control" name={"class"}
+                                <div className="col-6">
+                                    {/*<select className="form-control" name={"class"}
                                             onChange={this.handleSelect.bind(this, 1)} value={this.state.chooseClass}>
                                         <option value="">请选择班级</option>
                                         {
                                             this.state.classList.map(item => (
-                                                <option key={item.id} value={item.id}>{item.code}</option>
+                                                <option key={item.id} value={item.id} mainteacher={item.mainTeacher}>{item.code}</option>
                                             ))
                                         }
-                                    </select>
+                                    </select>*/}
+                                    <Select style={{"width":"100%"}} value={this.state.chooseClass} filterable={true} onChange={this.handleSelect.bind(this, 1)} clearable={true} placeholder="请选择班级">
+                                        {
+                                            this.state.classList.map(el => {
+                                                return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                            })
+                                        }
+                                    </Select>
                                 </div>
                             </div>
                             <div className="form-group row">
                                 <label className="col-3 col-form-label">教师</label>
                                 <div className="col-6 input-group">
-                                    <select className="form-control" name={"teacher"}
+                                    {/*<select className="form-control" name={"teacher"}
                                             onChange={this.handleSelect.bind(this, 2)} value={this.state.chooseTeacher}>
                                         <option value="">请选择教师</option>
                                         {
@@ -269,13 +322,20 @@ class DialogForEvent extends React.Component {
                                                 <option key={item.id} value={item.id}>{item.name}</option>
                                             ))
                                         }
-                                    </select>
+                                    </select>*/}
+                                    <Select style={{"width":"100%"}} value={this.state.chooseTeacher} filterable={true} onChange={this.handleSelect.bind(this, 2)} clearable={true} placeholder="请选择教师">
+                                        {
+                                            this.state.teacherList.map(el => {
+                                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                            })
+                                        }
+                                    </Select>
                                 </div>
                             </div>
                             <div className="form-group row">
                                 <label className="col-3 col-form-label">教室</label>
                                 <div className="col-6 input-group">
-                                    <select className="form-control" name={"class"}
+                                    {/*<select className="form-control" name={"class"}
                                             onChange={this.handleSelect.bind(this, 3)} value={this.state.chooseRoom}>
                                         <option value="">请选择教室</option>
                                         {
@@ -283,7 +343,14 @@ class DialogForEvent extends React.Component {
                                                 <option key={item.id} value={item.id}>{item.code}</option>
                                             ))
                                         }
-                                    </select>
+                                    </select>*/}
+                                    <Select style={{"width":"100%"}} value={this.state.chooseRoom} filterable={true} onChange={this.handleSelect.bind(this, 3)} clearable={true} placeholder="请选择教室">
+                                        {
+                                            this.state.roomList.map(el => {
+                                                return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                            })
+                                        }
+                                    </Select>
                                 </div>
                             </div>
                             <div className="form-group row">

@@ -362,7 +362,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.mainTeacher}
+                                                        value={this.state.data.mainTeacherName}
                                                     />
                                                 </div>
                                             </div>

@@ -10,7 +10,7 @@ import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 import './AssignClass.css'
 import DialogForEvent from "../../Dialog/DialogForEvent";
 import fmtDate from "../../../utils/fmtDate";
-import {Card, Menu, Message, MessageBox} from "element-react";
+import {Card, Menu, Message, MessageBox, Select} from "element-react";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
@@ -61,7 +61,7 @@ class List extends React.Component {
                 //顶部
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
-                let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id});
+                let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
 
                 this.setState({
                     teacherList: teacherList.data.items,
@@ -121,6 +121,7 @@ class List extends React.Component {
     }
 
     titleF(date) {
+        debugger
         return fmtDate(date.start.marker) + '-----' + fmtDate(date.end.marker);
     }
 
@@ -138,9 +139,13 @@ class List extends React.Component {
 
     //type:1代表班级 2教师  3教室   evt:里面的id值
     chooseTopCondition(type, evt) {
-
         switch (type) {
             case(1): {
+                this.setState({
+                    chooseTeacher : null,
+                    chooseRoom : null,
+                    chooseClass : evt.id,
+                });
                 this.state.chooseTeacher = null;
                 this.state.chooseRoom = null;
                 this.state.chooseClass = evt.id;
@@ -148,6 +153,11 @@ class List extends React.Component {
                 break;
             }
             case(2): {
+                this.setState({
+                    chooseTeacher : evt.id,
+                    chooseRoom : null,
+                    chooseClass : null,
+                });
                 this.state.chooseTeacher = evt.id;
                 this.state.chooseRoom = null;
                 this.state.chooseClass = null;
@@ -155,6 +165,11 @@ class List extends React.Component {
                 break;
             }
             case(3): {
+                this.setState({
+                    chooseTeacher : null,
+                    chooseRoom : evt.id,
+                    chooseClass : null,
+                });
                 this.state.chooseRoom = evt.id;
                 this.state.chooseTeacher = null;
                 this.state.chooseClass = null;
@@ -210,7 +225,6 @@ class List extends React.Component {
         }
         const request = async () => {
             try {
-                debugger
                 let param =  {classId: selected.chooseClass,
                     teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,
                     startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate};
@@ -221,11 +235,7 @@ class List extends React.Component {
                 });
                 this.refreshAssignClass();
             } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
+
             } finally {
                 this.setState({isAnimating: false});
             }
@@ -289,6 +299,13 @@ class List extends React.Component {
         request();
     }
 
+    initRange(currentDate) {
+        return {
+            start: currentDate.clone().subtract(1, 'days'),
+            end: currentDate.clone().add(3, 'days') // exclusive end, so 3
+        };
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -307,20 +324,55 @@ class List extends React.Component {
 
                     <div className='demo-app'>
                         <div className="row">
-                            <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
+                            {/*<div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>班级：</label>
-                            </div>
-                            <Menu defaultActive={this.state.chooseClass} className="el-menu-demo" mode="horizontal"
+                            </div>*/}
+                            {/*<Menu defaultActive={this.state.chooseClass} className="el-menu-demo" mode="horizontal"
                                   onSelect={this.chooseTopCondition.bind(this, 1)}>
                                 {
                                     this.state.classList ? this.state.classList.map(item => (
                                         <Menu.Item index={item}>{item.code}</Menu.Item>
                                     )) : null
                                 }
-                            </Menu>
+                            </Menu>*/}
+                            <div className="col-2">
+                                <Select value={this.state.chooseClass} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级">
+                                    {
+                                        this.state.classList.map(el => {
+                                            return (
+                                                <Select.Option key={el.id} label={el.code} value={el}>
+                                                    {el.assignId && el.assignId.length > 0 ? (
+                                                        <span>{el.code}</span>
+                                                    ) : (<span style={{color: '#CDCDC1'}}>{el.code}</span>)}
+
+                                                </Select.Option>
+                                            )
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            <div class="col-2">
+                                <Select value={this.state.chooseTeacher} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 2)} placeholder="请选择教师">
+                                    {
+                                        this.state.teacherList.map(el => {
+                                            return <Select.Option key={el.id} label={el.name} value={el} />
+                                        })
+                                    }
+                                </Select>
+                            </div>
+                            <div class="col-2">
+                                <Select value={this.state.chooseRoom} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 3)} placeholder="请选择教室">
+                                    {
+                                        this.state.roomList.map(el => {
+                                            return <Select.Option key={el.id} label={el.code} value={el} />
+                                        })
+                                    }
+                                </Select>
+                            </div>
+
                         </div>
                         <div className="row">
-                            <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
+                            {/*<div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>教师：</label>
                             </div>
                             <Menu defaultActive={this.state.chooseTeacher} className="el-menu-demo" mode="horizontal"
@@ -330,10 +382,12 @@ class List extends React.Component {
                                         <Menu.Item index={item2}>{item2.name}</Menu.Item>
                                     )) : null
                                 }
-                            </Menu>
+                            </Menu>*/}
+
                         </div>
-                        <div className="row room-bot">
-                            <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
+                        <div className="row">
+                            <br/>
+                            {/*<div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>教室：</label>
                             </div>
                             <Menu defaultActive={this.state.chooseRoom} className="el-menu-demo" mode="horizontal"
@@ -343,7 +397,7 @@ class List extends React.Component {
                                         <Menu.Item index={item3}>{item3.code}</Menu.Item>
                                     )) : null
                                 }
-                            </Menu>
+                            </Menu>*/}
                         </div>
 
                         {/*<div className='demo-app-top row'>
@@ -363,6 +417,7 @@ class List extends React.Component {
                                     }}
                                     plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
                                     ref={this.calendarComponentRef}
+                                    firstDay={1}
                                     weekends={this.state.calendarWeekends}
                                     events={this.state.calendarEvents}
                                     dateClick={this.handleDateClick}
@@ -374,6 +429,7 @@ class List extends React.Component {
                                     titleFormat={this.titleF}
                                     eventMouseEnter={this.eventMouseEnter}
                                     eventMouseLeave={this.eventMouseLeave}
+
                                     /*handleWindowResize={false}
                                     windowReSize={this.windowResize}
                                     aspectRatio={1.1}*/

@@ -9,7 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Message, Tooltip} from 'element-react';
+import {Button, Table, Pagination, Message, Tooltip, Select, Input} from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
@@ -26,10 +26,15 @@ class List extends React.Component {
         this.addAction = this.addAction.bind(this);
         this.exportAction = this.exportAction.bind(this);
         this.importSuccess = this.importSuccess.bind(this);
+        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
+        this.onChange = this.onChange.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            classStatus: [],
+            chooseStatusName: null,
+            chooseClassName: null,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
@@ -94,8 +99,15 @@ class List extends React.Component {
                 },
                 {
                     label: "主教",
-                    prop: "mainTeacher",
+                    prop: "mainTeacherName",
                     width: 95,
+                    className:'tabletd',
+                    render: function (data) {
+                        return <Tooltip effect="dark" content={data.mainTeacherName}
+                                        placement="top-start">
+                            {data.mainTeacherName}
+                        </Tooltip>
+                    }
                 },
                 {
                     label: "客服",
@@ -125,6 +137,26 @@ class List extends React.Component {
                 {
                     label: "结课日期",
                     prop: "courseEndDate",
+                    width: 120
+                },
+                {
+                    label: "课程进度",
+                    prop: "courseProcess",
+                    width: 120
+                },
+                {
+                    label: "总课时",
+                    prop: "classHour",
+                    width: 120
+                },
+                {
+                    label: "消耗课时",
+                    prop: "useCourseHour",
+                    width: 120
+                },
+                {
+                    label: "剩余课时",
+                    prop: "noUseCourseHour",
                     width: 120
                 },
                 {
@@ -161,27 +193,32 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageIndex:this.state.currentPage,limit:this.state.pageSize});
+                let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageIndex:this.state.currentPage,
+                    limit:this.state.pageSize,statusId:this.state.chooseStatusName,classCode:this.state.chooseClassName});
+                let allClassStatus = await ajax('/academy/class/classStatus.do');
+                let ids = [];
+                if(list.data && list.data.items){
+                    ids = list.data.items.map((contract) => (contract.id));
+                    list.data.items.map(item => {
+                        if(item.createOn != null){
+                            item.createOn = fmtDate(item.createOn);
+                        }
+                        if(item.startDate != null){
+                            item.startDate = fmtDate(item.startDate);
+                        }
+                        if(item.endDate != null){
+                            item.endDate = fmtDate(item.endDate);
+                        }
+                        if(item.courseStartDate != null){
+                            item.courseStartDate = fmtDate(item.courseStartDate);
+                        }
+                        if(item.courseEndDate != null){
+                            item.courseEndDate = fmtDate(item.courseEndDate);
+                        }
+                    });
+                }
 
-                const ids = list.data.items.map((contract) => (contract.id));
-                list.data.items.map(item => {
-                    if(item.createOn != null){
-                        item.createOn = fmtDate(item.createOn);
-                    }
-                    if(item.startDate != null){
-                        item.startDate = fmtDate(item.startDate);
-                    }
-                    if(item.endDate != null){
-                        item.endDate = fmtDate(item.endDate);
-                    }
-                    if(item.courseStartDate != null){
-                        item.courseStartDate = fmtDate(item.courseStartDate);
-                    }
-                    if(item.courseEndDate != null){
-                        item.courseEndDate = fmtDate(item.courseEndDate);
-                    }
-                });
-                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
+                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,classStatus:allClassStatus});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -296,6 +333,19 @@ class List extends React.Component {
         this.componentDidMount();
         this.successMsg("导入成功")
     };
+    chooseStatusSearch(chooseStatusName){
+        // debugger;
+        this.state.chooseStatusName = chooseStatusName;
+        /*window.sessionStorage.setItem("chooseStatusName",chooseStatusName);*/
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
+
+    onChange(key, value) {
+        this.setState({
+            chooseClassName: value
+        });
+    }
 
     render() {
         const uploadConfig = {
@@ -329,13 +379,34 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <div class="row">
+                        <div className="col-3">
+                            <Input placeholder="请输入班级编号"
+                                   className={"leadlist_search"}
+                                   value={this.state.chooseClassName}
+                                   onChange={this.onChange.bind(this, 'className')}
+                                   append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                            />
+                        </div>
+                        <div className="col-2">
+                            <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true}
+                                    onChange={this.chooseStatusSearch}>
+                                {
+                                    this.state.classStatus.map(el => {
+                                        return <Select.Option key={el.code} label={el.name} value={el.code}/>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                    </div>
                     <Table
-                        style={{width: '100%'}}
+                        style={{width: '100%',"margin-bottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}
                         fit={true}
                         emptyText={"--"}
+                        height='80%'
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}
