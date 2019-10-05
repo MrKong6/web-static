@@ -29,7 +29,7 @@ class List extends React.Component {
             redirectToReferrer: false,
             columns: [
                 {
-                    label: "序号",
+                    // label: "序号",
                     type: 'index',
                     fixed: 'left',
                 },
@@ -71,7 +71,7 @@ class List extends React.Component {
                     sortable: true,
                     width: 100,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent ? row.parent.name : null}</Button></span>
                     }
                 },
                 {
@@ -99,9 +99,9 @@ class List extends React.Component {
                     width: 120,
                     className:'tabletd',
                     render: function (data) {
-                        return <Tooltip effect="dark" content={data.parent.address}
+                        return <Tooltip effect="dark" content={data.parent ? data.parent.address : null}
                                         placement="top-start">
-                            {data.parent.address}
+                            {data.parent ? data.parent.address : null}
                         </Tooltip>
                     }
                 },
@@ -207,6 +207,8 @@ class List extends React.Component {
             statusName:[],
             chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
             cellphone:storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
+            advisorList:[],
+            chooseAdvisorName:storage.getItem("chooseOpporAdvisorName") ? storage.getItem("chooseOpporAdvisorName") : '',
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
@@ -214,6 +216,7 @@ class List extends React.Component {
         this.exportAction = this.exportAction.bind(this);
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
+        this.chooseAdvisorSearch = this.chooseAdvisorSearch.bind(this);
     }
 
     componentDidMount() {
@@ -222,9 +225,11 @@ class List extends React.Component {
                 let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,fromWay:3,
                     pageNum:this.state.currentPage,pageSize:this.state.pageSize,cellphone:this.state.cellphone,
                     isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0),
-                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName,
+                    chooseAdvisorName:this.state.chooseAdvisorName});
                 let status = await ajax('/mkt/leads/status/list.do', {typeId: 2});
                 let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 2});
+                let advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
                 const ids = list.data.map((leads) => (leads.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -237,7 +242,8 @@ class List extends React.Component {
                         item.assignTime = formatWithTime(item.assignTime);
                     }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,statusName:status});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,
+                    statusName:status,advisorList:advisorList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -378,6 +384,13 @@ class List extends React.Component {
         this.componentDidMount();
         this.successMsg("导入成功")
     };
+    chooseAdvisorSearch(chooseAdvisorName){
+        // debugger;
+        this.state.chooseAdvisorName = chooseAdvisorName;
+        window.sessionStorage.setItem("chooseOpporAdvisorName",chooseAdvisorName);
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -429,6 +442,13 @@ class List extends React.Component {
                             this.state.statusName.map(el => {
                                 return <Select.Option key={el.id} label={el.name} value={el.id} />
                             })
+                        }
+                    </Select>
+                    <Select value={this.state.chooseAdvisorName} placeholder="请选择所属用户" clearable={true} onChange={this.chooseAdvisorSearch} className={"leftMargin"}>
+                        {
+                            this.state.advisorList ? this.state.advisorList.map(el => {
+                                return <Select.Option key={el.cId} label={el.cRealName} value={el.cId} />
+                            }) : null
                         }
                     </Select>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}

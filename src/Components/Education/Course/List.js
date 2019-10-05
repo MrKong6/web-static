@@ -30,7 +30,7 @@ class List extends React.Component {
             classList: [],
             teacherList: [],
             group: this.props.changedCrmGroup,
-            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 999999999,
             calendarEvents: [ // initial event data
                 {
                     title: 'K101  Teacher Zhou',

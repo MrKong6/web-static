@@ -262,6 +262,12 @@ export default {
             ICON_CLASS: "fa-leanpub",
             CATEGORY: '课程'
         },
+        "5-1-1": {
+            PATH_RULE: /^\/home\/academy\/course\/create$/,
+            ICON_CLASS: "fa-user-o",
+            CATEGORY: '课程',
+            // NAME: '访客'
+        },
         "5-2": {
             PATH: "home/academy/teacher",
             PATH_RULE: /^\/home\/academy\/teacher(\/((?!create).)*)?$/,
@@ -310,6 +316,13 @@ export default {
         "6-1": {
             PATH: "home/education/class",
             PATH_RULE: /^\/home\/education\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "6-1-1": {
+            PATH: "home/education/class",
+            PATH_RULE: /^\/home\/education\/class\/create$/,
             ICON_CLASS: "fa-users",
             CATEGORY: '我的',
             NAME: '班级'

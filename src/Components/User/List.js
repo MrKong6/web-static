@@ -12,12 +12,17 @@ import ajax from "../../utils/ajax";
 import {$} from "../../vendor";
 
 const Table = ({list, changedState, groupId}) => {
+  let i = 1;
+  list.map(item => {
+    item.index = i++;
+  });
   if (list.length) {
     return (
       <table className="table table-bordered table-sm">
         <thead>
         <tr>
           <th>&nbsp;</th>
+          <th>序号</th>
           <th>状态</th>
           <th>用户名</th>
           <th>姓名</th>
@@ -44,6 +49,7 @@ const Table = ({list, changedState, groupId}) => {
                   </label>
                 </div>
               </th>
+              <td> {user.index}</td>
               <td>
                 <div className="switch">
                   <input
@@ -57,7 +63,7 @@ const Table = ({list, changedState, groupId}) => {
                   <label htmlFor={`switch-${user.cId}`}/>
                 </div>
               </td>
-              < td> {user.cLoginName}</td>
+              <td> {user.cLoginName}</td>
               <td>{user.cRealName}</td>
               <td>{user.cNickName}</td>
               <td>{user.cPhone}</td>

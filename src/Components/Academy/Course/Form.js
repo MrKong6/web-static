@@ -35,47 +35,21 @@ class Form extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let relation = await ajax('/mkt/relation/list.do');
-        let gender = await ajax('/mkt/gender/list.do');
         let data = null;
 
         if (this.props.isEditor) {
-          data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
+          data = await ajax('/course/type/query.do', {id: this.props.editorId});
         } else {
-          data = {
-            stuName: this.props.apporData.student.name,
-            stuGrade: this.props.apporData.student.classGrade,
-            stuBirthday: new Date(this.props.apporData.student.birthday),
-            stuGenderId: this.props.apporData.student.genderId || '',
-            stuSchoolName: this.props.apporData.student.schoolName,
-            parName: this.props.apporData.parent.name,
-            relation: this.props.apporData.parent.relation,
-            parCellphone: this.props.apporData.parent.cellphone,
-            parWechat: this.props.apporData.parent.wechat || '',
-            parAddress: this.props.apporData.parent.address,
-            courseId: this.props.apporData.courseId || '',
-            courseName: this.props.apporData.courseName || ''
-          }
         }
 
-        const birthday = new Date(data.stuBirthday);
-        const age = calculateAge(birthday);
-
         this.setState({
-          option: {relation, gender},
-          data,
-          birthday,
-          age
+          data
         }, () => {
           const keys = Object.keys(data);
 
           keys.map(key => {
             if (this.form[key]) {
-              if (key === 'startDate' || key === 'endDate') {
-                this.form[key].value = fmtDate(data[key]);
-              } else {
                 this.form[key].value = data[key];
-              }
             }
           })
         });
@@ -133,15 +107,11 @@ class Form extends React.Component {
   }
 
   getFormValue() {
-    if (!this.form.checkValidity() || !this.form.stuGrade.value || !this.form.courseId.value || !this.form.courseName.value) {
+    if (!this.form.checkValidity()) {
       return
     }
 
     let query = {};
-
-    query.stuBirthday = this.state.birthday;
-    query.stuCode = this.form.code.value;
-    query.courseType = this.form.courseId.options[this.form.courseId.selectedIndex].text;
 
     for (let i = 0; i < this.form.length; i++) {
       if (this.form[i].name) {
@@ -157,21 +127,7 @@ class Form extends React.Component {
   }
 
   render() {
-    if (!this.state.option || (this.props.isEditor && !this.state.data)) {
-      return (
-        <form ref={(dom) => {
-          this.form = dom
-        }}>
-          <div className="row justify-content-md-center">
-            <div className="col col-12">
-              <div className="card">
-                <div className="card-body">数据加载中...</div>
-              </div>
-            </div>
-          </div>
-        </form>
-      )
-    } else {
+
       return (
         <form ref={(dom) => {
           this.form = dom
@@ -180,126 +136,6 @@ class Form extends React.Component {
             <div className="col col-12">
               <div className="card">
                 <div className="card-body">
-                  <p className="ht pb-3 b-b">基本信息</p>
-                  <div className="row">
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>学员姓名
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="stuName" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">学员姓别</label>
-                        <div className="col-7">
-                          <Gender data={this.state.option.gender} name="stuGenderId"/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>出生年月
-                        </label>
-                        <div className="col-7">
-                          <DayPickerInput
-                            value={this.state.birthday}
-                            dayPickerProps={{
-                              initialMonth: this.state.birthday
-                            }}
-                            onDayChange={day => {
-                              this.changeBirthday(day)
-                            }}
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>学员年龄
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="stuAge"
-                                 value={this.state.age ? this.state.age : ''} readOnly={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>在读年级
-                        </label>
-                        <div className="col-7">
-                          <Grade name="stuGrade"/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>所在学校
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="stuSchoolName" required={true}/>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">证件类型</label>
-                        <div className="col-7">
-                          <Document name="stuIdType"/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">证件号码</label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="stuIdCode"/>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>家长姓名
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="parName" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>与孩子关系
-                        </label>
-                        <div className="col-7">
-                          <Relation data={this.state.option.relation}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>联系电话
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="parCellphone" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">微信号</label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="parWechat"/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">电子邮箱</label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="parEmail"/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">家庭住址</label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="parAddress"/>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col"/>
-                  </div>
-                  <p className="ht pt-3 pb-3 b-t b-b">合同信息</p>
                   <div className="row">
                     <div className="col">
                       <div className="form-group row">
@@ -307,105 +143,33 @@ class Form extends React.Component {
                           <em className="text-danger">*</em>课程类别
                         </label>
                         <div className="col-7">
-                          <CourseType/>
+                          <input type="text" className="form-control" name="courseType" required={true}/>
                         </div>
                       </div>
                       <div className="form-group row">
                         <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>课程产品
+                          <em className="text-danger">*</em>课程阶段
                         </label>
                         <div className="col-7">
-                          <CourseName/>
+                          <input type="text" className="form-control" name="name" required={true}/>
                         </div>
                       </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>课时
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="courseHours" required={true}/>
+                        <div className="form-group row">
+                            <label className="col-5 col-form-label font-weight-bold">
+                                <em className="text-danger">*</em>总课时
+                            </label>
+                            <div className="col-7">
+                                <input type="text" className="form-control" name="classHour" required={true}/>
+                            </div>
                         </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>课次
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="courseTimes" required={true}/>
+                        <div className="form-group row">
+                            <label className="col-5 col-form-label font-weight-bold">
+                                <em className="text-danger">*</em>总课次
+                            </label>
+                            <div className="col-7">
+                                <input type="text" className="form-control" name="classTime" required={true}/>
+                            </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>合同金额
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="oriPrice" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>折扣金额
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="discPrice" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>应付金额
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="finalPrice" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>已付金额
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="paid" required={true}/>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col">
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>合同编号
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="code" required={true}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>合同类型
-                        </label>
-                        <div className="col-7">
-                          <select className="form-control" name="typeId">
-                            <option value="2">新招</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>签约日期
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="startDate" required={true}
-                                 placeholder={fmtDate(new Date())}/>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>到期日期
-                        </label>
-                        <div className="col-7">
-                          <input type="text" className="form-control" name="endDate" required={true}
-                                 placeholder={fmtDate(new Date())}/>
-                        </div>
-                      </div>
                     </div>
                     <div className="col"/>
                   </div>
@@ -416,7 +180,6 @@ class Form extends React.Component {
         </form>
       )
     }
-  }
 }
 
 export default Form;

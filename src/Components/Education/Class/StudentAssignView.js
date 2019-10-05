@@ -24,7 +24,7 @@ const NextBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/academy/class/${ids[curIndex + 1]}`,
+                pathname: `/home/education/class/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -44,7 +44,7 @@ const PrevBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/academy/class/${ids[curIndex - 1]}`,
+                pathname: `/home/education/class/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -308,7 +308,7 @@ class StudentAssignView extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/academy/class"/>
+                <Redirect to="/home/education/class"/>
             )
         }
 
@@ -323,7 +323,7 @@ class StudentAssignView extends React.Component {
                     </div>*/}
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
-                            this.props.history.push('/home/academy/class');
+                            this.props.history.push('/home/education/class');
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
@@ -402,7 +402,7 @@ class StudentAssignView extends React.Component {
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
                             <li className="breadcrumb-item"><Link
-                                to={`/home/academy/class/${this.state.id}`}>班级基本信息</Link></li>
+                                to={`/home/education/class/${this.state.id}`}>班级基本信息</Link></li>
                             <li className="breadcrumb-item active">班级学员信息</li>
                             <li className="breadcrumb-item">
                                 <Link to={{

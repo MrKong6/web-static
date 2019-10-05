@@ -14,6 +14,7 @@ import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 import ajaxFile from "../../../utils/ajaxFile";
+import {$} from "../../../vendor";
 
 class List extends React.Component {
     constructor(props) {
@@ -231,6 +232,17 @@ class List extends React.Component {
         };
         request();
         mainSize()
+    }
+
+    componentDidUpdate(){
+        //如果是移动端
+        /*if(navigator.userAgent.match(/mobile/i)) {
+            let classDom = document.getElementsByClassName('el-button');
+            classDom[0].style.padding="0px";
+            /!*for (var i = 0; i < classDom.length; i++) {
+                classDom[i].style.padding="auto";
+            }*!/
+        }*/
     }
 
     /*componentWillReceiveProps(nextProps) {

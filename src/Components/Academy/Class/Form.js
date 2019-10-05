@@ -106,6 +106,13 @@ class Form extends React.Component {
                                 this.state.startTime = new Date(data[key]);
                             } else if (key === 'endDate') {
                                 this.state.endTime =new Date(data[key]);
+                            }else if (key === 'courseStartDate') {
+                                this.state.courseStartTime =new Date(data[key]);
+                            }else if (key === 'courseEndDate') {
+                                this.state.courseEndTime =new Date(data[key]);
+                            }else if (key === 'classColor') {
+                                // this.state.classColor = data[key];
+                                this.changeColor(data[key]);
                             }
                         });
                     }
@@ -243,7 +250,8 @@ class Form extends React.Component {
                                                 ></ColorPicker>*/}
                                                 <div>
                                                     <InputColor
-                                                        initialHexColor="#5e72e4"
+                                                        colorFormat='hex'
+                                                        initialHexColor= "#5e72e4"
                                                         onChange={this.changeColor}
                                                         placement="right"
                                                     />
@@ -252,7 +260,7 @@ class Form extends React.Component {
                                                             width: 50,
                                                             height: 50,
                                                             marginTop: 20,
-                                                            backgroundColor: this.state.classColor ? this.state.classColor.hex : null
+                                                            backgroundColor: this.state.classColor
                                                         }}
                                                     />
                                                 </div>

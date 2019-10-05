@@ -138,7 +138,7 @@ class View extends React.Component {
     }
 
     delAction() {
-        MessageBox.confirm('此操作将永久删除教师, 是否继续?', '提示', {
+        MessageBox.confirm('此操作将永久删除该记录, 是否继续?', '提示', {
             type: 'warning'
         }).then(() => {
             request();
@@ -461,19 +461,19 @@ class View extends React.Component {
                             <li className="breadcrumb-item">班级基本信息</li>
                             <li className="breadcrumb-item active">
                                 <Link to={{
-                                    pathname: `/home/education/class//student/${this.state.id}`,
+                                    pathname: `/home/education/class/student/${this.state.id}`,
                                     state: {stuName: this.state.data.code}
                                 }}>班级学员信息</Link>
                             </li>
                             <li className="breadcrumb-item">
                                 <Link to={{
-                                    pathname: ``,
+                                    pathname: `/home/education/class/teacher/${this.state.id}`,
                                     state: {stuName: this.state.data.code}
                                 }}>班级教师信息</Link>
                             </li>
                             <li className="breadcrumb-item">
                                 <Link to={{
-                                    pathname: ``,
+                                    pathname: `/home/education/class/assignClass/${this.state.id}`,
                                     state: {stuName: this.state.data.code}
                                 }}>班级课程表</Link>
                             </li>

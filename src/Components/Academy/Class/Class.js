@@ -6,7 +6,9 @@ import List from './List'
 import View from './View';
 import StudentView from './StudentView';
 import StudentAssignView from './StudentAssignView';
+import TeacherView from './TeacherView';
 import Editor from "./Editor";
+import AssignClassView from "./AssignClassView";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
@@ -19,6 +21,14 @@ const Account = ({commands, location, match, profile, changedCrmGroup}) => {
             )}/>
             <Route path={`${match.url}/student/:contractId`} render={(props) => (
                 <StudentView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                             changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/teacher/:contractId`} render={(props) => (
+                <TeacherView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                             changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/assignClass/:contractId`} render={(props) => (
+                <AssignClassView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
                              changedCrmGroup={changedCrmGroup}/>
             )}/>
             <Route path={`${match.url}/create`} render={(props) => (

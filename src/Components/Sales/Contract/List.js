@@ -99,9 +99,9 @@ class List extends React.Component {
             redirectToReferrer: false,
             columns:[
                 {
-                    label: "序号",
+                    // label: "序号",
                     width: 100,
-                    sortable: true,
+                    // sortable: true,
                     type: 'index'
                 },
                 {

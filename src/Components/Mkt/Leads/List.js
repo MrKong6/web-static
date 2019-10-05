@@ -111,6 +111,7 @@ class List extends React.Component {
         this.exportAction = this.exportAction.bind(this);
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
+        this.chooseAdvisorSearch = this.chooseAdvisorSearch.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -120,7 +121,6 @@ class List extends React.Component {
             cellphone : storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
             columns:[
                 {
-                    label: "序号",
                     type: 'index',
                     fixed: 'left',
                 },
@@ -176,9 +176,9 @@ class List extends React.Component {
                     width: 95,
                     className:'tabletd',
                     render: function (data) {
-                        return <Tooltip effect="dark" content={data.parent.cellphone}
+                        return <Tooltip effect="dark" content={data.parent ? data.parent.cellphone : null}
                                         placement="top-start">
-                                    {data.parent.cellphone}
+                                    {data.parent ? data.parent.cellphone : null}
                                 </Tooltip>
                     }
 
@@ -269,9 +269,10 @@ class List extends React.Component {
             chooseStageNameLeads:storage.getItem("chooseStageNameLeads") ? storage.getItem("chooseStageNameLeads") : '',
             statusName:[],
             chooseStatusNameLeads:storage.getItem("chooseStatusNameLeads") ? Number(storage.getItem("chooseStatusNameLeads")) : '',
+            advisorList:[],
+            chooseAdvisorName:storage.getItem("chooseAdvisorName") ? storage.getItem("chooseAdvisorName") : '',
 
         };
-
     }
 
     componentDidMount() {
@@ -280,9 +281,11 @@ class List extends React.Component {
                 let list = await ajax('/mkt/leads/list.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
                     pageNum:this.state.currentPage,pageSize:this.state.pageSize,fromWay:2,
                     isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0),
-                    stageId:this.state.chooseStageNameLeads,statusId:this.state.chooseStatusNameLeads});
+                    stageId:this.state.chooseStageNameLeads,statusId:this.state.chooseStatusNameLeads,
+                    chooseAdvisorName:this.state.chooseAdvisorName});
                 let status = await ajax('/mkt/leads/status/list.do', {typeId: 1});
                 let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 1});
+                let advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
                 if(this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1){
                     //线索私有池
                     status = status.filter(sta => !(sta.id == 2 || sta.id == 3));
@@ -299,7 +302,7 @@ class List extends React.Component {
                         item.parent = {"cellphone" : "","name" : ""};
                     }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,statusName:status});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,stageName:stage,statusName:status,advisorList:advisorList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -364,7 +367,6 @@ class List extends React.Component {
     }
 
     createDialogTips(text) {
-        // debugger
         if (this.tips === undefined) {
             this.tipsContainer = document.createElement('div');
 
@@ -455,6 +457,13 @@ class List extends React.Component {
         this.state.currentPage = 1;
         this.componentDidMount();
     }
+    chooseAdvisorSearch(chooseAdvisorName){
+        // debugger;
+        this.state.chooseAdvisorName = chooseAdvisorName;
+        window.sessionStorage.setItem("chooseAdvisorName",chooseAdvisorName);
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
 
     render() {
 
@@ -474,7 +483,6 @@ class List extends React.Component {
                 }}/>
             )
         }
-
         return (
             <div>
                 <h5 id="subNav">
@@ -509,6 +517,13 @@ class List extends React.Component {
                             this.state.statusName.map(el => {
                                 return <Select.Option key={el.id} label={el.name} value={el.id} />
                             })
+                        }
+                    </Select>
+                    <Select value={this.state.chooseAdvisorName} placeholder="请选择所属用户" clearable={true} onChange={this.chooseAdvisorSearch} className={"leftMargin"}>
+                        {
+                            this.state.advisorList ? this.state.advisorList.map(el => {
+                                return <Select.Option key={el.cId} label={el.cRealName} value={el.cId} />
+                            }) : null
                         }
                     </Select>
                     {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}

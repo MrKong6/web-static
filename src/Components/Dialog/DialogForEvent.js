@@ -4,7 +4,7 @@ import {$} from "../../vendor";
 
 import DialogGroup from './DialogGroup';
 import ajax from "../../utils/ajax";
-import {DatePicker, DateRangePicker, Message, MessageBox, Select} from "element-react";
+import {DatePicker, DateRangePicker, Message, MessageBox, Select, Radio} from "element-react";
 import DialogTips from "./DialogTips";
 
 class DialogForEvent extends React.Component {
@@ -35,6 +35,7 @@ class DialogForEvent extends React.Component {
             classList: [],
             teacherList: [],
             comment: null,
+            loopId: null,
         }
         // if(this.props.data && this.props.data.start)
     }
@@ -51,11 +52,18 @@ class DialogForEvent extends React.Component {
                 let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
                 let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
                 let data = null;
+                let dateRange = [];
                 if(this.state.id){
                     //即编辑
                     let assignClassList = await ajax('/academy/class/assignClassList.do', {csId: this.state.id});
                     if(assignClassList && assignClassList.data && assignClassList.data.length>0){
                         data = assignClassList.data[0];
+                        if(data.loopStartTime){
+                            dateRange.push(new Date(data.loopStartTime));
+                        }
+                        if(data.xunhuanEndDate){
+                            dateRange.push(new Date(data.xunhuanEndDate));
+                        }
                     }
 
                 }
@@ -70,6 +78,9 @@ class DialogForEvent extends React.Component {
                     chooseTeacher: data ? Number(data.teacherId): null,
                     chooseClass: data ? data.classId: null,
                     chooseRoom: data ? Number(data.roomId): null,
+                    value2: dateRange,
+                    loopId: data? data.loopId : null,
+                    loopStartTime: data? new Date(data.loopStartTime) : null
                 });
 
             } catch (err) {
@@ -179,9 +190,12 @@ class DialogForEvent extends React.Component {
                 break;
             }
             case(4): {
+                debugger
                 if(evt.target.value && evt.target.value == '2'){
                     //是否循环选择了是   显示循环日期
-                    this.setState({showXunhuanDate:false});
+                    // if(!this.state.showXunhuan === 'none'){
+                        this.setState({showXunhuanDate:false});
+                    // }
                 }else{
                     this.setState({showXunhuanDate:true});
                 }
@@ -192,7 +206,6 @@ class DialogForEvent extends React.Component {
 
     accept() {
         //校验是否都选择了
-        // debugger
         if (!(this.state.chooseClass && this.state.chooseRoom && this.state.chooseTeacher)) {
             this.createGroupsDialog(`请先选择班级、教师、教室`);
             return;
@@ -201,6 +214,7 @@ class DialogForEvent extends React.Component {
             this.createGroupsDialog(`请录入开始和结束时间`);
             return;
         }
+
         this.props.accept({
             group: {
                 id: this.state.groupId,
@@ -218,6 +232,9 @@ class DialogForEvent extends React.Component {
             comment: this.state.comment,
             xunhuanEndDate: this.state.value2 ? this.state.value2[1] : null,
             id:this.state.id,
+            loopId: this.state.loopId,
+            showXunhuanDate: this.state.showXunhuanDate ? 1 : 2,  //1是循环 2是不循环
+            loopStartTime: this.state.loopStartTime ? this.state.loopStartTime : null
 
         });
         this.dialog.modal('hide');
@@ -230,7 +247,7 @@ class DialogForEvent extends React.Component {
     }
 
     del() {
-        MessageBox.confirm('此操作将永久删除教师, 是否继续?', '提示', {
+        MessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
             type: 'warning'
         }).then(() => {
             request();
@@ -387,8 +404,8 @@ class DialogForEvent extends React.Component {
                                         />
                                     </div>
                                 </div>
-                            {/*</div>*/}
-                            <div className="form-group row" style={{"display":this.state.showXunhuan}}>
+                            {/*</div>*/}{/*style={{"display":this.state.showXunhuan}}*/}
+                            <div className="form-group row">
                                 <label className="col-3 col-form-label font-weight-bold">
                                     是否循环
                                 </label>
@@ -400,7 +417,7 @@ class DialogForEvent extends React.Component {
                                     </select>
                                 </div>
                             </div>
-                            <div className="form-group row" style={{"display":this.state.showXunhuan}}>
+                            <div className="form-group row">
                                 <label className="col-3 col-form-label font-weight-bold">
                                     循环周期
                                 </label>

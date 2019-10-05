@@ -30,7 +30,7 @@ class List extends React.Component {
             ids: [],
             classStatus: [],
             chooseStatusName: null,
-            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 999999999,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
@@ -185,25 +185,28 @@ class List extends React.Component {
                 let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageIndex:this.state.currentPage,
                     limit:this.state.pageSize,csTeacherId:this.state.teacherId,statusId:this.state.chooseStatusName});
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
+                let ids = [];
+                if(list.data && list.data.items){
+                    ids = list.data.items.map((contract) => (contract.id+''));
+                    list.data.items.map(item => {
+                        if(item.createOn != null){
+                            item.createOn = fmtDate(item.createOn);
+                        }
+                        if(item.startDate != null){
+                            item.startDate = fmtDate(item.startDate);
+                        }
+                        if(item.endDate != null){
+                            item.endDate = fmtDate(item.endDate);
+                        }
+                        if(item.courseStartDate != null){
+                            item.courseStartDate = fmtDate(item.courseStartDate);
+                        }
+                        if(item.courseEndDate != null){
+                            item.courseEndDate = fmtDate(item.courseEndDate);
+                        }
+                    });
+                }
 
-                const ids = list.data.items.map((contract) => (contract.id+''));
-                list.data.items.map(item => {
-                    if(item.createOn != null){
-                        item.createOn = fmtDate(item.createOn);
-                    }
-                    if(item.startDate != null){
-                        item.startDate = fmtDate(item.startDate);
-                    }
-                    if(item.endDate != null){
-                        item.endDate = fmtDate(item.endDate);
-                    }
-                    if(item.courseStartDate != null){
-                        item.courseStartDate = fmtDate(item.courseStartDate);
-                    }
-                    if(item.courseEndDate != null){
-                        item.courseEndDate = fmtDate(item.courseEndDate);
-                    }
-                });
                 this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,classStatus:allClassStatus});
             } catch (err) {
                 if (err.errCode === 401) {

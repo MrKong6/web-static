@@ -185,7 +185,6 @@ class ThroughStudentView extends React.Component {
     }
 
     sizeChange(pageSize){
-        debugger
         console.log(pageSize);
         this.state.pageSize = pageSize;
         this.componentDidMount();

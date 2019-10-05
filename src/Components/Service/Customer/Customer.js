@@ -10,7 +10,7 @@ import ParentEditor from './ParentEditor';
 import AccountView from "./AccountView";
 
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
-  const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
+    const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
 
   return (
     <Switch>

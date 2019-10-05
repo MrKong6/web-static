@@ -94,7 +94,7 @@ class List extends React.Component {
                     prop: "parent.name",
                     width: 95,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent ? row.parent.name : null}</Button></span>
                     }
                 },
                 {
@@ -108,9 +108,9 @@ class List extends React.Component {
                     width: 95,
                     className:'tabletd',
                     render: function (data) {
-                        return <Tooltip effect="dark" content={data.parent.cellphone}
+                        return <Tooltip effect="dark" content={data.parent ? data.parent.cellphone : null}
                                         placement="top-start">
-                            {data.parent.cellphone}
+                            {data.parent ? data.parent.cellphone : null}
                         </Tooltip>
                     }
 

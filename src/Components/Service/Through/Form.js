@@ -73,7 +73,6 @@ class Form extends React.Component {
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
-                        debugger
                         keys.map(key => {
                             if (key === 'throughTime') {
                                 this.state.throughTime = new Date(data[key]);
@@ -120,7 +119,6 @@ class Form extends React.Component {
                         })
                     }
                 });
-                debugger
                 if(chooseassistant){
                     chooseassistant.map(item => {
                         chooseassistantTwo.push(Number(item));

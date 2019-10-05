@@ -3,6 +3,7 @@ import {Route, Redirect} from 'react-router-dom'
 
 const PrivateRoute = ({component: Component, ...rest}) => {
   const temp = {...rest};
+
   const isAccess = temp.access.filter((item) => (item.test(temp.location.pathname) === true));
 
   console.log("====================================================")

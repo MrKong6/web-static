@@ -26,7 +26,7 @@ class List extends React.Component {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
-            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
+            teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 999999999,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [

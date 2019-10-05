@@ -14,6 +14,7 @@ import {Card, Menu, Message, MessageBox, Select} from "element-react";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
+import {$} from "../../../vendor";
 
 
 class List extends React.Component {
@@ -60,7 +61,7 @@ class List extends React.Component {
             try {
                 //顶部
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
-                let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
+                let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,pageNum:1,pageSize:9999});
                 let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
 
                 this.setState({
@@ -81,6 +82,21 @@ class List extends React.Component {
         };
         request();
         mainSize()
+    }
+
+    componentDidUpdate(){
+        //如果是移动端  将日历高度自适应  头部字体自适应
+        if(navigator.userAgent.match(/mobile/i)) {
+            //如果是移动端
+            var h2Stle = $(".fc-toolbar h2");
+            if(h2Stle){
+                h2Stle.css("font-size","1em");
+            }
+            var tags = $(".fc-widget-content  div");
+            if(tags && tags.length > 3){
+                tags[4].removeAttribute('style');
+            }
+        }
     }
 
     toggleWeekends = () => {
@@ -121,7 +137,6 @@ class List extends React.Component {
     }
 
     titleF(date) {
-        debugger
         return fmtDate(date.start.marker) + '-----' + fmtDate(date.end.marker);
     }
 
@@ -221,13 +236,14 @@ class List extends React.Component {
     //确认添加自定义事件
     addCustomeEvent(selected){
         if(selected.id){
-            this.delAssignClass(selected.id);
+            this.delAssignClass(selected.id,selected.showXunhuanDate);
         }
         const request = async () => {
             try {
                 let param =  {classId: selected.chooseClass,
                     teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,
-                    startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate};
+                    startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate,
+                    loopTrue:selected.showXunhuanDate, loopId:selected.loopId, loopStartTime: selected.loopStartTime};
                 await ajax('/academy/class/assignClass.do',{"assignVo":JSON.stringify(param)});
                 Message({
                     message: "成功",
@@ -281,11 +297,11 @@ class List extends React.Component {
         request();
     }
     //删除事件列表
-    delAssignClass(id) {
+    delAssignClass(id,loopTrue) {
         const request = async () => {
             try {
                 //事件列表
-                let assignClassList = await ajax('/academy/class/delAssignClass.do', {id: id});
+                let assignClassList = await ajax('/academy/class/delAssignClass.do', {id: id,loopTrue:loopTrue});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})

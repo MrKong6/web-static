@@ -54,7 +54,7 @@ const PrevBtn = ({id, ids}) => {
     )
 };
 
-class StudentView extends React.Component {
+class TeacherView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -70,94 +70,98 @@ class StudentView extends React.Component {
       stuName:this.props.location.state.stuName,
       ids: [],
       columns: [
-          {
-              label: "序号",
-              width: 100,
-              sortable: true,
-              type: 'index'
-          },
-          {
-              label: "学员",
-              prop: "name",
-          },
-          {
-              label: "英文名",
-              prop: "enName",
-          },
-          {
-              label: "性别",
-              prop: "genderText",
-          },
-          {
-              label: "出生年月",
-              prop: "birthday",
-          },
-          {
-              label: "年龄",
-              prop: "age",
-          },
-          {
-              label: "家长姓名",
-              prop: "parent.name",
-          },
-          {
-              label: "与学员关系",
-              prop: "parent.relation",
-          },
-          {
-              label: "缴费总课时",
-              prop: "",
-          },
-          {
-              label: "剩余课时",
-              prop: "",
-          },
-          {
-              label: "是否升学",
-              prop: "",
-          },
-          {
-              label: "状态",
-              prop: "classStatusName",
-
-          },
-      ],
+            {
+                label: "序号",
+                width: 100,
+                sortable: true,
+                type: 'index'
+            },
+            {
+                label: "编号",
+                prop: "code",
+            },
+            {
+                label: "姓名",
+                prop: "name",
+                showOverflowTooltip: true,
+                /*render: (row, column, data)=>{
+                    return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.name}</Button></span>
+                }*/
+            },
+            {
+                label: "英文名",
+                prop: "enName",
+            },
+            {
+                label: "性别",
+                prop: "genderText",
+            },
+            {
+                label: "出生日期",
+                prop: "birthday",
+            },
+            {
+                label: "年龄",
+                prop: "age",
+            },
+            {
+                label: "职位",
+                prop: "positionName",
+            },
+            {
+                label: "类型",
+                prop: "typeName",
+            },
+            {
+                label: "类别",
+                prop: "rangeName",
+            },
+            {
+                label: "备注",
+                prop: "comment",
+            },
+            /*{
+                label: "创建人",
+                prop: "createBy",
+            },
+            {
+                label: "创建时间",
+                prop: "createOn",
+                sortable: true
+            },*/
+    ],
       totalPage:0,
       currentPage:1,
       pageSize:10,
       totalCount:0,
     };
     this.createDialogTips = this.createDialogTips.bind(this);
-    this.assignAction = this.assignAction.bind(this);
   }
 
   componentDidMount() {
-    const request = async () => {
-      try {
-          let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
-              pageSize:this.state.pageSize,id:this.state.id,needParent:1});
-          list.data.map(item => {
-              if(item.idType != null){
-                  item.idType = CONFIG.DOCUMENT[item.idType];
+      const request = async () => {
+          try {
+              let list = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
+                  pageSize:this.state.pageSize,classId:this.state.id});
+              const ids = list.data.items.map((contract) => (contract.id));
+              list.data.items.map(item => {
+                  if(item.birthday != null){
+                      item.birthday = fmtDate(item.birthday);
+                  }
+              });
+              this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
+          } catch (err) {
+              if (err.errCode === 401) {
+                  this.setState({redirectToReferrer: true})
+              } else {
+                  this.createDialogTips(`${err.errCode}: ${err.errText}`);
               }
-              if(item.birthday != null){
-                  item.age = calculateAge(fmtDate(item.birthday));
-                  item.birthday = fmtDate(item.birthday);
-              }
-          });
-          console.log(list.data);
-          this.setState({list: list.data,totalPage: list.totalPage,totalCount: list.count});
-      } catch (err) {
-        if (err.errCode === 401) {
-          this.setState({redirectToReferrer: true})
-        } else {
-          this.createDialogTips(`${err.errCode}: ${err.errText}`);
-        }
-      }
-    };
-
-    request();
-    mainSize();
+          } finally {
+              this.setState({isAnimating: false});
+          }
+      };
+      request();
+      mainSize()
   }
 
   componentWillReceiveProps(nextProps) {
@@ -192,10 +196,6 @@ class StudentView extends React.Component {
     }
 
     this.tips.dialog.modal('show');
-  }
-
-  assignAction() {
-    this.props.history.push(`/home/academy/class/student/assign/${this.state.id}`, {ids: this.ids});
   }
 
     pageChange(currentPage){
@@ -245,15 +245,15 @@ class StudentView extends React.Component {
                     }} type="button" className="btn btn-light">返回
                     </button>
                 </div>
-                <Commands
+                {/*<Commands
                     commands={this.commands}
                     assignAction={this.assignAction}
-                />
+                />*/}
             </h5>
             <div id="main" className="main p-3">
                 {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                 {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                <p>班级学员信息</p>
+                <p>班级教师信息</p>
                 <div className="row" style={{"height":'80%'}}>
                     <Table
                         style={{width: '100%'}}
@@ -277,17 +277,19 @@ class StudentView extends React.Component {
                 </div>
                 <nav aria-label="breadcrumb">
                     <ol className="breadcrumb location_bottom">
-                        <li className="breadcrumb-item"><Link to={`/home/academy/class/${this.state.id}`}>班级基本信息</Link></li>
-                        <li className="breadcrumb-item active">班级学员信息</li>
-                        <li className="breadcrumb-item">
+                        <li className="breadcrumb-item"><Link to={`/home/education/class/${this.state.id}`}>班级基本信息</Link></li>
+                        <li className="breadcrumb-item active">
                             <Link to={{
-                                pathname: `/home/academy/class/teacher/${this.state.id}`,
+                                pathname: `/home/education/class/student/${this.state.id}`,
                                 state: {stuName: this.state.stuName}
-                            }}>班级教师信息</Link>
+                            }}>班级学员信息</Link>
+                        </li>
+                        <li className="breadcrumb-item">
+                            班级教师信息
                         </li>
                         <li className="breadcrumb-item">
                             <Link to={{
-                                pathname: `/home/academy/class/assignClass/${this.state.id}`,
+                                pathname: `/home/education/class/assignClass/${this.state.id}`,
                                 state: {stuName: this.state.stuName}
                             }}>班级课程表</Link>
                         </li>
@@ -301,4 +303,4 @@ class StudentView extends React.Component {
   }
 }
 
-export default StudentView;
+export default TeacherView;
