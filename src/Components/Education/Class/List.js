@@ -37,17 +37,20 @@ class List extends React.Component {
                 {
                     width: 100,
                     sortable: true,
+                    fixed: 'left',
                     type: 'index'
                 },
                 {
                     label: "(校区名称)",
                     prop: "schoolArea",
                     width: 120,
+                    fixed: 'left',
                 },
                 {
                     label: "班级编号",
                     prop: "code",
                     width: 120,
+                    fixed: 'left',
                     sortable: true,
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"

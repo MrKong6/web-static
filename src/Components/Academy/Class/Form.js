@@ -27,12 +27,14 @@ class Form extends React.Component {
             createOn: null,
             classColor: null,
             mainTeacherIds: [],
+            allClassCourseRange: []
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
         this.changeColor = this.changeColor.bind(this);
         this.chooseMainTeacher = this.chooseMainTeacher.bind(this);
+        this.changeCourseType = this.changeCourseType.bind(this);
 
     }
 
@@ -45,13 +47,16 @@ class Form extends React.Component {
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
                 let allClassType = await ajax('/academy/class/classType.do');
                 let allClassRange = await ajax('/academy/class/classRange.do');
-                let allClassCourseType = await ajax('/academy/class/classCourseType.do');
+                let allClassCourse = await ajax('/academy/class/classCourseType.do',{orgId: this.state.group.id});
                 let mainTeacher = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
-                let gender = await ajax('/mkt/gender/list.do');
-                let data = null;
-
+                let data = null,allClassCourseType=[],allClassCourseRange=[];
                 if(mainTeacher){
                     mainTeacher = mainTeacher.data.items;
+                }
+
+                if(allClassCourse){
+                    allClassCourseType = allClassCourse.type;
+                    allClassCourseRange = allClassCourse.range;
                 }
 
                 if (this.props.isEditor) {
@@ -90,6 +95,7 @@ class Form extends React.Component {
                 this.setState({
                     option: {allClassStatus, allClassType, allClassRange, allClassCourseType,mainTeacher},
                     mainTeacherIds: main,
+                    allClassCourseRange: allClassCourseRange,
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -201,6 +207,19 @@ class Form extends React.Component {
 
     chooseMainTeacher(data){
         this.state.mainTeacherIds = data;
+    }
+
+    changeCourseType(evt){
+        const request = async () => {
+            let allClassCourse = await ajax('/academy/class/classCourseType.do',{orgId: this.state.group.id,courseType:evt.target.value});
+            if(allClassCourse){
+                let allClassCourseRange = allClassCourse.range;
+                this.setState({
+                    allClassCourseRange:allClassCourseRange,
+                });
+            }
+        };
+        request()
     }
 
     render() {
@@ -407,11 +426,11 @@ class Form extends React.Component {
                                                 <em className="text-danger">*</em>课程类别
                                             </label>
                                             <div className="col-7">
-                                                <select className="form-control" name={this.props.name || "courseType"}>
+                                                <select className="form-control" name={this.props.name || "courseType"} onChange={this.changeCourseType}>
                                                     {
                                                         this.state.option ? this.state.option.allClassCourseType.map(item => (
-                                                            <option key={item.code}
-                                                                    value={item.code}>{item.name}</option>
+                                                            <option key={item}
+                                                                    value={item}>{item}</option>
                                                         )) : null
                                                     }
                                                 </select>
@@ -423,10 +442,11 @@ class Form extends React.Component {
                                             </label>
                                             <div className="col-7">
                                                 <select className="form-control" name={this.props.name || "courseRange"}>
+                                                    {/*<option>请选择类别</option>*/}
                                                     {
-                                                        this.state.option ? this.state.option.allClassType.map(item => (
-                                                            <option key={item.code}
-                                                                    value={item.code}>{item.name}</option>
+                                                        this.state.allClassCourseRange ? this.state.allClassCourseRange.map(item => (
+                                                            <option key={item}
+                                                                    value={item}>{item}</option>
                                                         )) : null
                                                     }
                                                 </select>

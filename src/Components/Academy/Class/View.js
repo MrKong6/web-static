@@ -56,7 +56,8 @@ class View extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Assign'&& command.name !== 'Import'&& command.name !== 'Export'));
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Assign'
+            && command.name !== 'Import'&& command.name !== 'Export'&& command.name !== 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -465,16 +466,19 @@ class View extends React.Component {
                             <li className="breadcrumb-item">
                                 <Link to={{
                                     pathname: `/home/academy/class/teacher/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.data.code}
                                 }}>班级教师信息</Link>
                             </li>
                             <li className="breadcrumb-item">
                                 <Link to={{
                                     pathname: `/home/academy/class/assignClass/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.data.code}
                                 }}>班级课程表</Link>
                             </li>
-                            <li className="breadcrumb-item"><Link to={``}>班级考勤信息</Link></li>
+                            <li className="breadcrumb-item"><Link to={{
+                                pathname: `/home/academy/class/clocked/${this.state.id}`,
+                                state: {stuName: this.state.data.code}
+                            }}>班级考勤信息</Link></li>
                             <li className="breadcrumb-item"><Link to={``}>班级异动信息</Link></li>
                         </ol>
                     </nav>

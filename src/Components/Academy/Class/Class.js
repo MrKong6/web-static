@@ -9,12 +9,17 @@ import StudentAssignView from './StudentAssignView';
 import TeacherView from './TeacherView';
 import Editor from "./Editor";
 import AssignClassView from "./AssignClassView";
+import ClockedView from "./ClockedView";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
 
     return (
         <Switch>
+            <Route path={`${match.url}/clocked/:contractId`} render={(props) => (
+                <ClockedView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                             changedCrmGroup={changedCrmGroup}/>
+            )}/>
             <Route path={`${match.url}/student/assign/:contractId`} render={(props) => (
                 <StudentAssignView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
                                    changedCrmGroup={changedCrmGroup}/>

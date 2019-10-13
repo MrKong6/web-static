@@ -57,7 +57,8 @@ class StudentView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod' && command.name !== 'Del'));
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod'
+            && command.name !== 'Del'&& command.name !== 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -285,7 +286,10 @@ class StudentView extends React.Component {
                                     state: {stuName: this.state.stuName}
                                 }}>班级课程表</Link>
                             </li>
-                            <li className="breadcrumb-item"><Link to={``}>班级考勤信息</Link></li>
+                            <li className="breadcrumb-item"><Link to={{
+                                pathname: `/home/education/class/clocked/${this.state.id}`,
+                                state: {stuName: this.state.stuName}
+                            }}>班级考勤信息</Link></li>
                             <li className="breadcrumb-item"><Link to={``}>班级异动信息</Link></li>
                         </ol>
                     </nav>

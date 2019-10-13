@@ -45,3 +45,30 @@ export function formatWithTime(date) {
     //
     // return yy + '-' + mm + '-' + dd + ' ' + hour + ':' + minute;
 }
+//时间选择器所需时间格式
+export function formatWithOnlyTime(date) {
+    // return new Date(date).format("hh:mm");
+    const d = new Date(date);
+    const yy = d.getFullYear();
+    const mm = d.getMonth();
+    const dd = d.getDate();
+    const hour = d.getHours();
+    const minute = d.getMinutes();
+    return new Date(yy, mm, dd, hour, minute);
+    //
+    // return yy + '-' + mm + '-' + dd + ' ' + hour + ':' + minute;
+}
+//时间用第二个参数  日期用第一个
+export function formatWithDateAndTime(date,dateWithTime) {
+    // return new Date(date).format("hh:mm");
+    let useDate = new Date(date);
+    let useTime = new Date(dateWithTime);
+    let yy = useDate.getFullYear();
+    let mm = useDate.getMonth();
+    let dd = useDate.getDate();
+    let hour = useTime.getHours();
+    let minute = useTime.getMinutes();
+    return new Date(yy, mm, dd, hour, minute);
+    //
+    // return yy + '-' + mm + '-' + dd + ' ' + hour + ':' + minute;
+}

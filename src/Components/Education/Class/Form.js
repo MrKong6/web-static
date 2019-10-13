@@ -45,13 +45,18 @@ class Form extends React.Component {
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
                 let allClassType = await ajax('/academy/class/classType.do');
                 let allClassRange = await ajax('/academy/class/classRange.do');
-                let allClassCourseType = await ajax('/academy/class/classCourseType.do');
+                let allClassCourse = await ajax('/academy/class/classCourseType.do');
                 let mainTeacher = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
                 let gender = await ajax('/mkt/gender/list.do');
-                let data = null;
+                let data = null,allClassCourseType=[],allClassCourseRange=[];;
 
                 if(mainTeacher){
                     mainTeacher = mainTeacher.data.items;
+                }
+
+                if(allClassCourse){
+                    allClassCourseType = allClassCourse.type;
+                    allClassCourseRange = allClassCourse.range;
                 }
 
                 if (this.props.isEditor) {
@@ -90,6 +95,7 @@ class Form extends React.Component {
                 this.setState({
                     option: {allClassStatus, allClassType, allClassRange, allClassCourseType,mainTeacher},
                     mainTeacherIds: main,
+                    allClassCourseRange: allClassCourseRange,
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);

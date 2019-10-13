@@ -352,7 +352,7 @@ class List extends React.Component {
                                 }
                             </Menu>*/}
                             <div className="col-2">
-                                <Select value={this.state.chooseClass} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级">
+                                <Select value={this.state.chooseClass} filterable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级" clearable={true}>
                                     {
                                         this.state.classList.map(el => {
                                             return (

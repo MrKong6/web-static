@@ -48,12 +48,14 @@ class List extends React.Component {
                     label: "(校区名称)",
                     prop: "schoolArea",
                     width: 120,
+                    fix: true
                 },
                 {
                     label: "班级编号",
                     prop: "code",
                     width: 120,
                     sortable: true,
+                    fix: true,
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
@@ -117,12 +119,12 @@ class List extends React.Component {
                 },
                 {
                     label: "课程类别",
-                    prop: "courseTypeName",
+                    prop: "courseType",
                     width: 95
                 },
                 {
                     label: "课程阶段",
-                    prop: "courseRangeName",
+                    prop: "courseRange",
                     width: 100
                 },
                 {
@@ -143,6 +145,11 @@ class List extends React.Component {
                 {
                     label: "课程进度",
                     prop: "courseProcess",
+                    width: 120
+                },
+                {
+                    label: "总课次",
+                    prop: "classTime",
                     width: 120
                 },
                 {

@@ -39,20 +39,23 @@ class Form extends React.Component {
 
         if (this.props.isEditor) {
           data = await ajax('/course/type/query.do', {id: this.props.editorId});
+          data = data.data
+          this.setState({
+              data:data
+          }, () => {
+              const keys = Object.keys(data);
+
+              keys.map(key => {
+                  if (this.form[key]) {
+                      this.form[key].value = data[key];
+                  }
+              })
+          });
         } else {
+
         }
 
-        this.setState({
-          data
-        }, () => {
-          const keys = Object.keys(data);
 
-          keys.map(key => {
-            if (this.form[key]) {
-                this.form[key].value = data[key];
-            }
-          })
-        });
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
