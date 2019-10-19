@@ -19,12 +19,9 @@ class DialogForClocked extends React.Component {
         super(props);
         this.createGroupsDialog = this.createGroupsDialog.bind(this);
         this.acceptGroupDialog = this.acceptGroupDialog.bind(this);
-        this.handleSelect = this.handleSelect.bind(this);
         this.accept = this.accept.bind(this);
-        this.del = this.del.bind(this);
         this.cancel = this.cancel.bind(this);
         this.closed = this.closed.bind(this);
-        this.changedLead = this.changedLead.bind(this);
         this.changedCommonDate = this.changedCommonDate.bind(this);
         this.changeChecked = this.changeChecked.bind(this);
         this.changeClassTime = this.changeClassTime.bind(this);
@@ -37,7 +34,7 @@ class DialogForClocked extends React.Component {
             isEdit: this.props.data ? true : false,
             checked : false,
             hasCheckedCount:0,//已经签退过的人数
-            date: formatWithOnlyTime(new Date().getTime()),
+            date: null,//formatWithOnlyTime(new Date().getTime()),
             classTimes: this.props.classTimes,
             selectedClassTime: null,
             classTimeList: [],
@@ -45,7 +42,7 @@ class DialogForClocked extends React.Component {
             helpTeacher: this.props.helpTeacher ? this.props.helpTeacher : [],
             roomList: this.props.roomList,
             chooseRoom:null,
-            chooseMainTeacher:null,
+            chooseMainTeacher:this.props.teacherId,
             chooseHelpTeacher: [],
         }
         // if(this.props.data && this.props.data.start)
@@ -56,22 +53,48 @@ class DialogForClocked extends React.Component {
         this.dialog.on('hidden.bs.modal', () => {
             this.closed();
         });
-        //对空的签到时间赋值
-        let maxClassTime = 1;
-        let index = 1;
-        this.state.data.map(item => {
-            if(item.maxClassTime && item.maxClassTime > maxClassTime){
-                maxClassTime = item.maxClassTime;
+        const request = async () => {
+            try {
+                //事件列表
+                let maxVo = await ajax('/student/clocked/getTeacherMaxClocked.do', {id: this.props.id});
+                let chooseOne = false,date = null;
+                if(maxVo != null && maxVo.startTime != null){
+                    if((new Date().getTime() - new Date(maxVo.startTime).getTime()) <= (60 * 60 * 1000)){
+                        chooseOne = true;
+                        date = new Date(maxVo.startTime);
+                    }
+                }
+
+                //对空的签到时间赋值
+                let maxClassTime = 1;
+                let index = 1;
+                this.state.data.map(item => {
+                    if(item.maxClassTime && item.maxClassTime > maxClassTime){
+                        maxClassTime = item.maxClassTime;
+                    }
+                    item.index = index++;
+                });
+                if(chooseOne){
+                    this.changeClassTime(maxClassTime);
+                }
+                //赋值数组
+                let timeList = [];
+                for(let i=this.state.classTimes;i>0;i--){
+                    timeList.push(i);
+                }
+                this.setState({classTimeList:timeList,date:date});
+
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
             }
-            item.index = index++;
-        });
-        this.changeClassTime(maxClassTime);
-        //赋值数组
-        let timeList = [];
-        for(let i=1;i<this.state.classTimes;i++){
-            timeList.push(i);
-        }
-        this.setState({classTimeList:timeList});
+        };
+        request();
     }
 
     createGroupsDialog(text) {
@@ -105,37 +128,6 @@ class DialogForClocked extends React.Component {
         });
     }
 
-    handleSelect(type, evt) {
-        switch (type) {
-            case(1): {
-                this.chooseClass(evt);
-                this.setState({chooseClass:evt});
-                this.state.chooseClass = evt;
-                break;
-            }
-            case(2): {
-                this.setState({chooseTeacher:evt});
-                this.state.chooseTeacher = evt;
-                break;
-            }
-            case(3): {
-                this.setState({chooseRoom:evt});
-                this.state.chooseRoom = evt;
-                break;
-            }
-            case(4): {
-                if(evt.target.value && evt.target.value == '2'){
-                    //是否循环选择了是   显示循环日期
-                    // if(!this.state.showXunhuan === 'none'){
-                        this.setState({showXunhuanDate:false});
-                    // }
-                }else{
-                    this.setState({showXunhuanDate:true});
-                }
-                break;
-            }
-        }
-    }
     //签到 签退
     accept(evt) {
         //校验是否都选择了
@@ -143,7 +135,9 @@ class DialogForClocked extends React.Component {
         let dataList = this.state.data;
         let commitVo = {"vos":dataList,"checkInToday":this.state.checked,"classTime":this.state.selectedClassTime,
             "startTime":new Date(this.state.startTime.getTime()),"checkOutToday":this.props.typeName,
-            "hasCheckedCount":this.state.hasCheckedCount,"roomId":this.state.chooseRoom,"techerId":this.state.chooseMainTeacher,"helpTeacherId":this.state.chooseHelpTeacher.join(",")};
+            "teacherStartDate":new Date(this.state.date.getTime()),
+            "hasCheckedCount":this.state.hasCheckedCount,"roomId":this.state.chooseRoom,"techerId":this.state.chooseMainTeacher
+            ,"helpTeacherId":(this.state.chooseHelpTeacher && this.state.chooseHelpTeacher.length > 0) ? this.state.chooseHelpTeacher.join(",") : null};
         const request = async () => {
             try {
                 let response = await ajax('/student/clocked/clockedAdd.do', {"clockedAddVo":JSON.stringify(commitVo)});
@@ -165,34 +159,6 @@ class DialogForClocked extends React.Component {
         this.props.refresh();
     }
 
-    del() {
-        MessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
-            type: 'warning'
-        }).then(() => {
-            request();
-            this.props.refresh();
-        }).catch(() => {
-            Message({
-                type: 'info',
-                message: '已取消删除'
-            });
-        });
-        const request = async () => {
-            try {
-                //事件列表
-                let assignClassList = await ajax('/academy/class/delAssignClass.do', {id: this.state.id});
-            } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
-            } finally {
-                this.setState({isAnimating: false});
-            }
-        };
-    }
-
     closed() {
         if (this.groupContainer) {
             document.body.removeChild(this.groupContainer);
@@ -201,13 +167,11 @@ class DialogForClocked extends React.Component {
         document.body.removeChild(this.props.container);
     }
 
-    changedLead(evt) {
-        this.state.typeId = evt.target.value;
-    }
-
     //统一选择签到时间
     changedCommonDate(evt) {
-        if(evt){
+        let chooseDate = formatWithDateAndTime(this.state.date.getTime(),evt);
+        this.setState({date: chooseDate});
+        /*if(evt){
             let chooseDate = formatWithDateAndTime(this.state.startTime.getTime(),evt.getTime());
             let dataList = this.state.data;
             if(dataList && dataList.length > 0){
@@ -224,11 +188,10 @@ class DialogForClocked extends React.Component {
                     }
                 })
             }
-        }
+        }*/
     }
     //统一选择签到
     changeChecked(evt){
-        console.log(evt);
         let dataList = this.state.data;
         if(dataList && dataList.length > 0){
             dataList.map(item => {
@@ -243,7 +206,7 @@ class DialogForClocked extends React.Component {
         if(dataList && dataList.length > 0){
             let existTime = null;
             let hasCheckedCount = 0;
-            let teacherId = 0,roomId = 0,helpTeacherId=[];
+            let teacherId = this.props.teacherId,roomId = 0,helpTeacherId=[];
             dataList.map(item => {
                 if(item[evt]){
                     //即历史签到过该次数
@@ -270,7 +233,9 @@ class DialogForClocked extends React.Component {
                             let array = item[evt].helpTeacherId.split(",");
                             array.map(aa => {helpTeacherId.push(Number(aa))});
                         }else{
-                            helpTeacherId = helpTeacherId.push(Number(item[evt].helpTeacherId));
+                            if(item[evt].helpTeacherId){
+                                helpTeacherId = helpTeacherId.push(Number(item[evt].helpTeacherId));
+                            }
                         }
                     }
                     if(item.checkInToday != 1){
@@ -294,6 +259,7 @@ class DialogForClocked extends React.Component {
     }
     //选择教室  主教 助教
     chooseClassTeacherInfo(type,evt){
+        debugger
         if(type == 1){
             //教室
             this.state.chooseRoom = evt;
@@ -310,7 +276,7 @@ class DialogForClocked extends React.Component {
         if(this.props.typeName && this.props.typeName == '1'){
             return (
                 <div id="123456" className="modal fade" tabIndex="-1" role="dialog" data-backdrop="static">
-                    <div className="modal-dialog" role="document">
+                    <div className="modal-dialog" role="document">{/*  style={{"maxWidth":"600px"}}*/}
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">{this.props.title}</h5>
@@ -320,8 +286,8 @@ class DialogForClocked extends React.Component {
                             </div>
                             <div className="modal-body">
                                 <div className="form-group row">
-                                    <label className="col-3 col-form-label" style={{"textAlign":"right","color":"red"}}>签到课次</label>
-                                    <div className="col-3">
+                                    <label className="col-2 col-form-label" style={{"textAlign":"right","color":"red"}}>课次</label>
+                                    <div className="col-2" style={{padding: 0}}>
                                         <Select value={this.state.selectedClassTime} placeholder="课次" onChange={this.changeClassTime} required={true}>
                                             {
                                                 this.state.classTimeList.map(el => {
@@ -330,21 +296,30 @@ class DialogForClocked extends React.Component {
                                             }
                                         </Select>
                                     </div>
-                                    <div className="col-6">
+                                    <div className="col-4">
                                         <DatePicker
                                             value={this.state.date}
                                             placeholder="选择日期"
                                             onChange={date=>{
                                                 console.debug('DatePicker1 changed: ', date)
-                                                this.setState({date: date})
+                                                let chooseDate = formatWithDateAndTime(date,this.state.date.getTime());
+                                                this.setState({date: chooseDate})
                                             }}
-                                            disabledDate={time=>time.getTime() < Date.now() - 8.64e7}
+                                            /*disabledDate={time=>time.getTime() < Date.now() - 8.64e7}*/
+                                        />
+                                    </div>
+                                    <div className="col-4">
+                                        <TimePicker
+                                            selectableRange="08:30:00 - 21:30:00"
+                                            value={this.state.date}
+                                            onChange={this.changedCommonDate}
+                                            placeholder="选择时间"
                                         />
                                     </div>
                                 </div>
                                 <div className="form-group row">
                                     <label className="col-3 col-form-label" style={{"textAlign":"right","color":"red"}}>教室/教师</label>
-                                    <div className="col-3">
+                                    <div className="col-3" style={{padding: 0}}>
                                         <Select value={this.state.chooseRoom} placeholder="教室" onChange={this.chooseClassTeacherInfo.bind(this,'1')} required={true}>
                                             {
                                                 this.state.roomList.map(el => {
@@ -374,7 +349,7 @@ class DialogForClocked extends React.Component {
 
                                 </div>
                                 <hr/>
-                                <div className="form-group row">
+                                {/*<div className="form-group row">
                                     <label className="col-3 col-form-label" style={{"textAlign":"right","color":"red"}}>统一选择</label>
                                     <div className="col-2 col-form-label">
                                         <Checkbox checked={this.state.checked} onChange={this.changeChecked}>签到</Checkbox>
@@ -388,7 +363,7 @@ class DialogForClocked extends React.Component {
                                         />
                                     </div>
                                 </div>
-                                <hr/>
+                                <hr/>*/}
                                 {
                                     this.state.data ? this.state.data.map(function(val) {
                                         let i=1;
@@ -398,7 +373,7 @@ class DialogForClocked extends React.Component {
                                                 <Checkbox checked={val.checkInToday == 1}
                                                           onChange={check=>{
                                                               val.checkInToday = check ? 1 : 2;
-                                                          }}></Checkbox>
+                                                          }}>签到</Checkbox>
                                             </div>
                                             <div className="col-7">
                                                 <TimePicker
@@ -462,7 +437,7 @@ class DialogForClocked extends React.Component {
                                     </div>
                                 </div>
                                 <hr/>
-                                <div className="form-group row">
+                                {/*<div className="form-group row">
                                     <label className="col-3 col-form-label" style={{"textAlign":"right","color":"red"}}>签退</label>
                                     <div className="col-2 col-form-label">
                                         <Checkbox checked={this.state.checked} onChange={this.changeChecked}></Checkbox>
@@ -476,7 +451,7 @@ class DialogForClocked extends React.Component {
                                         />
                                     </div>
                                 </div>
-                                <hr/>
+                                <hr/>*/}
                                 {
                                     this.state.data ? this.state.data.map(function(val) {
                                         return <div className="form-group row">

@@ -4,14 +4,9 @@ import {Link, Redirect} from 'react-router-dom'
 import {Pagination, Table, Tooltip} from 'element-react';
 
 import DialogTips from "../../Dialog/DialogTips";
-import Commands from "../../Commands/Commands";
-
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import CONFIG from "../../../utils/config";
-import calculateAge from "../../../utils/calculateAge";
-import fmtDate from "../../../utils/fmtDate";
 import DialogForClocked from "../../Dialog/DialogForClocked";
 
 class ClockedView extends React.Component {
@@ -58,6 +53,7 @@ class ClockedView extends React.Component {
             redirectToList: false,
             isAnimating: false,
             id: this.props.match.params.contractId,
+            teacherId: this.props.profile.teacherId,
             data: null,  //学生签到数据
             teacherClockList:[], //教师签到数据
             stuName: this.props.location.state.stuName,
@@ -214,6 +210,8 @@ class ClockedView extends React.Component {
                     container={this.userContainer}
                     mainTeacher={this.state.mainTeacher}
                     helpTeacher={this.state.helpTeacher}
+                    classId={this.state.id}
+                    teacherId={this.state.teacherId}
                     roomList={this.state.roomList}
                     typeName="1"
                     changedCrmGroup={this.state.group}
@@ -237,6 +235,8 @@ class ClockedView extends React.Component {
                     container={this.userContainer}
                     mainTeacher={this.state.mainTeacher}
                     helpTeacher={this.state.helpTeacher}
+                    classId={this.state.id}
+                    teacherId={this.state.teacherId}
                     roomList={this.state.roomList}
                     typeName="2"
                     changedCrmGroup={this.state.group}

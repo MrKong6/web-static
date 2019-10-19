@@ -269,6 +269,17 @@ class View extends React.Component {
                           />
                         </div>
                       </div>
+                      <div className="form-group row">
+                          <label className="col-5 col-form-label font-weight-bold">时长(min)</label>
+                          <div className="col-7">
+                              <input
+                                  type="text"
+                                  readOnly={true}
+                                  className="form-control-plaintext"
+                                  value={this.state.data.time}
+                              />
+                          </div>
+                      </div>
                     </div>
                     <div className="col"/>
                   </div>

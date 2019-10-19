@@ -57,6 +57,10 @@ class List extends React.Component {
                 {
                     label: "总课时",
                     prop: "classHour",
+                },
+                {
+                    label: "时长(min)",
+                    prop: "time",
                 }
             ],
             totalPage:0,

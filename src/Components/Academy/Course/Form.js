@@ -173,6 +173,14 @@ class Form extends React.Component {
                                 <input type="text" className="form-control" name="classTime" required={true}/>
                             </div>
                         </div>
+                        <div className="form-group row">
+                            <label className="col-5 col-form-label font-weight-bold">
+                                <em className="text-danger">*</em>时长(min)
+                            </label>
+                            <div className="col-7">
+                                <input type="number" className="form-control" name="time" required={true}/>
+                            </div>
+                        </div>
                     </div>
                     <div className="col"/>
                   </div>

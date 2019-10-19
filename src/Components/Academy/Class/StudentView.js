@@ -72,7 +72,6 @@ class StudentView extends React.Component {
       ids: [],
       columns: [
           {
-              label: "序号",
               width: 100,
               sortable: true,
               type: 'index'
