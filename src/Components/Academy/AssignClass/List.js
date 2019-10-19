@@ -156,39 +156,39 @@ class List extends React.Component {
     chooseTopCondition(type, evt) {
         switch (type) {
             case(1): {
+                this.state.chooseTeacher = null;
+                this.state.chooseRoom = null;
+                this.state.chooseClass = evt.id;
+                this.title.name = evt.code;
                 this.setState({
                     chooseTeacher : null,
                     chooseRoom : null,
                     chooseClass : evt.id,
                 });
-                this.state.chooseTeacher = null;
-                this.state.chooseRoom = null;
-                this.state.chooseClass = evt.id;
-                this.title.name = evt.code;
                 break;
             }
             case(2): {
+                this.state.chooseTeacher = evt.id;
+                this.state.chooseRoom = null;
+                this.state.chooseClass = null;
+                this.title.name = evt.name;
                 this.setState({
                     chooseTeacher : evt.id,
                     chooseRoom : null,
                     chooseClass : null,
                 });
-                this.state.chooseTeacher = evt.id;
-                this.state.chooseRoom = null;
-                this.state.chooseClass = null;
-                this.title.name = evt.name;
                 break;
             }
             case(3): {
+                this.state.chooseRoom = evt.id;
+                this.state.chooseTeacher = null;
+                this.state.chooseClass = null;
+                this.title.name = evt.code;
                 this.setState({
                     chooseTeacher : null,
                     chooseRoom : evt.id,
                     chooseClass : null,
                 });
-                this.state.chooseRoom = evt.id;
-                this.state.chooseTeacher = null;
-                this.state.chooseClass = null;
-                this.title.name = evt.code;
                 break;
             }
         }
@@ -277,8 +277,8 @@ class List extends React.Component {
                             title: '班级：' + item.classCode + '\n教师：' + item.teacherName + '\n教室：' + item.roomCode,
                             start: new Date(item.startTime),
                             end: new Date(item.endTime),
-                            color: item.classColor ? item.classColor : "#123456",
-                            textColor: "#fff",
+                            color: item.classColor ? item.classColor : "#ECF5FF",
+                            textColor: item.classColor ? "#fff" : '#FF0000',   //没有色值的便是体验课，设置特殊色值
                             id: item.id
                         });
                     });
@@ -352,7 +352,7 @@ class List extends React.Component {
                                 }
                             </Menu>*/}
                             <div className="col-2">
-                                <Select value={this.state.chooseClass} filterable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级" clearable={true}>
+                                <Select value={this.state.chooseClass} filterable={true} clearable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级">
                                     {
                                         this.state.classList.map(el => {
                                             return (
@@ -360,7 +360,6 @@ class List extends React.Component {
                                                     {el.assignId && el.assignId.length > 0 ? (
                                                         <span>{el.code}</span>
                                                     ) : (<span style={{color: '#CDCDC1'}}>{el.code}</span>)}
-
                                                 </Select.Option>
                                             )
                                         })

@@ -68,6 +68,7 @@ class StudentView extends React.Component {
             id: this.props.match.params.contractId,
             data: null,
             stuName: this.props.location.state.stuName,
+            show: this.props.location.state.show,
             ids: [],
             columns: [
                 {
@@ -231,7 +232,7 @@ class StudentView extends React.Component {
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
                     <p className="d-inline text-muted">{this.state.stuName}</p>
-                    <div className="btn-group float-right ml-4" role="group">
+                    <div className="btn-group float-right ml-4" role="group" style={{"display":this.state.show}}>
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>
@@ -277,18 +278,18 @@ class StudentView extends React.Component {
                             <li className="breadcrumb-item">
                                 <Link to={{
                                     pathname: `/home/education/class/teacher/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.stuName,show:this.state.show}
                                 }}>班级教师信息</Link>
                             </li>
                             <li className="breadcrumb-item">
                                 <Link to={{
                                     pathname: `/home/education/class/assignClass/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.stuName,show:this.state.show}
                                 }}>班级课程表</Link>
                             </li>
                             <li className="breadcrumb-item"><Link to={{
                                 pathname: `/home/education/class/clocked/${this.state.id}`,
-                                state: {stuName: this.state.stuName}
+                                state: {stuName: this.state.stuName,show:this.state.show}
                             }}>班级考勤信息</Link></li>
                             <li className="breadcrumb-item"><Link to={``}>班级异动信息</Link></li>
                         </ol>

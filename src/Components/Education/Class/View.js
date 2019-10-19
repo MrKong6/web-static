@@ -66,6 +66,7 @@ class View extends React.Component {
             id: this.props.match.params.contractId,
             data: null,
             ids: this.props.ids,
+            show: 'normal',
             teacherId: (this.props.profile && this.props.profile.teacherId) ? this.props.profile && this.props.profile.teacherId : 0,
 
         };
@@ -82,9 +83,13 @@ class View extends React.Component {
                     orgId: this.state.group.id,
                     csTeacherId: this.state.teacherId
                 });
-
+                //如果是移动端
+                let show = 'normal';
+                if(navigator.userAgent.match(/mobile/i)) {
+                    show = 'none';
+                }
                 const ids = list.data.items.map((contract) => (contract.id + ""));
-                this.setState({data: data.data, ids: ids});
+                this.setState({data: data.data, ids: ids,show:show});
                 console.log(data.data)
             } catch (err) {
                 if (err.errCode === 401) {
@@ -219,11 +224,11 @@ class View extends React.Component {
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
                     <p className="d-inline text-muted">{this.state.data.code}</p>
 
-                    <div className="btn-group float-right ml-4" role="group">
+                    <div className="btn-group float-right ml-4" role="group" style={{"display":this.state.show}}>
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>
-                    <div className="btn-group float-right ml-4" role="group">
+                    <div className="btn-group float-right ml-4" role="group" style={{"display":this.state.show}}>
                         <button onClick={() => {
                             this.props.history.push('/home/education/class/');
                         }} type="button" className="btn btn-light">返回
@@ -389,7 +394,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.courseTypeName}
+                                                        value={this.state.data.courseType}
                                                     />
                                                 </div>
                                             </div>
@@ -400,7 +405,40 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.courseRangeName}
+                                                        value={this.state.data.courseRange}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">总课次</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.classTime}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">总课时</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.classHour}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">消耗课时</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.useClassHour}
                                                     />
                                                 </div>
                                             </div>
@@ -462,19 +500,19 @@ class View extends React.Component {
                             <li className="breadcrumb-item active">
                                 <Link to={{
                                     pathname: `/home/education/class/student/${this.state.id}`,
-                                    state: {stuName: this.state.data.code}
+                                    state: {stuName: this.state.data.code,show:this.state.show}
                                 }}>班级学员信息</Link>
                             </li>
                             <li className="breadcrumb-item">
                                 <Link to={{
                                     pathname: `/home/education/class/teacher/${this.state.id}`,
-                                    state: {stuName: this.state.data.code}
+                                    state: {stuName: this.state.data.code,show:this.state.show}
                                 }}>班级教师信息</Link>
                             </li>
                             <li className="breadcrumb-item">
                                 <Link to={{
                                     pathname: `/home/education/class/assignClass/${this.state.id}`,
-                                    state: {stuName: this.state.data.code}
+                                    state: {stuName: this.state.data.code,show:this.state.show}
                                 }}>班级课程表</Link>
                             </li>
                             <li className="breadcrumb-item"><Link to={{

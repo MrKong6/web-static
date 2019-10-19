@@ -1,0 +1,10 @@
+/*表格中的Progress进度条样式*/
+.no_border_radius{
+    border-radius: 0px!important;
+}
+.el-progress-bar__outer{
+    border-radius: 0px!important;
+}
+.el-progress-bar__inner{
+    border-radius: 0px!important;
+}

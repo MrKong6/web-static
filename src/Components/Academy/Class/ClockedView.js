@@ -37,6 +37,19 @@ class ClockedView extends React.Component {
                 fix: true
             },
         ];
+        this.dataTeacherHeader = [
+            {
+                width: 100,
+                sortable: true,
+                type: 'index',
+                fix: true
+            },
+            {
+                label: "名称",
+                prop: "name",
+                fix: true
+            },
+        ];
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
@@ -46,6 +59,7 @@ class ClockedView extends React.Component {
             isAnimating: false,
             id: this.props.match.params.contractId,
             data: null,
+            teacherClockList:[], //教师签到数据
             stuName: this.props.location.state.stuName,
             ids: [],
             columns: [
@@ -66,6 +80,19 @@ class ClockedView extends React.Component {
                     fix: true
                 },
             ],
+            teacherColumns: [
+                {
+                    width: 100,
+                    sortable: true,
+                    type: 'index',
+                    fix: true
+                },
+                {
+                    label: "名称",
+                    prop: "name",
+                    fix: true
+                },
+            ],
             totalPage: 0,
             currentPage: 1,
             pageSize: 10,
@@ -75,10 +102,12 @@ class ClockedView extends React.Component {
         this.thAction = this.thAction.bind(this);
         this.addCheckInEvent = this.addCheckInEvent.bind(this);
         this.addCheckOutEvent = this.addCheckOutEvent.bind(this);
+        this.refreshList = this.refreshList.bind(this);
     }
 
     componentDidMount() {
         let columnHeader = this.dataHeader;
+        let teacherColumnHeader = this.dataTeacherHeader;
         const request = async () => {
             try {
                 let data = await ajax('/academy/class/query.do', {id: this.state.id});
@@ -97,12 +126,17 @@ class ClockedView extends React.Component {
                                 </Tooltip>
                         }
                     });
+                    teacherColumnHeader.push({
+                        label: i+"",
+                        prop: i+"",
+                    });
                 }
-                this.setState({columns: columnHeader});
-                let dataList = await ajax('/student/clocked/list.do', {classId: this.state.id});
+                this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader});
+                /*let dataList = await ajax('/student/clocked/list.do', {classId: this.state.id});
                 if(dataList){
                     this.setState({list: dataList});
-                }
+                }*/
+                this.refreshList();
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -113,6 +147,22 @@ class ClockedView extends React.Component {
         };
         request();
         mainSize();
+    }
+
+    refreshList() {
+        const request = async () => {
+            let dataList = await ajax('/student/clocked/list.do', {classId: this.state.id});
+            let teacherDataList = await ajax('/student/clocked/teacherClockList.do', {classId: this.state.id});
+            if(dataList){
+                //如果是移动端
+                let show = 'normal';
+                if(navigator.userAgent.match(/mobile/i)) {
+                    show = 'none';
+                }
+                this.setState({list: dataList,show:show,teacherClockList:teacherDataList});  //,teacherClockList:teacherDataList
+            }
+        };
+        request();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -227,7 +277,18 @@ class ClockedView extends React.Component {
                             data={this.state.list}
                             border={true}
                             fit={true}
-                            height='80%'
+                            height='70%'
+                            emptyText={"暂无数据"}
+                        />
+                        <br/><hr/><br/><br/><br/>
+                        <Table
+                            style={{width: '100%'}}
+                            className="leadlist_search"
+                            columns={this.state.teacherColumns}
+                            data={this.state.teacherClockList}
+                            border={true}
+                            fit={true}
+                            height='40%'
                             emptyText={"暂无数据"}
                         />
                     </div>

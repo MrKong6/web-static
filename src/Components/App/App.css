@@ -514,3 +514,12 @@ main h5 p {
 .el-menu{
     background-color: inherit!important;
 }
+.back_table_tr_yellow{
+  background-color: #FFFF37!important;
+}
+.back_table_tr_grew{
+  background-color: #F0F0F0!important;
+}
+.back_table_tr_orange{
+  background-color: #FF8000!important;
+}

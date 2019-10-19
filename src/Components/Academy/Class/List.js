@@ -1,26 +1,23 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
-
 import DialogTips from "../../Dialog/DialogTips";
-import Progress from "../../Progress/Progress"
-
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
-import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Message, Tooltip, Select, Input} from 'element-react';
-import CONFIG from "../../../utils/config";
+import {Button, Table, Pagination, Message, Tooltip, Select, Input,Progress} from 'element-react';
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 import ajaxFile from "../../../utils/ajaxFile";
-import {$} from "../../../vendor";
+import '../../Mkt/Leads/Leads.css'
+import "../../App/common.css"
 
 class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command.name === 'Add' || command.name === 'Import' || command.name === 'Export'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Add' || command.name === 'Import'
+            || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
@@ -29,6 +26,7 @@ class List extends React.Component {
         this.importSuccess = this.importSuccess.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.rowClassName = this.rowClassName.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -42,24 +40,24 @@ class List extends React.Component {
                 {
                     width: 100,
                     sortable: true,
-                    type: 'index'
-                },
-                {
-                    label: "(校区名称)",
-                    prop: "schoolArea",
-                    width: 120,
-                    fix: true
+                    type: 'index',
+                    fixed: 'left',
                 },
                 {
                     label: "班级编号",
                     prop: "code",
                     width: 120,
                     sortable: true,
-                    fix: true,
+                    fixed: 'left',
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
+                },
+                {
+                    label: "(校区名称)",
+                    prop: "schoolArea",
+                    width: 120,
                 },
                 {
                     label: "班级状态",
@@ -145,7 +143,10 @@ class List extends React.Component {
                 {
                     label: "课程进度",
                     prop: "courseProcess",
-                    width: 120
+                    width: 120,
+                    render: (row, column, data) => {
+                        return <Progress strokeWidth={18} percentage={row.courseProcess} textInside />
+                    }
                 },
                 {
                     label: "总课次",
@@ -353,7 +354,6 @@ class List extends React.Component {
         this.successMsg("导入成功")
     };
     chooseStatusSearch(chooseStatusName){
-        // debugger;
         this.state.chooseStatusName = chooseStatusName;
         /*window.sessionStorage.setItem("chooseStatusName",chooseStatusName);*/
         this.state.currentPage = 1;
@@ -364,6 +364,21 @@ class List extends React.Component {
         this.setState({
             chooseClassName: value
         });
+    }
+
+    //表格行内底色
+    rowClassName(row, index) {
+        if (row.classStatus === 1) {
+            //已开班
+            return 'back_table_tr_yellow';
+        } else if (row.classStatus === 3) {
+            //已结课
+            return 'back_table_tr_grew';
+        }else if (row.classStatus === 4) {
+            //已结班
+            return 'back_table_tr_orange';
+        }
+        return '';
     }
 
     render() {
@@ -422,6 +437,7 @@ class List extends React.Component {
                         style={{width: '100%',"margin-bottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
+                        rowClassName={this.rowClassName.bind(this)}
                         border={true}
                         fit={true}
                         emptyText={"--"}

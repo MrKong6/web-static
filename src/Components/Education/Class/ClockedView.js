@@ -37,6 +37,19 @@ class ClockedView extends React.Component {
                 fix: true
             },
         ];
+        this.dataTeacherHeader = [
+            {
+                width: 100,
+                sortable: true,
+                type: 'index',
+                fix: true
+            },
+            {
+                label: "名称",
+                prop: "name",
+                fix: true
+            },
+        ];
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
@@ -45,11 +58,14 @@ class ClockedView extends React.Component {
             redirectToList: false,
             isAnimating: false,
             id: this.props.match.params.contractId,
-            data: null,
+            data: null,  //学生签到数据
+            teacherClockList:[], //教师签到数据
             stuName: this.props.location.state.stuName,
             classTimes: null,  //班次
             show: 'normal',
             ids: [],
+            mainTeacher: [],
+            helpTeacher: [],
             columns: [
                 {
                     width: 100,
@@ -68,6 +84,19 @@ class ClockedView extends React.Component {
                     fix: true
                 },
             ],
+            teacherColumns: [
+                {
+                    width: 100,
+                    sortable: true,
+                    type: 'index',
+                    fix: true
+                },
+                {
+                    label: "名称",
+                    prop: "name",
+                    fix: true
+                },
+            ],
             totalPage: 0,
             currentPage: 1,
             pageSize: 10,
@@ -75,17 +104,16 @@ class ClockedView extends React.Component {
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.thAction = this.thAction.bind(this);
-        this.addCheckInEvent = this.addCheckInEvent.bind(this);
-        this.addCheckOutEvent = this.addCheckOutEvent.bind(this);
         this.refreshList = this.refreshList.bind(this);
     }
 
     componentDidMount() {
         let columnHeader = this.dataHeader;
+        let teacherColumnHeader = this.dataTeacherHeader;
         const request = async () => {
             try {
                 let data = await ajax('/academy/class/query.do', {id: this.state.id});
-                let times = 100;
+                let times = 60;
                 if(data && data.data && data.data.classTime){
                     times = data.data.classTime;
                 }
@@ -100,8 +128,18 @@ class ClockedView extends React.Component {
                                     </Tooltip>
                         }
                     });
+                    teacherColumnHeader.push({
+                        label: i+"",
+                        prop: i+"",
+                    });
                 }
-                this.setState({columns: columnHeader,classTimes: times});
+                //老师列表
+                let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
+                let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
+                let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:2});  //助教   ,position:2
+                this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader,classTimes: times,mainTeacher:mainTeacherData.data.items,
+                    helpTeacher:helpTeacherData.data.items,roomList:roomList.data.items});
+                this.refreshList();
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -111,20 +149,20 @@ class ClockedView extends React.Component {
             }
         };
         request();
-        this.refreshList();
         mainSize();
     }
 
     refreshList() {
         const request = async () => {
             let dataList = await ajax('/student/clocked/list.do', {classId: this.state.id});
+            let teacherDataList = await ajax('/student/clocked/teacherClockList.do', {classId: this.state.id});
             if(dataList){
                 //如果是移动端
                 let show = 'normal';
                 if(navigator.userAgent.match(/mobile/i)) {
                     show = 'none';
                 }
-                this.setState({list: dataList,show:show});
+                this.setState({list: dataList,show:show,teacherClockList:teacherDataList});  //,teacherClockList:teacherDataList
             }
         };
         request();
@@ -174,6 +212,9 @@ class ClockedView extends React.Component {
                     accept={this.addCheckInEvent}
                     refresh={this.refreshList}
                     container={this.userContainer}
+                    mainTeacher={this.state.mainTeacher}
+                    helpTeacher={this.state.helpTeacher}
+                    roomList={this.state.roomList}
                     typeName="1"
                     changedCrmGroup={this.state.group}
                     data = {this.state.list}
@@ -194,6 +235,9 @@ class ClockedView extends React.Component {
                     accept={this.addCheckInEvent}
                     refresh={this.refreshList}
                     container={this.userContainer}
+                    mainTeacher={this.state.mainTeacher}
+                    helpTeacher={this.state.helpTeacher}
+                    roomList={this.state.roomList}
                     typeName="2"
                     changedCrmGroup={this.state.group}
                     data = {this.state.list}
@@ -209,33 +253,8 @@ class ClockedView extends React.Component {
             this.user.dialog.modal('show');
         }
     }
-    //签到
-    addCheckInEvent(){
-
-    }
-
-    //签退
-    addCheckOutEvent(){
-
-    }
 
     render() {
-
-        if (this.state.redirectToReferrer) {
-            return (
-                <Redirect to={{
-                    pathname: '/login',
-                    state: {from: this.props.location}
-                }}/>
-            )
-        }
-
-        if (this.state.redirectToList) {
-            return (
-                <Redirect to="/home/academy/class"/>
-            )
-        }
-
 
         return (
             <div>
@@ -268,6 +287,7 @@ class ClockedView extends React.Component {
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     {/*<p>班级学员信息</p>*/}
                     <div className="row" style={{"height": '80%'}}>
+                        {/*<span>学员考勤信息</span>*/}
                         <Table
                             style={{width: '100%'}}
                             className="leadlist_search"
@@ -275,7 +295,19 @@ class ClockedView extends React.Component {
                             data={this.state.list}
                             border={true}
                             fit={true}
-                            height='80%'
+                            height='70%'
+                            emptyText={"暂无数据"}
+                        />
+                        {/*<span>教师考勤信息</span>*/}
+                        <br/><hr/><br/>
+                        <Table
+                            style={{width: '100%'}}
+                            className="leadlist_search"
+                            columns={this.state.teacherColumns}
+                            data={this.state.teacherClockList}
+                            border={true}
+                            fit={true}
+                            height='40%'
                             emptyText={"暂无数据"}
                         />
                     </div>

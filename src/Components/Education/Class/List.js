@@ -3,14 +3,13 @@ import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
-import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Tooltip, Select} from 'element-react';
-import CONFIG from "../../../utils/config";
+import {Button, Table, Pagination, Tooltip, Select,Progress} from 'element-react';
+import "../../App/common.css"
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 
@@ -24,6 +23,7 @@ class List extends React.Component {
         this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
+        this.rowClassName = this.rowClassName.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -41,12 +41,6 @@ class List extends React.Component {
                     type: 'index'
                 },
                 {
-                    label: "(校区名称)",
-                    prop: "schoolArea",
-                    width: 120,
-                    fixed: 'left',
-                },
-                {
                     label: "班级编号",
                     prop: "code",
                     width: 120,
@@ -56,6 +50,11 @@ class List extends React.Component {
                         return <span><Button type="text" size="small"
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
+                },
+                {
+                    label: "(校区名称)",
+                    prop: "schoolArea",
+                    width: 120,
                 },
                 {
                     label: "班级状态",
@@ -134,7 +133,10 @@ class List extends React.Component {
                 {
                     label: "课程进度",
                     prop: "courseProcess",
-                    width: 120
+                    width: 120,
+                    render: (row, column, data) => {
+                        return <Progress strokeWidth={18} percentage={row.courseProcess} textInside />
+                    }
                 },
                 {
                     label: "总课时",
@@ -305,11 +307,24 @@ class List extends React.Component {
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
     }
     chooseStatusSearch(chooseStatusName){
-        // debugger;
         this.state.chooseStatusName = chooseStatusName;
         /*window.sessionStorage.setItem("chooseStatusName",chooseStatusName);*/
         this.state.currentPage = 1;
         this.componentDidMount();
+    }
+    //表格行内底色
+    rowClassName(row, index) {
+        if (row.classStatus === 1) {
+            //已开班
+            return 'back_table_tr_yellow';
+        } else if (row.classStatus === 3) {
+            //已结课
+            return 'back_table_tr_grew';
+        }else if (row.classStatus === 4) {
+            //已结班
+            return 'back_table_tr_orange';
+        }
+        return '';
     }
 
     render() {
@@ -321,7 +336,6 @@ class List extends React.Component {
                 }}/>
             )
         }
-
         return (
             <div>
                 <h5 id="subNav">
@@ -349,6 +363,7 @@ class List extends React.Component {
                     <Table
                         style={{width: '100%',"margin-bottom":"30px"}}
                         columns={this.state.columns}
+                        rowClassName={this.rowClassName.bind(this)}
                         data={this.state.list}
                         border={true}
                         fit={true}

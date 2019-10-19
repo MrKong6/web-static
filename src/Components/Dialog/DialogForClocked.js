@@ -2,17 +2,13 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import {$} from "../../vendor";
 
-import DialogGroup from './DialogGroup';
 import ajax from "../../utils/ajax";
 import {
     DatePicker,
-    DateRangePicker,
     Message,
     MessageBox,
     Select,
-    Radio,
     Checkbox,
-    TimeSelect,
     TimePicker
 } from "element-react";
 import DialogTips from "./DialogTips";
@@ -32,6 +28,7 @@ class DialogForClocked extends React.Component {
         this.changedCommonDate = this.changedCommonDate.bind(this);
         this.changeChecked = this.changeChecked.bind(this);
         this.changeClassTime = this.changeClassTime.bind(this);
+        this.chooseClassTeacherInfo = this.chooseClassTeacherInfo.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             startTime:  formatWithOnlyTime(new Date().getTime()),
@@ -43,7 +40,13 @@ class DialogForClocked extends React.Component {
             date: formatWithOnlyTime(new Date().getTime()),
             classTimes: this.props.classTimes,
             selectedClassTime: null,
-            classTimeList: []
+            classTimeList: [],
+            mainTeacher: this.props.mainTeacher ? this.props.mainTeacher : [],
+            helpTeacher: this.props.helpTeacher ? this.props.helpTeacher : [],
+            roomList: this.props.roomList,
+            chooseRoom:null,
+            chooseMainTeacher:null,
+            chooseHelpTeacher: [],
         }
         // if(this.props.data && this.props.data.start)
     }
@@ -55,10 +58,12 @@ class DialogForClocked extends React.Component {
         });
         //对空的签到时间赋值
         let maxClassTime = 1;
+        let index = 1;
         this.state.data.map(item => {
             if(item.maxClassTime && item.maxClassTime > maxClassTime){
                 maxClassTime = item.maxClassTime;
             }
+            item.index = index++;
         });
         this.changeClassTime(maxClassTime);
         //赋值数组
@@ -67,55 +72,6 @@ class DialogForClocked extends React.Component {
             timeList.push(i);
         }
         this.setState({classTimeList:timeList});
-        const request = async () => {
-            try {
-
-                let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
-                let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
-                let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
-                let data = null;
-                let dateRange = [];
-                if(this.state.id){
-                    //即编辑
-                    let assignClassList = await ajax('/academy/class/assignClassList.do', {csId: this.state.id});
-                    if(assignClassList && assignClassList.data && assignClassList.data.length>0){
-                        data = assignClassList.data[0];
-                        if(data.loopStartTime){
-                            dateRange.push(new Date(data.loopStartTime));
-                        }
-                        if(data.xunhuanEndDate){
-                            dateRange.push(new Date(data.xunhuanEndDate));
-                        }
-                    }
-
-                }
-                this.setState({
-                    classList: classList.data.items,
-                    teacherList: teacherList.data.items,
-                    roomList: roomList.data.items,
-                    data: data,
-                    comment: data ? data.comment: null,
-                    startTime: data ? new Date(data.startTime): this.props.chooseStartDate,
-                    endTime: data ? new Date(data.endTime): this.props.chooseStartDate,
-                    chooseTeacher: data ? Number(data.teacherId): null,
-                    chooseClass: data ? data.classId: null,
-                    chooseRoom: data ? Number(data.roomId): null,
-                    value2: dateRange,
-                    loopId: data? data.loopId : null,
-                    loopStartTime: data? new Date(data.loopStartTime) : null
-                });
-
-            } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
-            } finally {
-                this.setState({isAnimating: false});
-            }
-        };
-        // request();
     }
 
     createGroupsDialog(text) {
@@ -148,39 +104,8 @@ class DialogForClocked extends React.Component {
             userName: ''
         });
     }
-    //选择班级后关联教师
-    /*chooseClass(id){
-        const request = async () => {
-            try {
-
-                let data = await ajax('/academy/class/query.do', {id: id});
-                data = data.data;
-                if(data && data.mainTeacher){
-                    if(data.mainTeacher.indexOf(",") != -1){
-                        this.setState({
-                            chooseTeacher: data.mainTeacher.split(",")[0]
-                        });
-                    }else{
-                        this.setState({
-                            chooseTeacher: data.mainTeacher
-                        });
-                    }
-                }
-            } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
-            } finally {
-                this.setState({isAnimating: false});
-            }
-        };
-        request();
-    }*/
 
     handleSelect(type, evt) {
-        // debugger
         switch (type) {
             case(1): {
                 this.chooseClass(evt);
@@ -199,7 +124,6 @@ class DialogForClocked extends React.Component {
                 break;
             }
             case(4): {
-                debugger
                 if(evt.target.value && evt.target.value == '2'){
                     //是否循环选择了是   显示循环日期
                     // if(!this.state.showXunhuan === 'none'){
@@ -212,13 +136,14 @@ class DialogForClocked extends React.Component {
             }
         }
     }
-
+    //签到 签退
     accept(evt) {
         //校验是否都选择了
         console.log(this.state.data);
         let dataList = this.state.data;
         let commitVo = {"vos":dataList,"checkInToday":this.state.checked,"classTime":this.state.selectedClassTime,
-            "startTime":new Date(this.state.startTime.getTime()),"checkOutToday":this.props.typeName,"hasCheckedCount":this.state.hasCheckedCount};
+            "startTime":new Date(this.state.startTime.getTime()),"checkOutToday":this.props.typeName,
+            "hasCheckedCount":this.state.hasCheckedCount,"roomId":this.state.chooseRoom,"techerId":this.state.chooseMainTeacher,"helpTeacherId":this.state.chooseHelpTeacher.join(",")};
         const request = async () => {
             try {
                 let response = await ajax('/student/clocked/clockedAdd.do', {"clockedAddVo":JSON.stringify(commitVo)});
@@ -318,6 +243,7 @@ class DialogForClocked extends React.Component {
         if(dataList && dataList.length > 0){
             let existTime = null;
             let hasCheckedCount = 0;
+            let teacherId = 0,roomId = 0,helpTeacherId=[];
             dataList.map(item => {
                 if(item[evt]){
                     //即历史签到过该次数
@@ -337,17 +263,46 @@ class DialogForClocked extends React.Component {
                     if(item.startTime && item.endTime){
                         hasCheckedCount += 1;
                     }
+                    if(item[evt].teacherId > 0){
+                        teacherId = item[evt].teacherId;
+                        roomId = item[evt].roomId;
+                        if(item[evt].helpTeacherId && item[evt].helpTeacherId.indexOf(",") != -1){
+                            let array = item[evt].helpTeacherId.split(",");
+                            array.map(aa => {helpTeacherId.push(Number(aa))});
+                        }else{
+                            helpTeacherId = helpTeacherId.push(Number(item[evt].helpTeacherId));
+                        }
+                    }
+                    if(item.checkInToday != 1){
+                        //没有签过到
+                        item.startTime = formatWithOnlyTime(new Date());
+                        item.endTime = formatWithOnlyTime(new Date());
+                    }
                 }else{
                     item.checkInToday = 2;
-                    item.startTime = null;
-                    item.endTime = null;
+                    item.startTime = formatWithOnlyTime(new Date());
+                    item.endTime = formatWithOnlyTime(new Date());
                 }
             })
             if(!existTime){
                 //既没有历史签到过
                 existTime = formatWithOnlyTime(new Date());
             }
-            this.setState({data:dataList,date:existTime,selectedClassTime:evt,hasCheckedCount:hasCheckedCount});
+            this.setState({data:dataList,date:existTime,selectedClassTime:evt,hasCheckedCount:hasCheckedCount,chooseMainTeacher:teacherId,
+                chooseRoom:roomId,chooseHelpTeacher:helpTeacherId});
+        }
+    }
+    //选择教室  主教 助教
+    chooseClassTeacherInfo(type,evt){
+        if(type == 1){
+            //教室
+            this.state.chooseRoom = evt;
+        }else if(type == 2){
+            //教室
+            this.state.chooseMainTeacher = evt;
+        }else if(type == 3){
+            //教室
+            this.state.chooseHelpTeacher = evt;
         }
     }
 
@@ -387,6 +342,37 @@ class DialogForClocked extends React.Component {
                                         />
                                     </div>
                                 </div>
+                                <div className="form-group row">
+                                    <label className="col-3 col-form-label" style={{"textAlign":"right","color":"red"}}>教室/教师</label>
+                                    <div className="col-3">
+                                        <Select value={this.state.chooseRoom} placeholder="教室" onChange={this.chooseClassTeacherInfo.bind(this,'1')} required={true}>
+                                            {
+                                                this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                    <div className="col-3">
+                                        <Select value={this.state.chooseMainTeacher} placeholder="主教" onChange={this.chooseClassTeacherInfo.bind(this,'2')} required={true}>
+                                            {
+                                                this.state.mainTeacher.map(el => {
+                                                    return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+                                    <div className="col-3">
+                                        <Select value={this.state.chooseHelpTeacher} multiple={true}  placeholder="助教" onChange={this.chooseClassTeacherInfo.bind(this,'3')} required={true}>
+                                            {
+                                                this.state.helpTeacher.map(el => {
+                                                    return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                                })
+                                            }
+                                        </Select>
+                                    </div>
+
+                                </div>
                                 <hr/>
                                 <div className="form-group row">
                                     <label className="col-3 col-form-label" style={{"textAlign":"right","color":"red"}}>统一选择</label>
@@ -405,8 +391,9 @@ class DialogForClocked extends React.Component {
                                 <hr/>
                                 {
                                     this.state.data ? this.state.data.map(function(val) {
+                                        let i=1;
                                         return <div className="form-group row">
-                                            <label className="col-3 col-form-label" style={{"textAlign":"right"}}>{val.name}</label>
+                                            <label className="col-3 col-form-label" style={{"textAlign":"left"}}>{val.index+'.'}  {val.name}</label>
                                             <div className="col-2 col-form-label">
                                                 <Checkbox checked={val.checkInToday == 1}
                                                           onChange={check=>{
@@ -493,7 +480,7 @@ class DialogForClocked extends React.Component {
                                 {
                                     this.state.data ? this.state.data.map(function(val) {
                                         return <div className="form-group row">
-                                            <label className="col-3 col-form-label" style={{"textAlign":"right"}}>{val.name}</label>
+                                            <label className="col-3 col-form-label" style={{"textAlign":"right"}}>{val.index+'.'}  {val.name}</label>
                                             <div className="col-2 col-form-label">
                                                 <Checkbox checked={val.checkInToday == 1}
                                                           onChange={check=>{
