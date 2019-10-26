@@ -3,8 +3,8 @@ import {$} from '../vendor';
 import {Message} from "element-react";
 
 // 192.168.0.98
-export const AJAX_PATH = 'http://www.schooloms.com:8080/web/ajax';
-// export const AJAX_PATH = 'http://localhost:8080/ajax';
+// export const AJAX_PATH = 'http://www.schooloms.com:8080/web/ajax';
+export const AJAX_PATH = 'http://localhost:8080/ajax';
 // export const AJAX_PATH = 'http://192.168.0.104:8080/ajax';
 // export const AJAX_PATH = 'http://192.168.70.64:8080/ajax';
 //
@@ -33,7 +33,6 @@ export default function (url, data) {
               });
           }
         }else{
-
             resolve(data.data);
         }
       } else {

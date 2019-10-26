@@ -8,6 +8,8 @@ import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
 import CONFIG from "../../../utils/config";
+import List from "../Contract/List";
+import {Button, Table, Tooltip} from "element-react";
 
 const NextBtn = ({id, ids}) => {
   const curIndex = ids.indexOf(id);
@@ -62,9 +64,123 @@ class ContractView extends React.Component {
       ids: [],
       data: {name: this.props.location.state.stuName},
       contractList: [],
-      isEmpty: false
+      isEmpty: false,
+      columns: [
+            {
+                // label: "序号",
+                width: 100,
+                sortable: true,
+                type: 'index'
+            },
+            {
+                label: "创建人",
+                prop: "creatorName",
+                width: 100,
+                sortable: true
+            },
+            {
+                label: "创建时间",
+                prop: "createTime",
+                width: 120,
+                sortable: true
+            },
+            {
+                label: "所属组织",
+                prop: "orgName",
+                width: 175,
+                showOverflowTooltip: true,
+            },
+            {
+                label: "所属用户",
+                prop: "executiveName",
+                width: 95
+            },
+            {
+                label: "合同类型",
+                prop: "typeId",
+                width: 100
+            },
+            {
+                label: "合同编号",
+                prop: "code",
+                width: 130,
+            },
+            {
+                label: "签约时间",
+                prop: "startDate",
+                width: 120
+            },
+            {
+                label: "到期时间",
+                prop: "endDate",
+                width: 120
+            },
+            {
+                label: "学员姓名",
+                prop: "stuName",
+                width: 95,
+            },
+            {
+                label: "家长姓名",
+                prop: "parName",
+                width: 95,
+            },
+            {
+                label: "联系电话",
+                prop: "parCellphone",
+                width: 150,
+                className: 'tabletd',
+                render: function (data) {
+                    return <Tooltip effect="dark" content={data.parCellphone}
+                                    placement="top-start">
+                        {data.parCellphone}
+                    </Tooltip>
+                }
+
+            },
+            {
+                label: "课程类别",
+                prop: "courseType",
+                width: 95
+            },
+            {
+                label: "课程",
+                prop: "courseName",
+                width: 95,
+                className: 'tabletd',
+                render: function (data) {
+
+                    return <Tooltip effect="dark" content={data.courseName}
+                                    placement="top-start">
+                        {data.courseName}
+                    </Tooltip>
+                }
+            },
+            {
+                label: "合同金额",
+                prop: "contractPrice",
+                width: 100
+            },
+            {
+                label: "折扣金额",
+                prop: "countPrice",
+                width: 100,
+                sortable: true
+            },
+            {
+                label: "应付金额",
+                prop: "finalPrice",
+                width: 95
+            },
+            {
+                label: "已付金额",
+                prop: "paid",
+                width: 120
+            }
+      ],
     };
     this.createDialogTips = this.createDialogTips.bind(this);
+    this.goToDetails = this.goToDetails.bind(this);
   }
 
   componentDidMount() {
@@ -74,6 +190,21 @@ class ContractView extends React.Component {
         let contractList = await ajax('/service/contract/queryListByStudentId.do', {id: this.state.id});
         const ids = list.data.map((student) => (student.id));
         const isEmpty = !contractList.length;
+
+        contractList.map(item => {
+            if(item.createTime != null){
+                item.createTime = fmtDate(item.createTime);
+            }
+            if(item.startDate != null){
+                item.startDate = fmtDate(item.startDate);
+            }
+            if(item.endDate != null){
+                item.endDate = fmtDate(item.endDate);
+            }
+            if(item.typeId != null){
+                item.typeId = CONFIG.TYPE_ID[item.typeId];
+            }
+        });
 
         this.setState({ids, contractList, isEmpty});
       } catch (err) {
@@ -87,6 +218,12 @@ class ContractView extends React.Component {
 
     request();
     mainSize();
+  }
+
+  goToDetails(evt) {
+      const url = `${this.props.match.url}/${evt}`;
+
+      this.props.history.push(url);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -167,47 +304,6 @@ class ContractView extends React.Component {
       )
     }
 
-    /*if (this.state.isEmpty && !this.state.contractList.length) {
-      return (
-        <div>
-          <h5 id="subNav">
-            <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
-            &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-
-            <div className="btn-group float-right ml-4" role="group">
-              <button onClick={() => {
-                this.props.history.push('/home/sales/contract');
-              }} type="button" className="btn btn-light">返回
-              </button>
-            </div>
-          </h5>
-
-          <div id="main" className="main p-3">
-            <div className="row justify-content-md-center">
-              <div className="col col-12">
-                <div className="card">
-                  <div className="card-body">无合同记录...</div>
-                </div>
-              </div>
-            </div>
-
-            <nav aria-label="breadcrumb">
-              <ol className="breadcrumb">
-                <li className="breadcrumb-item"><Link to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
-                <li className="breadcrumb-item">
-                  <Link to={{
-                    pathname: `/home/service/customer/parent/${this.state.id}`,
-                    state: {stuName: this.state.data.name}
-                  }}>家长信息</Link>
-                </li>
-                <li className="breadcrumb-item active">合同信息</li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-      )
-    }*/
-
     return (
       <div>
         <h5 id="subNav">
@@ -233,56 +329,14 @@ class ContractView extends React.Component {
               <div className="card border-top-0">
                 <div className="card-body">
                   <p className="ht pb-3 b-b">合同信息</p>
-                  <table className="table table-bordered table-sm table-responsive">
-                    <thead>
-                    <tr>
-                      <th>序号</th>
-                      <th>创建人</th>
-                      <th>创建时间</th>
-                      <th>所属组织</th>
-                      <th>所属用户</th>
-                      <th>合同类型</th>
-                      <th>合同编号</th>
-                      <th>签约时间</th>
-                      <th>到期时间</th>
-                      <th>学员姓名</th>
-                      <th>家长姓名</th>
-                      <th>联系电话</th>
-                      <th>课程类别</th>
-                      <th>课程</th>
-                      <th>合同金额</th>
-                      <th>折扣金额</th>
-                      <th>应付金额</th>
-                      <th>已付金额</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                      this.state.contractList.map((item, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{item.creatorName}</td>
-                          <td>{fmtDate(item.createTime)}</td>
-                          <td>{item.orgName}</td>
-                          <td>{item.executiveName}</td>
-                          <td>{CONFIG.TYPE_ID[item.type]}</td>
-                          <td>{item.code}</td>
-                          <td>{fmtDate(item.startDate)}</td>
-                          <td>{fmtDate(item.endDate)}</td>
-                          <td>{item.stuName}</td>
-                          <td>{item.parName}</td>
-                          <td>{item.parCellphone}</td>
-                          <td>{item.courseType}</td>
-                          <td>{item.courseName}</td>
-                          <td>{item.oriPrice}</td>
-                          <td>{item.discPrice}</td>
-                          <td>{item.finalPrice}</td>
-                          <td>{item.paid}</td>
-                        </tr>
-                      ))
-                    }
-                    </tbody>
-                  </table>
+                    <Table
+                        style={{width: '100%'}}
+                        columns={this.state.columns}
+                        data={this.state.contractList}
+                        border={true}
+                        fit={true}
+                        emptyText={"--"}
+                    />
                 </div>
               </div>
             </div>

@@ -78,7 +78,6 @@ class View extends React.Component {
     const request = async () => {
       try {
         let data = await ajax('/sales/contract/query.do', {id: this.state.id});
-        data = data.data;
         let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id});
         const ids = list.data.map((contract) => (contract.id));
 
@@ -137,7 +136,7 @@ class View extends React.Component {
   delAction() {
     const request = async () => {
       try {
-        await ajax('/service/contract/del.do', {id: this.state.id});
+        await ajax('/sales/contract/del.do', {id: this.state.id});
         this.setState({redirectToList: true});
       } catch (err) {
         if (err.errCode === 401) {
@@ -165,7 +164,7 @@ class View extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/service/contract"/>
+        <Redirect to="/home/sales/contract"/>
       )
     }
 
@@ -178,7 +177,7 @@ class View extends React.Component {
 
             <div className="btn-group float-right ml-4" role="group">
               <button onClick={() => {
-                this.props.history.push('/home/service/contract');
+                this.props.history.push('/home/sales/contract');
               }} type="button" className="btn btn-light">返回
               </button>
             </div>
@@ -210,7 +209,7 @@ class View extends React.Component {
           </div>
           <div className="btn-group float-right ml-4" role="group">
             <button onClick={() => {
-              this.props.history.push('/home/service/contract');
+              this.props.history.push('/home/sales/contract');
             }} type="button" className="btn btn-light">返回
             </button>
           </div>

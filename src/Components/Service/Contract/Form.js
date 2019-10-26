@@ -96,13 +96,13 @@ class Form extends React.Component {
                                 this.form[key].value = data[key];
                             }
                         }
-                    })
+                    });
                     if(data.list && data.list.length > 0){
                         data.list.map(item => {
-                            this.form["cls"+item.contractTime].value = item.amount;
+                            this.form[item.clsName].value = item.amount;
                         });
-                        this.form["oneAmount"].value = oneAmount;
                     }
+                    this.form["oneAmount"].value = oneAmount;
                 });
             } catch (err) {
                 if (err.errCode === 401) {
@@ -545,7 +545,6 @@ class Form extends React.Component {
                                             <div className="col-3">
                                                 <div className="form-group row">
                                                     <input type="text" className="form-control" name={evt.clsName}
-
                                                            placeholder="请输入金额" required={true}/>
                                                 </div>
                                             </div>

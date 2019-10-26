@@ -18,7 +18,11 @@ class List extends React.Component {
         super(props);
 
         this.commands = this.props.commands.filter((command) => (command === 'Add'));
-        this.title = fmtTitle(this.props.location.pathname);
+        if(this.props.location){
+            this.title = fmtTitle(this.props.location.pathname);
+        }else{
+            this.title={"icon":"","text":""}
+        }
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.changeTabs = this.changeTabs.bind(this);
@@ -242,8 +246,10 @@ class List extends React.Component {
         } else {
             this.tips.setText(text);
         }
-
-        this.tips.dialog.modal('show');
+        //兼容学员管理
+        if(this.tips && this.tips.dialog){
+            this.tips.dialog.modal('show');
+        }
     }
 
     goToDetails(evt) {

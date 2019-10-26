@@ -26,11 +26,15 @@ class DialogForClocked extends React.Component {
         this.changeChecked = this.changeChecked.bind(this);
         this.changeClassTime = this.changeClassTime.bind(this);
         this.chooseClassTeacherInfo = this.chooseClassTeacherInfo.bind(this);
+        let dataList = this.props.data;
+        if(dataList && dataList.length > 0){
+            dataList = this.props.data.filter(item => !(item.type && item.type == 'teacher'))
+        }
         this.state = {
             group: this.props.changedCrmGroup,
             startTime:  formatWithOnlyTime(new Date().getTime()),
             endTime: formatWithOnlyTime(new Date().getTime()),
-            data: this.props.data ? this.props.data : null,
+            data: dataList ? dataList : null,
             isEdit: this.props.data ? true : false,
             checked : false,
             hasCheckedCount:0,//已经签退过的人数

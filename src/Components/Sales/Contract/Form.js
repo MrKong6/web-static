@@ -43,7 +43,6 @@ class Form extends React.Component {
                 let data = null,oneDate = null,oneAmount = null;
                 if (this.props.isEditor) {
                     data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
-                    data = data.data;
                     //处理付款信息中的时间
                     if (data.list && data.list.length > 0) {
                         oneDate = formatWithOnlyTime(data.list[0].contractDate);
@@ -111,8 +110,8 @@ class Form extends React.Component {
                         data.list.map(item => {
                             this.form["cls"+item.contractTime].value = item.amount;
                         });
-                        this.form["oneAmount"].value = oneAmount;
                     }
+                    this.form["oneAmount"].value = oneAmount;
                 });
             } catch (err) {
                 if (err.errCode === 401) {
@@ -176,8 +175,7 @@ class Form extends React.Component {
         list.push({"contractTime":1,"contractDate":this.state.oneDate,"amount":this.form["oneAmount"].value})
         if(this.state.moneyList){
             this.state.moneyList.map(item => {
-               if(item.amount && item.amount > 0){
-                   debugger
+               if(this.form[item.clsName] && this.form[item.clsName].value > 0){
                    list.push({"contractTime":item.name,"contractDate":item.contractDate,"amount":this.form[item.clsName].value})
                }
             });
@@ -540,7 +538,7 @@ class Form extends React.Component {
                                             </div>
                                             <div className="col-3">
                                                 <div className="form-group row">
-                                                    <input type="text" className="form-control" name={item.clsName}
+                                                    <input type="text" className="form-control" name={item.clsName} value={item.amount}
                                                            placeholder="请输入金额" required={true}/>
                                                 </div>
                                             </div>

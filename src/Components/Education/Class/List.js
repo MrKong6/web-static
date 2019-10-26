@@ -107,12 +107,12 @@ class List extends React.Component {
                 },
                 {
                     label: "课程类别",
-                    prop: "courseTypeName",
+                    prop: "courseType",
                     width: 95
                 },
                 {
                     label: "课程阶段",
-                    prop: "courseRangeName",
+                    prop: "courseRange",
                     width: 100
                 },
                 {

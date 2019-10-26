@@ -16,9 +16,8 @@ class ClockedView extends React.Component {
         super(props);
         this.dataHeader = [
             {
-                width: 100,
-                sortable: true,
-                type: 'index',
+                label: "序号",
+                prop: 'idx',
                 fix: true
             },
             {
@@ -64,9 +63,8 @@ class ClockedView extends React.Component {
             helpTeacher: [],
             columns: [
                 {
-                    width: 100,
-                    sortable: true,
-                    type: 'index',
+                    label: "序号",
+                    prop: 'idx',
                     fix: true
                 },
                 {
@@ -157,6 +155,21 @@ class ClockedView extends React.Component {
                 let show = 'normal';
                 if(navigator.userAgent.match(/mobile/i)) {
                     show = 'none';
+                }
+                if(!dataList){
+                    dataList = [];
+                }else{
+                    let idx = 1;
+                    dataList.map(item => {
+                        item.idx = idx++;
+                    })
+                }
+
+                if(teacherDataList && teacherDataList.length > 0){
+                    teacherDataList.map(item => {
+                        item.type='teacher';
+                        dataList.push(item);
+                    });
                 }
                 this.setState({list: dataList,show:show,teacherClockList:teacherDataList});  //,teacherClockList:teacherDataList
             }
@@ -272,9 +285,9 @@ class ClockedView extends React.Component {
                         <button onClick={this.thAction} type="button" className="btn btn-primary" id="btnChoose">
                             签到
                         </button>
-                        <button onClick={this.thAction} type="button" className="btn btn-warning" id="btnChoose">
+                        {/*<button onClick={this.thAction} type="button" className="btn btn-warning" id="btnChoose">
                             签退
-                        </button>
+                        </button>*/}
                     </div>
 
                     {/*<Commands
@@ -295,12 +308,12 @@ class ClockedView extends React.Component {
                             data={this.state.list}
                             border={true}
                             fit={true}
-                            height='70%'
+                            height='90%'
                             emptyText={"暂无数据"}
                         />
                         {/*<span>教师考勤信息</span>*/}
                         <br/><hr/><br/>
-                        <Table
+                        {/*<Table
                             style={{width: '100%'}}
                             className="leadlist_search"
                             columns={this.state.teacherColumns}
@@ -309,7 +322,7 @@ class ClockedView extends React.Component {
                             fit={true}
                             height='40%'
                             emptyText={"暂无数据"}
-                        />
+                        />*/}
                     </div>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">

@@ -86,7 +86,7 @@ class Create extends React.Component {
       try {
         let rs = await ajax('/sales/contract/add.do', query);
 
-        this.setState({isCreated: true, createdId: rs.data})
+        this.setState({isCreated: true, createdId: rs})
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
