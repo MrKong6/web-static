@@ -262,7 +262,7 @@ class List extends React.Component {
                 },
             ],
             totalPage:0,
-            currentPage:storage.getItem("leadCurrentPage") ? Number(storage.getItem("leadCurrentPage")) : 10,
+            currentPage:storage.getItem("leadCurrentPage") ? Number(storage.getItem("leadCurrentPage")) : 1,
             pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
             totalCount:0,
             stageName:[],

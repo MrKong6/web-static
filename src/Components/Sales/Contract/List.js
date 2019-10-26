@@ -11,7 +11,7 @@ import fmtTitle from '../../../utils/fmtTitle';
 import CONFIG from '../../../utils/config';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs} from 'element-react';
 
 
 /*
@@ -195,12 +195,12 @@ class List extends React.Component {
                 },
                 {
                     label: "合同金额",
-                    prop: "oriPrice",
+                    prop: "contractPrice",
                     width: 100
                 },
                 {
                     label: "折扣金额",
-                    prop: "discPrice",
+                    prop: "countPrice",
                     width: 100,
                     sortable: true
                 },
@@ -220,13 +220,14 @@ class List extends React.Component {
             pageSize:10,
             totalCount:0,
         };
-
+        this.changeTabs = this.changeTabs.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:1,typeId:this.state.typeId});
+                let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
+                    pageSize:this.state.pageSize,isIn:1,typeId:this.state.typeId});
                 const ids = list.data.map((contract) => (contract.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -334,6 +335,12 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    //切换tab
+    changeTabs(tab){
+        this.state.typeId = tab.props.name;
+        this.componentDidMount();
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -352,7 +359,7 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <Table
+                    {/*<Table
                         style={{width: '100%'}}
                         columns={this.state.columns}
                         data={this.state.list}
@@ -368,7 +375,47 @@ class List extends React.Component {
                                 pageCount={this.state.totalPage}
                                 className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
+                    <Tabs activeName="1" onTabClick={this.changeTabs.bind(this)}>{/*(tab) => console.log(tab.props.name)*/}
+                        <Tabs.Pane label="自招" name="1">
+                            <Table
+                                style={{width: '100%'}}
+                                columns={this.state.columns}
+                                data={this.state.list}
+                                border={true}
+                                fit={true}
+                                emptyText={"--"}
+                            />
+                            <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                        total={this.state.totalCount}
+                                        pageSizes={[10, 50, 100]}
+                                        pageSize={this.state.pageSize}
+                                        currentPage={this.state.currentPage}
+                                        pageCount={this.state.totalPage}
+                                        className={"leadlist_page"}
+                                        onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                        onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+                        </Tabs.Pane>
+                        <Tabs.Pane label="续报" name="2">
+                            <Table
+                                style={{width: '100%'}}
+                                columns={this.state.columns}
+                                data={this.state.list}
+                                border={true}
+                                fit={true}
+                                emptyText={"--"}
+                            />
+                            <Pagination layout="total, sizes, prev, pager, next, jumper"
+                                        total={this.state.totalCount}
+                                        pageSizes={[10, 50, 100]}
+                                        pageSize={this.state.pageSize}
+                                        currentPage={this.state.currentPage}
+                                        pageCount={this.state.totalPage}
+                                        className={"leadlist_page"}
+                                        onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                        onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
+                        </Tabs.Pane>
+                    </Tabs>
                 </div>
             </div>
         )

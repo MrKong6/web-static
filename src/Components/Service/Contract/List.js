@@ -127,12 +127,12 @@ class List extends React.Component {
                 },
                 {
                     label: "合同金额",
-                    prop: "oriPrice",
+                    prop: "contractPrice",
                     width: 100
                 },
                 {
                     label: "折扣金额",
-                    prop: "discPrice",
+                    prop: "countPrice",
                     width: 100,
                     sortable: true
                 },

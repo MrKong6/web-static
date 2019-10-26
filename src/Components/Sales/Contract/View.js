@@ -505,7 +505,7 @@ class View extends React.Component {
                                                 type="text"
                                                 readOnly={true}
                                                 className="form-control-plaintext"
-                                                value={CONFIG.TYPE_ID[this.state.data.countPrice]}
+                                                value={this.state.data.countPrice}
                                             />
                                         </div>
                                     </div>
