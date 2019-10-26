@@ -86,7 +86,7 @@ class Create extends React.Component {
       try {
         let rs = await ajax('/sales/contract/add.do', query);
 
-        this.setState({isCreated: true, createdId: rs})
+        this.setState({isCreated: true, createdId: rs.data})
       } catch (err) {
         if (err.errCode === 401) {
           this.setState({redirectToReferrer: true})
@@ -154,6 +154,7 @@ class Create extends React.Component {
             isEditor={false}
             changedCrmGroup={this.state.group}
             apporData={this.props.location.state.data}
+            profiles={this.props.profile}
             ref={(dom) => {
               this.form = dom
             }}

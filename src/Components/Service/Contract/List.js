@@ -21,15 +21,18 @@ class List extends React.Component {
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.changeTabs = this.changeTabs.bind(this);
+
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            typeId: 1,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
                 {
-                    label: "序号",
+                    // label: "序号",
                     width: 100,
                     sortable: true,
                     type: 'index'
@@ -154,7 +157,8 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:this.state.typeId});
                 const ids = list.data.map((contract) => (contract.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -260,6 +264,11 @@ class List extends React.Component {
         this.state.pageSize = pageSize;
         this.componentDidMount();
     }
+    //切换tab
+    changeTabs(tab){
+        this.state.typeId = tab.props.name;
+        this.componentDidMount();
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -280,7 +289,7 @@ class List extends React.Component {
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
 
-                    <Tabs activeName="2" onTabClick={ (tab) => console.log(tab.props.name) }>
+                    <Tabs activeName="1" onTabClick={this.changeTabs.bind(this)}>{/*(tab) => console.log(tab.props.name)*/}
                         <Tabs.Pane label="自招" name="1">
                             <Table
                                 style={{width: '100%'}}

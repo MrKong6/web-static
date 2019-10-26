@@ -209,6 +209,19 @@ class StudentView extends React.Component {
         this.props.history.push(`/home/education/class/student/customer/`+id);
     }
 
+    pageChange(currentPage){
+        console.log(currentPage);
+        this.state.currentPage = currentPage;
+        // this.setState({currentPage:currentPage});
+        this.componentDidMount();
+    }
+
+    sizeChange(pageSize){
+        console.log(pageSize);
+        this.state.pageSize = pageSize;
+        this.componentDidMount();
+    }
+
     render() {
 
         if (this.state.redirectToReferrer) {

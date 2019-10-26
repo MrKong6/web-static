@@ -95,13 +95,14 @@ class List extends React.Component {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            typeId: 1,
             isAnimating: true,
             redirectToReferrer: false,
-            columns:[
+            columns: [
                 {
                     // label: "序号",
                     width: 100,
-                    // sortable: true,
+                    sortable: true,
                     type: 'index'
                 },
                 {
@@ -136,8 +137,9 @@ class List extends React.Component {
                     label: "合同编号",
                     prop: "code",
                     width: 130,
-                    render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                    render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
                 },
                 {
@@ -164,7 +166,7 @@ class List extends React.Component {
                     label: "联系电话",
                     prop: "parCellphone",
                     width: 150,
-                    className:'tabletd',
+                    className: 'tabletd',
                     render: function (data) {
                         return <Tooltip effect="dark" content={data.parCellphone}
                                         placement="top-start">
@@ -182,7 +184,7 @@ class List extends React.Component {
                     label: "课程",
                     prop: "courseName",
                     width: 95,
-                    className:'tabletd',
+                    className: 'tabletd',
                     render: function (data) {
 
                         return <Tooltip effect="dark" content={data.courseName}
@@ -224,7 +226,7 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:1});
+                let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize,isIn:1,typeId:this.state.typeId});
                 const ids = list.data.map((contract) => (contract.id));
                 list.data.map(item => {
                     if(item.createTime != null){

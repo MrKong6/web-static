@@ -1,5 +1,8 @@
 export default function (birthday) {
-  if (!birthday.getFullYear) {
+  if(!birthday){
+    birthday = new Date();
+  }
+  if (!birthday || !birthday.getFullYear) {
     birthday = new Date(birthday);
   }
 
