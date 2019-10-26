@@ -71,6 +71,7 @@ class List extends React.Component {
     this.commands = this.props.commands.filter((command) => (command === 'Add'));
     this.title = fmtTitle(this.props.location.pathname);
       this.createDialogTips = this.createDialogTips.bind(this);
+      this.goToDetails = this.goToDetails.bind(this);
       this.state = {
       group: this.props.changedCrmGroup,
       list: [],
@@ -79,12 +80,15 @@ class List extends React.Component {
       redirectToReferrer: false,
       columns:[
           {
-              label: "序号",
               type: 'index'
           },
           {
               label: "学员姓名",
               prop: "name",
+              render: (row, column, data) => {
+                  return <span><Button type="text" size="small"
+                                       onClick={this.goToDetails.bind(this, row.id)}>{row.name}</Button></span>
+              }
           },
           {
               label: "学员编号",
@@ -190,6 +194,10 @@ class List extends React.Component {
       document.body.removeChild(this.tipsContainer);
     }
   }
+
+    goToDetails(id) {
+        this.props.history.push(`/home/sales/customer/student/` + id);
+    }
 
   createDialogTips(text) {
     if (this.tips === undefined) {

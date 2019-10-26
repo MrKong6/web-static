@@ -81,7 +81,7 @@ class StudentView extends React.Component {
         let data = await ajax('/sales/customer/student/query.do', {id: this.state.id});
         let contractList = await ajax('/sales/contract/queryListByStudentId.do', {id: this.state.id});
         let parentList = await ajax('/sales/customer/parent/queryListByStudentId.do', {id: this.state.id});
-        const ids = list.map((student) => (student.id));
+        const ids = list.data ? list.data.map((student) => (student.id)) : [];
 
         this.setState({data, ids, contractList, parentList});
       } catch (err) {

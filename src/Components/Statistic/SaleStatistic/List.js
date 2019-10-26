@@ -7,10 +7,10 @@ import actProcess from "../../../utils/actProcess";
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs} from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Card} from 'element-react';
 import ReactEcharts from 'echarts-for-react';
 import Commands from "../../Commands/Commands";
-import {getBarOption,getChartOption,getFuuelChartOption,getMulYOption} from "../../../utils/const";
+import {getBarOption, getChartOption, getFuuelChartOption, getMagicType, getMulYOption} from "../../../utils/const";
 
 class List extends React.Component {
     constructor(props) {
@@ -23,6 +23,7 @@ class List extends React.Component {
         this.panelOpporReq = this.panelOpporReq.bind(this);
         this.panelOpporReqSplit = this.panelOpporReqSplit.bind(this);
         this.panelVisitorReq = this.panelVisitorReq.bind(this);
+        this.panelAcademyReq = this.panelAcademyReq.bind(this);
 
         this.modAction = this.modAction.bind(this);
         this.commands = this.props.commands.filter(command => (command.name === 'Show'));
@@ -43,6 +44,9 @@ class List extends React.Component {
             optionNum:getMulYOption(), //线索数量簇状柱状图 机会数量簇状柱状图
             optionOpporNum:getMulYOption(), //销售数量簇状柱状图
             optionOpporNumBar:getBarOption(),//销售数量堆积图
+            optionAcademyClassStatus:getMagicType(),//教务管理--班级状态--饼状图
+            viewMode: 'Day',
+            tasks: this.getTasks(),
         };
     }
 
@@ -53,6 +57,8 @@ class List extends React.Component {
             this.panelLeadReq();
         }else if(this.state.type == 3){
             this.panelVisitorReq();
+        }else if(this.state.type == 4){
+            this.panelAcademyReq();
         }
         mainSize()
     }
@@ -1152,7 +1158,7 @@ class List extends React.Component {
         };
         request();
     }
-    //访客渲染
+    //访客数据渲染
     panelVisitorReq(type,reportType){
         const request = async (rt) => {
             let list = await ajax('/mkt/leads/getStatisticCount.do', {orgId: this.state.group.id,cellphone:this.state.cellphone,
@@ -1302,7 +1308,43 @@ class List extends React.Component {
         };
         requestTwo(reportType)
     }
-
+    //教务数据渲染
+    panelAcademyReq(){
+        //班级状态柱状图获取
+        const request = async (rt) => {
+            let list = await ajax('/statistic/getClassStatusStatistic.do', {orgId: this.state.group.id});
+            if(list){
+                this.setState({optionAcademyClassStatus:{
+                        title : {
+                            text: '班级状态分布表',
+                            // subtext: '纯属虚构',
+                            x:'center'
+                        },
+                        tooltip : {
+                            trigger: 'item',
+                            formatter: "{a} <br/>{b} : {c} ({d}%)"
+                        },
+                        legend: {
+                            x : 'center',
+                            y : 'bottom',
+                            data:list.data.columns
+                        },
+                        calculable : true,
+                        series : [
+                            {
+                                name:'班级状态',
+                                type:'pie',
+                                radius : [50, 110],
+                                roseType : 'area',
+                                data:list.data.data
+                            }
+                        ]
+                    }});
+            }
+        };
+        request();
+    }
+    //销售管理机会和线索面板切换
     changePanel(tab) {
         console.log(tab);
         if(tab.props.name == '2'){
@@ -1318,7 +1360,7 @@ class List extends React.Component {
             this.panelLeadReq();
         }
     }
-
+    //顶部导航切换
     modAction(evt){
         let type = 1;
         if(evt && evt.target.innerHTML == "市场管理"){
@@ -1327,6 +1369,8 @@ class List extends React.Component {
             type = 2;
         }else if(evt && evt.target.innerHTML == "客户服务"){
             type = 3;
+        }else if(evt && evt.target.innerHTML == "教务管理"){
+            type = 4;
         }
         this.state.type=type;
         this.setState({type:type});
@@ -1344,6 +1388,61 @@ class List extends React.Component {
             this.componentDidMount();
         }
     }
+
+
+    componentDidMount() {
+        window.setInterval(function() {
+            this.setState({
+                viewMode: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month'][parseInt(Math.random() * 5 + 1) - 1],
+                tasks: this.getTasks().slice(0, parseInt(Math.random() * 4 + 1))
+            });
+        }.bind(this), 5000)
+    };
+
+    getTasks = () => {
+        let names = [
+            ["Redesign website", [0, 7]],
+            ["Write new content", [1, 4]],
+            ["Apply new styles", [3, 6]],
+            ["Review", [7, 7]],
+            ["Deploy", [8, 9]],
+            ["Go Live!", [10, 10]]
+        ];
+
+        let tasks = names.map(function(name, i) {
+            let today = new Date();
+            let start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            let end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            start.setDate(today.getDate() + name[1][0]);
+            end.setDate(today.getDate() + name[1][1]);
+            return {
+                start: start,
+                end: end,
+                name: name[0],
+                id: "Task " + i,
+                progress: parseInt(Math.random() * 100, 10)
+            }
+        });
+        tasks[1].dependencies = "Task 0";
+        tasks[2].dependencies = "Task 1, Task 0";
+        tasks[3].dependencies = "Task 2";
+        tasks[5].dependencies = "Task 4";
+
+        tasks[0].custom_class = "bar-milestone";
+        tasks[0].progress = 60;
+        return tasks;
+    };
+
+    customPopupHtml = task => {
+        const end_date = task._end.format('MMM D');
+        return `
+                  <div class="details-container">
+                    <h5>${task.name}</h5>
+                    <p>Expected to finish by ${end_date}</p>
+                    <p>${task.progress}% completed!</p>
+                  </div>
+                `;
+    };
 
     render() {
 
@@ -1484,6 +1583,29 @@ class List extends React.Component {
                             </Tabs.Pane>
                             <Tabs.Pane label="学员" name="3"></Tabs.Pane>
                         </Tabs>
+                    </div>
+                </div>
+            )
+        }else if(this.state.type == 4){
+            return (
+                <div>
+                    <h5 id="subNav">
+                        <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                        <Commands
+                            commands={this.commands}
+                            modAction={this.modAction}
+                        />
+                    </h5>
+                    <div id="main" className="main p-3">
+                        <Card className="box-card">
+                            <ReactEcharts
+                                option={this.state.optionAcademyClassStatus}
+                                style={{height: '350px', width: '1000px'}}
+                                className='react_for_echarts' />
+                        </Card>
+                        <Card className="box-card">
+
+                        </Card>
                     </div>
                 </div>
             )

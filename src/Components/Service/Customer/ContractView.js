@@ -97,13 +97,17 @@ class ContractView extends React.Component {
             },
             {
                 label: "合同类型",
-                prop: "typeId",
+                prop: "typeName",
                 width: 100
             },
             {
                 label: "合同编号",
                 prop: "code",
                 width: 130,
+                render: (row, column, data) => {
+                    return <span><Button type="text" size="small"
+                                         onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                }
             },
             {
                 label: "签约时间",
@@ -201,9 +205,6 @@ class ContractView extends React.Component {
             if(item.endDate != null){
                 item.endDate = fmtDate(item.endDate);
             }
-            if(item.typeId != null){
-                item.typeId = CONFIG.TYPE_ID[item.typeId];
-            }
         });
 
         this.setState({ids, contractList, isEmpty});
@@ -221,8 +222,7 @@ class ContractView extends React.Component {
   }
 
   goToDetails(evt) {
-      const url = `${this.props.match.url}/${evt}`;
-
+      const url = `/home/service/contract/${evt}`;
       this.props.history.push(url);
   }
 

@@ -260,6 +260,54 @@ export function getMulYOption() {
     };
     return OPTION_BAR;
 }
+//玫瑰饼状图
+export function getMagicType(){
+    const OPTION_BAR = {
+        title : {
+            text: '班级状态分布表',
+            // subtext: '纯属虚构',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            x : 'center',
+            y : 'bottom',
+            data:['rose1','rose2','rose3','rose4']
+        },
+        // toolbox: {
+        //         //     show : true,
+        //         //     feature : {
+        //         //         mark : {show: true},
+        //         //         dataView : {show: true, readOnly: false},
+        //         //         magicType : {
+        //         //             show: true,
+        //         //             type: ['pie', 'funnel']
+        //         //         },
+        //         //         restore : {show: true},
+        //         //         saveAsImage : {show: true}
+        //         //     }
+        //         // },
+        calculable : true,
+        series : [
+            {
+                name:'面积模式',
+                type:'pie',
+                radius : [50, 110],
+                roseType : 'area',
+                data:[
+                    {value:10, name:'rose1'},
+                    {value:5, name:'rose2'},
+                    {value:15, name:'rose3'},
+                    {value:25, name:'rose4'}
+                ]
+            }
+        ]
+    };
+    return OPTION_BAR;
+}
 
 
 

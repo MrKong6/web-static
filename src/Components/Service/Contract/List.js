@@ -66,7 +66,7 @@ class List extends React.Component {
                 },
                 {
                     label: "合同类型",
-                    prop: "typeId",
+                    prop: "typeName",
                     width: 100
                 },
                 {
@@ -296,7 +296,7 @@ class List extends React.Component {
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
 
                     <Tabs activeName="1" onTabClick={this.changeTabs.bind(this)}>{/*(tab) => console.log(tab.props.name)*/}
-                        <Tabs.Pane label="自招" name="1">
+                        <Tabs.Pane label="新招" name="1">
                             <Table
                                 style={{width: '100%'}}
                                 columns={this.state.columns}
