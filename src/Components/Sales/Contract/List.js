@@ -11,7 +11,9 @@ import fmtTitle from '../../../utils/fmtTitle';
 import CONFIG from '../../../utils/config';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs} from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message} from 'element-react';
+import {getContractColumns} from "../../../utils/commonTableColumns";
+import Commands from "../../Commands/Commands";
 
 
 /*
@@ -103,54 +105,50 @@ class List extends React.Component {
                     // label: "序号",
                     width: 100,
                     sortable: true,
-                    type: 'index'
+                    type: 'index',
+                    fixed: true,
                 },
                 {
                     label: "创建人",
                     prop: "creatorName",
                     width: 100,
-                    sortable: true
+                    sortable: true,
+                    fixed: true,
                 },
                 {
                     label: "创建时间",
                     prop: "createTime",
                     width: 120,
-                    sortable: true
+                    sortable: true,
+                    fixed: true,
                 },
                 {
                     label: "所属组织",
                     prop: "orgName",
                     width: 175,
                     showOverflowTooltip: true,
+                    fixed: true,
                 },
                 {
                     label: "所属用户",
                     prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "合同类型",
-                    prop: "typeName",
-                    width: 100
+                    width: 95,
+                    fixed: true,
                 },
                 {
                     label: "合同编号",
                     prop: "code",
                     width: 130,
+                    fixed: true,
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
                 },
                 {
-                    label: "签约时间",
-                    prop: "startDate",
-                    width: 120
-                },
-                {
-                    label: "到期时间",
-                    prop: "endDate",
-                    width: 120
+                    label: "合同类型",
+                    prop: "typeName",
+                    width: 100,
                 },
                 {
                     label: "学员姓名",
@@ -194,24 +192,50 @@ class List extends React.Component {
                     }
                 },
                 {
-                    label: "合同金额",
+                    label: "合同金额(元)",
                     prop: "contractPrice",
                     width: 100
                 },
                 {
-                    label: "折扣金额",
+                    label: "折扣金额(元)",
                     prop: "countPrice",
                     width: 100,
                     sortable: true
                 },
                 {
-                    label: "应付金额",
+                    label: "应付金额(元)",
                     prop: "finalPrice",
                     width: 95
                 },
                 {
-                    label: "已付金额",
+                    label: "已付金额(元)",
                     prop: "paid",
+                    width: 120
+                },
+                {
+                    label: "课时费(元)",
+                    prop: "oriPrice",
+                    width: 100,
+                    sortable: true
+                },
+                {
+                    label: "培训资料费(元)",
+                    prop: "discPrice",
+                    width: 95
+                },
+                {
+                    label: "其他费用(元)",
+                    prop: "otherPrice",
+                    width: 120
+                },
+                {
+                    label: "总课时",
+                    prop: "courseHours",
+                    width: 95
+                },
+                {
+                    label: "总课次",
+                    prop: "courseTimes",
                     width: 120
                 }
             ],
@@ -226,7 +250,7 @@ class List extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
-                    pageSize:this.state.pageSize,isIn:1,typeId:this.state.typeId});
+                    pageSize:this.state.pageSize,isIn:1,typeId:null});
                 const ids = list.data.map((contract) => (contract.id));
                 if(list.data){
                     list.data.map(item => {
@@ -335,6 +359,7 @@ class List extends React.Component {
         this.state.pageSize = pageSize;
         this.componentDidMount();
     }
+
 
     render() {
         if (this.state.redirectToReferrer) {

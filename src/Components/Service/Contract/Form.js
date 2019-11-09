@@ -18,7 +18,7 @@ import {Button, DatePicker} from "element-react";
 class Form extends React.Component {
     constructor(props) {
         super(props);
-
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             birthday: null,
@@ -521,7 +521,7 @@ class Form extends React.Component {
                                             <Button type="primary" icon="plus" onClick={this.addPayItem}></Button>
                                         </div>
                                     </div>
-                                    {this.state.moneyList.map(function (evt) {
+                                    {this.state.moneyList ? this.state.moneyList.map(function (evt) {
                                         return <div className="row">
                                             <div className="col-1">
                                                 <label className="col-form-label font-weight-bold">
@@ -549,7 +549,7 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        })
+                                        }) : null
                                     }
                                 </div>
                             </div>

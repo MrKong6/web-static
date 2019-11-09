@@ -182,6 +182,8 @@ class Form extends React.Component {
         }
 
         query.typeId = 1;
+        query.stuId = this.state.data ? this.state.data.stuId : null;
+        query.parId = this.state.data ? this.state.data.parId : null;
         query.listStr=JSON.stringify(list);
         query.stuBirthday = this.state.birthday;
         query.courseType = this.form.courseId.options[this.form.courseId.selectedIndex].text;

@@ -308,6 +308,103 @@ export function getMagicType(){
     };
     return OPTION_BAR;
 }
+//班级进度甘特图
+export function getGanteType(){
+    const OPTION_BAR = {
+        title: {
+            text: '班级进度表',
+            left: 10
+        },
+        legend: {
+            y: 'bottom',
+            data: ['结课日期', '当前进度日期']  //修改的地方1
+
+        },
+        grid: {
+            containLabel: true,
+            left: 20
+        },
+        xAxis: {
+            type: 'time'
+        },
+
+        yAxis: {
+
+            data: []
+
+        },
+        tooltip: {
+            trigger: 'axis',
+            formatter: function(params) {
+                var res = params[0].name + "</br>"
+                var date0 = params[0].data;
+                var date1 = params[1].data;
+                var date2 = params[2].data;
+                var date3 = params[3].data;
+                date0 = date0.getFullYear() + "-" + (date0.getMonth() + 1) + "-" + date0.getDate();
+                date1 = date1.getFullYear() + "-" + (date1.getMonth() + 1) + "-" + date1.getDate();
+                date2 = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate();
+                date3 = date3.getFullYear() + "-" + (date3.getMonth() + 1) + "-" + date3.getDate();
+                // res += params[0].seriesName + "~" + params[1].seriesName + ":</br>" + date0 + "~" + date1 + "</br>"
+                // res += params[2].seriesName + "~" + params[3].seriesName + ":</br>" + date2 + "~" + date3 + "</br>"
+                res += params[2].seriesName + "~" + params[0].seriesName + ":</br>" + date2 + "~" + date0 + "</br>"
+                console.log(params[0]);
+                return res;
+            }
+        },
+        series: [
+
+
+            {
+                name: '结课日期',
+                type: 'bar',
+                stack: 'test1',
+                //修改地方2
+                itemStyle: {
+                    normal: {
+                        color: '#F98563'
+                    }
+                },
+                data: []
+            },
+            {
+                name: '实际开课日期',
+                type: 'bar',
+                stack: 'test1',
+                itemStyle: {
+                    normal: {
+                        color: 'rgba(0,0,0,0)'
+                    }
+                },
+                data: []
+            },
+            {
+                name: '当前进度日期',
+                type: 'bar',
+                stack: 'test1',
+                //修改地方3
+                itemStyle: {
+                    normal: {
+                        color: '#A2E068'
+                    }
+                },
+                data: []
+            },
+            {
+                name: '开课日期',
+                type: 'bar',
+                stack: 'test1',
+                itemStyle: {
+                    normal: {
+                        color: 'rgba(0,0,0,0)'
+                    }
+                },
+                data: []
+            }
+        ]
+    };
+    return OPTION_BAR;
+}
 
 
 

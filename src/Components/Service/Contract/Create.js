@@ -14,8 +14,8 @@ import ajax from "../../../utils/ajax";
 class Create extends React.Component {
     constructor(props) {
         super(props);
-
         this.title = fmtTitle(this.props.location.pathname);
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             oriId: this.props.location.state.oriId,
@@ -86,14 +86,11 @@ class Create extends React.Component {
         query.startDate = query.startDate ? (new Date(query.startDate).getTime()) : null;
         query.endDate = query.endDate ? (new Date(query.endDate).getTime()) : null;
 
-        query.stuBirthday = query.stuBirthday ? (new Date(query.stuBirthday).getTime()) : null;
-        query.startDate = query.startDate ? (new Date(query.startDate).getTime()) : null;
-
         this.setState({isAnimating: true});
 
         const request = async () => {
             try {
-                let rs = await ajax('/sales/contract/add.do', query);
+                let rs = await ajax('/service/contract/add.do', query);
 
                 this.setState({isCreated: true, createdId: rs})
             } catch (err) {

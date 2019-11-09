@@ -205,7 +205,7 @@ class StudentView extends React.Component {
     }
 
     assignAction() {
-        this.props.history.push(`/home/academy/class/student/assign/${this.state.id}`, {ids: this.ids});
+        this.props.history.push(`/home/academy/class/student/assign/${this.state.id}`, {ids: this.ids,stuName: this.state.stuName});
     }
 
     pageChange(currentPage) {

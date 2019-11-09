@@ -2222,11 +2222,12 @@ echarts-for-react@^2.0.15-beta.0:
     fast-deep-equal "^2.0.1"
     size-sensor "^0.2.0"
 
-echarts@^3.8.5:
-  version "3.8.5"
-  resolved "https://registry.yarnpkg.com/echarts/-/echarts-3.8.5.tgz#58e4a51d2743c6fb75257b0dc0a9cf9f5378ac0e"
+echarts@^4.0.2:
+  version "4.4.0"
+  resolved "https://registry.npm.taobao.org/echarts/download/echarts-4.4.0.tgz#d5260566cef0b98f5a00baf1b5010e92c1c23661"
+  integrity sha1-1SYFZs7wuY9aALrxtQEOksHCNmE=
   dependencies:
-    zrender "3.7.4"
+    zrender "4.1.1"
 
 ee-first@1.1.1:
   version "1.1.1"
@@ -2912,6 +2913,11 @@ forwarded@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/forwarded/-/forwarded-0.1.2.tgz#98c23dab1175657b8c0573e8ceccd91b0ff18c84"
 
+frappe-gantt@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npm.taobao.org/frappe-gantt/download/frappe-gantt-0.2.0.tgz#6512816557f47c0718349add38366d27425a74ba"
+  integrity sha1-ZRKBZVf0fAcYNJrdODZtJ0JadLo=
+
 fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
@@ -2978,6 +2984,14 @@ function-bind@^1.0.2, function-bind@^1.1.1:
 functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
+
+gantt-for-react@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.npm.taobao.org/gantt-for-react/download/gantt-for-react-0.2.0.tgz#d6ec44cf3f033566ad539019615d683fe2e7abd3"
+  integrity sha1-1uxEzz8DNWatU5AZYV1oP+Lnq9M=
+  dependencies:
+    frappe-gantt "^0.2.0"
+    size-sensor "^0.2.0"
 
 gauge@~2.7.3:
   version "2.7.4"
@@ -7091,6 +7105,7 @@ yargs@~3.10.0:
     decamelize "^1.0.0"
     window-size "0.1.0"
 
-zrender@3.7.4:
-  version "3.7.4"
-  resolved "https://registry.yarnpkg.com/zrender/-/zrender-3.7.4.tgz#f847d53948481ef6d42906d1ea9aeec7acbefdf2"
+zrender@4.1.1:
+  version "4.1.1"
+  resolved "https://registry.npm.taobao.org/zrender/download/zrender-4.1.1.tgz#201e58a55cf1a7e973e1dbad3c15596ef8779f54"
+  integrity sha1-IB5YpVzxp+lz4dutPBVZbvh3n1Q=

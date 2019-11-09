@@ -210,6 +210,11 @@ export default {
             ICON_CLASS: "fa-file-text-o",
             CATEGORY: '合同'
         },
+        "3-1-1": {
+            PATH_RULE: /^\/home\/service\/contract\/create$/,
+            ICON_CLASS: "fa-file-text-o",
+            CATEGORY: '合同'
+        },
         "3-2": {
             PATH: "home/service/customer",
             PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account)\/((?!create).)*)?$/,

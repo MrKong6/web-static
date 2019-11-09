@@ -10,7 +10,8 @@ import ajax from "../../../utils/ajax";
 import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Card} from 'element-react';
 import ReactEcharts from 'echarts-for-react';
 import Commands from "../../Commands/Commands";
-import {getBarOption, getChartOption, getFuuelChartOption, getMagicType, getMulYOption} from "../../../utils/const";
+import {getBarOption, getChartOption, getFuuelChartOption, getMagicType, getMulYOption, getGanteType} from "../../../utils/const";
+import fmtDate from "../../../utils/fmtDate";
 
 class List extends React.Component {
     constructor(props) {
@@ -45,8 +46,7 @@ class List extends React.Component {
             optionOpporNum:getMulYOption(), //销售数量簇状柱状图
             optionOpporNumBar:getBarOption(),//销售数量堆积图
             optionAcademyClassStatus:getMagicType(),//教务管理--班级状态--饼状图
-            viewMode: 'Day',
-            tasks: this.getTasks(),
+            optionAcademyClassTime:getGanteType(),//教务管理--班级课时进度--甘特图
         };
     }
 
@@ -92,11 +92,11 @@ class List extends React.Component {
         }
     }
 
-    componentWillUnmount() {
+    /*componentWillUnmount() {
         if (this.tipsContainer) {
             document.body.removeChild(this.tipsContainer);
         }
-    }
+    }*/
 
     createDialogTips(text) {
         if (this.tips === undefined) {
@@ -1343,6 +1343,112 @@ class List extends React.Component {
             }
         };
         request();
+        //班级进度甘特图获取
+        const requestGante = async (rt) => {
+            let list = await ajax('/statistic/getClassHourStatistic.do', {orgId: this.state.group.id});
+            if(list && list.data){
+                list = list.data;
+                this.setState({optionAcademyClassTime:{
+                        title: {
+                            text: '班级进度表',
+                            left: 10
+                        },
+                        legend: {
+                            y: 'bottom',
+                            data: ['结课日期', '当前进度日期']  //修改的地方1
+
+                        },
+                        grid: {
+                            containLabel: true,
+                            left: 20
+                        },
+                        xAxis: {
+                            type: 'time'
+                        },
+
+                        yAxis: {
+                            data: list.classCodes
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            formatter: function(params) {
+                                var res = params[0].name + "</br>"
+                                var date0 = params[0].data;
+                                var date1 = params[1].data;
+                                var date2 = params[2].data;
+                                var date3 = params[3].data;
+                                /*if(date0){
+                                    console.log(date0);
+                                    date0 = fmtDate(date0)
+                                    date0 = date0.getFullYear() + "-" + (date0.getMonth() + 1) + "-" + date0.getDate();
+                                }
+                                if(date2){
+                                    console.log(date2);
+                                    date2 = fmtDate(date2)
+                                    date2 = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate();
+                                }*/
+                                // date0 = date0.getFullYear() + "-" + (date0.getMonth() + 1) + "-" + date0.getDate();
+                                // date1 = date1.getFullYear() + "-" + (date1.getMonth() + 1) + "-" + date1.getDate();
+                                // date2 = date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate();
+                                // date3 = date3.getFullYear() + "-" + (date3.getMonth() + 1) + "-" + date3.getDate();
+                                // res += params[0].seriesName + "~" + params[1].seriesName + ":</br>" + date0 + "~" + date1 + "</br>"
+                                // res += params[2].seriesName + "~" + params[3].seriesName + ":</br>" + date2 + "~" + date3 + "</br>"
+                                res += params[2].seriesName + "~" + params[0].seriesName + ":</br>" + date2 + "~" + date0 + "</br>"
+                                return res;
+                            }
+                        },
+                        series: [
+                            {
+                                name: '结课日期',
+                                type: 'bar',
+                                stack: 'test1',
+                                //修改地方2
+                                itemStyle: {
+                                    normal: {
+                                        color: '#F98563'
+                                    }
+                                },
+                                data: list.endDates
+                            },
+                            {
+                                name: '实际开课日期',
+                                type: 'bar',
+                                stack: 'test1',
+                                itemStyle: {
+                                    normal: {
+                                        color: 'rgba(0,0,0,0)'
+                                    }
+                                },
+                                data: list.startDates
+                            },
+                            {
+                                name: '当前进度日期',
+                                type: 'bar',
+                                stack: 'test1',
+                                //修改地方3
+                                itemStyle: {
+                                    normal: {
+                                        color: '#A2E068'
+                                    }
+                                },
+                                data: list.rightNowDates
+                            },
+                            {
+                                name: '开课日期',
+                                type: 'bar',
+                                stack: 'test1',
+                                itemStyle: {
+                                    normal: {
+                                        color: 'rgba(0,0,0,0)'
+                                    }
+                                },
+                                data: list.startDates
+                            }
+                        ]
+                    }});
+            }
+        };
+        requestGante();
     }
     //销售管理机会和线索面板切换
     changePanel(tab) {
@@ -1389,60 +1495,6 @@ class List extends React.Component {
         }
     }
 
-
-    componentDidMount() {
-        window.setInterval(function() {
-            this.setState({
-                viewMode: ['Quarter Day', 'Half Day', 'Day', 'Week', 'Month'][parseInt(Math.random() * 5 + 1) - 1],
-                tasks: this.getTasks().slice(0, parseInt(Math.random() * 4 + 1))
-            });
-        }.bind(this), 5000)
-    };
-
-    getTasks = () => {
-        let names = [
-            ["Redesign website", [0, 7]],
-            ["Write new content", [1, 4]],
-            ["Apply new styles", [3, 6]],
-            ["Review", [7, 7]],
-            ["Deploy", [8, 9]],
-            ["Go Live!", [10, 10]]
-        ];
-
-        let tasks = names.map(function(name, i) {
-            let today = new Date();
-            let start = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            let end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-            start.setDate(today.getDate() + name[1][0]);
-            end.setDate(today.getDate() + name[1][1]);
-            return {
-                start: start,
-                end: end,
-                name: name[0],
-                id: "Task " + i,
-                progress: parseInt(Math.random() * 100, 10)
-            }
-        });
-        tasks[1].dependencies = "Task 0";
-        tasks[2].dependencies = "Task 1, Task 0";
-        tasks[3].dependencies = "Task 2";
-        tasks[5].dependencies = "Task 4";
-
-        tasks[0].custom_class = "bar-milestone";
-        tasks[0].progress = 60;
-        return tasks;
-    };
-
-    customPopupHtml = task => {
-        const end_date = task._end.format('MMM D');
-        return `
-                  <div class="details-container">
-                    <h5>${task.name}</h5>
-                    <p>Expected to finish by ${end_date}</p>
-                    <p>${task.progress}% completed!</p>
-                  </div>
-                `;
-    };
 
     render() {
 
@@ -1604,7 +1656,10 @@ class List extends React.Component {
                                 className='react_for_echarts' />
                         </Card>
                         <Card className="box-card">
-
+                            <ReactEcharts
+                                option={this.state.optionAcademyClassTime}
+                                style={{height: '800px', width: '1000px'}}
+                                className='react_for_echarts' />
                         </Card>
                     </div>
                 </div>

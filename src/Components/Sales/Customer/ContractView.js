@@ -68,54 +68,50 @@ class ContractView extends React.Component {
                     // label: "序号",
                     width: 100,
                     sortable: true,
-                    type: 'index'
+                    type: 'index',
+                    fixed: true,
                 },
                 {
                     label: "创建人",
                     prop: "creatorName",
                     width: 100,
-                    sortable: true
+                    sortable: true,
+                    fixed: true,
                 },
                 {
                     label: "创建时间",
                     prop: "createTime",
                     width: 120,
-                    sortable: true
+                    sortable: true,
+                    fixed: true,
                 },
                 {
                     label: "所属组织",
                     prop: "orgName",
                     width: 175,
                     showOverflowTooltip: true,
+                    fixed: true,
                 },
                 {
                     label: "所属用户",
                     prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "合同类型",
-                    prop: "typeName",
-                    width: 100
+                    width: 95,
+                    fixed: true,
                 },
                 {
                     label: "合同编号",
                     prop: "code",
                     width: 130,
+                    fixed: true,
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
                 },
                 {
-                    label: "签约时间",
-                    prop: "startDate",
-                    width: 120
-                },
-                {
-                    label: "到期时间",
-                    prop: "endDate",
-                    width: 120
+                    label: "合同类型",
+                    prop: "typeName",
+                    width: 100,
                 },
                 {
                     label: "学员姓名",
@@ -159,31 +155,59 @@ class ContractView extends React.Component {
                     }
                 },
                 {
-                    label: "合同金额",
+                    label: "合同金额(元)",
                     prop: "contractPrice",
                     width: 100
                 },
                 {
-                    label: "折扣金额",
+                    label: "折扣金额(元)",
                     prop: "countPrice",
                     width: 100,
                     sortable: true
                 },
                 {
-                    label: "应付金额",
+                    label: "应付金额(元)",
                     prop: "finalPrice",
                     width: 95
                 },
                 {
-                    label: "已付金额",
+                    label: "已付金额(元)",
                     prop: "paid",
+                    width: 120
+                },
+                {
+                    label: "课时费(元)",
+                    prop: "oriPrice",
+                    width: 100,
+                    sortable: true
+                },
+                {
+                    label: "培训资料费(元)",
+                    prop: "discPrice",
+                    width: 95
+                },
+                {
+                    label: "其他费用(元)",
+                    prop: "otherPrice",
+                    width: 120
+                },
+                {
+                    label: "总课时",
+                    prop: "courseHours",
+                    width: 95
+                },
+                {
+                    label: "总课次",
+                    prop: "courseTimes",
                     width: 120
                 }
             ],
-            isEmpty: false
+            isEmpty: false,
+            stuInfo:null
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.addContract = this.addContract.bind(this);
     }
 
     componentDidMount() {
@@ -191,8 +215,11 @@ class ContractView extends React.Component {
             try {
                 let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id});
                 let contractList = await ajax('/sales/contract/queryListByStudentId.do', {id: this.state.id});
+                let stuData = await ajax('/service/customer/student/query.do', {id: this.state.id});  //学员信息
+                let parentList = await ajax('/service/customer/parent/queryListByStudentId.do', {id: this.state.id});//学员家长信息
                 const ids = list.data ? list.data.map((student) => (student.id)) : [];
                 const isEmpty = !contractList.length;
+                let stuInfo = {"student":stuData,"parent":(parentList && parentList.length > 0) ? parentList[0] : null}
                 if(contractList){
                     contractList.map(item => {
                         if(item.createTime != null){
@@ -209,7 +236,7 @@ class ContractView extends React.Component {
                         }
                     });
                 }
-                this.setState({ids, contractList, isEmpty});
+                this.setState({ids, contractList, isEmpty, stuInfo});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -261,6 +288,11 @@ class ContractView extends React.Component {
         this.props.history.push(`/home/sales/contract/` + id);
     }
 
+    addContract(){
+        this.props.history.push(`/home/sales/contract/create`, {id: this.state.id,data:this.state.stuInfo,typeId:2,
+            stuId:(this.state.stuInfo.student ? this.state.stuInfo.student.id : null),
+            parId:((this.state.stuInfo.parent && this.state.stuInfo.parent.length) > 0 ? this.state.stuInfo.parent[0].id: null) });
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -319,6 +351,11 @@ class ContractView extends React.Component {
                             }} type="button" className="btn btn-light">返回
                             </button>
                         </div>
+                        <div className="btn-group float-right" role="group">
+                            <button onClick={this.addContract} type="button" className="btn btn-primary" id="btnChoose">
+                                新增
+                            </button>
+                        </div>
                     </h5>
 
                     <div id="main" className="main p-3">
@@ -363,6 +400,11 @@ class ContractView extends React.Component {
                         <button onClick={() => {
                             this.props.history.push('/home/sales/customer');
                         }} type="button" className="btn btn-light">返回
+                        </button>
+                    </div>
+                    <div className="btn-group float-right" role="group">
+                        <button onClick={this.addContract} type="button" className="btn btn-primary" id="btnChoose">
+                            新增
                         </button>
                     </div>
                 </h5>
