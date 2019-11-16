@@ -85,8 +85,9 @@ class StudentAssignView extends React.Component {
                     prop: "genderText",
                 },
                 {
-                    label: "出生年月",
-                    prop: "birthday",
+                    // label: "出生年月",
+                    label: "合同编码",
+                    prop: "contractCode",
                 },
                 {
                     label: "年龄",
@@ -126,8 +127,10 @@ class StudentAssignView extends React.Component {
                     prop: "genderText",
                 },
                 {
-                    label: "出生年月",
-                    prop: "birthday",
+                    // label: "出生年月",
+                    // prop: "birthday",
+                    label: "合同编码",
+                    prop: "contractCode",
                 },
                 {
                     label: "年龄",
@@ -171,8 +174,8 @@ class StudentAssignView extends React.Component {
     reqListData(){
         const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,classStatus:1,exceptAssign:1,id:this.state.id});
-                let listRight = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,id:this.state.id});
+                let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,exceptAssign:1,id:this.state.id});
+                let listRight = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,id:this.state.id,exceptAssign:2});
                 if(list){
                     list.data.map(item => {
                         if(item.idType != null){

@@ -2,16 +2,10 @@ import React from 'react'
 import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
 import {Pagination, Table, Tooltip} from 'element-react';
-
 import DialogTips from "../../Dialog/DialogTips";
-import Commands from "../../Commands/Commands";
-
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import CONFIG from "../../../utils/config";
-import calculateAge from "../../../utils/calculateAge";
-import fmtDate from "../../../utils/fmtDate";
 import DialogForClocked from "../../Dialog/DialogForClocked";
 
 class ClockedView extends React.Component {

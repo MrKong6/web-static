@@ -9,11 +9,12 @@ import mainSize from "../../../utils/mainSize";
 import fmtDate from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import CONFIG from '../../../utils/config';
-import ajax from "../../../utils/ajax";
+import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
 import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message} from 'element-react';
 import {getContractColumns} from "../../../utils/commonTableColumns";
 import Commands from "../../Commands/Commands";
+import ajaxFile from "../../../utils/ajaxFile";
 
 
 /*
@@ -89,10 +90,11 @@ class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command === 'Add'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.exportAction = this.exportAction.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -359,7 +361,25 @@ class List extends React.Component {
         this.state.pageSize = pageSize;
         this.componentDidMount();
     }
+    /**
+     * 导出
+     */
+    exportAction() {
+        ajaxFile('/service/contract/export.do',{orgId: this.state.group.id,isIn:1})
+    };
 
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -370,11 +390,31 @@ class List extends React.Component {
                 }}/>
             )
         }
-
+        const uploadConfig = {
+            className:"upload-demo",
+            showFileList:false,
+            withCredentials:true,
+            data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId},
+            action: AJAX_PATH + '/service/contract/import.do',
+            onSuccess: (response, file, fileList) => {
+                debugger
+                if(response.code && response.code == 200){
+                    this.successMsg("导入成功");
+                    this.componentDidMount();
+                }else{
+                    this.errorMsg(response.detail);
+                }
+            }
+        };
         return (
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                    <Commands
+                        commands={this.commands}
+                        importAction={uploadConfig}
+                        exportAction={this.exportAction}
+                    />
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>

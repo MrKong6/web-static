@@ -367,7 +367,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">学员姓别</label>
+                                                <label className="col-5 col-form-label font-weight-bold">学员性别</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -419,7 +419,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.parent.name : ''}
+                                                        value={this.state.data && this.state.data.parent  ? this.state.data.parent.name : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -430,7 +430,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.parent.relation : ''}
+                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.relation : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -441,7 +441,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.parent.cellphone : ''}
+                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.cellphone : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -452,7 +452,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.parent.wechat : ''}
+                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.wechat : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -463,7 +463,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.parent.address : ''}
+                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.address : ''}
                                                     />
                                                 </div>
                                             </div>

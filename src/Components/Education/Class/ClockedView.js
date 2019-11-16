@@ -18,17 +18,17 @@ class ClockedView extends React.Component {
             {
                 label: "序号",
                 prop: 'idx',
-                fix: true
+                fixed: 'left',
             },
             {
                 label: "学员",
                 prop: "name",
-                fix: true
+                fixed: 'left',
             },
             {
                 label: "英文名",
                 prop: "enName",
-                fix: true
+                fixed: 'left',
             },
         ];
         this.dataTeacherHeader = [
@@ -36,12 +36,12 @@ class ClockedView extends React.Component {
                 width: 100,
                 sortable: true,
                 type: 'index',
-                fix: true
+                fixed: 'left',
             },
             {
                 label: "名称",
                 prop: "name",
-                fix: true
+                fixed: 'left',
             },
         ];
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
@@ -64,18 +64,18 @@ class ClockedView extends React.Component {
             columns: [
                 {
                     label: "序号",
+                    fixed: 'left',
                     prop: 'idx',
-                    fix: true
                 },
                 {
                     label: "学员",
                     prop: "name",
-                    fix: true
+                    fixed: 'left',
                 },
                 {
                     label: "英文名",
                     prop: "enName",
-                    fix: true
+                    fixed: 'left',
                 },
             ],
             teacherColumns: [
@@ -83,12 +83,12 @@ class ClockedView extends React.Component {
                     width: 100,
                     sortable: true,
                     type: 'index',
-                    fix: true
+                    fixed: 'left',
                 },
                 {
                     label: "名称",
                     prop: "name",
-                    fix: true
+                    fixed: 'left',
                 },
             ],
             totalPage: 0,
@@ -130,7 +130,7 @@ class ClockedView extends React.Component {
                 //老师列表
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
-                let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:2});  //助教   ,position:2
+                let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});  //助教   ,position:2  ,position:2
                 this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader,classTimes: times,mainTeacher:mainTeacherData.data.items,
                     helpTeacher:helpTeacherData.data.items,roomList:roomList.data.items});
                 this.refreshList();
@@ -307,7 +307,6 @@ class ClockedView extends React.Component {
                             columns={this.state.columns}
                             data={this.state.list}
                             border={true}
-                            fit={true}
                             height='90%'
                             emptyText={"暂无数据"}
                         />

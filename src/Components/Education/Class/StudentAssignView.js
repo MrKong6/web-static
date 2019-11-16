@@ -171,7 +171,7 @@ class StudentAssignView extends React.Component {
     reqListData(){
         const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,classStatus:1,exceptAssign:1,id:this.state.id});
+                let list = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,exceptAssign:1,id:this.state.id});
                 let listRight = await ajax('/service/customer/student/classStuList.do', {orgId: this.state.group.id,id:this.state.id});
                 if(list){
                     list.data.map(item => {

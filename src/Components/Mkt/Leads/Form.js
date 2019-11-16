@@ -213,7 +213,7 @@ class Form extends React.Component {
                         </div>
                       </div>
                       <div className="form-group row">
-                        <label className="col-5 col-form-label font-weight-bold">学员姓别</label>
+                        <label className="col-5 col-form-label font-weight-bold">学员性别</label>
                         <div className="col-7">
                           <Gender data={this.state.option.gender}/>
                         </div>

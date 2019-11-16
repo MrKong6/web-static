@@ -10,7 +10,7 @@ import ajax from "../../../utils/ajax";
 import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Card} from 'element-react';
 import ReactEcharts from 'echarts-for-react';
 import Commands from "../../Commands/Commands";
-import {getBarOption, getChartOption, getFuuelChartOption, getMagicType, getMulYOption, getGanteType} from "../../../utils/const";
+import {getBarOption, getChartOption, getFuuelChartOption, getPieOption, getMulYOption, getGanteType} from "../../../utils/const";
 import fmtDate from "../../../utils/fmtDate";
 
 class List extends React.Component {
@@ -45,7 +45,7 @@ class List extends React.Component {
             optionNum:getMulYOption(), //线索数量簇状柱状图 机会数量簇状柱状图
             optionOpporNum:getMulYOption(), //销售数量簇状柱状图
             optionOpporNumBar:getBarOption(),//销售数量堆积图
-            optionAcademyClassStatus:getMagicType(),//教务管理--班级状态--饼状图
+            optionAcademyClassStatus:getPieOption(),//教务管理--班级状态--饼状图
             optionAcademyClassTime:getGanteType(),//教务管理--班级课时进度--甘特图
         };
     }
@@ -1315,31 +1315,44 @@ class List extends React.Component {
             let list = await ajax('/statistic/getClassStatusStatistic.do', {orgId: this.state.group.id});
             if(list){
                 this.setState({optionAcademyClassStatus:{
-                        title : {
-                            text: '班级状态分布表',
-                            // subtext: '纯属虚构',
+                    title : {
+                        text: '班级状态分布表',
                             x:'center'
-                        },
-                        tooltip : {
-                            trigger: 'item',
+                    },
+                    tooltip : {
+                        trigger: 'item',
                             formatter: "{a} <br/>{b} : {c} ({d}%)"
-                        },
-                        legend: {
-                            x : 'center',
-                            y : 'bottom',
-                            data:list.data.columns
-                        },
-                        calculable : true,
-                        series : [
-                            {
-                                name:'班级状态',
-                                type:'pie',
-                                radius : [50, 110],
-                                roseType : 'area',
-                                data:list.data.data
+                    },
+                    legend: {
+                        type: 'scroll',
+                        orient: 'vertical',
+                        right: 10,
+                        top: 20,
+                        bottom: 20,
+                        data: list.data.columns,
+                    },
+                    series : [
+                        {
+                            name: '姓名',
+                            type: 'pie',
+                            radius : '55%',
+                            center: ['40%', '50%'],
+                            label:{
+                                normal:{
+                                    formatter: '{b}({d}%)',  //{a} <br/>{b} : {c} ({d}%)
+                                }
+                            },
+                            data: list.data.data,
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
                             }
-                        ]
-                    }});
+                        }
+                    ]
+                }});
             }
         };
         request();

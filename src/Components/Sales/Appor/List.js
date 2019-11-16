@@ -13,21 +13,35 @@ import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import {Button, Table, Pagination, Upload, Input, Tooltip, Select, Message} from 'element-react';
 import '../../Mkt/Leads/Leads.css'
 import ajaxFile from "../../../utils/ajaxFile";
+import DialogUser from "../../Dialog/DialogUser";
 
 class List extends React.Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
+        let link = "/home/sales/oppor";
+        if (this.props.location.pathname.indexOf("opporpublic") != -1) {
+            this.commands = this.props.commands.filter(command => (command.name === 'Add' ||
+                command.name === 'Import' || command.name === 'Export' || command.name == 'Assign'));
+        }else{
+            this.commands = this.props.commands.filter(command => (command.name === 'Add' ||
+                command.name === 'Import' || command.name === 'Export'));
+        }
 
-        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            chooseRows: [],
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
+                {
+                    type: 'selection',
+                    width: 20,
+                },
                 {
                     // label: "序号",
                     type: 'index',
@@ -217,6 +231,9 @@ class List extends React.Component {
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
         this.chooseAdvisorSearch = this.chooseAdvisorSearch.bind(this);
+        this.addAction = this.addAction.bind(this);
+        this.assignAction = this.assignAction.bind(this);
+        this.assignAccept = this.assignAccept.bind(this);
     }
 
     componentDidMount() {
@@ -391,6 +408,73 @@ class List extends React.Component {
         this.state.currentPage = 1;
         this.componentDidMount();
     }
+    /**
+     * 列表选择
+     * @param value
+     */
+    selectRow(value) {
+        var ids = [];
+        if(value){
+            value.map((leads) => (ids.push(leads.id)));
+        }
+        this.setState({
+            chooseRows: ids
+        });
+    }
+    /**
+     * 转移给
+     */
+    assignAction() {
+        const defaults = {
+            groupId: this.state.group.id,
+            groupName: this.state.group.name,
+            userId: this.props.profile.cId,
+            userName: this.props.profile.cRealName,
+        };
+        this.userContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogUser
+                accept={this.assignAccept}
+                title={this.title.name}
+                container={this.userContainer}
+                defaults={defaults}
+                replace={this.props.history.replace}
+                from={this.props.location}
+                path="/sales/oppor/listAssignableUsers.do"
+                ref={(dom) => {
+                    this.user = dom
+                }}
+            />,
+            document.body.appendChild(this.userContainer)
+        );
+
+        this.user.dialog.modal('show');
+    };
+    assignAccept(selected) {
+        this.setState({isAnimating: true});
+        const request = async () => {
+            try {
+                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: 2};
+                await ajax('/sales/oppor/batchAssign.do', {"assignVo":JSON.stringify(param)});
+                let data = Object.assign({}, this.state.data);
+                Message({
+                    message: "已重新分配",
+                    type: 'info'
+                });
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -419,6 +503,8 @@ class List extends React.Component {
                         addAction={this.addAction}
                         exportAction={this.exportAction}
                         importAction={uploadConfig}
+                        assignAction={this.assignAction}
+                        assignParams={this.state.chooseRows}
                     />
                 </h5>
                 <div id="main" className="main p-3">
@@ -460,6 +546,7 @@ class List extends React.Component {
                         fit={true}
                         emptyText={"--"}
                         height='80%'
+                        onSelectChange={(selection) => this.selectRow(selection) }
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}

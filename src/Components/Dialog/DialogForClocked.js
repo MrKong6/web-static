@@ -137,6 +137,13 @@ class DialogForClocked extends React.Component {
         //校验是否都选择了
         console.log(this.state.data);
         let dataList = this.state.data;
+        if(dataList && dataList.length > 0){
+            dataList.map(item => {
+                if(item.startTime){
+                    item.startTime = formatWithDateAndTime(this.state.date,item.startTime);
+                }
+            });
+        }
         let commitVo = {"vos":dataList,"checkInToday":this.state.checked,"classTime":this.state.selectedClassTime,
             "startTime":new Date(this.state.startTime.getTime()),"checkOutToday":this.props.typeName,
             "teacherStartDate":new Date(this.state.date.getTime()),
@@ -238,7 +245,7 @@ class DialogForClocked extends React.Component {
                             array.map(aa => {helpTeacherId.push(Number(aa))});
                         }else{
                             if(item[evt].helpTeacherId){
-                                helpTeacherId = helpTeacherId.push(Number(item[evt].helpTeacherId));
+                                helpTeacherId.push(Number(item[evt].helpTeacherId));
                             }
                         }
                     }
@@ -279,7 +286,7 @@ class DialogForClocked extends React.Component {
     render() {
         if(this.props.typeName && this.props.typeName == '1'){
             return (
-                <div id="123456" className="modal fade" tabIndex="-1" role="dialog" data-backdrop="static">
+                <div id="123456" className="modal" tabIndex="-1" role="dialog" data-backdrop="static">
                     <div className="modal-dialog" role="document">{/*  style={{"maxWidth":"600px"}}*/}
                         <div className="modal-content">
                             <div className="modal-header">

@@ -58,7 +58,7 @@ class View extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter(command => (command.name !== 'Add'));
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -243,7 +243,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">学员姓别</label>
+                                                <label className="col-5 col-form-label font-weight-bold">学员性别</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"

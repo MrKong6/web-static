@@ -16,6 +16,7 @@ import './Leads.css'
 
 import {$} from "../../../vendor";
 import ajaxFile from "../../../utils/ajaxFile";
+import DialogUser from "../../Dialog/DialogUser";
 
 /*
 const Table = ({list, goto}) => {
@@ -103,7 +104,14 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
-        this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import' || command.name === 'Export'));
+        if (this.props.location.pathname.indexOf("leadspublic") != -1) {
+            this.commands = this.props.commands.filter(command => (command.name === 'Add' ||
+                command.name === 'Import' || command.name === 'Export' || command.name == 'Assign'));
+        }else{
+            this.commands = this.props.commands.filter(command => (command.name === 'Add' ||
+                command.name === 'Import' || command.name === 'Export'));
+        }
+
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         // this.goToDetails = this.goToDetails.bind(this);
@@ -112,14 +120,22 @@ class List extends React.Component {
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
         this.chooseAdvisorSearch = this.chooseAdvisorSearch.bind(this);
+        this.addAction = this.addAction.bind(this);
+        this.assignAction = this.assignAction.bind(this);
+        this.assignAccept = this.assignAccept.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            chooseRows: [],
             isAnimating: true,
             redirectToReferrer: false,
             cellphone : storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
             columns:[
+                {
+                    type: 'selection',
+                    width: 20,
+                },
                 {
                     type: 'index',
                     fixed: 'left',
@@ -464,7 +480,74 @@ class List extends React.Component {
         this.state.currentPage = 1;
         this.componentDidMount();
     }
+    /**
+     * 列表选择
+     * @param value
+     */
+    selectRow(value) {
+        var ids = [];
+        if(value){
+            value.map((leads) => (ids.push(leads.id)));
+        }
+        this.setState({
+            chooseRows: ids
+        });
+    }
+    /**
+     * 转移给
+     */
+    assignAction() {
+        const defaults = {
+            groupId: this.state.group.id,
+            groupName: this.state.group.name,
+            userId: this.props.profile.cId,
+            userName: this.props.profile.cRealName,
+        };
+        this.userContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogUser
+                accept={this.assignAccept}
+                title={this.title.name}
+                container={this.userContainer}
+                defaults={defaults}
+                replace={this.props.history.replace}
+                from={this.props.location}
+                typeName="1"
+                path="/mkt/leads/listAssignableUsers.do"
+                ref={(dom) => {
+                    this.user = dom
+                }}
+            />,
+            document.body.appendChild(this.userContainer)
+        );
 
+        this.user.dialog.modal('show');
+    }
+
+    assignAccept(selected) {
+        this.setState({isAnimating: true});
+        const request = async () => {
+            try {
+                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: 1};
+                await ajax('/mkt/leads/batchAssign.do', {"assignVo":JSON.stringify(param)});
+                Message({
+                    message: "已重新分配",
+                    type: 'info'
+                });
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
+    }
     render() {
 
         const uploadConfig = {
@@ -493,6 +576,8 @@ class List extends React.Component {
                         addAction={this.addAction}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
+                        assignAction={this.assignAction}
+                        assignParams={this.state.chooseRows}
                     />
                 </h5>
                 <div id="main" className="main p-3">
@@ -534,6 +619,7 @@ class List extends React.Component {
                         border={true}
                         fit={false}
                         height='80%'
+                        onSelectChange={(selection) => this.selectRow(selection) }
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
                                 total={this.state.totalCount}

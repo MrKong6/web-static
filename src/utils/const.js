@@ -405,6 +405,51 @@ export function getGanteType(){
     };
     return OPTION_BAR;
 }
+//普通圆饼图
+export function getPieOption(){
+    const OPTION_BAR = {
+        title : {
+            text: '班级状态分布表',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            type: 'scroll',
+            orient: 'vertical',
+            right: 10,
+            top: 20,
+            bottom: 20,
+            data: [],
+            selected: []
+        },
+        series : [
+            {
+                name: '姓名',
+                type: 'pie',
+                radius : '55%',
+                center: ['40%', '50%'],
+                label:{
+                    normal:{
+                        formatter: '{a} <br/>{b} : {c} ({d}%)',
+                    }
+                },
+                data: [],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    };
+    //36课
+    return OPTION_BAR;
+}
 
 
 
