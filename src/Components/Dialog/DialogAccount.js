@@ -35,7 +35,6 @@ class DialogAccount extends React.Component {
                 let data = await ajax('/service/account/getDictionariesByCode.do', {code: 'PAY_OUT_TYPE'});
                 if(data != null){
                     this.setState({payTypes:data}, () => {
-                        debugger
                         for (let i = 0; i < this.form.length; i++) {
                             this.form[i].value = null;
                         }
@@ -92,7 +91,12 @@ class DialogAccount extends React.Component {
                     query.outType = null;
                 }
                 let resp = await ajax('/service/account/add.do', query);
-                debugger
+                this.setState({}, () => {
+                    for (let i = 0; i < this.form.length; i++) {
+                        this.form[i].value = null;
+                    }
+                    this.form["remark"].value = "";
+                });
                 if(resp.code == '200'){
                     this.cancel();
                     Message({

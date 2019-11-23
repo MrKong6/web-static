@@ -15,7 +15,7 @@ import "../../App/common.css"
 class List extends React.Component {
     constructor(props) {
         super(props);
-
+        debugger
         this.commands = this.props.commands.filter((command) => (command.name === 'Add' || command.name === 'Import'
             || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);

@@ -134,7 +134,25 @@ export default {
             CATEGORY: '我的',
             NAME: '学员'
         },
+        "2-3-1": {
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '我的',
+            NAME: '学员'
+        },
         "2-3-2": {
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '我的',
+            NAME: '学员'
+        },
+        "2-3-3": {
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '我的',
+            NAME: '学员'
+        },
+        "2-3-4": {
             PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '我的',
@@ -221,7 +239,22 @@ export default {
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
         },
+        "3-2-1": {
+            PATH_RULE: /^\/home\/service\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '学员'
+        },
         "3-2-2": {
+            PATH_RULE: /^\/home\/service\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '学员'
+        },
+        "3-2-3": {
+            PATH_RULE: /^\/home\/service\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '学员'
+        },
+        "3-2-4": {
             PATH_RULE: /^\/home\/service\/customer\/student\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
@@ -299,16 +332,52 @@ export default {
         },
         "5-4": {
             PATH: "home/academy/class",
-            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            PATH_RULE: /^\/home\/academy\/class$/,
             ICON_CLASS: "fa-users",
             CATEGORY: '班级'
         },
         "5-4-1": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "5-4-2": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "5-4-3": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "5-4-4": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "5-4-5": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "5-4-6": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        /*"5-4-1-1": {
             PATH_RULE: /^\/home\/academy\/class\/create$/,
             ICON_CLASS: "fa-houzz",
             CATEGORY: '班级',
             NAME: ''
-        },
+        },*/
         "5-5": {
             PATH: "home/academy/assignclass",
             PATH_RULE: /^\/home\/academy\/assignclass(\/((?!create).)*)?$/,
@@ -326,6 +395,41 @@ export default {
             NAME: '班级'
         },
         "6-1-1": {
+            PATH: "home/education/class",
+            PATH_RULE: /^\/home\/education\/class\/create$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "6-1-2": {
+            PATH: "home/education/class",
+            PATH_RULE: /^\/home\/education\/class\/create$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "6-1-3": {
+            PATH: "home/education/class",
+            PATH_RULE: /^\/home\/education\/class\/create$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "6-1-4": {
+            PATH: "home/education/class",
+            PATH_RULE: /^\/home\/education\/class\/create$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "6-1-5": {
+            PATH: "home/education/class",
+            PATH_RULE: /^\/home\/education\/class\/create$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "6-1-6": {
             PATH: "home/education/class",
             PATH_RULE: /^\/home\/education\/class\/create$/,
             ICON_CLASS: "fa-users",

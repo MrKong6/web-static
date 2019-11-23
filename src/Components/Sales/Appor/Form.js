@@ -66,11 +66,11 @@ class Form extends React.Component {
             }
             this.form.classGrade.value = this.state.data.student.classGrade;
             this.form.schoolName.value = this.state.data.student.schoolName;
-            this.form.parentName.value = this.state.data.parent.name;
-            this.form.relation.value = this.state.data.parent.relation || '';
-            this.form.cellphone.value = this.state.data.parent.cellphone;
-            this.form.wechat.value = this.state.data.parent.wechat;
-            this.form.address.value = this.state.data.parent.address;
+            this.form.parentName.value = this.state.data.parent ? this.state.data.parent.name : '';
+            this.form.relation.value = this.state.data.parent ? this.state.data.parent.relation : '';
+            this.form.cellphone.value = this.state.data.parent ? this.state.data.parent.cellphone : '';
+            this.form.wechat.value = this.state.data.parent ? this.state.data.parent.wechat : '';
+            this.form.address.value = this.state.data.parent ? this.state.data.parent.address : '';
             this.form.courseId.value = this.state.data.courseId ? this.state.data.courseId : '';
             this.form.courseTypeId.value = this.state.data.courseTypeId ? this.state.data.courseTypeId : '';
             this.form.note.value = this.state.data.note;

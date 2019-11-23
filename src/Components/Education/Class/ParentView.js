@@ -53,7 +53,7 @@ class ParentView extends React.Component {
   constructor(props) {
     super(props);
 
-    this.commands = this.props.commands.filter(command => (command.id === '3-2-5'));
+    this.commands = this.props.commands.filter(command => (command.id === '3-2-2-5'));
     this.title = fmtTitle(this.props.location.pathname);
     this.state = {
       group: this.props.changedCrmGroup,
@@ -314,7 +314,7 @@ class ParentView extends React.Component {
             <ol className="breadcrumb location_bottom">
               <li className="breadcrumb-item"><Link to={`/home/education/class/student/customer/${this.state.id}`}>学员信息</Link></li>
               <li className="breadcrumb-item active">家长信息</li>
-              <li className="breadcrumb-item">
+              {/*<li className="breadcrumb-item">
                 <Link to={{
                   pathname: `/home/education/class/contract/${this.state.id}`,
                   state: {stuName: this.state.data.name}
@@ -325,7 +325,7 @@ class ParentView extends React.Component {
                       pathname: `/home/education/class/account/${this.state.id}`,
                       state: {stuName: this.state.data.name}
                   }}>账户信息</Link>
-              </li>
+              </li>*/}
             </ol>
           </nav>
         </div>

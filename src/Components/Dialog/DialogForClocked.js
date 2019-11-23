@@ -174,7 +174,6 @@ class DialogForClocked extends React.Component {
         if (this.groupContainer) {
             document.body.removeChild(this.groupContainer);
         }
-
         document.body.removeChild(this.props.container);
     }
 

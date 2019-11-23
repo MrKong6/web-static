@@ -19,6 +19,12 @@ class AssignClassView extends React.Component {
         super(props);
 
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod' && command.name !== 'Del' && command.name !== 'Import' && command.name !== 'Export'));
+        this.first = !(this.props.sonView.filter(view => (view.id == '6-1-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '6-1-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '6-1-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '6-1-4')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '6-1-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '6-1-6')) == false) ? 'normal' : 'none';
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -186,7 +192,7 @@ class AssignClassView extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/academy/class"/>
+                <Redirect to="/home/education/class"/>
             )
         }
 
@@ -232,28 +238,28 @@ class AssignClassView extends React.Component {
                     <div className="row">
                         <nav aria-label="breadcrumb" style={{"zIndex":"3456789"}}>
                             <ol className="breadcrumb location_bottom">
-                                <li className="breadcrumb-item"><Link
+                                <li className="breadcrumb-item" style={{"display":this.first}}><Link
                                     to={`/home/education/class/${this.state.id}`}>班级基本信息</Link></li>
-                                <li className="breadcrumb-item active">
+                                <li className="breadcrumb-item active" style={{"display":this.second}}>
                                     <Link to={{
                                         pathname: `/home/education/class/student/${this.state.id}`,
                                         state: {stuName: this.state.stuName}
                                     }}>班级学员信息</Link>
                                 </li>
-                                <li className="breadcrumb-item">
+                                <li className="breadcrumb-item" style={{"display":this.third}}>
                                     <Link to={{
                                         pathname: `/home/education/class/teacher/${this.state.id}`,
                                         state: {stuName: this.state.stuName}
                                     }}>班级教师信息</Link>
                                 </li>
-                                <li className="breadcrumb-item">
+                                <li className="breadcrumb-item" style={{"display":this.fourth}}>
                                     班级课程表
                                 </li>
-                                <li className="breadcrumb-item"><Link to={{
+                                <li className="breadcrumb-item" style={{"display":this.fifth}}><Link to={{
                                     pathname: `/home/education/class/clocked/${this.state.id}`,
                                     state: {stuName: this.state.stuName}
                                 }}>班级考勤信息</Link></li>
-                                <li className="breadcrumb-item"><Link to={``}>班级异动信息</Link></li>
+                                <li className="breadcrumb-item" style={{"display":this.sixth}}><Link to={``}>班级异动信息</Link></li>
                             </ol>
                         </nav>
                     </div>

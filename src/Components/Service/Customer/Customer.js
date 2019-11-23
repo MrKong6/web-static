@@ -11,41 +11,41 @@ import AccountView from "./AccountView";
 import ContractCreate from "../Contract/Create"
 
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
-    const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
-
+    let groupCommands = commands.filter(item => (item.id == '3-2'));
+    groupCommands = groupCommands[0];
     return (
         <Switch>
             <Route path={`/home/service/contract/create`} render={(props) => (
-                <ContractCreate {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+                <ContractCreate {...props} profile={profile} changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/student/:studentId/edit`} render={(props) => (
-                <StudentEditor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+                <StudentEditor {...props} profile={profile} changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/student/:studentId`} render={(props) => (
                 <StudentView key={props.match.params.studentId} {...props} profile={profile}
                              commands={groupCommands.commands}
-                             changedCrmGroup={changedCrmGroup}/>
+                             changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/parent/:studentId/edit`} render={(props) => (
-                <ParentEditor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+                <ParentEditor {...props} profile={profile} changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/parent/:studentId`} render={(props) => (
                 <ParentView key={props.match.params.studentId} {...props} profile={profile}
                             commands={groupCommands.commands}
-                            changedCrmGroup={changedCrmGroup}/>
+                            changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/contract/:studentId`} render={(props) => (
                 <ContractView key={props.match.params.studentId} {...props} profile={profile}
                               commands={groupCommands.commands}
-                              changedCrmGroup={changedCrmGroup}/>
+                              changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/account/:studentId`} render={(props) => (
                 <AccountView key={props.match.params.studentId} {...props} profile={profile}
                              commands={groupCommands.commands}
-                             changedCrmGroup={changedCrmGroup}/>
+                             changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}`} render={(props) => (
-                <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>
+                <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
         </Switch>
     )

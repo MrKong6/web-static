@@ -55,6 +55,10 @@ class ContractView extends React.Component {
         super(props);
 
         this.title = fmtTitle(this.props.location.pathname);
+        this.first = !(this.props.sonView.filter(view => (view.id == '2-3-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '2-3-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '2-3-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '2-3-4')) == false) ? 'normal' : 'none';
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -430,15 +434,21 @@ class ContractView extends React.Component {
 
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb">
-                            <li className="breadcrumb-item"><Link
+                            <li className="breadcrumb-item" style={{"display":this.first}}><Link
                                 to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
-                            <li className="breadcrumb-item">
+                            <li className="breadcrumb-item" style={{"display":this.second}}>
                                 <Link to={{
                                     pathname: `/home/sales/customer/parent/${this.state.id}`,
                                     state: {stuName: this.state.data.name}
                                 }}>家长信息</Link>
                             </li>
-                            <li className="breadcrumb-item active">合同信息</li>
+                            <li className="breadcrumb-item active" style={{"display":this.third}}>合同信息</li>
+                            {/*<li className="breadcrumb-item" style={{"display":this.fourth}}>
+                                <Link to={{
+                                    pathname: `/home/sales/customer/account/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>账户信息</Link>
+                            </li>*/}
                         </ol>
                     </nav>
                 </div>

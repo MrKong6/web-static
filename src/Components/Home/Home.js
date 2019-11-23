@@ -126,7 +126,6 @@ class Home extends React.Component {
         </div>
       );
     }
-
     const query = {
       access: this.state.profile.access,
       profile: this.state.profile.profile,

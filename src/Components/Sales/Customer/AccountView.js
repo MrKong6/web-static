@@ -54,10 +54,10 @@ class AccountView extends React.Component {
     constructor(props) {
         super(props);
         this.title = fmtTitle(this.props.location.pathname);
-        this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
+        this.first = !(this.props.sonView.filter(view => (view.id == '2-3-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '2-3-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '2-3-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '2-3-4')) == false) ? 'normal' : 'none';
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -315,16 +315,16 @@ class AccountView extends React.Component {
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
                             <li className="breadcrumb-item"style={{"display":this.first}}><Link
-                                to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
+                                to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
                             <li className="breadcrumb-item" style={{"display":this.second}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/parent/${this.state.id}`,
+                                    pathname: `/home/sales/customer/parent/${this.state.id}`,
                                     state: {stuName: this.state.name}
                                 }}>家长信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.third}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/contract/${this.state.id}`,
+                                    pathname: `/home/sales/customer/contract/${this.state.id}`,
                                     state: {stuName: this.state.name}
                                 }}>合同信息</Link>
                             </li>

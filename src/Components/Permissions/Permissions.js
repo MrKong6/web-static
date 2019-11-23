@@ -38,7 +38,6 @@ const TableItem = (data, selectedFunc, changedFunc) => {
   if (data.length === 0) {
     return table;
   }
-
   data.map(item => {
     const level = item.cId.split('-').length - 1;
     const spacingStyle = {marginLeft: 26 * level + "px", whiteSpace: 'nowrap'};
@@ -213,6 +212,7 @@ class Permissions extends React.Component {
           selectedFunc = selectedRoleDetails.functions.map(funcs => (funcs.cId));
           const selectedRoleAllFunc = selectedRoleDetails.rootFuncs.map(funcs => (funcs.cId));
           list = await ajax('/func/list.do', {ids: selectedRoleAllFunc.join(',')});
+
         }
 
         this.setState({

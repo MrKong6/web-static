@@ -18,17 +18,17 @@ class ClockedView extends React.Component {
                 width: 100,
                 sortable: true,
                 type: 'index',
-                fix: true
+                fixed: 'left',
             },
             {
                 label: "学员",
                 prop: "name",
-                fix: true
+                fixed: 'left',
             },
             {
                 label: "英文名",
                 prop: "enName",
-                fix: true
+                fixed: 'left',
             },
         ];
         this.dataTeacherHeader = [
@@ -36,15 +36,21 @@ class ClockedView extends React.Component {
                 width: 100,
                 sortable: true,
                 type: 'index',
-                fix: true
+                fixed: 'left',
             },
             {
                 label: "名称",
                 prop: "name",
-                fix: true
+                fixed: 'left',
             },
         ];
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
+        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6')) == false) ? 'normal' : 'none';
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -54,24 +60,24 @@ class ClockedView extends React.Component {
             id: this.props.match.params.contractId,
             data: null,
             teacherClockList:[], //教师签到数据
-            stuName: this.props.location.state.stuName,
+            stuName: this.props.location.state ? this.props.location.state.stuName : "",
             ids: [],
             columns: [
                 {
                     width: 100,
                     sortable: true,
                     type: 'index',
-                    fix: true
+                    fixed: 'left',
                 },
                 {
                     label: "学员",
                     prop: "name",
-                    fix: true
+                    fixed: 'left',
                 },
                 {
                     label: "英文名",
                     prop: "enName",
-                    fix: true
+                    fixed: 'left',
                 },
             ],
             teacherColumns: [
@@ -79,12 +85,12 @@ class ClockedView extends React.Component {
                     width: 100,
                     sortable: true,
                     type: 'index',
-                    fix: true
+                    fixed: 'left',
                 },
                 {
                     label: "名称",
                     prop: "name",
-                    fix: true
+                    fixed: 'left',
                 },
             ],
             totalPage: 0,
@@ -152,6 +158,21 @@ class ClockedView extends React.Component {
                 let show = 'normal';
                 if(navigator.userAgent.match(/mobile/i)) {
                     show = 'none';
+                }
+                if(!dataList){
+                    dataList = [];
+                }else{
+                    let idx = 1;
+                    dataList.map(item => {
+                        item.idx = idx++;
+                    })
+                }
+
+                if(teacherDataList && teacherDataList.length > 0){
+                    teacherDataList.map(item => {
+                        item.type='teacher';
+                        dataList.push(item);
+                    });
                 }
                 this.setState({list: dataList,show:show,teacherClockList:teacherDataList});  //,teacherClockList:teacherDataList
             }
@@ -271,11 +292,11 @@ class ClockedView extends React.Component {
                             data={this.state.list}
                             border={true}
                             fit={true}
-                            height='70%'
+                            height='90%'
                             emptyText={"暂无数据"}
                         />
                         <br/><hr/><br/><br/><br/>
-                        <Table
+                        {/*<Table
                             style={{width: '100%'}}
                             className="leadlist_search"
                             columns={this.state.teacherColumns}
@@ -284,32 +305,32 @@ class ClockedView extends React.Component {
                             fit={true}
                             height='40%'
                             emptyText={"暂无数据"}
-                        />
+                        />*/}
                     </div>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
-                            <li className="breadcrumb-item"><Link
+                            <li className="breadcrumb-item" style={{"display":this.first}}><Link
                                 to={`/home/academy/class/${this.state.id}`}>班级基本信息</Link></li>
-                            <li className="breadcrumb-item active">
+                            <li className="breadcrumb-item active" style={{"display":this.second}}>
                                 <Link to={{
                                     pathname: `/home/academy/class/student/${this.state.id}`,
                                     state: {stuName: this.state.stuName}
                                 }}>班级学员信息</Link>
                             </li>
-                            <li className="breadcrumb-item">
+                            <li className="breadcrumb-item" style={{"display":this.third}}>
                                 <Link to={{
                                     pathname: `/home/academy/class/teacher/${this.state.id}`,
                                     state: {stuName: this.state.stuName}
                                 }}>班级教师信息</Link>
                             </li>
-                            <li className="breadcrumb-item">
+                            <li className="breadcrumb-item" style={{"display":this.fourth}}>
                                 <Link to={{
                                     pathname: `/home/academy/class/assignClass/${this.state.id}`,
                                     state: {stuName: this.state.stuName}
                                 }}>班级课程表</Link>
                             </li>
-                            <li className="breadcrumb-item">班级考勤信息</li>
-                            <li className="breadcrumb-item"><Link to={``}>班级异动信息</Link></li>
+                            <li className="breadcrumb-item" style={{"display":this.fifth}}>班级考勤信息</li>
+                            <li className="breadcrumb-item" style={{"display":this.sixth}}><Link to={``}>班级异动信息</Link></li>
                         </ol>
                     </nav>
                 </div>

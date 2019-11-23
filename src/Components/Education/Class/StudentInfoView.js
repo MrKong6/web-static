@@ -294,7 +294,7 @@ class StudentInfoView extends React.Component {
                   state: {stuName: this.state.data.name}
                 }}>家长信息</Link>
               </li>
-              <li className="breadcrumb-item">
+              {/*<li className="breadcrumb-item">
                 <Link to={{
                   pathname: `/home/education/class/contract/${this.state.id}`,
                   state: {stuName: this.state.data.name}
@@ -305,7 +305,7 @@ class StudentInfoView extends React.Component {
                       pathname: `/home/education/class/account/${this.state.id}`,
                       state: {stuName: this.state.data.name}
                   }}>账户信息</Link>
-              </li>
+              </li>*/}
             </ol>
           </nav>
         </div>
