@@ -196,19 +196,19 @@ class List extends React.Component {
                     label: "创建时间",
                     prop: "createTime",
                     sortable: true,
-                    width: 140,
+                    width: 150,
                 },
                 {
                     label: "转移时间",
                     prop: "transTime",
                     sortable: true,
-                    width: 140,
+                    width: 150,
                 },
                 {
                     label: "转化时间",
                     prop: "assignTime",
                     sortable: true,
-                    width: 140,
+                    width: 150,
                 },
 
             ],

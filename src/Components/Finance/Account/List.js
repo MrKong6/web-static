@@ -29,120 +29,43 @@ class List extends React.Component {
             redirectToReferrer: false,
             columns: [
                 {
-                    label: "序号",
                     width: 100,
-                    sortable: true,
                     type: 'index'
                 },
                 {
-                    label: "创建人",
+                    label: "学员编号",
                     prop: "creatorName",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 120,
-                    sortable: true
-                },
-                {
-                    label: "所属组织",
-                    prop: "orgName",
-                    width: 175,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "合同类型",
-                    prop: "typeId",
-                    width: 100
-                },
-                {
-                    label: "合同编号",
-                    prop: "code",
-                    width: 130,
-                    render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }
-                },
-                {
-                    label: "签约时间",
-                    prop: "startDate",
-                    width: 120
-                },
-                {
-                    label: "到期时间",
-                    prop: "endDate",
-                    width: 120
                 },
                 {
                     label: "学员姓名",
-                    prop: "stuName",
-                    width: 95,
+                    prop: "createTime",
                 },
                 {
-                    label: "家长姓名",
-                    prop: "parName",
-                    width: 95,
+                    label: "英文名",
+                    prop: "orgName",
                 },
                 {
-                    label: "联系电话",
-                    prop: "parCellphone",
-                    width: 150,
-                    className: 'tabletd',
-                    render: function (data) {
-                        return <Tooltip effect="dark" content={data.parCellphone}
-                                        placement="top-start">
-                            {data.parCellphone}
-                        </Tooltip>
-                    }
-
+                    label: "性别",
+                    prop: "executiveName",
                 },
                 {
-                    label: "课程类别",
-                    prop: "courseType",
-                    width: 95
+                    label: "年龄",
+                    prop: "typeId",
                 },
                 {
-                    label: "课程",
-                    prop: "courseName",
-                    width: 95,
-                    className: 'tabletd',
-                    render: function (data) {
-
-                        return <Tooltip effect="dark" content={data.courseName}
-                                        placement="top-start">
-                            {data.courseName}
-                        </Tooltip>
-                    }
-                },
-                {
-                    label: "合同金额",
-                    prop: "oriPrice",
-                    width: 100
-                },
-                {
-                    label: "折扣金额",
-                    prop: "discPrice",
-                    width: 100,
+                    label: "总收入",
+                    prop: "code",
                     sortable: true
                 },
                 {
-                    label: "应付金额",
-                    prop: "finalPrice",
-                    width: 95
+                    label: "总支出",
+                    prop: "startDate",
                 },
                 {
-                    label: "已付金额",
-                    prop: "paid",
-                    width: 120
-                }
+                    label: "账户余额",
+                    prop: "endDate",
+                    sortable: true
+                },
             ],
             totalPage:0,
             currentPage:1,
@@ -279,7 +202,7 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    {/*<Table
+                    <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}
                         data={this.state.list}
@@ -295,7 +218,7 @@ class List extends React.Component {
                                 pageCount={this.state.totalPage}
                                 className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
+                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
             </div>
         )
