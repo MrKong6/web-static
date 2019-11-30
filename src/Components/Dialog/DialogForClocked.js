@@ -269,7 +269,6 @@ class DialogForClocked extends React.Component {
     }
     //选择教室  主教 助教
     chooseClassTeacherInfo(type,evt){
-        debugger
         if(type == 1){
             //教室
             this.state.chooseRoom = evt;

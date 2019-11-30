@@ -45,7 +45,6 @@ class ClockedView extends React.Component {
             },
         ];
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
-        debugger
         this.first = !(this.props.sonView.filter(view => (view.id == '6-1-1')) == false) ? 'normal' : 'none';
         this.second = !(this.props.sonView.filter(view => (view.id == '6-1-2')) == false) ? 'normal' : 'none';
         this.third = !(this.props.sonView.filter(view => (view.id == '6-1-3')) == false) ? 'normal' : 'none';

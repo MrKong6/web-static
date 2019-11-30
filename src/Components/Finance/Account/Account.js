@@ -4,24 +4,28 @@ import {Route, Switch} from 'react-router-dom'
 import List from './List'
 import View from './View';
 import Editor from "./Editor";
+import AccountView from "../../Service/Customer/AccountView";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
-  const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
+    const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
 
-  return (
-    <Switch>
-      <Route path={`${match.url}/:contractId/edit`} render={(props) => (
-        <Editor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
-      )}/>
-      <Route path={`${match.url}/:contractId`} render={(props) => (
-        <View key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
-              changedCrmGroup={changedCrmGroup}/>
-      )}/>
-      <Route path={`${match.url}`} render={(props) => (
-        <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>
-      )}/>
-    </Switch>
-  )
+    return (
+        <Switch>
+            <Route path={`${match.url}/customer/account`} render={(props) => (
+                <AccountView {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/:contractId/edit`} render={(props) => (
+                <Editor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/:contractId`} render={(props) => (
+                <View key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                      changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}`} render={(props) => (
+                <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>
+            )}/>
+        </Switch>
+    )
 };
 
 export default Account;

@@ -397,7 +397,6 @@ class List extends React.Component {
             data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId},
             action: AJAX_PATH + '/service/contract/import.do',
             onSuccess: (response, file, fileList) => {
-                debugger
                 if(response.code && response.code == 200){
                     this.successMsg("导入成功");
                     this.componentDidMount();

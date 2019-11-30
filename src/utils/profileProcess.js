@@ -40,7 +40,7 @@ function unique5(arr, field) {
 }
 
 export default function (data) {
-    debugger;
+    // debugger;
     let hasChangeGroupBtn = true;
     let profile = {};
     let menu = [];

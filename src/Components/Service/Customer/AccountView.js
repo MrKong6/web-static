@@ -54,10 +54,10 @@ class AccountView extends React.Component {
     constructor(props) {
         super(props);
         this.title = fmtTitle(this.props.location.pathname);
-        this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
+        this.first = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false)) ? 'normal' : 'none';
+        this.second = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false)) ? 'normal' : 'none';
+        this.third = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false)) ? 'normal' : 'none';
+        this.fourth = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false)) ? 'normal' : 'none';
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -282,7 +282,7 @@ class AccountView extends React.Component {
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>*/}
-                    <div className="btn-group float-right ml-4" role="group">
+                    <div className="btn-group float-right ml-4" role="group" style={{"display":this.fourth}}>
                         <button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
                             新增
                         </button>

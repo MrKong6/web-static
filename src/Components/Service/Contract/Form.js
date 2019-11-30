@@ -18,7 +18,6 @@ import {Button, DatePicker} from "element-react";
 class Form extends React.Component {
     constructor(props) {
         super(props);
-        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             birthday: null,
@@ -151,7 +150,6 @@ class Form extends React.Component {
     }
 
     changeBirthday(day) {
-        debugger
         const birthday = day;
         const age = calculateAge(birthday);
         this.setState({birthday},() => {

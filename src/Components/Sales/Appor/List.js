@@ -29,7 +29,6 @@ class List extends React.Component {
         }
 
         this.title = fmtTitle(this.props.location.pathname);
-        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],

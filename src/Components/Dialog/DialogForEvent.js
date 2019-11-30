@@ -190,7 +190,6 @@ class DialogForEvent extends React.Component {
                 break;
             }
             case(4): {
-                debugger
                 if(evt.target.value && evt.target.value == '2'){
                     //是否循环选择了是   显示循环日期
                     // if(!this.state.showXunhuan === 'none'){

@@ -84,8 +84,6 @@ class Form extends React.Component {
                 const age = calculateAge(birthday);
                 data.age = age;
 
-                debugger
-
                 this.setState({
                     option: {relation, gender},
                     data,

@@ -57,7 +57,6 @@ class StudentView extends React.Component {
     constructor(props) {
         super(props);
 
-        debugger
         this.commands = this.props.commands.filter(command => (command.id === '2-3-1-2' || command.id === '2-3-1-3'));
         this.first = !(this.props.sonView.filter(view => (view.id == '2-3-1')) == false) ? 'normal' : 'none';
         this.second = !(this.props.sonView.filter(view => (view.id == '2-3-2')) == false) ? 'normal' : 'none';

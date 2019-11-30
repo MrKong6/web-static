@@ -519,7 +519,12 @@ class View extends React.Component {
                                 pathname: `/home/academy/class/clocked/${this.state.id}`,
                                 state: {stuName: this.state.data.code}
                             }}>班级考勤信息</Link></li>
-                            <li className="breadcrumb-item" style={{"display":this.sixth}}><Link to={``}>班级异动信息</Link></li>
+                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
+                                <Link to={{
+                                    pathname: `/home/academy/class/situation/${this.state.id}`,
+                                    state: {stuName: this.state.data.code}
+                                }}>班级异动信息</Link>
+                            </li>
                         </ol>
                     </nav>
                 </div>

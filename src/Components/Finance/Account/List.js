@@ -19,6 +19,7 @@ class List extends React.Component {
 
         this.commands = this.props.commands.filter((command) => (command === 'Add'));
         this.title = fmtTitle(this.props.location.pathname);
+        debugger
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.state = {
@@ -34,36 +35,40 @@ class List extends React.Component {
                 },
                 {
                     label: "学员编号",
-                    prop: "creatorName",
+                    prop: "stuCode",
+                    render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.stuId)}>{row.stuCode}</Button></span>
+                    }
                 },
                 {
                     label: "学员姓名",
-                    prop: "createTime",
+                    prop: "stuName",
                 },
                 {
                     label: "英文名",
-                    prop: "orgName",
+                    prop: "stuEnName",
                 },
                 {
                     label: "性别",
-                    prop: "executiveName",
+                    prop: "stuGender",
                 },
                 {
                     label: "年龄",
-                    prop: "typeId",
+                    prop: "stuAge",
                 },
                 {
                     label: "总收入",
-                    prop: "code",
+                    prop: "allInCome",
                     sortable: true
                 },
                 {
                     label: "总支出",
-                    prop: "startDate",
+                    prop: "allInOut",
                 },
                 {
                     label: "账户余额",
-                    prop: "endDate",
+                    prop: "accountBalance",
                     sortable: true
                 },
             ],
@@ -77,23 +82,11 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                const ids = list.data.map((contract) => (contract.id));
-                list.data.map(item => {
-                    if(item.createTime != null){
-                        item.createTime = fmtDate(item.createTime);
-                    }
-                    if(item.startDate != null){
-                        item.startDate = fmtDate(item.startDate);
-                    }
-                    if(item.endDate != null){
-                        item.endDate = fmtDate(item.endDate);
-                    }
-                    if(item.typeId != null){
-                        item.typeId = CONFIG.TYPE_ID[item.typeId];
-                    }
-                });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                let list = await ajax('/service/account/accountBalanceList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                if(list.data && list.data.items){
+                    const ids = list.data.items.map((contract) => (contract.id));
+                    this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -104,37 +97,11 @@ class List extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
-        //request();
+        request();
         mainSize()
     }
 
     componentWillReceiveProps(nextProps) {
-        if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
-            this.setState({isAnimating: true});
-
-            const request = async () => {
-                try {
-                    let list = await ajax('/service/contract/list.do', {orgId: nextProps.changedCrmGroup.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                    const ids = list.data.map((contract) => (contract.id));
-
-                    this.setState({
-                        group: nextProps.changedCrmGroup,
-                        list: list.data,
-                        ids: ids,totalPage: list.totalPage,totalCount: list.count
-                    });
-                } catch (err) {
-                    if (err.errCode === 401) {
-                        this.setState({redirectToReferrer: true})
-                    } else {
-                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                    }
-                } finally {
-                    this.setState({isAnimating: false});
-                }
-            };
-
-            //request();
-        }
     }
 
     componentWillUnmount() {
@@ -166,9 +133,9 @@ class List extends React.Component {
     }
 
     goToDetails(evt) {
-        const url = `${this.props.match.url}/${evt}`;
+        const url = `${this.props.match.url}/customer/account`;
 
-        this.props.history.push(url);
+        this.props.history.push(url,{state: {stuName: this.state.name}});
     }
 
     pageChange(currentPage){

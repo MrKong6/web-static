@@ -15,7 +15,6 @@ class Create extends React.Component {
     constructor(props) {
         super(props);
         this.title = fmtTitle(this.props.location.pathname);
-        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             oriId: this.props.location.state.oriId,

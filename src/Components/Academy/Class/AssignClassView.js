@@ -17,7 +17,6 @@ import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 class AssignClassView extends React.Component {
     constructor(props) {
         super(props);
-        debugger
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod'
             && command.name !== 'Del' && command.name !== 'Import' && command.name !== 'Export'&& command.name !== 'ShowNormal'));
         this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1')) == false) ? 'normal' : 'none';
