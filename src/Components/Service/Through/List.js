@@ -30,7 +30,6 @@ class List extends React.Component {
             redirectToReferrer: false,
             columns: [
                 {
-                    label: "ID",
                     sortable: true,
                     type: 'index'
                 },
@@ -83,7 +82,7 @@ class List extends React.Component {
                             item.throughTime = formatWithTime(item.throughTime);
                         }
                     });
-                    this.setState({list: list.data.items, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                    this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
                 }
 
             } catch (err) {

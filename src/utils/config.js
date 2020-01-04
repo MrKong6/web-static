@@ -129,7 +129,7 @@ export default {
         },
         "2-3": {
             PATH: "home/sales/customer",
-            PATH_RULE: /^\/home\/sales\/customer(\/(student|parent|contract)\/((?!create).)*)?$/,
+            PATH_RULE: /^\/home\/sales\/customer(\/(student|parent|contract|situation)\/((?!create).)*)?$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '我的',
             NAME: '学员'
@@ -159,11 +159,12 @@ export default {
             NAME: '学员'
         },
         "2-3-5": {
-            PATH_RULE: /^\/home\/sales\/customer\/parent\/((?!create).)*\/edit$/,
+            PATH_RULE: /^\/home\/sales\/customer\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '我的',
             NAME: '学员'
         },
+
         "2-4": {
             PATH: "home/sales/through",
             PATH_RULE: /^\/home\/sales\/through(\/((?!create).)*)?$/,
@@ -235,7 +236,7 @@ export default {
         },
         "3-2": {
             PATH: "home/service/customer",
-            PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account)\/((?!create).)*)?$/,
+            PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account|situation)\/((?!create).)*)?$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
         },
@@ -260,7 +261,7 @@ export default {
             CATEGORY: '学员'
         },
         "3-2-5": {
-            PATH_RULE: /^\/home\/service\/customer\/parent\/((?!create).)*\/edit$/,
+            PATH_RULE: /^\/home\/service\/customer\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
         },

@@ -14,13 +14,33 @@ import StudentEditor from "./StudentEditor";
 import TeacherView from "./TeacherView";
 import AssignClassView from "./AssignClassView";
 import ClockedView from "./ClockedView";
+import StudentSituation from "./StudentSituation";
 import ContractView from "../../Service/Customer/ContractView"
+import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
+import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
+import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '6-1'));
     groupCommands = groupCommands[0];
     return (
         <Switch>
+            <Route path={`${match.url}/situation/changeClassAdd/:contractId`} render={(props) => (
+                <StudentSituationChangeClassAdd key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                                                changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource} />
+            )}/>
+            <Route path={`${match.url}/situation/pauseClassAdd/:contractId`} render={(props) => (
+                <StudentSituationPauseClassAdd key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                                               changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource} />
+            )}/>
+            <Route path={`${match.url}/situation/backMoneyAdd/:contractId`} render={(props) => (
+                <StudentSituationBackMoneyAdd key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                                              changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource} />
+            )}/>
+            <Route path={`${match.url}/situation/:contractId`} render={(props) => (
+                <StudentSituation key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                                  changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource} />
+            )}/>
             <Route path={`${match.url}/clocked/:contractId`} render={(props) => (
                 <ClockedView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
                              changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>

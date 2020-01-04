@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+This project was bootstrapped with [SaleManageReport React App](https://github.com/facebookincubator/create-react-app).
 
 - [npm start](#npm-start)
 - [npm test](#npm-test)

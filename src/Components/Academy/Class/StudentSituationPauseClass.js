@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
-import {Button, Pagination, Table} from 'element-react';
+import {Button, Message, Pagination, Table} from 'element-react';
 
 import DialogTips from "../../Dialog/DialogTips";
 import Commands from "../../Commands/Commands";
@@ -23,7 +23,7 @@ class StudentSituationBackMoney extends React.Component {
             isAnimating: false,
             id: this.props.id,
             type: this.props.type,
-            data: null,
+            list: this.props.data,
             ids: [],
             columns: [
                 {
@@ -34,19 +34,19 @@ class StudentSituationBackMoney extends React.Component {
                 },
                 {
                     label: "申报人",
-                    prop: "code",
+                    prop: "applyPerson",
                     width: 120,
                     sortable: true,
                     fixed: 'left',
                 },
                 {
                     label: "申报时间",
-                    prop: "schoolArea",
+                    prop: "applyTime",
                     width: 120,
                 },
                 {
                     label: "异动状态",
-                    prop: "classStatusName",
+                    prop: "situationStatus",
                     width: 95,
                     /*render: (row, column, data) => {
                         return <span><Button type="text" size="small"
@@ -55,92 +55,90 @@ class StudentSituationBackMoney extends React.Component {
                 },
                 {
                     label: "休学原因",
-                    prop: "typeName",
+                    prop: "reason",
                     width: 95
                 },
                 {
                     label: "学员编号",
-                    prop: "rangeName",
+                    prop: "stuCode",
                     width: 95
                 },
                 {
                     label: "学员姓名",
-                    prop: "startDate",
+                    prop: "stuName",
                     width: 120
                 },
                 {
                     label: "学员状态",
-                    prop: "endDate",
+                    prop: "classStatus",
                     width: 120
                 },
                 {
                     label: "班级名称",
-                    prop: "planNum",
+                    prop: "classCode",
                     width: 95
                 },
                 {
                     label: "班级教师",
-                    prop: "factNum",
+                    prop: "mainTeacherName",
                     width: 95
                 },
                 {
                     label: "总课时",
-                    prop: "mainTeacherName",
+                    prop: "classHour",
                     width: 95,
                 },
                 {
                     label: "已消耗课时",
-                    prop: "registrar",
+                    prop: "useCourseHour",
                     width: 95,
                 },
                 {
                     label: "剩余课时",
-                    prop: "courseType",
+                    prop: "noUseCourseHour",
                     width: 95
                 }
             ],
         };
     }
 
-    /*componentDidMount() {
-        const request = async () => {
+    componentDidMount() {
+        /*const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/classStuList.do', {
-                    orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize, id: this.state.id, needParent: 1
+                let list = await ajax('/student/situation/list.do', {
+                    orgId: this.state.group.id, situationType:2,classId:this.state.id
                 });
-                list.data.map(item => {
-                    if (item.idType != null) {
-                        item.idType = CONFIG.DOCUMENT[item.idType];
-                    }
-                    if (item.birthday != null) {
-                        item.age = calculateAge(fmtDate(item.birthday));
-                        item.birthday = fmtDate(item.birthday);
-                    }
-                });
-                console.log(list.data);
-                this.setState({list: list.data, totalPage: list.totalPage, totalCount: list.count});
+                if(list && list.items){
+                    list.items.map(item => {
+                        if (item.idType != null) {
+                            item.idType = CONFIG.DOCUMENT[item.idType];
+                        }
+                        if (item.birthday != null) {
+                            item.age = calculateAge(fmtDate(item.birthday));
+                            item.birthday = fmtDate(item.birthday);
+                        }
+                    });
+                    console.log(list.items);
+                }
+                this.setState({list: list.items, totalPage: list.totalPage, totalCount: list.count});
             } catch (err) {
-                // if (err.errCode === 401) {
-                //     this.setState({redirectToReferrer: true})
-                // } else {
-                //     this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                // }
+                Message({
+                    message: err.errText,
+                    type: 'error'
+                });
             }
         };
-        // request();
+        request();*/
         // mainSize();
-    }*/
-
+    }
     render() {
-
         return (
             <div>
                 <Table
                     style={{width: '100%'}}
                     className="leadlist_search"
                     columns={this.state.columns}
-                    data={this.state.list}
+                    data={this.props.data}
                     border={true}
                     emptyText={"暂无数据"}
                 />

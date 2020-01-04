@@ -2,7 +2,7 @@ import React from 'react'
 import {Route, Switch} from 'react-router-dom'
 
 import List from './List'
-import Create from './Create'
+import SaleManageReport from './SaleManageReport'
 import View from './View';
 import Editor from "./Editor";
 
@@ -12,7 +12,7 @@ const SaleStatistic = ({commands, location, match, profile, changedCrmGroup}) =>
   return (
     <Switch>
       <Route path={`${match.url}/create`} render={(props) => (
-        <Create {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+        <SaleManageReport {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
       )}/>
       <Route path={`${match.url}/:actId/edit`} render={(props) => (
         <Editor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>

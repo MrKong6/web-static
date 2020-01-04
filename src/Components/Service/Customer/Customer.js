@@ -9,12 +9,37 @@ import StudentEditor from './StudentEditor';
 import ParentEditor from './ParentEditor';
 import AccountView from "./AccountView";
 import ContractCreate from "../Contract/Create"
+import StudentSituation from "./StudentSituation";
+import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
+import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
+import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
 
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '3-2'));
     groupCommands = groupCommands[0];
     return (
         <Switch>
+            <Route path={`${match.url}/situation/:contractId`} render={(props) => (
+                <StudentSituation key={props.match.params.contractId} {...props} profile={profile}
+                                  commands={groupCommands.commands}
+                                  changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
+            )}/>
+            <Route path={`${match.url}/situation/changeClassAdd/:contractId`} render={(props) => (
+                <StudentSituationChangeClassAdd key={props.match.params.contractId} {...props} profile={profile}
+                                                commands={groupCommands.commands}
+                                                changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
+            )}/>
+            <Route path={`${match.url}/situation/pauseClassAdd/:contractId`} render={(props) => (
+                <StudentSituationPauseClassAdd key={props.match.params.contractId} {...props} profile={profile}
+                                               commands={groupCommands.commands}
+                                               changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
+            )}/>
+            <Route path={`${match.url}/situation/backMoneyAdd/:contractId`} render={(props) => (
+                <StudentSituationBackMoneyAdd key={props.match.params.contractId} {...props} profile={profile}
+                                              commands={groupCommands.commands}
+                                              changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
+            )}/>
+
             <Route path={`/home/service/contract/create`} render={(props) => (
                 <ContractCreate {...props} profile={profile} changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>

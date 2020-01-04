@@ -380,6 +380,7 @@ class DialogForClocked extends React.Component {
                                             <label className="col-3 col-form-label" style={{"textAlign":"left"}}>{val.index+'.'}  {val.name}</label>
                                             <div className="col-2 col-form-label">
                                                 <Checkbox checked={val.checkInToday == 1}
+                                                          disabled={val.situation == 1}
                                                           onChange={check=>{
                                                               val.checkInToday = check ? 1 : 2;
                                                           }}>签到</Checkbox>
@@ -398,7 +399,6 @@ class DialogForClocked extends React.Component {
                                         </div>
                                     }) : null
                                 }
-
                             </div>
                             <div className="modal-footer">
                                 <button onClick={this.cancel} type="button" className="btn btn-secondary"

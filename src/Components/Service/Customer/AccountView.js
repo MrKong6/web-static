@@ -58,6 +58,8 @@ class AccountView extends React.Component {
         this.second = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false)) ? 'normal' : 'none';
         this.third = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false)) ? 'normal' : 'none';
         this.fourth = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false)) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
+
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -330,6 +332,12 @@ class AccountView extends React.Component {
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
                                 账户信息
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.fifth}}>
+                                <Link to={{
+                                    pathname: `/home/service/customer/situation/${this.state.id}`,
+                                    state: {stuName: this.state.name}
+                                }}>异动信息</Link>
                             </li>
                         </ol>
                     </nav>

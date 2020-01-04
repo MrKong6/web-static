@@ -12,21 +12,18 @@ import mainSize from "../../../utils/mainSize";
 import CONFIG from "../../../utils/config";
 import calculateAge from "../../../utils/calculateAge";
 import fmtDate from "../../../utils/fmtDate";
-import StudentSituationBackMoney from "./StudentSituationBackMoney";
-import StudentSituationPauseClass from "./StudentSituationPauseClass";
-import StudentSituationChangeClass from "./StudentSituationChangeClass";
-
+import StudentSituationBackMoney from "../../Academy/Class/StudentSituationBackMoney";
+import StudentSituationPauseClass from "../../Academy/Class/StudentSituationPauseClass";
+import StudentSituationChangeClass from "../../Academy/Class/StudentSituationChangeClass";
 class StudentSituation extends React.Component {
     constructor(props) {
         super(props);
 
         this.commands = this.props.commands.filter(command => (command.id == '5-4-6-1'));
-        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6')) == false) ? 'normal' : 'none';
+        this.first = !(this.props.sonView.filter(view => (view.id == '2-3-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '2-3-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '2-3-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '2-3-5')) == false) ? 'normal' : 'none';
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -54,7 +51,7 @@ class StudentSituation extends React.Component {
             try {
                 let list = await ajax('/student/situation/list.do', {
                     orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize, situationType:this.state.situationView,classId:this.state.id
+                    pageSize: this.state.pageSize, situationType:this.state.situationView,stuId:this.state.id
                 });
                 if(list && list.items){
                     list.items.map(item => {
@@ -175,7 +172,7 @@ class StudentSituation extends React.Component {
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <p>班级异动信息</p>
+                    <p>异动信息</p>
                     <div className="row" style={{"height": '80%'}}>
                         <Tabs activeName="1" onTabClick={ this.changePanel }>
                             <Tabs.Pane label="退费" name="1">
@@ -191,33 +188,23 @@ class StudentSituation extends React.Component {
                     </div>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
-                            <li className="breadcrumb-item"><Link
-                                to={`/home/academy/class/${this.state.id}`} style={{"display":this.first}}>班级基本信息</Link></li>
-                            <li className="breadcrumb-item active" style={{"display":this.second}}>
+                            <li className="breadcrumb-item" style={{"display":this.first}}>
+                                <Link to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link>
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.second}}>
                                 <Link to={{
-                                    pathname: `/home/academy/class/student/${this.state.id}`,
+                                    pathname: `/home/sales/customer/parent/${this.state.id}`,
                                     state: {stuName: this.state.stuName}
-                                }}>班级学员信息</Link>
+                                }}>家长信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.third}}>
                                 <Link to={{
-                                    pathname: `/home/academy/class/teacher/${this.state.id}`,
+                                    pathname: `/home/sales/customer/contract/${this.state.id}`,
                                     state: {stuName: this.state.stuName}
-                                }}>班级教师信息</Link>
+                                }}>合同信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
-                                <Link to={{
-                                    pathname: `/home/academy/class/assignClass/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
-                                }}>班级课程表</Link>
-                            </li>
-                            <li className="breadcrumb-item" style={{"display":this.fifth}}>
-                                <Link to={{
-                                pathname: `/home/academy/class/clocked/${this.state.id}`,
-                                state: {stuName: this.state.stuName}
-                            }}>班级考勤信息</Link></li>
-                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
-                                班级异动信息
+                                异动信息
                             </li>
                         </ol>
                     </nav>

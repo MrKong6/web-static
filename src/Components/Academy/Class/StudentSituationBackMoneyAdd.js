@@ -5,6 +5,7 @@ import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import ajax from "../../../utils/ajax";
 import calculateAge from "../../../utils/calculateAge";
+import {DatePicker} from "element-react";
 
 
 class StudentSituationBackMoneyAdd extends React.Component {
@@ -21,8 +22,12 @@ class StudentSituationBackMoneyAdd extends React.Component {
             type: this.props.location.state.type,
             data: null,
             list:[],
+            classData:null,
+            stuData:null,
+            applyTime: new Date()
         };
         this.changeStu = this.changeStu.bind(this);
+        this.create = this.create.bind(this);
     }
 
     componentDidMount() {
@@ -42,12 +47,15 @@ class StudentSituationBackMoneyAdd extends React.Component {
                         item.birthday = fmtDate(item.birthday);
                     }
                 });
-                console.log(list.data);
-                this.setState({list: list.data, totalPage: list.totalPage, totalCount: list.count},()=>{
+                let classOneData,stuOneData;
+                if(list.data != null && list.data.length > 0){
+                    stuOneData = list.data[0];
+                }
+                this.setState({list: list.data, totalPage: list.totalPage, totalCount: list.count,classData:classData.data,stuData:stuOneData},()=>{
                     //学生信息
                     if(list.data != null && list.data.length > 0){
                         let dataOne = list.data[0];
-                        this.form["id"].value = dataOne.id;
+                        this.form["stuId"].value = dataOne.id;
                         this.form["code"].value = dataOne.code;
                         this.form["classStatusName"].value = dataOne.classStatusName;
                         this.form["amount"].value = dataOne.accountBalance ? dataOne.accountBalance : 0;
@@ -56,8 +64,7 @@ class StudentSituationBackMoneyAdd extends React.Component {
                             this.form["relation"].value = dataOne.parent.relation;
                             this.form["cellphone"].value = dataOne.parent.cellphone;
                         }
-                        this.form["createBy"].value = this.props.profile.cRealname;
-                        this.form["createOn"].value = fmtDate(new Date());
+                        this.form["applyPerson"].value = this.props.profile.cRealname;
                     }
                     //班级信息
                     if(classData != null && classData.data != null){
@@ -67,13 +74,13 @@ class StudentSituationBackMoneyAdd extends React.Component {
                         this.form["classCode"].value = classData.code;
                         this.form["mainTeacherName"].value = classData.mainTeacherName;
                     }
+                    //设置默认值
+                    if(this.form["situationStatus"]){
+                        this.form["situationStatus"].value = "已审批,已同意";
+                    }
                 });
             } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
+
             }
         };
         request();
@@ -85,7 +92,7 @@ class StudentSituationBackMoneyAdd extends React.Component {
             this.state.list.map(item => {
                 if(item.id == evt.target.value){
                     let dataOne = item;
-                    this.form["id"].value = dataOne.id;
+                    this.form["stuId"].value = dataOne.id;
                     this.form["code"].value = dataOne.code;
                     this.form["classStatusName"].value = dataOne.classStatusName;
                     this.form["amount"].value = dataOne.accountBalance ? dataOne.accountBalance : 0;
@@ -94,12 +101,45 @@ class StudentSituationBackMoneyAdd extends React.Component {
                         this.form["relation"].value = dataOne.parent.relation;
                         this.form["cellphone"].value = dataOne.parent.cellphone;
                     }
-                    this.form["createBy"].value = this.props.profile.cRealname;
-                    this.form["createOn"].value = fmtDate(new Date());
+                    this.form["applyPerson"].value = this.props.profile.cRealname;
                     return ;
                 }
             });
         }
+    }
+
+    //新增
+    create(){
+        const request = async () => {
+            try {
+                let query = {};
+
+                for (let i = 0; i < this.form.length; i++) {
+                    if (this.form[i].name) {
+                        query[this.form[i].name] = this.form[i].value;
+                    }
+                }
+                query.type = 1;
+                query.classId=this.state.classData.id;
+                query.stuCode = this.state.stuData.code;
+                query.stuName = this.state.stuData.name;
+                query.classStatus = this.state.stuData.classStatusName;
+                query.applyTime = this.state.applyTime.getTime();
+
+                let rs = await ajax('/student/situation/situationAdd.do', query);
+                historyBack(this.props.history)
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
     }
 
     render() {
@@ -138,7 +178,7 @@ class StudentSituationBackMoneyAdd extends React.Component {
                                                 <label className="col-5 col-form-label font-weight-bold">请选择学生</label>
                                                 <div className="col-7">
                                                     <select className="form-control"
-                                                            name={this.props.id || "id"} onChange={this.changeStu}>
+                                                            name={this.props.stuId || "stuId"} onChange={this.changeStu}>
                                                         {
                                                             this.state.list ? this.state.list.map(item => (
                                                                 <option key={item.id}
@@ -173,6 +213,12 @@ class StudentSituationBackMoneyAdd extends React.Component {
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="amount"
                                                            required={true}/>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">异动状态</label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="situationStatus"/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -253,7 +299,7 @@ class StudentSituationBackMoneyAdd extends React.Component {
                                                     <em className="text-danger">*</em>申报人
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="createBy"
+                                                    <input type="text" className="form-control" name="applyPerson"
                                                            readOnly={true}/>
                                                 </div>
                                             </div>
@@ -262,8 +308,17 @@ class StudentSituationBackMoneyAdd extends React.Component {
                                                     <em className="text-danger">*</em>申报时间
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="createOn"
-                                                           readOnly={true}/>
+                                                    <DatePicker
+                                                        name="createTime"
+                                                        value={this.state.applyTime}
+                                                        isShowTime={false}
+                                                        placeholder="选择日期"
+                                                        format="yyyy-MM-dd"
+                                                        onChange={date => {
+                                                            console.debug('DatePicker1 changed: ', date)
+                                                            this.setState({applyTime: date})
+                                                        }}
+                                                    />
                                                 </div>
                                             </div>
 

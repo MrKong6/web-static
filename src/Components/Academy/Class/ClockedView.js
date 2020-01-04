@@ -115,6 +115,7 @@ class ClockedView extends React.Component {
                 if(data && data.data && data.data.classTime){
                     times = data.data.classTime;
                 }
+                console.log('one    '+new Date().getTime());
                 for (let i = 1; i <= times; i++) {
                     columnHeader.push({
                         label: i+"",
@@ -131,12 +132,12 @@ class ClockedView extends React.Component {
                         prop: i+"",
                     });
                 }
+                console.log('two    '+new Date().getTime());
                 this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader});
                 /*let dataList = await ajax('/student/clocked/list.do', {classId: this.state.id});
                 if(dataList){
                     this.setState({list: dataList});
                 }*/
-                this.refreshList();
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -147,12 +148,14 @@ class ClockedView extends React.Component {
         };
         request();
         mainSize();
+        this.refreshList();
     }
 
     refreshList() {
         const request = async () => {
             let dataList = await ajax('/student/clocked/list.do', {classId: this.state.id});
             let teacherDataList = await ajax('/student/clocked/teacherClockList.do', {classId: this.state.id});
+            console.log('three    '+new Date().getTime());
             if(dataList){
                 //如果是移动端
                 let show = 'normal';
@@ -174,6 +177,7 @@ class ClockedView extends React.Component {
                         dataList.push(item);
                     });
                 }
+                console.log('four    '+new Date().getTime());
                 this.setState({list: dataList,show:show,teacherClockList:teacherDataList});  //,teacherClockList:teacherDataList
             }
         };
@@ -330,7 +334,12 @@ class ClockedView extends React.Component {
                                 }}>班级课程表</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>班级考勤信息</li>
-                            <li className="breadcrumb-item" style={{"display":this.sixth}}><Link to={``}>班级异动信息</Link></li>
+                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
+                                <Link to={{
+                                    pathname: `/home/academy/class/situation/${this.state.id}`,
+                                    state: {stuName: this.state.stuName}
+                                }}>班级异动信息</Link>
+                            </li>
                         </ol>
                     </nav>
                 </div>
