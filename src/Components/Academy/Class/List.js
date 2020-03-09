@@ -385,7 +385,7 @@ class List extends React.Component {
             className:"upload-demo",
             showFileList:false,
             withCredentials:true,
-            data:{'type':1,'orgId':this.state.group.id},
+            data:{'type':1,'orgId':this.state.group.id,"importType":3},
             action: AJAX_PATH + '/academy/class/import.do',
             onSuccess: (file, fileList) => this.importSuccess(),
         };

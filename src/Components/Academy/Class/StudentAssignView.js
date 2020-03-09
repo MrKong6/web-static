@@ -271,7 +271,7 @@ class StudentAssignView extends React.Component {
     selectRow(value,type) {
         var ids = [];
         if(value){
-            value.map((leads) => (ids.push(leads.id)));
+            value.map((leads) => (ids.push(leads.contractId)));
         }
         if(type == 1){
             this.setState({

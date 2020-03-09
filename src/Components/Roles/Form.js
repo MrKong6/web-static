@@ -16,7 +16,7 @@ class Form extends React.Component {
     this.state = {
       isAdmin: false,
       isManger: false,
-
+      managerFlag:0,
       funcDic: [],
       rankDic: [],
 
@@ -58,7 +58,7 @@ class Form extends React.Component {
     if (nextProps.data && this.props.data !== nextProps.data) {
       let state = {};
 
-      state.isAdmin = nextProps.data.cRankId === this.RANK_ADMIN;
+      state.isAdmin = nextProps.data.cRankId == this.RANK_ADMIN;
 
       if (!state.isAdmin) {
         state.selectedRole = nextProps.data.cRankId;
@@ -110,8 +110,9 @@ class Form extends React.Component {
   }
 
   changedFunc(evt) {
+      console.log(this.state.selectedRole,this.state.isManger,this.state.managerFlag);
+      this.state.isManger = this.state.managerFlag == 1;
     let tempFunc = [];
-
     if (this.state.selectedFunc.includes(evt.target.value)) {
       if (this.state.selectedRole && this.state.isManger) {
         tempFunc = this.state.selectedFunc.filter((func) => (func !== evt.target.value));
@@ -142,21 +143,24 @@ class Form extends React.Component {
   }
 
   changedRole(evt) {
-    const isManger = parseInt(evt.target.value) === this.RANK_MANGER;
+    const manager = parseInt(evt.target.value) === this.RANK_MANGER;
     let tempFunc = [];
+    console.log(this.state.rankDic,evt.target.value,manager);
 
-    if (!isManger && this.state.selectedFunc.length > 1) {
+    if (!manager && this.state.selectedFunc.length > 1) {
       tempFunc = this.state.selectedFunc.shift();
       this.setState({
         selectedFunc: tempFunc
       })
     }
-
+    this.state.isManger = manager;
     this.setState({
-      isManger,
+      isManger: manager,
       isAdmin: false,
+      managerFlag:manager ? 1 : 0,
       selectedRole: parseInt(evt.target.value)
     })
+      console.log(this.state.isManger)
   }
 
   getFormValue() {

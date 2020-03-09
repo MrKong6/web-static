@@ -332,7 +332,7 @@ class List extends React.Component {
             className:"upload-demo",
             showFileList:false,
             withCredentials:true,
-            data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId},
+            data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId,"importType":2},
             action: AJAX_PATH + '/service/contract/import.do',
             onSuccess: (response, file, fileList) => {
                 if(response.code && response.code == 200){

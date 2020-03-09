@@ -224,13 +224,13 @@ export default {
             ICON_CLASS: "fa-file-text-o",
             CATEGORY: '合同'
         },
-        "3-1-2": {
-            PATH_RULE: /^\/home\/service\/contract\/((?!create).)*\/edit$/,
+        "3-1-1": {
+            PATH_RULE: /^\/home\/service\/contract\/create$/,
             ICON_CLASS: "fa-file-text-o",
             CATEGORY: '合同'
         },
-        "3-1-1": {
-            PATH_RULE: /^\/home\/service\/contract\/create$/,
+        "3-1-2": {
+            PATH_RULE: /^\/home\/service\/contract\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-file-text-o",
             CATEGORY: '合同'
         },
@@ -334,6 +334,12 @@ export default {
         "5-4": {
             PATH: "home/academy/class",
             PATH_RULE: /^\/home\/academy\/class$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "5-4": {
+            PATH: "home/academy/class",
+            PATH_RULE: /^\/home\/academy\/class\/create$/,
             ICON_CLASS: "fa-users",
             CATEGORY: '班级'
         },

@@ -39,7 +39,6 @@ const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
                                               commands={groupCommands.commands}
                                               changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
-
             <Route path={`/home/service/contract/create`} render={(props) => (
                 <ContractCreate {...props} profile={profile} changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>

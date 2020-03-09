@@ -71,11 +71,11 @@ class List extends React.Component {
                 });
                 this.refreshAssignClass();
             } catch (err) {
-                if (err.errCode === 401) {
+                /*if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
                 } else {
                     this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
+                }*/
             } finally {
                 this.setState({isAnimating: false});
             }
@@ -354,7 +354,7 @@ class List extends React.Component {
                             <div className="col-2">
                                 <Select value={this.state.chooseClass} filterable={true} clearable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级">
                                     {
-                                        this.state.classList.map(el => {
+                                        this.state.classList ? this.state.classList.map(el => {
                                             return (
                                                 <Select.Option key={el.id} label={el.code} value={el}>
                                                     {el.assignId && el.assignId.length > 0 ? (
@@ -362,25 +362,25 @@ class List extends React.Component {
                                                     ) : (<span style={{color: '#CDCDC1'}}>{el.code}</span>)}
                                                 </Select.Option>
                                             )
-                                        })
+                                        }) : null
                                     }
                                 </Select>
                             </div>
                             <div class="col-2">
                                 <Select value={this.state.chooseTeacher} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 2)} placeholder="请选择教师">
                                     {
-                                        this.state.teacherList.map(el => {
+                                        this.state.teacherList ? this.state.teacherList.map(el => {
                                             return <Select.Option key={el.id} label={el.name} value={el} />
-                                        })
+                                        }) : null
                                     }
                                 </Select>
                             </div>
                             <div class="col-2">
                                 <Select value={this.state.chooseRoom} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 3)} placeholder="请选择教室">
                                     {
-                                        this.state.roomList.map(el => {
+                                        this.state.roomList ? this.state.roomList.map(el => {
                                             return <Select.Option key={el.id} label={el.code} value={el} />
-                                        })
+                                        }) : null
                                     }
                                 </Select>
                             </div>

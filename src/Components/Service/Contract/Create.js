@@ -118,14 +118,14 @@ class Create extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/sales/contract"/>
+                <Redirect to="/home/service/contract"/>
             )
         }
 
         if (this.state.isCreated) {
             return (
                 <Redirect to={{
-                    pathname: `/home/sales/contract/${this.state.createdId}`,
+                    pathname: `/home/service/contract`,
                 }}/>
             )
         }

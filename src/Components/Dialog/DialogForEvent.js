@@ -6,6 +6,7 @@ import DialogGroup from './DialogGroup';
 import ajax from "../../utils/ajax";
 import {DatePicker, DateRangePicker, Message, MessageBox, Select, Radio} from "element-react";
 import DialogTips from "./DialogTips";
+import {stringToDate} from "../../utils/fmtDate";
 
 class DialogForEvent extends React.Component {
     constructor(props) {
@@ -17,8 +18,7 @@ class DialogForEvent extends React.Component {
         this.del = this.del.bind(this);
         this.cancel = this.cancel.bind(this);
         this.closed = this.closed.bind(this);
-        this.changedLead = this.changedLead.bind(this);
-        this.changedOppor = this.changedOppor.bind(this);
+        this.changedDate = this.changedDate.bind(this);
         this.chooseClass = this.chooseClass.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -31,6 +31,7 @@ class DialogForEvent extends React.Component {
             showDelete: this.props.data ? 'normal' : 'none',
             showXunhuan: this.props.data ? 'none' : 'normal',
             showXunhuanDate: true,
+            classCount:0,
             roomList: [],
             classList: [],
             teacherList: [],
@@ -190,7 +191,7 @@ class DialogForEvent extends React.Component {
                 break;
             }
             case(4): {
-                if(evt.target.value && evt.target.value == '2'){
+                if(evt.target.value && evt.target.value == '2' && this.state.showDelete == 'none'){
                     //是否循环选择了是   显示循环日期
                     // if(!this.state.showXunhuan === 'none'){
                         this.setState({showXunhuanDate:false});
@@ -260,7 +261,7 @@ class DialogForEvent extends React.Component {
         const request = async () => {
             try {
                 //事件列表
-                let assignClassList = await ajax('/academy/class/delAssignClass.do', {id: this.state.id});
+                let assignClassList = await ajax('/academy/class/delAssignClass.do', {id: this.state.id,loopTrue:(this.state.showXunhuanDate ? 2 : 1)});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -280,19 +281,24 @@ class DialogForEvent extends React.Component {
 
         document.body.removeChild(this.props.container);
     }
-
-    changedLead(evt) {
-        this.state.typeId = evt.target.value;
+    //更新日期
+    changedDate(date) {
+        let classCount = 0;
+        if(date){
+            let day = (date[1].getTime() - date[0].getTime()) / (24 * 60 * 60 * 1000);
+            let foramatDate = this.state.startTime.format("yyyy-MM-dd");
+            let startTime = stringToDate(foramatDate,'-');
+            debugger
+            for(let i=0;i<day+1;i++){
+                if(startTime.getTime() <= date[1].getTime()){
+                    classCount = classCount + 1;
+                    startTime = new Date(startTime.getTime() + 7 * 24 * 60 * 60 * 1000);
+                }
+            }
+        }
+        this.setState({value2: date,classCount})
     }
 
-    changedOppor() {
-        this.state.typeId = '2';
-        let checkO = this.state.checkOppor;
-        this.setState({
-            checkOppor: !checkO,
-        })
-
-    }
 
     render() {
         return (
@@ -427,10 +433,17 @@ class DialogForEvent extends React.Component {
                                         align="right"
                                         isDisabled={this.state.showXunhuanDate}
                                         ref={e=>this.daterangepicker2 = e}
-                                        onChange={date=>{
-                                            console.debug('DateRangePicker2 changed: ', date)
-                                            this.setState({value2: date})
-                                        }}
+                                        onChange={this.changedDate}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label className="col-3 col-form-label">课次数</label>
+                                <div className="col-6">
+                                    <input className="form-control"
+                                           type="text"
+                                           disabled={true}
+                                           value={this.state.classCount}
                                     />
                                 </div>
                             </div>

@@ -48,6 +48,9 @@ class DialogForClocked extends React.Component {
             chooseRoom:null,
             chooseMainTeacher:this.props.teacherId,
             chooseHelpTeacher: [],
+            maxClassTime: 1,
+            maxClassTimeDate: null,
+            maxClassTimeRoomId: null,
         }
         // if(this.props.data && this.props.data.start)
     }
@@ -60,9 +63,20 @@ class DialogForClocked extends React.Component {
         const request = async () => {
             try {
                 //事件列表
-                let maxVo = await ajax('/student/clocked/getTeacherMaxClocked.do', {id: this.props.id});
-                let chooseOne = false,date = null;
+                let maxVo = await ajax('/student/clocked/getTeacherMaxClocked.do', {classId: this.props.classId});
+                let chooseOne = false,date = null,teacherMaxTime = 1,maxClassTimeDate,maxClassTimeRoomId;
+                //为了限制不能补录以后的
+                if(maxVo.classTime && maxVo.classTime > 0){
+                    teacherMaxTime = maxVo.classTime + 1;
+                }
+                if(maxVo.nextDate){
+                    maxClassTimeDate = maxVo.nextDate;
+                }
+                if(maxVo.nextRoomId){
+                    maxClassTimeRoomId = maxVo.nextRoomId;
+                }
                 if(maxVo != null && maxVo.startTime != null){
+
                     if((new Date().getTime() - new Date(maxVo.startTime).getTime()) <= (60 * 60 * 1000)){
                         chooseOne = true;
                         date = new Date(maxVo.startTime);
@@ -86,13 +100,13 @@ class DialogForClocked extends React.Component {
                 for(let i=this.state.classTimes;i>0;i--){
                     timeList.push(i);
                 }
-                this.setState({classTimeList:timeList,date:date});
+                this.setState({classTimeList:timeList,date:date,maxClassTime:teacherMaxTime,maxClassTimeDate,maxClassTimeRoomId});
 
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
                 } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    // this.createDialogTips(`${err.errCode}: ${err.errText}`);
                 }
             } finally {
                 this.setState({isAnimating: false});
@@ -135,12 +149,36 @@ class DialogForClocked extends React.Component {
     //签到 签退
     accept(evt) {
         //校验是否都选择了
-        console.log(this.state.data);
+        if(!this.state.date){
+            //此时是教务没有排课导致日期没有  弹出错误提示
+            this.dialog.modal('hide');
+            Message({
+                message: "请联系相关人员排课，排课后方可录入考勤信息！",
+                type: 'error'
+            });
+            return;
+        }
         let dataList = this.state.data;
+        let pushData = [];
         if(dataList && dataList.length > 0){
+            //封装数据提交格式  把没必要的数据去掉
             dataList.map(item => {
                 if(item.startTime){
                     item.startTime = formatWithDateAndTime(this.state.date,item.startTime);
+                    pushData.push({
+                        "checkInToday":item.checkInToday,
+                        "classId":item.classId,
+                        "checkOutToday":item.checkOutToday,
+                        "maxClassTime":item.maxClassTime,
+                        "name":item.name,
+                        "id":item.id,
+                        "situation":item.situation,
+                        "idx":item.idx,
+                        "index":item.index,
+                        "startTime":item.startTime,
+                        "endTime":item.endTime,
+                        "classTime":this.state.selectedClassTime,
+                    });
                 }
             });
         }
@@ -217,54 +255,65 @@ class DialogForClocked extends React.Component {
             let existTime = null;
             let hasCheckedCount = 0;
             let teacherId = this.props.teacherId,roomId = 0,helpTeacherId=[];
-            dataList.map(item => {
-                if(item[evt]){
-                    //即历史签到过该次数
-                    console.log(item[evt]);
-                    item.checkInToday = item[evt].clocked;
-                    if(item[evt].startTime){
-                        item.startTime = formatWithOnlyTime(item[evt].startTime);
-                        existTime = item.startTime;
-                    }else{
-                        item.startTime = null;
-                    }
-                    if(item[evt].endTime){
-                        item.endTime = formatWithOnlyTime(item[evt].endTime);
-                    }else{
-                        item.endTime = null;
-                    }
-                    if(item.startTime && item.endTime){
-                        hasCheckedCount += 1;
-                    }
-                    if(item[evt].teacherId > 0){
-                        teacherId = item[evt].teacherId;
-                        roomId = item[evt].roomId;
-                        if(item[evt].helpTeacherId && item[evt].helpTeacherId.indexOf(",") != -1){
-                            let array = item[evt].helpTeacherId.split(",");
-                            array.map(aa => {helpTeacherId.push(Number(aa))});
+            if(evt == this.state.maxClassTime){
+                //即选择最大课次后自动关联排课的教室和日期
+                existTime = (this.state.maxClassTimeDate ? formatWithOnlyTime(this.state.maxClassTimeDate) : formatWithOnlyTime(new Date()));     //null
+                roomId = this.state.maxClassTimeRoomId;
+                dataList.map(item => {
+                    item.checkInToday = 2;
+                    item.startTime = existTime;
+                    item.endTime = existTime;
+                })
+            }else{
+                dataList.map(item => {
+                    if(item[evt]){
+                        //即历史签到过该次数
+                        console.log(item[evt]);
+                        item.checkInToday = item[evt].clocked;
+                        if(item[evt].startTime){
+                            item.startTime = formatWithOnlyTime(item[evt].startTime);
+                            existTime = item.startTime;
                         }else{
-                            if(item[evt].helpTeacherId){
-                                helpTeacherId.push(Number(item[evt].helpTeacherId));
+                            item.startTime = null;
+                        }
+                        if(item[evt].endTime){
+                            item.endTime = formatWithOnlyTime(item[evt].endTime);
+                        }else{
+                            item.endTime = null;
+                        }
+                        if(item.startTime && item.endTime){
+                            hasCheckedCount += 1;
+                        }
+                        if(item[evt].teacherId > 0){
+                            teacherId = item[evt].teacherId;
+                            roomId = item[evt].roomId;
+                            if(item[evt].helpTeacherId && item[evt].helpTeacherId.indexOf(",") != -1){
+                                let array = item[evt].helpTeacherId.split(",");
+                                array.map(aa => {helpTeacherId.push(Number(aa))});
+                            }else{
+                                if(item[evt].helpTeacherId){
+                                    helpTeacherId.push(Number(item[evt].helpTeacherId));
+                                }
                             }
                         }
-                    }
-                    if(item.checkInToday != 1){
-                        //没有签过到
+                        if(item.checkInToday != 1){
+                            //没有签过到
+                            item.startTime = formatWithOnlyTime(new Date());
+                            item.endTime = formatWithOnlyTime(new Date());
+                        }
+                    }else{
+                        item.checkInToday = 2;
                         item.startTime = formatWithOnlyTime(new Date());
                         item.endTime = formatWithOnlyTime(new Date());
                     }
-                }else{
-                    item.checkInToday = 2;
-                    item.startTime = formatWithOnlyTime(new Date());
-                    item.endTime = formatWithOnlyTime(new Date());
+                })
+                if(!existTime){
+                    //既没有历史签到过
+                    existTime = formatWithOnlyTime(new Date());
                 }
-            })
-            if(!existTime){
-                //既没有历史签到过
-                existTime = formatWithOnlyTime(new Date());
             }
             this.setState({data:dataList,date:existTime,selectedClassTime:evt,hasCheckedCount:hasCheckedCount,chooseMainTeacher:teacherId,
-                chooseRoom:roomId,chooseHelpTeacher:helpTeacherId});
+                chooseRoom:roomId ? parseInt(roomId) : 0,chooseHelpTeacher:helpTeacherId});
         }
     }
     //选择教室  主教 助教
@@ -300,17 +349,21 @@ class DialogForClocked extends React.Component {
                                         <Select value={this.state.selectedClassTime} placeholder="课次" onChange={this.changeClassTime} required={true}>
                                             {
                                                 this.state.classTimeList.map(el => {
-                                                    return <Select.Option key={el} label={el} value={el} />
+                                                    return <Select.Option key={el} label={el} value={el} />  /*disabled={(el > this.state.maxClassTime)}*/
                                                 })
                                             }
                                         </Select>
                                     </div>
                                     <div className="col-4">
+                                        {/*sDisabled={true}*/}
                                         <DatePicker
                                             value={this.state.date}
                                             placeholder="选择日期"
                                             onChange={date=>{
                                                 console.debug('DatePicker1 changed: ', date)
+                                                if(this.state.date == null){
+                                                    this.state.date = new Date()
+                                                }
                                                 let chooseDate = formatWithDateAndTime(date,this.state.date.getTime());
                                                 this.setState({date: chooseDate})
                                             }}
@@ -318,6 +371,7 @@ class DialogForClocked extends React.Component {
                                         />
                                     </div>
                                     <div className="col-4">
+                                        {/*isDisabled={true}*/}
                                         <TimePicker
                                             selectableRange="08:30:00 - 21:30:00"
                                             value={this.state.date}
