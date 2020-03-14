@@ -240,7 +240,8 @@ class List extends React.Component {
     errorMsg(msg) {
         Message({
             message: msg,
-            type: 'error'
+            type: 'error',
+            duration: 30000  //30s
         });
     }
 
@@ -310,7 +311,6 @@ class List extends React.Component {
             data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId,"importType":2},
             action: AJAX_PATH + '/service/customer/student/import.do',
             onSuccess: (response, file, fileList) => {
-                debugger
                 if(response.code && response.code == 200){
                     this.successMsg("导入成功");
                     this.componentDidMount();

@@ -345,7 +345,8 @@ class List extends React.Component {
     errorMsg(msg) {
         Message({
             message: msg,
-            type: 'error'
+            type: 'error',
+            duration: 30000  //30s
         });
     }
     importSuccess() {
@@ -387,7 +388,14 @@ class List extends React.Component {
             withCredentials:true,
             data:{'type':1,'orgId':this.state.group.id,"importType":3},
             action: AJAX_PATH + '/academy/class/import.do',
-            onSuccess: (file, fileList) => this.importSuccess(),
+            onSuccess: (response, file, fileList) => {
+                if(response.code && response.code == 200){
+                    this.successMsg("导入成功");
+                    this.componentDidMount();
+                }else{
+                    this.errorMsg(response.detail);
+                }
+            }
         };
         if (this.state.redirectToReferrer) {
             return (
