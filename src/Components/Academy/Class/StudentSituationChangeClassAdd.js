@@ -151,7 +151,7 @@ class StudentSituationChangeClassAdd extends React.Component {
                     }
                 }
                 query.type = 3;
-                query.classId=this.state.classData.id;
+                query.classId=this.state.id;
                 query.stuCode = this.state.stuData.code;
                 query.stuName = this.state.stuData.name;
                 query.classStatus = this.state.stuData.classStatusName;
@@ -160,11 +160,11 @@ class StudentSituationChangeClassAdd extends React.Component {
                 let rs = await ajax('/student/situation/situationAdd.do', query);
                 historyBack(this.props.history)
             } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
+                // if (err.errCode === 401) {
+                //     this.setState({redirectToReferrer: true})
+                // } else {
+                //     this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                // }
             } finally {
                 this.setState({isAnimating: false});
             }

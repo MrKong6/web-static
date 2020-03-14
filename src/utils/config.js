@@ -236,7 +236,7 @@ export default {
         },
         "3-2": {
             PATH: "home/service/customer",
-            PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account|situation)\/((?!create).)*)?$/,
+            PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account|situation|class)\/((?!create).)*)?$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
         },
@@ -265,6 +265,11 @@ export default {
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
         },
+        "3-2-6": {
+            PATH_RULE: /^\/home\/service\/customer\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '学员'
+        },
         "3-5": {
             PATH: "home/service/statistic",
             PATH_RULE: /^\/home\/service\/statistic(\/((?!create).)*)?$/,
@@ -282,6 +287,17 @@ export default {
             PATH_RULE: /^\/home\/service\/through\/create$/,
             ICON_CLASS: "fa-desktop",
             CATEGORY: '体验课'
+        },
+        "3-7": {
+            PATH: "home/service/situation",
+            PATH_RULE: /^\/home\/service\/situation(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-desktop",
+            CATEGORY: '异动'
+        },
+        "3-7-1": {
+            PATH_RULE: /^\/home\/service\/situation\/create$/,
+            ICON_CLASS: "fa-desktop",
+            CATEGORY: '异动'
         },
 
         //财务相关权限配置

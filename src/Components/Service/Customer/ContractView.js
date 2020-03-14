@@ -59,6 +59,8 @@ class ContractView extends React.Component {
         this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
         this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
         this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
+
 
         this.state = {
             group: this.props.changedCrmGroup,
@@ -401,6 +403,12 @@ class ContractView extends React.Component {
                                     pathname: `/home/service/customer/account/${this.state.id}`,
                                     state: {stuName: this.state.data.name}
                                 }}>账户信息</Link>
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
+                                <Link to={{
+                                    pathname: `/home/service/customer/class/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>班级信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{

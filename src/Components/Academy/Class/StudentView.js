@@ -128,6 +128,18 @@ class StudentView extends React.Component {
                 {
                     label: "状态",
                     prop: "classStatusName",
+                    render: (row, column, data) => {
+                        if(row.transType && row.transType == 1){
+                            //转出班级
+                            return <span style={{"color":"red"}}>{row.classStuStatusName} （{row.transClassCode}）</span>
+                        }else if(row.transType && row.transType == 2){
+                            //转入班级
+                            return <span style={{"color":"red"}}>{row.classStatusName}（{row.transClassCode}）</span>
+                        }else{
+                            return <span>{row.classStatusName}</span>
+                        }
+
+                    }
 
                 },
             ],

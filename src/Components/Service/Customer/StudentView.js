@@ -63,6 +63,7 @@ class StudentView extends React.Component {
         this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
         this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
         this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -356,12 +357,19 @@ class StudentView extends React.Component {
                                     state: {stuName: this.state.data.name}
                                 }}>账户信息</Link>
                             </li>
+                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
+                                <Link to={{
+                                    pathname: `/home/service/customer/class/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>班级信息</Link>
+                            </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/situation/${this.state.id}`,
                                     state: {stuName: this.state.data.name}
                                 }}>异动信息</Link>
                             </li>
+
                         </ol>
                     </nav>
                 </div>

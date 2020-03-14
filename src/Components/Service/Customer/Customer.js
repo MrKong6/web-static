@@ -13,6 +13,7 @@ import StudentSituation from "./StudentSituation";
 import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
 import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
 import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
+import ClassView from "./ClassView";
 
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '3-2'));
@@ -65,6 +66,11 @@ const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
             )}/>
             <Route path={`${match.url}/account/:studentId`} render={(props) => (
                 <AccountView key={props.match.params.studentId} {...props} profile={profile}
+                             commands={groupCommands.commands}
+                             changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
+            )}/>
+            <Route path={`${match.url}/class/:studentId`} render={(props) => (
+                <ClassView key={props.match.params.studentId} {...props} profile={profile}
                              commands={groupCommands.commands}
                              changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>

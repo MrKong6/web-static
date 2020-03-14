@@ -39,6 +39,7 @@ import Statistic from "../Mkt/Statistic/Statistic";
 import AllStatistic from "../Statistic/SaleStatistic/SaleStatistic";
 import SaleStatistic from "../Statistic/SaleStatistic/SaleStatistic";
 import ServiceStatistic from "../Service/ServiceStatistic/ServiceStatistic";
+import Situation from "../Service/Situation/Situation";
 
 class Home extends React.Component {
   constructor(props) {
@@ -177,6 +178,8 @@ class Home extends React.Component {
                           component={ServiceCustomer}{...query}/>
             <PrivateRoute path="/home/service/through" changedCrmGroup={this.state.group}
                           component={ServiceThrough}{...query}/>
+            <PrivateRoute path="/home/service/situation" changedCrmGroup={this.state.group}
+                          component={Situation}{...query}/>
             <PrivateRoute path="/home/service/statistic" changedCrmGroup={this.state.group} component={ServiceStatistic}{...query}/>
             <PrivateRoute path="/home/finance/account" changedCrmGroup={this.state.group}
                           component={FinanceAccount}{...query}/>

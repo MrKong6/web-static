@@ -7,7 +7,7 @@ import fmtDate from "../../../utils/fmtDate";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import DialogAccount from "../../Dialog/DialogAccount";
-import {Button, Form, Table} from "element-react";
+import {Button, Form, Table, Tooltip} from "element-react";
 import DialogAccountRelateClass from "../../Dialog/DialogAccountRelateClass";
 
 const NextBtn = ({id, ids}) => {
@@ -50,7 +50,7 @@ const PrevBtn = ({id, ids}) => {
     )
 };
 
-class AccountView extends React.Component {
+class ClassView extends React.Component {
     constructor(props) {
         super(props);
         this.title = fmtTitle(this.props.location.pathname);
@@ -70,90 +70,91 @@ class AccountView extends React.Component {
             name: this.props.location.state.stuName,
             columns: [
                 {
-                    type: 'expand',
-                    expandPannel: function(data){
-                        if(data.outCode == 'CLASS_FEE' && data.sonList && data.sonList.length > 0){
-                            return (
-                                    <table className="table table-bordered table-sm noBorder tableWidth">
-                                        <tr>
-                                            <th>项目</th>
-                                            <th>序号</th>
-                                            <th>日期</th>
-                                            <th>摘要</th>
-                                            <th>收入</th>
-                                            <th>支出</th>
-                                            <th>余额</th>
-                                            <th>操作</th>
-                                        </tr>
-                                        <tbody>
-                                            {
-                                                data.sonList.map(function (evt) {
-                                                    return <tr key={evt.id}>
-                                                                <td style={{"border": 0, "borderTop": "hidden"}}>{evt.proName}</td>
-                                                                <td style={{"border": 0, "borderLeft": "1px solid black"}}>{evt.no}</td>
-                                                                <td style={{"border": 0}}>{evt.payDate}</td>
-                                                                <td style={{"border": 0}}>{evt.remark}</td>
-                                                                <td style={{"border": 0}}>{evt.income}</td>
-                                                                <td style={{"border": 0}}>{evt.outcome}</td>{/*¥*/}
-                                                                <td style={{"border": 0, "borderRight": "1px solid black"}}>{evt.afterBalance}</td>
-                                                                <td style={{"border": 0}}></td>
-                                                            </tr>
-                                                })
-                                            }
-                                        </tbody>
-                                    </table>
-
-
-                            )
-                        }else{
-                            return (
-                                <div>暂无信息</div>
-                            )
-                        }
+                    width: 100,
+                    sortable: true,
+                    type: 'index',
+                    fixed: 'left',
+                },
+                {
+                    label: "班级编号",
+                    prop: "code",
+                    width: 120,
+                },
+                {
+                    label: "(校区名称)",
+                    prop: "schoolArea",
+                    width: 120,
+                },
+                {
+                    label: "班级状态",
+                    prop: "classStatusName",
+                    width: 95,
+                    /*render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                    }*/
+                },
+                {
+                    label: "班级类型",
+                    prop: "typeName",
+                    width: 95
+                },
+                {
+                    label: "班级类别",
+                    prop: "rangeName",
+                    width: 95
+                },
+                {
+                    label: "主教",
+                    prop: "mainTeacherName",
+                    width: 95,
+                    className:'tabletd',
+                    render: function (data) {
+                        return <Tooltip effect="dark" content={data.mainTeacherName}
+                                        placement="top-start">
+                            {data.mainTeacherName}
+                        </Tooltip>
                     }
                 },
                 {
-                    label: "项目",
-                    prop: "proName",
-                    width: 150
+                    label: "客服",
+                    prop: "registrar",
+                    width: 95,
                 },
                 {
-                    label: "序号",
-                    prop: "no",
-                    width: 160
+                    label: "课程类别",
+                    prop: "courseType",
+                    width: 95
                 },
                 {
-                    label: "日期",
-                    prop: "payDate"
+                    label: "课程阶段",
+                    prop: "courseRange",
+                    width: 100
                 },
                 {
-                    label: "摘要",
-                    prop: "remark"
+                    label: "课程表",
+                    prop: "course",
+                    width: 100
                 },
                 {
-                    label: "收入",
-                    prop: "income"
+                    label: "开课日期",
+                    prop: "courseStartDate",
+                    width: 120
                 },
                 {
-                    label: "支出",
-                    prop: "outcome"
+                    label: "结课日期",
+                    prop: "courseEndDate",
+                    width: 120
                 },
                 {
-                    label: "余额",
-                    prop: "afterBalance"
+                    label: "总课次",
+                    prop: "classTime",
+                    width: 120
                 },
                 {
-                    label: "操作",
-                    prop: "operate",
-                    render: (row, column, data)=>{
-                        if(row.outCode == 'CLASS_FEE'){
-                            if(row.classId){
-                                return <span><Button type="primary" size="small" onClick={this.createCourseHourDialog.bind(this,row)}>关联班级</Button></span>
-                            }else{
-                                return <span><Button type="danger" size="small" onClick={this.createCourseHourDialog.bind(this,row)}>关联班级</Button></span>
-                            }
-                        }
-                    }
+                    label: "总课时",
+                    prop: "classHour",
+                    width: 120
                 }
             ],
             data: []
@@ -227,52 +228,46 @@ class AccountView extends React.Component {
     refresh(){
         const request = async () => {
             try {
-                let data = await ajax('/service/account/list.do', {stuId: this.state.id});
-                if(data && data.data.items){
-                    data = data.data.items;
-                    let idx = 1;
-                    let sonIdx = 1;
-                    data.map(item => {
-                        if(item.payDate){
-                            item.no = idx++;
-                            item.payDate = new Date(item.payDate).format("yyyy-MM-dd");
+                let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageIndex:this.state.currentPage,
+                    limit:this.state.pageSize,statusId:this.state.chooseStatusName,classCode:this.state.chooseClassName,stuId:this.state.id});
+                let ids = [];
+                if(list.data && list.data.items){
+                    ids = list.data.items.map((contract) => (contract.id));
+                    list.data.items.map(item => {
+                        if(item.createOn != null){
+                            item.createOn = fmtDate(item.createOn);
                         }
-                        sonIdx = 1;
-                        if(item.sonList && item.sonList.length > 0){
-                            item.sonList.map(son => {
-                                son.no = sonIdx++;
-                                son.payDate = new Date(son.payDate).format("yyyy-MM-dd");
-                            });
+                        if(item.startDate != null){
+                            item.startDate = fmtDate(item.startDate);
+                        }
+                        if(item.endDate != null){
+                            item.endDate = fmtDate(item.endDate);
+                        }
+                        if(item.courseStartDate != null){
+                            item.courseStartDate = fmtDate(item.courseStartDate);
+                        }
+                        if(item.courseEndDate != null){
+                            item.courseEndDate = fmtDate(item.courseEndDate);
                         }
                     });
-                    this.setState({data});
                 }
+
+                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
                 } else {
-                    // this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
                 }
+            } finally {
+                this.setState({isAnimating: false});
             }
         };
         request();
     }
 
     render() {
-        if (this.state.redirectToReferrer) {
-            return (
-                <Redirect to={{
-                    pathname: '/login',
-                    state: {from: this.props.location}
-                }}/>
-            )
-        }
 
-        if (this.state.redirectToList) {
-            return (
-                <Redirect to="/home/service/customer"/>
-            )
-        }
 
         return (
             <div>
@@ -280,21 +275,6 @@ class AccountView extends React.Component {
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
                     <p className="d-inline text-muted">{this.state.name}</p>
-
-                    {/*<div className="btn-group float-right ml-4" role="group">
-                        <PrevBtn id={this.state.id} ids={this.state.ids}/>
-                        <NextBtn id={this.state.id} ids={this.state.ids}/>
-                    </div>*/}
-                    <div className="btn-group float-right ml-4" role="group" style={{"display":this.fourth}}>
-                        <button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
-                            新增
-                        </button>
-                        <button onClick={() => {
-                            this.props.history.push('/home/service/customer');
-                        }} type="button" className="btn btn-light">返回
-                        </button>
-                    </div>
-
                 </h5>
 
                 <div id="main" className="main p-3" style={{"height":"80%"}}>
@@ -302,13 +282,13 @@ class AccountView extends React.Component {
                         <div className="col col-12">
                             <div className="card border-top-0">
                                 <div className="card-body">
-                                    <p className="ht pb-3 b-b">账户信息</p>
+                                    <p className="ht pb-3 b-b">班级信息</p>
                                     <Table
-                                        style={{width: '80%'}}
+                                        style={{width: '100%'}}
                                         columns={this.state.columns}
-                                        data={this.state.data}
-                                        border={false}
-                                        onCurrentChange={item=>{console.log(item)}}
+                                        data={this.state.list}
+                                        border={true}
+                                        emptyText={"--"}
                                     />
                                 </div>
                             </div>
@@ -332,13 +312,13 @@ class AccountView extends React.Component {
                                 }}>合同信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
-                                账户信息
+                                <Link to={{
+                                    pathname: `/home/service/customer/account/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>账户信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.sixth}}>
-                                <Link to={{
-                                    pathname: `/home/service/customer/class/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
-                                }}>班级信息</Link>
+                                班级信息
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{
@@ -354,4 +334,4 @@ class AccountView extends React.Component {
     }
 }
 
-export default AccountView;
+export default ClassView;

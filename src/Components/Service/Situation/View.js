@@ -3,11 +3,13 @@ import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
+import Progress from "../../Progress/Progress";
 import Commands from "../../Commands/Commands";
 
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
+import {formatWithTime} from "../../../utils/fmtDate";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -20,7 +22,7 @@ const NextBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/customer/parent/${ids[curIndex + 1]}`,
+                pathname: `/home/service/through/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -40,7 +42,7 @@ const PrevBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/customer/parent/${ids[curIndex - 1]}`,
+                pathname: `/home/service/through/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -49,42 +51,33 @@ const PrevBtn = ({id, ids}) => {
     )
 };
 
-class ParentView extends React.Component {
+class View extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter(command => (command.id === '3-2-2-5'));
-        this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
-
-
+        this.commands = this.props.commands.filter(command => (command.name !== 'Add'));
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
             redirectToList: false,
             isAnimating: false,
-            id: this.props.match.params.studentId,
-            ids: [],
-            data: {name: this.props.location.state.stuName},
-            parentList: []
+            id: this.props.match.params.contractId,
+            data: null,
+            ids: []
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
+        this.delAction = this.delAction.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/list.do', {orgId: this.state.group.id});
-                let parentList = await ajax('/service/customer/parent/queryListByStudentId.do', {id: this.state.id});
-                const ids = list.data.map((student) => (student.id));
-
-                this.setState({ids, parentList});
+                let data = await ajax('/service/through/query.do', {id: this.state.id});
+                let list = await ajax('/service/through/list.do', {id: this.state.id});
+                const ids = list.data.items.map((contract) => (contract.id));
+                this.setState({data: data.data, ids});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -133,7 +126,26 @@ class ParentView extends React.Component {
     }
 
     modAction() {
-        this.props.history.push(`${this.props.match.url}/edit`, {stuName: this.state.data.name});
+        this.props.history.push(`${this.props.match.url}/edit`, {ids: this.ids});
+    }
+
+    delAction() {
+        const request = async () => {
+            try {
+                await ajax('/service/through/del.do', {id: this.state.id});
+                this.setState({redirectToList: true});
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request();
     }
 
     render() {
@@ -148,11 +160,11 @@ class ParentView extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/service/customer"/>
+                <Redirect to="/home/service/through"/>
             )
         }
 
-        if (!this.state.parentList.length) {
+        if (!this.state.data) {
             return (
                 <div>
                     <h5 id="subNav">
@@ -161,7 +173,7 @@ class ParentView extends React.Component {
 
                         <div className="btn-group float-right ml-4" role="group">
                             <button onClick={() => {
-                                this.props.history.push(`/home/service/customer`);
+                                this.props.history.push('/home/service/through');
                             }} type="button" className="btn btn-light">返回
                             </button>
                         </div>
@@ -185,7 +197,7 @@ class ParentView extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">{this.state.data.name}</p>
+                    <p className="d-inline text-muted">{this.state.data.stuName}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
@@ -193,164 +205,139 @@ class ParentView extends React.Component {
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
-                            this.props.history.push('/home/service/customer');
+                            this.props.history.push('/home/service/through');
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
                     <Commands
                         commands={this.commands}
                         modAction={this.modAction}
+                        delAction={this.delAction}
                     />
                 </h5>
 
                 <div id="main" className="main p-3">
-                    <div className="row justify-content-md-center mb-2">
+                    <Progress isAnimating={this.state.isAnimating}/>
+
+                    <div className="row justify-content-md-center">
                         <div className="col col-12">
-                            <div className="card border-top-0">
+                            <div className="card">
                                 <div className="card-body">
-                                    <p className="ht pb-3 b-b">家长信息</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">家长姓名</label>
+                                                <label className="col-2 col-form-label font-weight-bold">体验课场次</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.parentList[0].name}
+                                                        value={this.state.data.code}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">与孩子关系</label>
+                                                <label className="col-2 col-form-label font-weight-bold">状态</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.parentList[0].relation}
+                                                        value={this.state.data.throughStatusName}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">联系电话</label>
+                                                <label className="col-2 col-form-label font-weight-bold">开始时间</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.parentList[0].cellphone}
+                                                        value={formatWithTime(this.state.data.throughTime)}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">家庭住址</label>
+                                                <label className="col-2 col-form-label font-weight-bold">结束时间</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.parentList[0].address}
+                                                        value={formatWithTime(this.state.data.throughEndTime)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">教室</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.room}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">主教</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.mainTeacher}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">助教</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.assistant}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">课程顾问</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.adviser}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">体验课人数</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.num}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col">
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">微信号</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.parentList[0].wechat}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">电子邮箱</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.parentList[0].email}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">家长姓名</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.parentList.length > 1 ? this.state.parentList[1].name : ""}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">与孩子关系</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.parentList.length > 1 ? this.state.parentList[1].relation : ""}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">联系电话</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.parentList.length > 1 ? this.state.parentList[1].cellphone : ""}
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col"/>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
-                            <li className="breadcrumb-item"style={{"display":this.first}}><Link
-                                to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
-                            <li className="breadcrumb-item active" style={{"display":this.second}}>家长信息</li>
-                            <li className="breadcrumb-item" style={{"display":this.third}}>
-                                <Link to={{
-                                    pathname: `/home/service/customer/contract/${this.state.id}`,
+                            <li className="breadcrumb-item active">体验课基本信息</li>
+                            <li className="breadcrumb-item"><Link
+                                to={{
+                                    pathname: `/home/service/through/student/${this.state.id}`,
                                     state: {stuName: this.state.data.name}
-                                }}>合同信息</Link>
-                            </li>
-                            <li className="breadcrumb-item" style={{"display":this.fourth}}>
-                                <Link to={{
-                                    pathname: `/home/service/customer/account/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
-                                }}>账户信息</Link>
-                            </li>
-                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
-                                <Link to={{
-                                    pathname: `/home/service/customer/class/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
-                                }}>班级信息</Link>
-                            </li>
-                            <li className="breadcrumb-item" style={{"display":this.fifth}}>
-                                <Link to={{
-                                    pathname: `/home/service/customer/situation/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
-                                }}>异动信息</Link>
-                            </li>
+                                }}>体验课学员信息</Link></li>
                         </ol>
                     </nav>
                 </div>
@@ -359,4 +346,4 @@ class ParentView extends React.Component {
     }
 }
 
-export default ParentView;
+export default View;

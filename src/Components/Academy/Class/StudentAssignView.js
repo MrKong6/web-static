@@ -65,6 +65,7 @@ class StudentAssignView extends React.Component {
             redirectToList: false,
             isAnimating: false,
             id: this.props.match.params.contractId,
+            stuName: this.props.location.state.stuName,
             data: [],
             dataRight: [],
             ids: [],
@@ -320,6 +321,7 @@ class StudentAssignView extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
+                    <p className="d-inline text-muted">{this.state.stuName}</p>
                     {/*<div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
