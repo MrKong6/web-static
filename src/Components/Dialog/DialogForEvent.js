@@ -4,9 +4,20 @@ import {$} from "../../vendor";
 
 import DialogGroup from './DialogGroup';
 import ajax from "../../utils/ajax";
-import {DatePicker, DateRangePicker, Message, MessageBox, Select, Radio} from "element-react";
+import {
+    DatePicker,
+    DateRangePicker,
+    Message,
+    MessageBox,
+    Select,
+    Radio,
+    Form,
+    Layout,
+    Checkbox,
+    TimePicker, Input, Button
+} from "element-react";
 import DialogTips from "./DialogTips";
-import {stringToDate} from "../../utils/fmtDate";
+import {getTimeFourByDate, getWeekByNum, stringToDate} from "../../utils/fmtDate";
 
 class DialogForEvent extends React.Component {
     constructor(props) {
@@ -15,6 +26,7 @@ class DialogForEvent extends React.Component {
         this.acceptGroupDialog = this.acceptGroupDialog.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.accept = this.accept.bind(this);
+        this.onSubmit = this.onSubmit.bind(this);
         this.del = this.del.bind(this);
         this.cancel = this.cancel.bind(this);
         this.closed = this.closed.bind(this);
@@ -28,7 +40,7 @@ class DialogForEvent extends React.Component {
             data: null,
             value2:null,
             isEdit: this.props.data ? true : false,
-            showDelete: this.props.data ? 'normal' : 'none',
+            showDelete: (this.props.data) ? 'normal' : 'none',
             showXunhuan: this.props.data ? 'none' : 'normal',
             showXunhuanDate: true,
             classCount:0,
@@ -37,6 +49,54 @@ class DialogForEvent extends React.Component {
             teacherList: [],
             comment: null,
             loopId: null,
+            form: {
+                name: null,
+                classId: null,
+                teacherId: [],
+                roomId: null,
+                classHour: null,
+                classTime: null,
+                courseRange: null,
+                startDate: null,
+                endDate: null,
+                loopTrue: 1,
+                currentClassTime: null,
+
+                delivery: false,
+                date1: null,
+                week1: false,
+                roomId1:null,
+                date2: null,
+                week2: false,
+                roomId2:null,
+                date3: null,
+                week3: false,
+                roomId3:null,
+                date4: null,
+                week4: false,
+                roomId4:null,
+                date5: null,
+                week5: false,
+                roomId5:null,
+                date6: null,
+                week6: false,
+                roomId6:null,
+                date7: null,
+                week7: false,
+                roomId7:null,
+
+                resource: '',
+                desc: ''
+            },
+            rules: {
+                classId: [
+                    { required: true, message: '请选择班级', trigger: 'change' }
+                ],
+                teacherId: [
+                    { required: true, message: '请选择教师', trigger: 'change' }
+                ]
+            },
+            chooseCls:null
         }
         // if(this.props.data && this.props.data.start)
     }
@@ -54,6 +114,7 @@ class DialogForEvent extends React.Component {
                 let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
                 let data = null;
                 let dateRange = [];
+                let hasEnd = 0;
                 if(this.state.id){
                     //即编辑
                     let assignClassList = await ajax('/academy/class/assignClassList.do', {csId: this.state.id});
@@ -72,16 +133,29 @@ class DialogForEvent extends React.Component {
                     classList: classList.data.items,
                     teacherList: teacherList.data.items,
                     roomList: roomList.data.items,
-                    data: data,
-                    comment: data ? data.comment: null,
-                    startTime: data ? new Date(data.startTime): this.props.chooseStartDate,
-                    endTime: data ? new Date(data.endTime): this.props.chooseStartDate,
-                    chooseTeacher: data ? Number(data.teacherId): null,
-                    chooseClass: data ? data.classId: null,
-                    chooseRoom: data ? Number(data.roomId): null,
-                    value2: dateRange,
-                    loopId: data? data.loopId : null,
-                    loopStartTime: data? new Date(data.loopStartTime) : null
+                    form:{
+                        name: null,
+                        classId: data.classId,
+                        teacherId: [],
+                        roomId: data.roomId,
+                        classHour: null,
+                        classTime: null,
+                        courseRange: null,
+                        startDate: null,
+                        endDate: null,
+                        loopTrue: 1,
+                        currentClassTime: null,
+                    }
+                    // data: data,
+                    // comment: data ? data.comment: null,
+                    // startTime: data ? new Date(data.startTime): this.props.chooseStartDate,
+                    // endTime: data ? new Date(data.endTime): this.props.chooseStartDate,
+                    // chooseTeacher: data ? Number(data.teacherId): null,
+                    // chooseClass: data ? data.classId: null,
+                    // chooseRoom: data ? Number(data.roomId): null,
+                    // value2: dateRange,
+                    // loopId: data? data.loopId : null,
+                    // loopStartTime: data? new Date(data.loopStartTime) : null
                 });
 
             } catch (err) {
@@ -98,25 +172,26 @@ class DialogForEvent extends React.Component {
     }
 
     createGroupsDialog(text) {
-        if (this.tips === undefined) {
-            this.tipsContainer = document.createElement('div');
 
-            ReactDOM.render(
-                <DialogTips
-                    accept={this.logout}
-                    title="提示"
-                    text={text}
-                    ref={(dom) => {
-                        this.tips = dom
-                    }}
-                />,
-                document.body.appendChild(this.tipsContainer)
-            );
-        } else {
-            this.tips.setText(text);
-        }
-
-        this.tips.dialog.modal('show');
+        // if (this.tips === undefined) {
+        //     this.tipsContainer = document.createElement('div');
+        //
+        //     ReactDOM.render(
+        //         <DialogTips
+        //             accept={this.logout}
+        //             title="提示"
+        //             text={text}
+        //             ref={(dom) => {
+        //                 this.tips = dom
+        //             }}
+        //         />,
+        //         document.body.appendChild(this.tipsContainer)
+        //     );
+        // } else {
+        //     this.tips.setText(text);
+        // }
+        //
+        // this.tips.dialog.modal('show');
     }
 
     acceptGroupDialog(selected) {
@@ -171,48 +246,103 @@ class DialogForEvent extends React.Component {
         request();
     }
 
-    handleSelect(type, evt) {
-        // debugger
-        switch (type) {
-            case(1): {
-                this.chooseClass(evt);
-                this.setState({chooseClass:evt});
-                this.state.chooseClass = evt;
-                break;
+    handleSelect(type, key, value) {
+        if(key.indexOf("date") != -1 || key.indexOf("week") != -1 || key.indexOf("Date") != -1){
+
+            if(key.indexOf("startDate") != -1){
+                 //选中开始日期  更新结课日期
+                let endDate = this.changedDate(value);
+                this.setState({
+                    form: Object.assign({}, this.state.form, { ["endDate"]: endDate,[key]: value })
+                });
+            }else{
+                this.setState({
+                    form: Object.assign({}, this.state.form, { [key]: value })
+                });
             }
-            case(2): {
-                this.setState({chooseTeacher:evt});
-                this.state.chooseTeacher = evt;
-                break;
+        }else{
+            //找到选中班级
+            if(key == "classId"){
+                this.state.classList.map(item => {
+                    if(item.id == value){
+                        this.state.form["classHour"] = item.classHour;
+                        this.state.form["classTime"] = item.classTime;
+                        this.state.form["courseRange"] = item.courseRange;
+                    }
+                })
             }
-            case(3): {
-                this.setState({chooseRoom:evt});
-                this.state.chooseRoom = evt;
-                break;
-            }
-            case(4): {
-                if(evt.target.value && evt.target.value == '2' && this.state.showDelete == 'none'){
-                    //是否循环选择了是   显示循环日期
-                    // if(!this.state.showXunhuan === 'none'){
-                        this.setState({showXunhuanDate:false});
-                    // }
-                }else{
-                    this.setState({showXunhuanDate:true});
-                }
-                break;
-            }
+            this.setState({
+                form: Object.assign({}, this.state.form, { [key]: value+"" })
+            });
         }
+
+
+        // switch (type) {
+        //     case(1): {
+        //         this.chooseClass(evt);
+        //         this.setState({ form: Object.assign({}, this.state.form, { [key]: evt })});
+        //         break;
+        //     }
+        //     case(2): {
+        //         this.setState({chooseTeacher:evt});
+        //         this.state.chooseTeacher = evt;
+        //         break;
+        //     }
+        //     case(3): {
+        //         this.setState({chooseRoom:evt});
+        //         this.state.chooseRoom = evt;
+        //         break;
+        //     }
+        //     case(4): {
+        //         if(evt.target.value && evt.target.value == '2' && this.state.showDelete == 'none'){
+        //             //是否循环选择了是   显示循环日期
+        //             // if(!this.state.showXunhuan === 'none'){
+        //                 this.setState({showXunhuanDate:false});
+        //             // }
+        //         }else{
+        //             this.setState({showXunhuanDate:true});
+        //         }
+        //         break;
+        //     }
+        // }
     }
 
+    onSubmit(e) {
+        e.preventDefault();
+
+        this.refs.form.validate((valid) => {
+            if (valid) {
+                this.accept();
+            } else {
+                console.log('error submit!!');
+                return false;
+            }
+        });
+
+    }
     accept() {
-        //校验是否都选择了
-        if (!(this.state.chooseClass && this.state.chooseRoom && this.state.chooseTeacher)) {
-            this.createGroupsDialog(`请先选择班级、教师、教室`);
-            return;
-        }
-        if (!(this.state.startTime && this.state.endTime)) {
-            this.createGroupsDialog(`请录入开始和结束时间`);
-            return;
+
+        let course = null;
+        for(let i=1;i<=7;i++){
+            if(this.state.form["week"+i]){
+                if(course != null){
+                    course = course + "、";
+                }
+                course = (course ? course : "") + getWeekByNum(i);
+                if(this.state.form["date"+i]){
+                    course = course + getTimeFourByDate(this.state.form["date"+i]);
+                }else{
+                    this.createGroupsDialog(`请录入排课信息时间`);
+                    return;
+                }
+                if(this.state.form["roomId"+i]){
+                    course = course + this.state.form["roomId"+i];
+                }else{
+                    this.createGroupsDialog(`请选择排课信息对应班级编码`);
+                    return;
+                }
+            }
+
         }
 
         this.props.accept({
@@ -224,17 +354,20 @@ class DialogForEvent extends React.Component {
                 id: this.state.userId,
                 name: this.state.userName
             },
-            chooseClass: this.state.chooseClass,
-            chooseTeacher: this.state.chooseTeacher,
-            chooseRoom: this.state.chooseRoom,
-            startTime: this.state.startTime,
+            chooseClass: this.state.form.classId,
+            chooseTeacher: this.state.form.teacherId,
+            chooseRoom: this.state.form.roomId,
+            classTime: this.state.form.classTime,
+            loopTrue: this.state.form.loopTrue,  //1是循环 2是不循环
+            loopStartTime: this.state.form.startDate ? this.state.form.startDate : null,
+            xunhuanEndDate: this.state.form.endDate ? this.state.form.endDate : null,
+            course: course,
+            startTime: this.state.form.startTime,
             endTime: this.state.endTime,
             comment: this.state.comment,
-            xunhuanEndDate: this.state.value2 ? this.state.value2[1] : null,
             id:this.state.id,
             loopId: this.state.loopId,
-            showXunhuanDate: this.state.showXunhuanDate ? 1 : 2,  //1是循环 2是不循环
-            loopStartTime: this.state.loopStartTime ? this.state.loopStartTime : null
+
 
         });
         this.dialog.modal('hide');
@@ -282,28 +415,21 @@ class DialogForEvent extends React.Component {
         document.body.removeChild(this.props.container);
     }
     //更新日期
-    changedDate(date) {
-        let classCount = 0;
-        if(date){
-            let day = (date[1].getTime() - date[0].getTime()) / (24 * 60 * 60 * 1000);
-            let foramatDate = this.state.startTime.format("yyyy-MM-dd");
-            let startTime = stringToDate(foramatDate,'-');
-            debugger
-            for(let i=0;i<day+1;i++){
-                if(startTime.getTime() <= date[1].getTime()){
-                    classCount = classCount + 1;
-                    startTime = new Date(startTime.getTime() + 7 * 24 * 60 * 60 * 1000);
-                }
-            }
+    changedDate(startDate) {
+        if(startDate && this.state.form.classTime){
+            // let day = (date[1].getTime() - date[0].getTime()) / (24 * 60 * 60 * 1000);
+            // let foramatDate = this.state.startTime.format("yyyy-MM-dd");
+            // let startTime = stringToDate(foramatDate,'-');
+            // debugger
+            startDate = new Date(startDate.getTime() + 7 * this.state.form.classTime * 24 * 60 * 60 * 1000);;
         }
-        this.setState({value2: date,classCount})
+        return startDate;
     }
-
 
     render() {
         return (
             <div id="123456" className="modal fade" tabIndex="-1" role="dialog">
-                <div className="modal-dialog" role="document">
+                <div className="modal-dialog" role="document" style={{"maxWidth":"650px"}}>
                     <div className="modal-content">
                         <div className="modal-header">
                             {this.state.isEdit ? (<h5 className="modal-title">编辑事件</h5>) : (<h5 className="modal-title">添加事件</h5>)}
@@ -312,160 +438,264 @@ class DialogForEvent extends React.Component {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label">班级</label>
-                                <div className="col-6">
-                                    {/*<select className="form-control" name={"class"}
-                                            onChange={this.handleSelect.bind(this, 1)} value={this.state.chooseClass}>
-                                        <option value="">请选择班级</option>
-                                        {
-                                            this.state.classList.map(item => (
-                                                <option key={item.id} value={item.id} mainteacher={item.mainTeacher}>{item.code}</option>
-                                            ))
-                                        }
-                                    </select>*/}
-                                    <Select style={{"width":"100%"}} value={this.state.chooseClass} filterable={true} onChange={this.handleSelect.bind(this, 1)} clearable={true} placeholder="请选择班级">
-                                        {
-                                            this.state.classList.map(el => {
-                                                return <Select.Option key={el.id} label={el.code} value={el.id} />
-                                            })
-                                        }
-                                    </Select>
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label">教师</label>
-                                <div className="col-6 input-group">
-                                    {/*<select className="form-control" name={"teacher"}
-                                            onChange={this.handleSelect.bind(this, 2)} value={this.state.chooseTeacher}>
-                                        <option value="">请选择教师</option>
-                                        {
-                                            this.state.teacherList.map(item => (
-                                                <option key={item.id} value={item.id}>{item.name}</option>
-                                            ))
-                                        }
-                                    </select>*/}
-                                    <Select style={{"width":"100%"}} value={this.state.chooseTeacher} filterable={true} onChange={this.handleSelect.bind(this, 2)} clearable={true} placeholder="请选择教师">
-                                        {
-                                            this.state.teacherList.map(el => {
-                                                return <Select.Option key={el.id} label={el.name} value={el.id} />
-                                            })
-                                        }
-                                    </Select>
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label">教室</label>
-                                <div className="col-6 input-group">
-                                    {/*<select className="form-control" name={"class"}
-                                            onChange={this.handleSelect.bind(this, 3)} value={this.state.chooseRoom}>
-                                        <option value="">请选择教室</option>
-                                        {
-                                            this.state.roomList.map(item => (
-                                                <option key={item.id} value={item.id}>{item.code}</option>
-                                            ))
-                                        }
-                                    </select>*/}
-                                    <Select style={{"width":"100%"}} value={this.state.chooseRoom} filterable={true} onChange={this.handleSelect.bind(this, 3)} clearable={true} placeholder="请选择教室">
-                                        {
-                                            this.state.roomList.map(el => {
-                                                return <Select.Option key={el.id} label={el.code} value={el.id} />
-                                            })
-                                        }
-                                    </Select>
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label">开始时间</label>
-                                <div className="col-6">
-                                    <DatePicker
-                                        name="createTime"
-                                        value={this.state.startTime}
-                                        isShowTime={true}
-                                        placeholder="选择日期"
-                                        format="yyyy-MM-dd HH:mm"
-                                        onChange={date => {
-                                            console.debug('DatePicker1 changed: ', date)
-                                            this.setState({startTime: date})
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                            <Form ref="form" model={this.state.form} rules={this.state.rules} labelWidth="80" className="demo-ruleForm">
 
-                            {/*<div className="form-check form-check-inline">*/}
-                                <div className="form-group row">
-                                    <label className="col-3 col-form-label">结束时间</label>
-                                    <div className="col-6">
+                                <Layout.Col span="12">
+                                    <Form.Item label="班级" prop="classId">
+                                        <Select value={this.state.form.classId} placeholder="请选择班级" filterable={true} onChange={this.handleSelect.bind(this, 1, "classId")} clearable={true}>
+                                            {
+                                                this.state.classList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                })
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="12">
+                                    <Form.Item label="教师" prop="teacherId">
+                                        <Select value={this.state.form.teacherId} placeholder="请选择教师" multiple={true} filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "teacherId")}>
+                                            {
+                                                this.state.teacherList ? this.state.teacherList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="12">
+                                    <Form.Item prop="startDate" label="开课日期">
                                         <DatePicker
-                                            name="createTime"
-                                            value={this.state.endTime}
-                                            isShowTime={true}
+                                            value={this.state.form.startDate}
                                             placeholder="选择日期"
-                                            format="yyyy-MM-dd HH:mm"
-                                            onChange={date => {
-                                                console.debug('DatePicker1 changed: ', date)
-                                                this.setState({endTime: date})
-                                            }}
+                                            onChange={this.handleSelect.bind(this, 1, 'startDate')}
                                         />
-                                    </div>
-                                </div>
-                            {/*</div>*/}{/*style={{"display":this.state.showXunhuan}}*/}
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label font-weight-bold">
-                                    是否循环
-                                </label>
-                                <div className="col-6 input-group">
-                                    <select className="form-control" name={"class"}
-                                            onChange={this.handleSelect.bind(this, 4)}>
-                                        <option value="1">否</option>
-                                        <option value="2">是</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label font-weight-bold">
-                                    循环周期
-                                </label>
-                                <div className="col-6 input-group">
-                                    <DateRangePicker
-                                        value={this.state.value2}
-                                        placeholder="选择日期范围"
-                                        align="right"
-                                        isDisabled={this.state.showXunhuanDate}
-                                        ref={e=>this.daterangepicker2 = e}
-                                        onChange={this.changedDate}
-                                    />
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label">课次数</label>
-                                <div className="col-6">
-                                    <input className="form-control"
-                                           type="text"
-                                           disabled={true}
-                                           value={this.state.classCount}
-                                    />
-                                </div>
-                            </div>
-                            <div className="form-group row">
-                                <label className="col-3 col-form-label">事件备注</label>
-                                <div className="col-6">
-                                    <input className="form-control"
-                                           type="text"
-                                           value={this.state.comment}
-                                    />
-                                </div>
-                            </div>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="12">
+                                    <Form.Item label="结课日期">
+                                        <DatePicker
+                                            value={this.state.form.endDate}
+                                            disabled={true}
+                                        />
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="8">
+                                    <Form.Item label="课程时长">
+                                        <Input value={this.state.form.classHour} disabled={true}></Input>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="8">
+                                    <Form.Item label="总课次">
+                                        <Input value={this.state.form.classTime} disabled={true}></Input>
 
-                        </div>
-                        <div className="modal-footer">
-                            <button onClick={this.del} type="button" className="btn btn-danger" style={{"display":this.state.showDelete}}
-                                    data-dismiss="modal">删除事件
-                            </button>
-                            <button onClick={this.cancel} type="button" className="btn btn-secondary"
-                                    data-dismiss="modal">取消
-                            </button>
-                            <button onClick={this.accept} type="button" className="btn btn-primary">确认</button>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="8">
+                                    <Form.Item label="课程阶段">
+                                        <Input value={this.state.form.courseRange} disabled={true}></Input>
+                                    </Form.Item>
+                                </Layout.Col>
+                                <Layout.Col span="8">
+                                    <Form.Item label="当前课次">
+                                        <Input value={this.state.form.currentClassTime} disabled={true}></Input>
+                                    </Form.Item>
+                                </Layout.Col>
+
+                                <Layout.Col span="8">
+                                    <Form.Item label="是否重复">
+                                        <Select value={this.state.form.loopTrue} placeholder="请选择" onChange={this.handleSelect.bind(this, 1, "loopTrue")}>
+                                            <Select.Option key="2" label="否" value="2" />
+                                            <Select.Option key="1" label="是" value="1" />
+                                        </Select>
+                                    </Form.Item>
+                                </Layout.Col>
+
+                                <Layout.Col span="8" offset="2">
+                                    <div></div>
+                                </Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周一" name="week1" checked={this.state.form.week1} onChange={this.handleSelect.bind(this, 1, 'week1')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date1}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date1')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId1} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId1")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周二" name="week2" checked={this.state.form.week2} onChange={this.handleSelect.bind(this, 1, 'week2')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date2}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date2')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId2} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId2")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周三" name="week3" checked={this.state.form.week3} onChange={this.handleSelect.bind(this, 1, 'week3')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date3}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date3')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId3} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId3")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周四" name="week4" checked={this.state.form.week4} onChange={this.handleSelect.bind(this, 1, 'week4')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date4}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date4')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId4} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId4")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周五" name="week5" checked={this.state.form.week5} onChange={this.handleSelect.bind(this, 1, 'week5')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date5}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date5')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId5} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId5")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周六" name="week6" checked={this.state.form.week6} onChange={this.handleSelect.bind(this, 1, 'week6')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date6}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date6')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId6} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId6")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+
+                                <Layout.Col span="3"><div className="grid-content bg-purple">
+                                    <Checkbox label="周日" name="week7" checked={this.state.form.week7} onChange={this.handleSelect.bind(this, 1, 'week7')}></Checkbox>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <TimePicker
+                                            value={this.state.form.date7}
+                                            selectableRange="6:30:00 - 22:30:00"
+                                            placeholder="请选择开始上课时间"
+                                            onChange={this.handleSelect.bind(this, 1, 'date7')}
+                                        />
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="9"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Select value={this.state.form.roomId7} placeholder="请选择教室" filterable={true}  clearable={true} onChange={this.handleSelect.bind(this, 1, "roomId7")}>
+                                            {
+                                                this.state.roomList ? this.state.roomList.map(el => {
+                                                    return <Select.Option key={el.id} label={el.code} value={el.id} />
+                                                }) : null
+                                            }
+                                        </Select>
+                                    </Form.Item>
+                                </div></Layout.Col>
+                                <Layout.Col span="12"><div className="grid-content bg-purple">
+                                    <Form.Item>
+                                        <Button type="primary" onClick={this.del} style={{"display":this.state.showDelete}} data-dismiss="modal">删除</Button>
+                                        <Button type="primary" onClick={this.onSubmit}>确认</Button>
+                                        <Button>取消</Button>
+                                    </Form.Item>
+                                </div></Layout.Col>
+                            </Form>
                         </div>
                     </div>
                 </div>

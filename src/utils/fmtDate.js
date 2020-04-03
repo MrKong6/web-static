@@ -90,3 +90,25 @@ export function stringToDate(dateStr,separator){
     var date = new Date(year,month -1,day);
     return date;
 }
+
+
+export function getWeekByNum(num){
+    let retval = "周";
+    switch (num){
+        case 1: retval = retval + "一";break;
+        case 2: retval = retval + "二";break;
+        case 3: retval = retval + "三";break;
+        case 4: retval = retval + "四";break;
+        case 5: retval = retval + "五";break;
+        case 6: retval = retval + "六";break;
+        case 7: retval = retval + "日";break;
+    }
+    return retval;
+}
+
+export function getTimeFourByDate(date){
+    let useDate = new Date(date);
+    let hour = useDate.getHours();
+    let minute = useDate.getMinutes();
+    return hour + ":" + minute;
+}

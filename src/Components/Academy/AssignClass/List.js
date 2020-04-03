@@ -15,6 +15,7 @@ import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
 import {$} from "../../../vendor";
+import DialogForEventEdit from "../../Dialog/DialogForEventEdit";
 
 
 class List extends React.Component {
@@ -199,23 +200,46 @@ class List extends React.Component {
 
         // if(this.state.chooseClass && this.state.chooseRoom && this.state.chooseTeacher){
         this.userContainer = document.createElement('div');
-        ReactDOM.render(
-            <DialogForEvent
-                accept={this.addCustomeEvent}
-                refresh={this.mid}
-                container={this.userContainer}
-                typeName="1"
-                changedCrmGroup={this.state.group}
-                chooseStartDate={(arg && arg.date) ? arg.date : (this.state.chooseEvent ? this.state.chooseEvent.startTime : new Date())}
-                data = {this.state.chooseEvent}
-                replace={this.props.history.replace}
-                from={this.props.location}
-                ref={(dom) => {
-                    this.user = dom
-                }}
-            />,
+        if(this.state.chooseEvent && this.state.chooseEvent.id){
+            //编辑
+            ReactDOM.render(
+
+                <DialogForEventEdit
+                    accept={this.addCustomeEvent}
+                    refresh={this.mid}
+                    container={this.userContainer}
+                    typeName="1"
+                    changedCrmGroup={this.state.group}
+                    chooseStartDate={(arg && arg.date) ? arg.date : (this.state.chooseEvent ? this.state.chooseEvent.startTime : new Date())}
+                    data = {this.state.chooseEvent}
+                    replace={this.props.history.replace}
+                    from={this.props.location}
+                    ref={(dom) => {
+                        this.user = dom
+                    }}
+                />,
+                document.body.appendChild(this.userContainer)
+            );
+        }else{
+            ReactDOM.render(
+
+                <DialogForEvent
+                    accept={this.addCustomeEvent}
+                    refresh={this.mid}
+                    container={this.userContainer}
+                    typeName="1"
+                    changedCrmGroup={this.state.group}
+                    chooseStartDate={(arg && arg.date) ? arg.date : (this.state.chooseEvent ? this.state.chooseEvent.startTime : new Date())}
+                    data = {this.state.chooseEvent}
+                    replace={this.props.history.replace}
+                    from={this.props.location}
+                    ref={(dom) => {
+                        this.user = dom
+                    }}
+                />,
             document.body.appendChild(this.userContainer)
         );
+        }
         this.user.dialog.modal('show');
         // if (confirm('Would you like to add an event to ' + arg.dateStr + ' ?')) {
         //     this.setState({  // add new event data
@@ -235,15 +259,15 @@ class List extends React.Component {
     }
     //确认添加自定义事件
     addCustomeEvent(selected){
-        if(selected.id){
-            this.delAssignClass(selected.id,selected.showXunhuanDate);
-        }
+        // if(selected.id){
+        //     this.delAssignClass(selected.id,selected.showXunhuanDate);
+        // }
         const request = async () => {
             try {
                 let param =  {classId: selected.chooseClass,
-                    teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,
+                    teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,course: selected.course,
                     startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate,
-                    loopTrue:selected.showXunhuanDate, loopId:selected.loopId, loopStartTime: selected.loopStartTime};
+                    loopTrue:selected.loopTrue, loopId:selected.loopId, loopStartTime: selected.loopStartTime, classTime:selected.classTime};
                 await ajax('/academy/class/assignClass.do',{"assignVo":JSON.stringify(param)});
                 Message({
                     message: "成功",
@@ -366,7 +390,7 @@ class List extends React.Component {
                                     }
                                 </Select>
                             </div>
-                            <div class="col-2">
+                            <div className="col-2">
                                 <Select value={this.state.chooseTeacher} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 2)} placeholder="请选择教师">
                                     {
                                         this.state.teacherList ? this.state.teacherList.map(el => {
@@ -375,7 +399,7 @@ class List extends React.Component {
                                     }
                                 </Select>
                             </div>
-                            <div class="col-2">
+                            <div className="col-2">
                                 <Select value={this.state.chooseRoom} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 3)} placeholder="请选择教室">
                                     {
                                         this.state.roomList ? this.state.roomList.map(el => {

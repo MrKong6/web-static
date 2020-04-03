@@ -522,6 +522,15 @@ export default {
             CATEGORY: '统计',
             NAME: '分析'
         },
+        //迁移向导
+        "9": {ICON_CLASS: "fa-area-chart"},
+        "9-1": {
+            PATH: "home/import",
+            PATH_RULE: /^\/home\/import/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '迁移向导',
+            NAME: ''
+        },
     },
 
     TYPE_ID: {1: '线索', 2: '新招', 3: '续报'},

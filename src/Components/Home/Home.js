@@ -40,6 +40,7 @@ import AllStatistic from "../Statistic/SaleStatistic/SaleStatistic";
 import SaleStatistic from "../Statistic/SaleStatistic/SaleStatistic";
 import ServiceStatistic from "../Service/ServiceStatistic/ServiceStatistic";
 import Situation from "../Service/Situation/Situation";
+import Import from "../Import/Import";
 
 class Home extends React.Component {
   constructor(props) {
@@ -201,6 +202,8 @@ class Home extends React.Component {
                           component={EducationThrough}{...query}/>
             <PrivateRoute path="/home/statistic" changedCrmGroup={this.state.group}
                           component={AllStatistic}{...query}/>
+            <PrivateRoute path="/home/import" changedCrmGroup={this.state.group}
+                          component={Import}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>
             <Route render={(props) => (
               <NoMatch {...props} profile={this.state.profile.profile}/>

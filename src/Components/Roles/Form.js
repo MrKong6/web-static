@@ -10,6 +10,9 @@ class Form extends React.Component {
     super(props)
 
     this.FUNC_ADMIN = "7";
+    this.FUNC_ADMIN_TWO = "9";
+    this.FUNC_ADMIN_THREE = "10";
+    this.FUNC_SYSTEM = "7,9,10";
     this.RANK_ADMIN = 4;
     this.RANK_MANGER = 1;
 
@@ -36,7 +39,7 @@ class Form extends React.Component {
         let funcDic = await ajax('/func/listAllFuncs.do');
         let rankDic = await ajax('/role/ranks.do');
 
-        funcDic = funcDic.filter(func => (func.cId === func.cRootId && func.cId !== this.FUNC_ADMIN && func.cId !== "8"));
+        funcDic = funcDic.filter(func => (func.cId === func.cRootId && func.cId !== this.FUNC_ADMIN && func.cId !== this.FUNC_ADMIN_TWO && func.cId !== this.FUNC_ADMIN_THREE && func.cId !== "8"));
         rankDic = rankDic.filter(rank => (rank.cId !== this.RANK_ADMIN));
 
         this.setState({funcDic, rankDic})
@@ -58,7 +61,7 @@ class Form extends React.Component {
     if (nextProps.data && this.props.data !== nextProps.data) {
       let state = {};
 
-      state.isAdmin = nextProps.data.cRankId == this.RANK_ADMIN;
+      state.isAdmin = nextProps.data.cRankId == this.RANK_ADMIN || nextProps.data.cRankId == this.RANK_ADMIN_TWO;
 
       if (!state.isAdmin) {
         state.selectedRole = nextProps.data.cRankId;
@@ -174,7 +177,7 @@ class Form extends React.Component {
     query.desc = this.form.desc.value;
 
     if (this.state.isAdmin) {
-      query.strFuncIds = this.FUNC_ADMIN;
+      query.strFuncIds = this.FUNC_SYSTEM;
       query.rankId = this.RANK_ADMIN;
     } else {
       query.strFuncIds = this.state.selectedFunc.join(',');
