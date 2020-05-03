@@ -157,7 +157,7 @@ export default function (data) {
            }else if(item.id == '3-2'){
                //学员管理
                student = item;
-           }else if(item.id == '3-2-1' || item.id == '3-2-2' || item.id == '3-2-3'|| item.id == '3-2-4'|| item.id == '3-2-5'|| item.id == '3-2-6'){
+           }else if(item.id == '3-2-1' || item.id == '3-2-2' || item.id == '3-2-3'|| item.id == '3-2-4'|| item.id == '3-2-5'|| item.id == '3-2-6'|| item.id == '3-2-7'){
                //学员管理
                if(item.commands && item.commands.length > 0){
                    for(let j=0;j<item.commands.length;j++){

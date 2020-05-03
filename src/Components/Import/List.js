@@ -102,6 +102,8 @@ class List extends React.Component {
     errorMsg(msg) {
         Message({
             message: msg,
+            duration: 0,
+            showClose: true,
             type: 'error'
         });
     }

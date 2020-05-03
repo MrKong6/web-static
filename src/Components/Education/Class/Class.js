@@ -19,6 +19,7 @@ import ContractView from "../../Service/Customer/ContractView"
 import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
 import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
 import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
+import CheckOn from "./CheckOn";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '6-1'));
@@ -40,6 +41,10 @@ const Account = ({commands, location, match, profile, changedCrmGroup}) => {
             <Route path={`${match.url}/situation/:contractId`} render={(props) => (
                 <StudentSituation key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
                                   changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource} />
+            )}/>
+            <Route path={`${match.url}/clocked/:contractId/checkon`} render={(props) => (
+                <CheckOn key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                             changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/clocked/:contractId`} render={(props) => (
                 <ClockedView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}

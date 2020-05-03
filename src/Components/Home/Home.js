@@ -20,6 +20,7 @@ import ServiceCustomer from '../Service/Customer/Customer';
 import ServiceVisitor from '../Service/Visitor/Visitor';
 import ServiceThrough from '../Service/Through/Through';
 import FinanceAccount from '../Finance/Account/Account';
+import FinanceCharge from '../Finance/Charge/Account';
 import AcademyCourse from '../Academy/Course/Course';
 import AcademyTeacher from '../Academy/Teacher/Teacher';
 import AcademyClass from '../Academy/Class/Class';
@@ -41,6 +42,10 @@ import SaleStatistic from "../Statistic/SaleStatistic/SaleStatistic";
 import ServiceStatistic from "../Service/ServiceStatistic/ServiceStatistic";
 import Situation from "../Service/Situation/Situation";
 import Import from "../Import/Import";
+import Academy from "../Setting/Academy/Academy";
+import Service from "../Setting/Service/Service";
+import CustomerService from "../Setting/Academy/CustomerService";
+import All from "../Sales/All/All";
 
 class Home extends React.Component {
   constructor(props) {
@@ -159,6 +164,7 @@ class Home extends React.Component {
             <PrivateRoute path="/home/mkt/act" changedCrmGroup={this.state.group} component={Act}{...query}/>
             <PrivateRoute path="/home/mkt/leads" changedCrmGroup={this.state.group} component={Leads}{...query}/>
             <PrivateRoute path="/home/mkt/leadspublic" changedCrmGroup={this.state.group} component={Leads}{...query}/>
+            <PrivateRoute path="/home/sales/allleads" changedCrmGroup={this.state.group} component={All}{...query}/>
             <PrivateRoute path="/home/mkt/statistic" changedCrmGroup={this.state.group} component={Statistic}{...query}/>
             <PrivateRoute path="/home/sales/oppor" changedCrmGroup={this.state.group} component={Appor}{...query}/>
             <PrivateRoute path="/home/sales/opporpublic" changedCrmGroup={this.state.group} component={Appor}{...query}/>
@@ -184,6 +190,8 @@ class Home extends React.Component {
             <PrivateRoute path="/home/service/statistic" changedCrmGroup={this.state.group} component={ServiceStatistic}{...query}/>
             <PrivateRoute path="/home/finance/account" changedCrmGroup={this.state.group}
                           component={FinanceAccount}{...query}/>
+              <PrivateRoute path="/home/finance/charge" changedCrmGroup={this.state.group}
+                            component={FinanceCharge}{...query}/>
             <PrivateRoute path="/home/academy/course" changedCrmGroup={this.state.group}
                           component={AcademyCourse}{...query}/>
             <PrivateRoute path="/home/academy/teacher" changedCrmGroup={this.state.group}
@@ -204,6 +212,10 @@ class Home extends React.Component {
                           component={AllStatistic}{...query}/>
             <PrivateRoute path="/home/import" changedCrmGroup={this.state.group}
                           component={Import}{...query}/>
+            <PrivateRoute path="/home/setting/academy" changedCrmGroup={this.state.group}
+                          component={Service}{...query}/>
+            <PrivateRoute path="/home/setting/service" changedCrmGroup={this.state.group}
+                        component={Academy}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>
             <Route render={(props) => (
               <NoMatch {...props} profile={this.state.profile.profile}/>

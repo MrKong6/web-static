@@ -9,6 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import DialogAccount from "../../Dialog/DialogAccount";
 import {Button, Form, Table} from "element-react";
 import DialogAccountRelateClass from "../../Dialog/DialogAccountRelateClass";
+import DialogAccountTwo from "../../Dialog/DialogAccountTwo";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -50,6 +51,8 @@ const PrevBtn = ({id, ids}) => {
     )
 };
 
+const INCOME="充值";
+
 class AccountView extends React.Component {
     constructor(props) {
         super(props);
@@ -58,14 +61,15 @@ class AccountView extends React.Component {
         this.second = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false)) ? 'normal' : 'none';
         this.third = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false)) ? 'normal' : 'none';
         this.fourth = (this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false)) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
+        this.fifth = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
+        this.sixth = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
+        this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
 
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
             redirectToList: false,
-            id: this.props.match.params.studentId,
+            id: this.props.match.params.studentId ? this.props.match.params.studentId : this.props.match.params.contractId,
             ids: [],
             name: this.props.location.state.stuName,
             columns: [
@@ -152,6 +156,9 @@ class AccountView extends React.Component {
                             }else{
                                 return <span><Button type="danger" size="small" onClick={this.createCourseHourDialog.bind(this,row)}>关联班级</Button></span>
                             }
+                        }else if(row.income && row.income > 0){
+                            //汇款记录  需要有支出按钮
+                            return <span><Button type="primary" size="small" onClick={this.createAccountDialog.bind(this,row)}>支出</Button></span>
                         }
                     }
                 }
@@ -181,24 +188,57 @@ class AccountView extends React.Component {
         }
     }
 
-    createAccountDialog() {
-        this.actContainer = document.createElement('div');
-        ReactDOM.render(
-            <DialogAccount
-                accept={this.acceptActDialog}
-                changedCrmGroup={this.state.group}
-                refresh={this.refresh}
-                id={this.state.id}
-                notRoot={true}
-                defaults={this.state.channelId}
-                replace={this.props.replace}
-                from={this.props.from}
-                ref={(dom) => {
-                    this.act = dom
-                }}
-            />,
-            document.body.appendChild(this.actContainer)
-        );
+    createAccountDialog(row,egt) {
+        if(egt.target.innerText == INCOME){
+            this.actContainer = document.createElement('div');
+            ReactDOM.render(
+                <div>
+                    <DialogAccount
+                        key={+new Date}
+                        accept={this.acceptActDialog}
+                        changedCrmGroup={this.state.group}
+                        refresh={this.refresh}
+                        id={this.state.id}
+                        accountType={1}
+                        notRoot={true}
+                        outRow={row}
+                        defaults={this.state.channelId}
+                        replace={this.props.replace}
+                        from={this.props.from}
+                        ref={(dom) => {
+                            this.act = dom
+                        }}
+                    />
+                </div>
+                ,
+                document.body.appendChild(this.actContainer)
+            );
+        }else{
+            this.actContainer = document.createElement('div');
+            let dateRandom = new Date().getTime();
+            ReactDOM.render(
+                    <DialogAccountTwo
+                        key={+new Date}
+                        dateRandom={dateRandom}
+                        accept={this.acceptActDialog}
+                        changedCrmGroup={this.state.group}
+                        refresh={this.refresh}
+                        id={this.state.id}
+                        accountType={2}
+                        notRoot={true}
+                        outRow={row}
+                        defaults={this.state.channelId}
+                        replace={this.props.replace}
+                        from={this.props.from}
+                        ref={(dom) => {
+                            this.act = dom
+                        }}
+                    />
+                ,
+                document.body.appendChild(this.actContainer)
+            );
+        }
+
         this.act.dialog.modal('show');
     }
 
@@ -286,9 +326,12 @@ class AccountView extends React.Component {
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>*/}
                     <div className="btn-group float-right ml-4" role="group" style={{"display":this.fourth}}>
-                        <button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
-                            新增
+                        <button onClick={this.createAccountDialog.bind(this,null)} className="btn btn-primary" type="button">
+                            充值
                         </button>
+                        {/*<button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
+                            支出
+                        </button>*/}
                         <button onClick={() => {
                             this.props.history.push('/home/service/customer');
                         }} type="button" className="btn btn-light">返回
@@ -345,6 +388,12 @@ class AccountView extends React.Component {
                                     pathname: `/home/service/customer/situation/${this.state.id}`,
                                     state: {stuName: this.state.name}
                                 }}>异动信息</Link>
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.seventh}}>
+                                <Link to={{
+                                    pathname: `/home/service/customer/charge/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>卡券信息</Link>
                             </li>
                         </ol>
                     </nav>

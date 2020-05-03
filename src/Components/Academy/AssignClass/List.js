@@ -10,14 +10,17 @@ import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 import './AssignClass.css'
 import DialogForEvent from "../../Dialog/DialogForEvent";
 import fmtDate from "../../../utils/fmtDate";
-import {Card, Menu, Message, MessageBox, Select} from "element-react";
+import {Button, Card, Menu, Message, MessageBox, Select} from "element-react";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
 import {$} from "../../../vendor";
 import DialogForEventEdit from "../../Dialog/DialogForEventEdit";
+import Commands from "../../Commands/Commands";
+import DialogAssignClass from "../../Dialog/DialogAssignClass";
 
-
+const MORE = "更多";
+const FOLD = "收起";
 class List extends React.Component {
 
     calendarComponentRef = React.createRef();
@@ -46,15 +49,20 @@ class List extends React.Component {
             chooseRoom: null,
             chooseClass: null,
             chooseTeacher: null,
+            classMore:MORE,
+            classMoreTeacher:MORE,
+            classMoreRoom:MORE,
         }
+        this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
         this.title.name  = this.title.name ? this.title.name : "All"
         this.eventMouseEnter = this.eventMouseEnter.bind(this);
         this.eventMouseLeave = this.eventMouseLeave.bind(this);
         this.chooseTopCondition = this.chooseTopCondition.bind(this);
-        this.addCustomeEvent = this.addCustomeEvent.bind(this);
         this.delAssignClass = this.delAssignClass.bind(this);
         this.mid = this.mid.bind(this);
+        this.changeFold = this.changeFold.bind(this);
+        this.toDirect = this.toDirect.bind(this);
     }
 
     componentDidMount() {
@@ -112,25 +120,34 @@ class List extends React.Component {
     }
 
     eventOnClick = (evt) => {
-        /*MessageBox.confirm('此操作将永久删除该日程, 是否继续?', '提示', {
-            type: 'warning'
-        }).then(() => {
-            this.delAssignClass(evt);
-            // evt.event.remove(evt)
-            this.refreshAssignClass();
-            Message({
-                type: 'success',
-                message: '删除成功!'
-            });
-        }).catch(() => {
-            Message({
-                type: 'info',
-                message: '已取消删除'
-            });
-        });*/
-        this.state.chooseEvent = evt.event;
-        this.handleDateClick();
+        // this.state.chooseEvent = evt.event;
+        // this.handleDateClick();
+        // this.props.history.push(`${this.props.match.url}/`+evt.event.id);
+        this.actContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogAssignClass
+                accept={this.acceptActDialog}
+                changedCrmGroup={this.state.group}
+                toDirect={this.toDirect}
+                id={evt.event.id}
+                defaults={this.state.channelId}
+                replace={this.props.replace}
+                from={this.props.from}
+                ref={(dom) => {
+                    this.act = dom
+                }}
+            />,
+            document.body.appendChild(this.actContainer)
+        );
+        this.act.dialog.modal('show');
+    }
 
+    toDirect(value,id){
+        if(value == 2){
+            this.props.history.push(`${this.props.match.url}/`+id,{type:value});
+        }else{
+            this.props.history.push(`${this.props.match.url}/`+id,{type:value});
+        }
     }
 
     windowResize(view) {
@@ -157,37 +174,40 @@ class List extends React.Component {
     chooseTopCondition(type, evt) {
         switch (type) {
             case(1): {
+                let items = this.state.classList.filter(item => (item.id == evt));
                 this.state.chooseTeacher = null;
                 this.state.chooseRoom = null;
-                this.state.chooseClass = evt.id;
-                this.title.name = evt.code;
+                this.state.chooseClass = Number(evt);
+                this.title.name = (items.length >0 ? items[0].code: "");
                 this.setState({
                     chooseTeacher : null,
                     chooseRoom : null,
-                    chooseClass : evt.id,
+                    chooseClass : Number(evt),
                 });
                 break;
             }
             case(2): {
-                this.state.chooseTeacher = evt.id;
+                let items = this.state.teacherList.filter(item => (item.id == evt));
+                this.state.chooseTeacher = evt;
                 this.state.chooseRoom = null;
                 this.state.chooseClass = null;
-                this.title.name = evt.name;
+                this.title.name = (items.length >0 ? items[0].name: "");;
                 this.setState({
-                    chooseTeacher : evt.id,
+                    chooseTeacher : evt,
                     chooseRoom : null,
                     chooseClass : null,
                 });
                 break;
             }
             case(3): {
-                this.state.chooseRoom = evt.id;
+                let items = this.state.roomList.filter(item => (item.id == evt));
+                this.state.chooseRoom = evt;
                 this.state.chooseTeacher = null;
                 this.state.chooseClass = null;
-                this.title.name = evt.code;
+                this.title.name = (items.length >0 ? items[0].code: "");;
                 this.setState({
                     chooseTeacher : null,
-                    chooseRoom : evt.id,
+                    chooseRoom : evt,
                     chooseClass : null,
                 });
                 break;
@@ -197,92 +217,9 @@ class List extends React.Component {
     }
     //添加自定义事件
     handleDateClick = (arg) => {
-
-        // if(this.state.chooseClass && this.state.chooseRoom && this.state.chooseTeacher){
-        this.userContainer = document.createElement('div');
-        if(this.state.chooseEvent && this.state.chooseEvent.id){
-            //编辑
-            ReactDOM.render(
-
-                <DialogForEventEdit
-                    accept={this.addCustomeEvent}
-                    refresh={this.mid}
-                    container={this.userContainer}
-                    typeName="1"
-                    changedCrmGroup={this.state.group}
-                    chooseStartDate={(arg && arg.date) ? arg.date : (this.state.chooseEvent ? this.state.chooseEvent.startTime : new Date())}
-                    data = {this.state.chooseEvent}
-                    replace={this.props.history.replace}
-                    from={this.props.location}
-                    ref={(dom) => {
-                        this.user = dom
-                    }}
-                />,
-                document.body.appendChild(this.userContainer)
-            );
-        }else{
-            ReactDOM.render(
-
-                <DialogForEvent
-                    accept={this.addCustomeEvent}
-                    refresh={this.mid}
-                    container={this.userContainer}
-                    typeName="1"
-                    changedCrmGroup={this.state.group}
-                    chooseStartDate={(arg && arg.date) ? arg.date : (this.state.chooseEvent ? this.state.chooseEvent.startTime : new Date())}
-                    data = {this.state.chooseEvent}
-                    replace={this.props.history.replace}
-                    from={this.props.location}
-                    ref={(dom) => {
-                        this.user = dom
-                    }}
-                />,
-            document.body.appendChild(this.userContainer)
-        );
-        }
-        this.user.dialog.modal('show');
-        // if (confirm('Would you like to add an event to ' + arg.dateStr + ' ?')) {
-        //     this.setState({  // add new event data
-        //         calendarEvents: this.state.calendarEvents.concat({ // creates a new array
-        //             title: 'New Event',
-        //             start: arg.date,
-        //             allDay: arg.allDay
-        //         })
-        //     })
-        // }
-        /*}else{
-            Message({
-                message: "请先选择班级、教师、教室",
-                type: 'error'
-            });
-        }*/
+        this.props.history.push(`${this.props.match.url}/create`);
     }
-    //确认添加自定义事件
-    addCustomeEvent(selected){
-        // if(selected.id){
-        //     this.delAssignClass(selected.id,selected.showXunhuanDate);
-        // }
-        const request = async () => {
-            try {
-                let param =  {classId: selected.chooseClass,
-                    teacherId: selected.chooseTeacher,roomId: selected.chooseRoom,course: selected.course,
-                    startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate,
-                    loopTrue:selected.loopTrue, loopId:selected.loopId, loopStartTime: selected.loopStartTime, classTime:selected.classTime};
-                await ajax('/academy/class/assignClass.do',{"assignVo":JSON.stringify(param)});
-                Message({
-                    message: "成功",
-                    type: 'info'
-                });
-                this.refreshAssignClass();
-            } catch (err) {
 
-            } finally {
-                this.setState({isAnimating: false});
-            }
-        };
-        request();
-        this.state.chooseEvent = null;
-    }
     mid(){
         this.refreshAssignClass();
         this.state.chooseEvent = null;
@@ -298,7 +235,7 @@ class List extends React.Component {
                     let calendarEvents = [];
                     assignClassList.data.map(item => {
                         calendarEvents.push({
-                            title: '班级：' + item.classCode + '\n教师：' + item.teacherName + '\n教室：' + item.roomCode,
+                            title: '班级：' + (item.classCode ? item.classCode : "")  + '\n教师：' + (item.teacherName ? item.teacherName : "") + '\n教室：' + (item.roomCode ? item.roomCode : "") + '\n课次：' + (item.currentClassTime ? item.currentClassTime : ""),
                             start: new Date(item.startTime),
                             end: new Date(item.endTime),
                             color: item.classColor ? item.classColor : "#ECF5FF",
@@ -345,6 +282,26 @@ class List extends React.Component {
             end: currentDate.clone().add(3, 'days') // exclusive end, so 3
         };
     }
+    //展开折叠
+    changeFold(type, evt) {
+        let className = ".list-fold-panel";
+        if(type == 1){
+            this.setState({classMore: evt.target.innerText == MORE ? FOLD : MORE})
+        }else if(type == 2){
+            className = ".list-fold-panel-teacher";
+            this.setState({classMoreTeacher: evt.target.innerText == MORE ? FOLD : MORE})
+        }else if(type == 3){
+            className = ".list-fold-panel-room";
+            this.setState({classMoreRoom: evt.target.innerText == MORE ? FOLD : MORE})
+        }
+        if(evt.target.innerText == MORE){
+            $(className).css("height", "auto");
+            $(className).css("overflow", "display");
+        }else{
+            $(className).css("height", "50px");
+            $(className).css("overflow", "hidden");
+        }
+    }
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -359,23 +316,15 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}|&nbsp;&nbsp;{this.title.name}
+                    <Commands
+                        commands={this.commands}
+                        thAction={this.handleDateClick}
+                    />
                 </h5>
                 <div id="main" className="main p-3">
 
                     <div className='demo-app'>
-                        <div className="row">
-                            {/*<div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
-                                <label>班级：</label>
-                            </div>*/}
-                            {/*<Menu defaultActive={this.state.chooseClass} className="el-menu-demo" mode="horizontal"
-                                  onSelect={this.chooseTopCondition.bind(this, 1)}>
-                                {
-                                    this.state.classList ? this.state.classList.map(item => (
-                                        <Menu.Item index={item}>{item.code}</Menu.Item>
-                                    )) : null
-                                }
-                            </Menu>*/}
-                            <div className="col-2">
+                            {/*<div className="col-2">
                                 <Select value={this.state.chooseClass} filterable={true} clearable={true} onChange={this.chooseTopCondition.bind(this, 1)} placeholder="请选择班级">
                                     {
                                         this.state.classList ? this.state.classList.map(el => {
@@ -389,8 +338,8 @@ class List extends React.Component {
                                         }) : null
                                     }
                                 </Select>
-                            </div>
-                            <div className="col-2">
+                            </div>*/}
+                            {/*<div className="col-2">
                                 <Select value={this.state.chooseTeacher} clearable={true} filterable={true} onChange={this.chooseTopCondition.bind(this, 2)} placeholder="请选择教师">
                                     {
                                         this.state.teacherList ? this.state.teacherList.map(el => {
@@ -407,38 +356,77 @@ class List extends React.Component {
                                         }) : null
                                     }
                                 </Select>
-                            </div>
+                            </div>*/}
+                            {/*<div className="col-2">
 
+                            </div>*/}
+                        </div>
+                    <div className="row">
+                        <div className="row">
+                            <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
+                                <label>班级：</label>
+                            </div>
+                            <div className="col-10 list-fold-panel">
+                                <Menu defaultActive={this.state.chooseClass} className="el-menu-demo" mode="horizontal"
+                                      onSelect={this.chooseTopCondition.bind(this, 1)}
+                                      >
+                                    {
+                                        this.state.classList ? this.state.classList.map(item => (
+                                            <Menu.Item index={item.id}>{item.code}</Menu.Item>
+                                        )) : null
+                                    }
+                                </Menu>
+                            </div>
+                            <div className="col-1 text-line-height">
+                                <Button type="text" size="large" onClick={this.changeFold.bind(this,1)}>{this.state.classMore}</Button>
+                            </div>
                         </div>
                         <div className="row">
-                            {/*<div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
+                            <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>教师：</label>
                             </div>
-                            <Menu defaultActive={this.state.chooseTeacher} className="el-menu-demo" mode="horizontal"
-                                  onSelect={this.chooseTopCondition.bind(this, 2)}>
-                                {
-                                    this.state.teacherList ? this.state.teacherList.map(item2 => (
-                                        <Menu.Item index={item2}>{item2.name}</Menu.Item>
-                                    )) : null
-                                }
-                            </Menu>*/}
-
+                            <div className="col-10 list-fold-panel-teacher">
+                                <Menu defaultActive={this.state.chooseTeacher} className="el-menu-demo" mode="horizontal"
+                                      onSelect={this.chooseTopCondition.bind(this, 2)}>
+                                    {
+                                        this.state.teacherList ? this.state.teacherList.map(item2 => (
+                                            <Menu.Item index={item2.id}>{item2.name}</Menu.Item>
+                                        )) : null
+                                    }
+                                </Menu>
+                            </div>
+                            <div className="col-1 text-line-height">
+                                <Button type="text" size="large" onClick={this.changeFold.bind(this,2)}>{this.state.classMoreTeacher}</Button>
+                            </div>
                         </div>
                         <div className="row">
-                            <br/>
-                            {/*<div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
+                            <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>教室：</label>
                             </div>
-                            <Menu defaultActive={this.state.chooseRoom} className="el-menu-demo" mode="horizontal"
-                                  onSelect={this.chooseTopCondition.bind(this, 3)}>
-                                {
-                                    this.state.roomList ? this.state.roomList.map(item3 => (
-                                        <Menu.Item index={item3}>{item3.code}</Menu.Item>
-                                    )) : null
-                                }
-                            </Menu>*/}
+                            <div className="col-10 list-fold-panel-room">
+                                <Menu defaultActive={this.state.chooseRoom} className="el-menu-demo" mode="horizontal"
+                                      onSelect={this.chooseTopCondition.bind(this, 3)}>
+                                    {
+                                        this.state.roomList ? this.state.roomList.map(item3 => (
+                                            <Menu.Item index={item3.id}>{item3.code}</Menu.Item>
+                                        )) : null
+                                    }
+                                </Menu>
+                            </div>
+                            <div className="col-1 text-line-height">
+                                <Button type="text" size="large" onClick={this.changeFold.bind(this,3)}>{this.state.classMoreRoom}</Button>
+                            </div>
                         </div>
-
+                        {/*<div className="row">
+                            <button
+                                type="submit"
+                                className="btn btn-primary"
+                                onClick={this.handleDateClick}
+                                disabled={this.state.isAnimating}
+                            >
+                                排课
+                            </button>
+                        </div>*/}
                         {/*<div className='demo-app-top row'>
                             <Card className="box-card">
                                 <div className="text item">事件内容：</div>
@@ -459,7 +447,7 @@ class List extends React.Component {
                                     firstDay={1}
                                     weekends={this.state.calendarWeekends}
                                     events={this.state.calendarEvents}
-                                    dateClick={this.handleDateClick}
+                                    // dateClick={this.handleDateClick}
                                     editable={false}
                                     timeZone='local'
                                     eventClick={this.eventOnClick}

@@ -13,7 +13,7 @@ export default {
             PATH: "home/mkt/act",
             PATH_RULE: /^\/home\/mkt\/act(\/((?!create).)*)?$/,
             ICON_CLASS: "fa-pie-chart",
-            CATEGORY: '市场',
+            CATEGORY: '营销',
             NAME: '活动'
         },
         "1-1-1": {
@@ -173,6 +173,13 @@ export default {
             NAME: '体验课'
         },
 
+        "2-5": {
+            PATH: "home/sales/allleads",
+            PATH_RULE: /^\/home\/sales\/allleads(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-desktop",
+            CATEGORY: '销售所有池',
+        },
+
 
         //服务相关权限配置
         "3": {ICON_CLASS: "fa-cogs"},
@@ -236,7 +243,7 @@ export default {
         },
         "3-2": {
             PATH: "home/service/customer",
-            PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account|situation|class)\/((?!create).)*)?$/,
+            PATH_RULE: /^\/home\/service\/customer(\/(student|parent|contract|account|situation|class|charge)\/((?!create).)*)?$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
         },
@@ -266,6 +273,11 @@ export default {
             CATEGORY: '学员'
         },
         "3-2-6": {
+            PATH_RULE: /^\/home\/service\/customer\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '学员'
+        },
+        "3-2-7": {
             PATH_RULE: /^\/home\/service\/customer\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '学员'
@@ -307,6 +319,12 @@ export default {
             PATH_RULE: /^\/home\/finance\/account(\/((?!create).)*)?$/,
             ICON_CLASS: "fa-credit-card",
             CATEGORY: '账户'
+        },
+        "4-2": {
+            PATH: "home/finance/charge",
+            PATH_RULE: /^\/home\/finance\/charge(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-credit-card",
+            CATEGORY: '财务'
         },
 
         //教务相关权限配置
@@ -404,6 +422,12 @@ export default {
         "5-5": {
             PATH: "home/academy/assignclass",
             PATH_RULE: /^\/home\/academy\/assignclass(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-tasks",
+            CATEGORY: '排课'
+        },
+        "5-5-1": {
+            PATH: "home/academy/assignclass",
+            PATH_RULE: /^\/home\/academy\/assignclass\/create$/,
             ICON_CLASS: "fa-tasks",
             CATEGORY: '排课'
         },
@@ -531,8 +555,42 @@ export default {
             CATEGORY: '迁移向导',
             NAME: ''
         },
+        //业务配置
+        "10": {ICON_CLASS: "fa-area-chart"},
+        "10-1": {
+            PATH: "home/setting/service",
+            PATH_RULE: /^\/home\/setting\/service/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '客户服务',
+            NAME: ''
+        },
+        "10-1-1": {
+            PATH_RULE: /^\/home\/setting\/service\/create$/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '客户服务',
+            NAME: ''
+        },
+        "10-1-2": {
+            PATH_RULE: /^\/home\/setting\/service\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-file-o",
+            CATEGORY: '客户服务',
+        },
+        "10-2": {
+            PATH: "home/setting/academy",
+            PATH_RULE: /^\/home\/setting\/academy/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '教务',
+            NAME: ''
+        },
+        "10-3": {
+            PATH: "home/setting/price",
+            PATH_RULE: /^\/home\/setting\/price/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '商品',
+            NAME: ''
+        },
     },
-
     TYPE_ID: {1: '线索', 2: '新招', 3: '续报'},
-    DOCUMENT: {1: '身份证'}
+    DOCUMENT: {1: '身份证'},
+    WEEKNAME: ["周一","周二","周三","周四","周五","周六","周日"]
 };

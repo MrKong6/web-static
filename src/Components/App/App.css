@@ -523,3 +523,6 @@ main h5 p {
 .back_table_tr_orange{
   background-color: #FF8000!important;
 }
+.right{
+  text-align: right;
+}

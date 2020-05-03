@@ -5,206 +5,272 @@ import DialogDate from '../../Dialog/DialogDate';
 import DialogAct from "../../Dialog/DialogAct"
 
 import fmtDate from '../../../utils/fmtDate'
+import {Tree} from "element-react";
+import ajax from "../../../utils/ajax";
 
 class Form extends React.Component {
-  constructor(props) {
-    super(props)
+    constructor(props) {
+        super(props)
 
-    this.state = {
-      group: this.props.changedCrmGroup,
-      parentId: 'root',
-      parentName: '作为一级活动',
-      startDate: undefined,
-      endDate: undefined
-    };
-    this.createActDialog = this.createActDialog.bind(this);
-    this.acceptActDialog = this.acceptActDialog.bind(this);
-    this.createDateDialog = this.createDateDialog.bind(this);
-    this.acceptDateDialog = this.acceptDateDialog.bind(this);
-    this.getFormValue = this.getFormValue.bind(this);
-  }
-
-  componentDidMount() {
-
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (!this.props.data && nextProps.data) {
-      this.setState({
-        parentId: nextProps.data.parentId,
-        parentName: nextProps.data.parentName,
-        startDate: new Date(nextProps.data.startDate),
-        endDate: new Date(nextProps.data.endDate)
-      }, () => {
-        this.form.name.value = nextProps.data.name;
-        this.form.budget.value = nextProps.data.budget;
-        this.form.cost.value = nextProps.data.cost;
-      });
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.tipsContainer) {
-      document.body.removeChild(this.tipsContainer);
+        this.options = {
+            label: 'name',
+            children: 'name'
+        }
+        this.state = {
+            group: this.props.changedCrmGroup,
+            parentId: 'root',
+            parentName: this.props.checkName ? this.props.checkName : '作为一级活动',
+            startDate: undefined,
+            endDate: undefined,
+            marketTypes: [],
+        };
+        this.createActDialog = this.createActDialog.bind(this);
+        this.acceptActDialog = this.acceptActDialog.bind(this);
+        this.createDateDialog = this.createDateDialog.bind(this);
+        this.acceptDateDialog = this.acceptDateDialog.bind(this);
+        this.getFormValue = this.getFormValue.bind(this);
     }
 
-    if (this.actContainer) {
-      document.body.removeChild(this.actContainer);
-    }
-  }
+    componentDidMount() {
 
-  createActDialog() {
-    if (this.act === undefined) {
-      this.actContainer = document.createElement('div');
-      ReactDOM.render(
-        <DialogAct
-          accept={this.acceptActDialog}
-          changedCrmGroup={this.state.group}
-          defaults={this.state.parentId}
-          replace={this.props.replace}
-          from={this.props.from}
-          ref={(dom) => {
-            this.act = dom
-          }}
-        />,
-        document.body.appendChild(this.actContainer)
-      );
     }
 
-    this.act.dialog.modal('show');
-  }
-
-  acceptActDialog(selected) {
-    this.setState({
-      parentId: selected.id,
-      parentName: selected.name,
-      startDate: null,
-      endDate: null
-    })
-  }
-
-  createDateDialog() {
-    if (this.date === undefined) {
-      this.dateContainer = document.createElement('div');
-      ReactDOM.render(
-        <DialogDate
-          accept={this.acceptDateDialog}
-          defaults={{
-            from: this.state.startDate,
-            to: this.state.endDate
-          }}
-          ref={(dom) => {
-            this.date = dom
-          }}
-        />,
-        document.body.appendChild(this.dateContainer)
-      );
+    componentWillReceiveProps(nextProps) {
+        if (!this.props.data && nextProps.data) {
+            this.setState({
+                parentId: nextProps.data.parentId,
+                parentName: nextProps.data.parentName,
+                startDate: new Date(nextProps.data.startDate),
+                endDate: new Date(nextProps.data.endDate)
+            }, () => {
+                this.form.name.value = nextProps.data.name;
+                this.form.budget.value = nextProps.data.budget;
+                this.form.cost.value = nextProps.data.cost;
+            });
+        }
     }
 
-    this.date.dialog.modal('show');
-  }
+    componentWillUnmount() {
+        if (this.tipsContainer) {
+            document.body.removeChild(this.tipsContainer);
+        }
 
-  acceptDateDialog({from, to}) {
-    this.setState({
-      startDate: from,
-      endDate: to
-    })
-  }
-
-  getFormValue() {
-    if (!this.form.checkValidity() || (!this.state.startDate && !this.state.endDate)) {
-      return
+        if (this.actContainer) {
+            document.body.removeChild(this.actContainer);
+        }
     }
 
-    let query = {};
+    createActDialog() {
+        if (this.act === undefined) {
+            this.actContainer = document.createElement('div');
+            ReactDOM.render(
+                <DialogAct
+                    accept={this.acceptActDialog}
+                    changedCrmGroup={this.state.group}
+                    defaults={this.state.parentId}
+                    replace={this.props.replace}
+                    from={this.props.from}
+                    ref={(dom) => {
+                        this.act = dom
+                    }}
+                />,
+                document.body.appendChild(this.actContainer)
+            );
+        }
 
-    if (this.state.parentId !== 'root') {
-      query.parentId = this.state.parentId;
+        this.act.dialog.modal('show');
     }
 
-    query.startDate = this.state.startDate;
-    query.endDate = this.state.endDate;
-
-    for (let i = 0; i < this.form.length; i++) {
-      if (this.form[i].tagName !== 'BUTTON' && !this.form[i].readOnly) {
-        query[this.form[i].name] = this.form[i].value;
-      }
+    acceptActDialog(selected) {
+        this.setState({
+            parentId: selected.id,
+            parentName: selected.name,
+            startDate: null,
+            endDate: null
+        })
     }
 
-    return query;
-  }
+    createDateDialog() {
+        if (this.date === undefined) {
+            this.dateContainer = document.createElement('div');
+            ReactDOM.render(
+                <DialogDate
+                    accept={this.acceptDateDialog}
+                    defaults={{
+                        from: this.state.startDate,
+                        to: this.state.endDate
+                    }}
+                    ref={(dom) => {
+                        this.date = dom
+                    }}
+                />,
+                document.body.appendChild(this.dateContainer)
+            );
+        }
 
-  render() {
-    if (this.props.isEditor && !this.props.data) {
-      return (
-        <form ref={(dom) => {
-          this.form = dom
-        }}>
-          <div className="row justify-content-md-center">
-            <div className="col col-md-6">
-              <div className="card">
-                <div className="card-body">数据加载中...</div>
-              </div>
-            </div>
-          </div>
-        </form>
-      )
-    } else {
-      return (
-        <form ref={(dom) => {
-          this.form = dom
-        }}>
-          <div className="row justify-content-md-center">
-            <div className="col col-md-5">
-              <div className="card">
-                <div className="card-body">
-                  <div className="form-group">
-                    <label htmlFor="name"><em className="text-danger">*</em>活动名称</label>
-                    <input type="text" className="form-control" name="name" required={true}/>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="name"><em className="text-danger">*</em>父级市场活动</label>
-                    <div className="input-group">
-                      <input type="text" className="form-control" value={this.state.parentName} readOnly={true}/>
+        this.date.dialog.modal('show');
+    }
+
+    acceptDateDialog({from, to}) {
+        this.setState({
+            startDate: from,
+            endDate: to
+        })
+    }
+
+    getFormValue() {
+        if (!this.form.checkValidity() || (!this.state.startDate && !this.state.endDate)) {
+            return
+        }
+
+        let query = {};
+
+        if (this.state.parentId !== 'root') {
+            query.parentId = this.state.parentId;
+        }
+
+        query.startDate = this.state.startDate;
+        query.endDate = this.state.endDate;
+
+        for (let i = 0; i < this.form.length; i++) {
+            if (this.form[i].tagName !== 'BUTTON' && !this.form[i].readOnly) {
+                query[this.form[i].name] = this.form[i].value;
+            }
+        }
+
+        return query;
+    }
+
+    handleCheckChange(data, node) {
+        console.log(data, node);
+        this.setState({checkId: data.id,checkName: data.name,checkRootId:data.rootId ? data.rootId : data.id});
+        this.state.checkId = data.id;
+        this.loadActivity();
+        // if(checked){
+        //     this.setState({checkId: data.id,checkName: data.name,checkRootId:data.rootId ? data.rootId : data.id});
+        // }else{
+        //     this.setState({checkId: null,checkName: null,checkRootId:null});
+        // }
+    }
+
+    //加载节点下的数据
+    loadNode(node, resolve) {
+        this.setState({checkId: node.id, checkName: node.name});
+        //第一级
+        if (node.level === 0) {
+            return resolve(this.state.marketTypes);
+        }
+        //超过5级返空
+        if (node.level > 5) return resolve([]);
+
+        const request = async () => {
+            try {
+                let list = await ajax('/mkt/activity/getMarketType.do', {
+                    orgId: this.state.group.id,
+                    parentId: node.data.id
+                });
+                return resolve(list);
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+        request();
+    }
+
+    render() {
+        if (this.props.isEditor && !this.props.data) {
+            return (
+                <form ref={(dom) => {
+                    this.form = dom
+                }}>
+                    <div className="row justify-content-md-center">
+                        <div className="col col-md-6">
+                            <div className="card">
+                                <div className="card-body">数据加载中...</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            )
+        } else {
+            return (
+                <form ref={(dom) => {
+                    this.form = dom
+                }}>
+                    <div className="row justify-content-md-center">
+                        <div className="col col-md-5">
+                            <div className="card">
+                                <div className="card-body">
+                                    <div className="form-group">
+                                        <label htmlFor="name"><em className="text-danger">*</em>活动名称</label>
+                                        <input type="text" className="form-control" name="name" required={true}/>
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="name"><em className="text-danger">*</em>父级营销活动</label>
+                                        <div className="input-group">
+                                            {/*<input type="text" className="form-control" value={this.state.parentName} readOnly={true}/>
                       <span className="input-group-btn">
                         <button onClick={this.createActDialog} className="btn btn-secondary" type="button">
                           <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
                         </button>
-                      </span>
-                    </div>
-                  </div>
-                  <div data-toggle="datepicker" className="form-group">
-                    <label htmlFor="startDate"><em className="text-danger">*</em>时间范围</label>
-                    <div className="input-group">
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={this.state.startDate ? `${fmtDate(this.state.startDate)} 至 ${fmtDate(this.state.endDate)}` : ''}
-                        readOnly={true}
-                      />
-                      <span className="input-group-btn">
+                      </span>*/}
+                                            {/*<Input placeholder="输入关键字进行过滤" onChange={text=> this.tree.filter(text)} />*/}
+                                            <Tree
+                                                ref={e => this.tree = e}
+                                                data={this.state.marketTypes}
+                                                options={this.options}
+                                                isShowCheckbox={false}
+                                                highlightCurrent={true}
+                                                expandOnClickNode={false}
+                                                defaultExpandAll={false}
+                                                lazy={true}
+                                                load={this.loadNode.bind(this)}
+                                                onNodeClicked={this.handleCheckChange.bind(this)}
+                                                /*filterNodeMethod={(value, data)=>{
+                                                    if (!value) return true;
+                                                    return data.name.indexOf(value) !== -1;
+                                                }}*/
+                                            />
+                                        </div>
+                                    </div>
+                                    <div data-toggle="datepicker" className="form-group">
+                                        <label htmlFor="startDate"><em className="text-danger">*</em>时间范围</label>
+                                        <div className="input-group">
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                value={this.state.startDate ? `${fmtDate(this.state.startDate)} 至 ${fmtDate(this.state.endDate)}` : ''}
+                                                readOnly={true}
+                                            />
+                                            <span className="input-group-btn">
                         <button onClick={this.createDateDialog} className="btn btn-secondary" type="button">
                           <i className="fa fa-calendar-o fa-lg" aria-hidden="true"/>
                         </button>
                       </span>
+                                        </div>
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="budget">预算费用</label>
+                                        <input type="text" className="form-control" name="budget"/>
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor="cost">实际费用</label>
+                                        <input type="text" className="form-control" name="cost"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="budget">预算费用</label>
-                    <input type="text" className="form-control" name="budget"/>
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="cost">实际费用</label>
-                    <input type="text" className="form-control" name="cost"/>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
-      )
+                </form>
+            )
+        }
     }
-  }
 }
 
 export default Form;

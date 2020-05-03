@@ -266,7 +266,7 @@ class View extends React.Component {
                         <dt>活动名称</dt>
                         <dd className="b-l">{this.state.name ? this.state.name : '--'}</dd>
 
-                        <dt>父级市场活动</dt>
+                        <dt>父级营销活动</dt>
                         <dd className="b-l">{this.state.parentName ? this.state.parentName : '--'}</dd>
 
                         <dt>时间周期</dt>

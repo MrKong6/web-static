@@ -31,3 +31,21 @@
   border-bottom: 1px dotted;
   margin-bottom: 10px;
 }
+.el-select{
+  display: block;
+}
+.list-fold-panel{
+  height: 50px;
+  overflow: hidden;
+}
+.list-fold-panel-teacher{
+  height: 50px;
+  overflow: hidden;
+}
+.list-fold-panel-room{
+  height: 50px;
+  overflow: hidden;
+}
+.text-line-height{
+  line-height: 60px;
+}

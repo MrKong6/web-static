@@ -25,13 +25,15 @@ class CourseName extends React.Component{
             }
             this.componentDidMount();
         });
+        this.changeCourse = this.changeCourse.bind(this);
+        this.changeFirstCourse = this.changeFirstCourse.bind(this);
     }
 
-   /* componentWillUnmount() {
-        emitter.removeListener(this.eventEmitter);
+    componentWillUnmount() {
+        if(this.eventEmitter){
+            emitter.removeListener('changeCourseType',this.eventEmitter._events.changeCourseType);
+        }
     }
-*/
-
     componentDidMount() {
         // debugger;
         /*if (this.state.list.length) {
@@ -41,10 +43,10 @@ class CourseName extends React.Component{
         const request = async () => {
 
             try {
-                let list = await ajax('/course/session/queryListByTypeId.do',{id:this.state.typeId ? this.state.typeId : 0});
-
-                this.setState({list});
-
+                let list = await ajax('/course/type/listAll.do',{courseType:this.state.typeId ? this.state.typeId : 0});
+                this.state.list = list.data.items ? list.data.items : [];
+                this.setState({list : list.data.items});
+                this.changeFirstCourse((list.data.items && list.data.items.length) > 0 ? list.data.items[0].id : null);
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -81,13 +83,36 @@ class CourseName extends React.Component{
         this.tips.dialog.modal('show');
     }
 
+    changeCourse(evt){
+        // console.log(evt.target.value);
+        this.changeFirstCourse(evt.target.value);
+    }
+
+    changeFirstCourse(id){
+        debugger
+        if(!this.props.parent){
+            return ;
+        }
+        if(id == null){
+            this.props.parent.changeCourse(this, null);
+        }else{
+            this.state.list.map(item => {
+                if(item.id == id){
+                    this.props.parent.changeCourse(this, item);
+                    return;
+                }
+            });
+        }
+
+    }
+
     render() {
         return (
-            <select name="courseId" className="form-control">
+            <select name="courseId" className="form-control" onChange={this.changeCourse}>
                 {
-                    this.state.list.map(item => (
+                    this.state.list ? this.state.list.map(item => (
                         <option key={item.id} value={item.id}>{item.name}</option>
-                    ))
+                    )) : null
                 }
             </select>
         )

@@ -5,7 +5,7 @@ import {Message} from "element-react";
 // 192.168.0.98
 // export const AJAX_PATH = 'http://www.schooloms.com:8080/web/ajax';
 export const AJAX_PATH = 'http://localhost:8081/ajax';
-// export const AJAX_PATH = 'http://192.168.0.104:8080/ajax';
+// export const AJAX_PATH = 'http://192.168.0.101:8080/ajax';
 // export const AJAX_PATH = 'http://192.168.70.64:8080/ajax';
 //
 export default function (url, data) {
@@ -36,14 +36,14 @@ export default function (url, data) {
             resolve(data.data);
         }
       } else {
-        // reject({
-        //   errCode: data.code,
-        //   errText: data.detail
-        // });
-          Message({
-              message: data.detail,
-              type: 'error'
-          });
+        reject({
+          errCode: data.code,
+          errText: data.detail
+        });
+          // Message({
+          //     message: data.detail,
+          //     type: 'error'
+          // });
       }
     }).fail((jqXHR) => {
       reject({

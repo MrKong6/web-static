@@ -32,7 +32,7 @@ class CourseType extends React.Component{
 
         const request = async () => {
             try {
-                let list = await ajax('/course/type/list.do');
+                let list = await ajax('/course/type/courseTypeList.do');
 
                 this.setState({list});
 
@@ -51,7 +51,9 @@ class CourseType extends React.Component{
     }
 
     componentWillUnmount() {
-        // emitter.removeListener(this.eventEmitter);
+        /*if(this.eventEmitter){
+            emitter.removeListener(this.eventEmitter);
+        }*/
     }
 
     createDialogTips(text) {
@@ -77,7 +79,9 @@ class CourseType extends React.Component{
     }
 
     changeType = (evt) => {
-        emitter.emit('changeCourseType', evt.target.value);
+        if(evt.target.value){
+            emitter.emit('changeCourseType', evt.target.value);
+        }
     };
 
     render() {

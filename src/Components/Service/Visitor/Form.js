@@ -16,7 +16,8 @@ import CourseName from '../../Dic/CourseName';
 import ajax from "../../../utils/ajax";
 import Age from "../../Dic/Age";
 import {formatWithTime} from "../../../utils/fmtDate";
-import { DatePicker } from 'element-react';
+import {DatePicker, Popover} from 'element-react';
+import ActHouver from "../../Dic/ActHouver";
 
 class Form extends React.Component {
     constructor(props) {
@@ -34,6 +35,7 @@ class Form extends React.Component {
         this.createActDialog = this.createActDialog.bind(this);
         this.acceptActDialog = this.acceptActDialog.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
+        this.checkAct = this.checkAct.bind(this);
     }
 
     componentDidMount() {
@@ -177,6 +179,11 @@ class Form extends React.Component {
 
 
         return query;
+    }
+
+    //选中活动
+    checkAct(item) {
+        this.setState({channelText:item.name,channelId:item.id});
     }
 
     render() {
@@ -331,12 +338,14 @@ class Form extends React.Component {
                                                     {/*<em className="text-danger">*</em>*/}具体渠道
                                                 </label>
                                                 <div className="input-group col-7">
-                                                    <input type="text" className="form-control" value={this.state.channelText} readOnly={true}/>
-                                                    <span className="input-group-btn">
-                                                        <button onClick={this.createActDialog} className="btn btn-secondary" type="button">
-                                                          <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
-                                                        </button>
-                                                    </span>
+                                                    <Popover placement="right-end" trigger="click" width={400}
+                                                             visible={this.state.visible} content={(
+                                                        <ActHouver parent={this} />
+                                                    )}>
+                                                        <input type="text" className="form-control"
+                                                               style={{"width": "70%"}}
+                                                               value={this.state.channelText} readOnly={true}/>
+                                                    </Popover>
                                                 </div>
                                             </div>
                                         </div>

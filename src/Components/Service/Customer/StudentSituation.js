@@ -24,6 +24,7 @@ class StudentSituation extends React.Component {
         this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
         this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
         this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
+        this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
 
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
@@ -218,6 +219,12 @@ class StudentSituation extends React.Component {
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 异动信息
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.seventh}}>
+                                <Link to={{
+                                    pathname: `/home/service/customer/charge/${this.state.id}`,
+                                    state: {stuName: this.state.data ? this.state.data.name : this.state.stuName}
+                                }}>卡券信息</Link>
                             </li>
                         </ol>
                     </nav>

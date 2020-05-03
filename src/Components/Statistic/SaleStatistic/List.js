@@ -161,7 +161,7 @@ class List extends React.Component {
                             <Menu.Item index="2-3">学员</Menu.Item>
                         </Menu.SubMenu>
                         <Menu.SubMenu index="3" title="市场管理" style={{"display":this.third}}>
-                            <Menu.Item index="3-1">市场活动</Menu.Item>
+                            <Menu.Item index="3-1">营销活动</Menu.Item>
                         </Menu.SubMenu>
                         <Menu.Item index="4" style={{"display":this.fourth}}>教务管理</Menu.Item>
                     </Menu>

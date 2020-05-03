@@ -1,3 +1,5 @@
+import CONFIG from "./config";
+
 Date.prototype.format = function (format) {
     var o = {
         "M+": this.getMonth() + 1, // month
@@ -105,10 +107,48 @@ export function getWeekByNum(num){
     }
     return retval;
 }
+const WEEKNAME=CONFIG.WEEKNAME;
+export function getNumByWeek(num){
+    let retval = 1;
+    switch (num){
+        case WEEKNAME[0]: retval = 1;break;
+        case WEEKNAME[1]: retval = 2;break;
+        case WEEKNAME[2]: retval = 3;break;
+        case WEEKNAME[3]: retval = 4;break;
+        case WEEKNAME[4]: retval = 5;break;
+        case WEEKNAME[5]: retval = 6;break;
+        case WEEKNAME[6]: retval = 7;break;
+    }
+    return retval;
+}
 
 export function getTimeFourByDate(date){
     let useDate = new Date(date);
     let hour = useDate.getHours();
     let minute = useDate.getMinutes();
-    return hour + ":" + minute;
+    if(hour >= 10){
+        hour = hour;
+    }else{
+        hour = '0' + hour;
+    }
+
+    if(minute >= 10){
+        minute = minute;
+    }else{
+        minute = '0' + minute;
+    }return hour + ":" + minute;
+}
+
+
+export function getTimeByWeek(week,date){
+    //获取所传日期是周几
+    let weekNum = date.getDay();
+    //根据周几获取数字
+    let num = getNumByWeek(week);
+    let offset = num - weekNum; // 计算出差几天
+    date = date.getTime(); // 拿到当前的时间戳
+    debugger
+    var future = date + offset * 24 * 3600 * 1000; // 计算出星期五的时间戳
+    return new Date(future); // 转成时间对象
+
 }

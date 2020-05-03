@@ -81,7 +81,9 @@ class View extends React.Component {
                 let data = await ajax('/service/contract/query.do', {id: this.state.id});
                 let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
                 const ids = list.data.map((contract) => (contract.id));
-
+                if(data.startDate){
+                    data.startDate = fmtDate(data.startDate);
+                }
                 this.setState({data, ids, moneyList: data.list});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -396,6 +398,52 @@ class View extends React.Component {
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">合同编号</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.code}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">合同日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.startDate}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">合同状态</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.contractStatusName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">合同类型</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.typeName}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">课程类别</label>
                                                 <div className="col-7">
                                                     <input
@@ -439,21 +487,30 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">合同编号</label>
+                                                <label className="col-5 col-form-label font-weight-bold">时长</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.code}
+                                                        value={this.state.data.time}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">课时费</label>
+                                                <label className="col-5 col-form-label font-weight-bold">单课时费</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.price}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">总课时费</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -580,32 +637,83 @@ class View extends React.Component {
                                         </div>
                                     </div>
                                     <p className="ht pt-3 pb-3 b-t b-b">付费信息</p>
-                                    {
-                                        this.state.moneyList.map(function (evt) {
-                                        return <div className="row">
-                                            <div className="col-1">
-                                                <label className="col-form-label font-weight-bold">
-                                                    <em className="text-danger">*</em>{evt.contractTime}期：
-                                                </label>
-                                            </div>
-                                            <div className="col-3">
-                                                <div className="form-group">
-                                                    <input type="text" className="form-control"
-                                                           readOnly={true}
-                                                           value={fmtDate(evt.contractDate)}
-                                                           required={true}/>
-                                                </div>
-                                            </div>
-                                            <div className="col-3">
-                                                <div className="form-group row">
-                                                    <input type="text" className="form-control"
-                                                           readOnly={true}
-                                                           value={evt.amount}
-                                                           placeholder="请输入金额" required={true}/>
-                                                </div>
-                                            </div>
+                                    <div className="row">
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                期数
+                                            </label>
                                         </div>
-                                    })
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                课时
+                                            </label>
+                                        </div>
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                课时费
+                                            </label>
+                                        </div>
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                培训资料费
+                                            </label>
+                                        </div>
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                其他费用
+                                            </label>
+                                        </div>
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                折扣费用
+                                            </label>
+                                        </div>
+                                        <div className="col-1">
+                                            <label className="col-form-label font-weight-bold">
+                                                本期应收
+                                            </label>
+                                        </div>
+                                    </div>
+                                    {
+                                        this.state.moneyList.map(function (item) {
+                                            return <div className="row">
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.periodNum}期
+                                                    </label>
+                                                </div>
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.classHour}
+                                                    </label>
+                                                </div>
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.amount}
+                                                    </label>
+                                                </div>
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.bookFee}
+                                                    </label>
+                                                </div>
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.otherFee}
+                                                    </label>
+                                                </div>
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.discount}
+                                                    </label>
+                                                </div>
+                                                <div className="col-1">
+                                                    <label className="col-form-label font-weight-bold">
+                                                        {item.thisAmount}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        })
                                     }
                                 </div>
                             </div>

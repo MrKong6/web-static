@@ -367,8 +367,6 @@ class DialogForEvent extends React.Component {
             comment: this.state.comment,
             id:this.state.id,
             loopId: this.state.loopId,
-
-
         });
         this.dialog.modal('hide');
     }

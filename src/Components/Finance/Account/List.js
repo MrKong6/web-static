@@ -19,7 +19,6 @@ class List extends React.Component {
 
         this.commands = this.props.commands.filter((command) => (command === 'Add'));
         this.title = fmtTitle(this.props.location.pathname);
-        debugger
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.state = {
@@ -38,7 +37,7 @@ class List extends React.Component {
                     prop: "stuCode",
                     render: (row, column, data) => {
                         return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.stuId)}>{row.stuCode}</Button></span>
+                                             onClick={this.goToDetails.bind(this, row.stuId, row.stuName)}>{row.stuCode}</Button></span>
                     }
                 },
                 {
@@ -132,10 +131,9 @@ class List extends React.Component {
         this.tips.dialog.modal('show');
     }
 
-    goToDetails(evt) {
-        const url = `${this.props.match.url}/customer/account`;
-
-        this.props.history.push(url,{state: {stuName: this.state.name}});
+    goToDetails(evt,name) {
+        const url = `${this.props.match.url}/customer/account/`+evt;
+        this.props.history.push(url,{state: {stuName: name}});
     }
 
     pageChange(currentPage){

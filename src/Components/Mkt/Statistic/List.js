@@ -215,7 +215,7 @@ class List extends React.Component {
                 </h5>
                 <div id="main" className="main p-3">
                     <Tabs activeName="1" onTabClick={ (tab) => console.log(tab.props.name) }>
-                        <Tabs.Pane label="市场活动" name="1"></Tabs.Pane>
+                        <Tabs.Pane label="营销活动" name="1"></Tabs.Pane>
                         {/*<Tabs.Pane label="配置管理" name="2"></Tabs.Pane>
                         <Tabs.Pane label="角色管理" name="3"></Tabs.Pane>
                         <Tabs.Pane label="定时补偿任务" name="4"></Tabs.Pane>*/}

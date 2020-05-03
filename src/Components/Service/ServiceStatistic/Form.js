@@ -163,7 +163,7 @@ class Form extends React.Component {
                     <input type="text" className="form-control" name="name" required={true}/>
                   </div>
                   <div className="form-group">
-                    <label htmlFor="name"><em className="text-danger">*</em>父级市场活动</label>
+                    <label htmlFor="name"><em className="text-danger">*</em>父级营销活动</label>
                     <div className="input-group">
                       <input type="text" className="form-control" value={this.state.parentName} readOnly={true}/>
                       <span className="input-group-btn">

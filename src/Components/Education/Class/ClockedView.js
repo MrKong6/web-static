@@ -62,7 +62,8 @@ class ClockedView extends React.Component {
             data: null,  //学生签到数据
             teacherClockList:[], //教师签到数据
             stuName: this.props.location.state.stuName,
-            classTimes: null,  //班次
+            classTimes: null,  //班次   课次
+            hourTime: 2, //每天多少课时
             show: 'normal',
             ids: [],
             mainTeacher: [],
@@ -113,20 +114,42 @@ class ClockedView extends React.Component {
         const request = async () => {
             try {
                 let data = await ajax('/academy/class/query.do', {id: this.state.id});
-                let times = 60;
-                if(data && data.data && data.data.classTime){
-                    times = data.data.classTime;
+                let times = 60,hourTime = 2;
+                let classTime = 0;
+                if(data && data.data && data.data.classHour){
+                    times = data.data.classHour;
+                    hourTime = data.data.classHour / data.data.classTime;
+                    classTime = data.data.classTime;
                 }
-                for (let i = 1; i <= times; i++) {
+                for (let i = 1; i <= times; i+=2) {
                     columnHeader.push({
-                        label: i+"",
-                        prop: i+"",
-                        render: (row, column, data)=>{
-                            return <Tooltip effect="dark" content={row[column.prop] ? row[column.prop].allStr : ''}
-                                                   placement="top-start">
-                                        {row[column.prop] ? row[column.prop].sign : ''}
-                                    </Tooltip>
-                        }
+                        label: "课次(" + (i + 1)/2 + ")",
+                        subColumns: [
+                            {
+                                label: i+"",
+                                prop: i+"",
+                                render: (row, column, data)=>{
+                                    if(row[column.prop] && row[column.prop].sign){
+                                        return <Tooltip effect="dark" content={row[column.prop] ? row[column.prop].allStr : ''}
+                                                        placement="top-start">
+                                            {row[column.prop] ? row[column.prop].sign : ''}
+                                        </Tooltip>
+                                    }
+                                }
+                            },
+                            {
+                                label: i+1+"",
+                                prop: i+1+"",
+                                render: (row, column, data)=>{
+                                    if(row[column.prop] && row[column.prop].sign){
+                                        return <Tooltip effect="dark" content={row[column.prop] ? row[column.prop].allStr : ''}
+                                                        placement="top-start">
+                                            {row[column.prop] ? row[column.prop].sign : ''}
+                                        </Tooltip>
+                                    }
+                                }
+                            }
+                        ]
                     });
                     teacherColumnHeader.push({
                         label: i+"",
@@ -137,8 +160,8 @@ class ClockedView extends React.Component {
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
                 let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});  //助教   ,position:2  ,position:2
-                this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader,classTimes: times,mainTeacher:mainTeacherData.data.items,
-                    helpTeacher:helpTeacherData.data.items,roomList:roomList.data.items});
+                this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader,classTimes: classTime,mainTeacher:mainTeacherData.data.items,
+                    helpTeacher:helpTeacherData.data.items,roomList:roomList.data.items,hourTime});
                 this.refreshList();
             } catch (err) {
                 if (err.errCode === 401) {
@@ -183,7 +206,6 @@ class ClockedView extends React.Component {
         request();
     }
 
-
     componentWillReceiveProps(nextProps) {
         if (this.props.changedCrmGroup !== nextProps.changedCrmGroup) {
             this.setState({redirectToList: true})
@@ -195,7 +217,6 @@ class ClockedView extends React.Component {
             document.body.removeChild(this.tipsContainer);
         }
     }
-
 
     createDialogTips(text) {
         if (this.tips === undefined) {
@@ -220,57 +241,10 @@ class ClockedView extends React.Component {
     }
     //签到签退
     thAction(evt) {
-        if(evt.target.innerText && evt.target.innerText == '签到'){
-            this.userContainer = document.createElement('div');
-            ReactDOM.render(
-                <DialogForClocked
-                    accept={this.addCheckInEvent}
-                    refresh={this.refreshList}
-                    container={this.userContainer}
-                    mainTeacher={this.state.mainTeacher}
-                    helpTeacher={this.state.helpTeacher}
-                    classId={this.state.id}
-                    teacherId={this.state.teacherId}
-                    roomList={this.state.roomList}
-                    typeName="1"
-                    changedCrmGroup={this.state.group}
-                    data = {this.state.list}
-                    classTimes = {this.state.classTimes}
-                    replace={this.props.history.replace}
-                    from={this.props.location}
-                    ref={(dom) => {
-                        this.user = dom
-                    }}
-                />,
-                document.body.appendChild(this.userContainer)
-            );
-            this.user.dialog.modal('show');
-        }else{
-            this.userContainer = document.createElement('div');
-            ReactDOM.render(
-                <DialogForClocked
-                    accept={this.addCheckInEvent}
-                    refresh={this.refreshList}
-                    container={this.userContainer}
-                    mainTeacher={this.state.mainTeacher}
-                    helpTeacher={this.state.helpTeacher}
-                    classId={this.state.id}
-                    teacherId={this.state.teacherId}
-                    roomList={this.state.roomList}
-                    typeName="2"
-                    changedCrmGroup={this.state.group}
-                    data = {this.state.list}
-                    classTimes = {this.state.classTimes}
-                    replace={this.props.history.replace}
-                    from={this.props.location}
-                    ref={(dom) => {
-                        this.user = dom
-                    }}
-                />,
-                document.body.appendChild(this.userContainer)
-            );
-            this.user.dialog.modal('show');
-        }
+        const url = `${this.props.match.url}/checkon/${evt}`;
+        this.props.history.push(url,{mainTeacher: this.state.mainTeacher, helpTeacher: this.state.helpTeacher,
+            teacherId: this.state.teacherId,classId: this.state.id,roomList: this.state.roomList, data: this.state.list,
+            classTimes: this.state.classTimes,hourTime: this.state.hourTime});
     }
 
     render() {

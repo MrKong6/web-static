@@ -62,7 +62,7 @@ class AccountView extends React.Component {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
             redirectToList: false,
-            id: this.props.match.params.studentId,
+            id: this.props.match.params.studentId ? this.props.match.params.studentId : this.props.match.params.contractId,
             ids: [],
             name: this.props.location.state.stuName,
             columns: [
