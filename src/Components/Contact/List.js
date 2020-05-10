@@ -8,6 +8,11 @@ import Approach from '../Dic/Approach';
 import ajax from "../../utils/ajax";
 import {DatePicker} from "element-react";
 import {formatWithTime} from '../../utils/fmtDate';
+import fmtDate from "../../utils/fmtDate";
+import {VerticalTimeline, VerticalTimelineElement} from "react-vertical-timeline-component";
+import 'react-vertical-timeline-component/style.min.css';
+import {BsBook} from "react-icons/bs/index";
+
 
 const TableTitle = ({canEdit}) => {
     const base = [
@@ -308,27 +313,24 @@ class List extends React.Component {
         }*/
 
         return (
-            <div>
-                <p className="ht pt-3 pb-3 b-t b-b">沟通记录</p>
-                <table className="table table-bordered table-sm">
-                    <thead>
-                    <TableTitle canEdit={this.state.canEdit}/>
-                    </thead>
-                    <tbody>
-                    <TableControl
-                        canEdit={this.state.canEdit}
-                        groupName={this.state.groupName}
-                        userName={this.state.userName}
-                        action={this.addContact}
-                    />
-                    <TableItems
-                        list={this.state.list}
-                        canEdit={this.state.canEdit}
-                        action={this.modContact}
-                    />
-                    </tbody>
-                </table>
-            </div>
+            <VerticalTimeline  layout='1-column'>
+                {
+                    this.state.list.map(item => {
+                        return <VerticalTimelineElement
+                            className="vertical-timeline-element--work"
+                            contentStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
+                            contentArrowStyle={{ borderRight: '7px solid  rgb(33, 150, 243)' }}
+                            date={formatWithTime(item.datetime) + '  ' + item.executiveName}
+                            iconStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
+                            icon={<BsBook />}
+                        >
+                            <p>
+                                {item.summary}
+                            </p>
+                        </VerticalTimelineElement>
+                    })
+                }
+            </VerticalTimeline>
         )
     }
 }

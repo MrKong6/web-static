@@ -15,6 +15,8 @@ import antd into schoolpal
 - [去掉销售机会线程进程中的类型字段]
 - [修复销售线索在详情页没有沟通记录不显示bug]
 
+- [npm i react-vertical-timeline-component]
+
 add [https://www.ctolib.com/react-input-color.html]
 - [npm install react-input-color --save]
 - [yarn add react-input-color]

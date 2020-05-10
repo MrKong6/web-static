@@ -8,7 +8,7 @@ import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {ColorPicker, DatePicker, Select} from "element-react";
-import InputColor from 'react-input-color';
+// import InputColor from 'react-input-color';
 
 class Form extends React.Component {
     constructor(props) {
@@ -267,8 +267,8 @@ class Form extends React.Component {
                                                 {/*<ColorPicker ref='myInput' value={this.state.classColor ? this.state.classColor : null}
                                                              onChange={this.changeColor}
                                                 ></ColorPicker>*/}
-                                                <div>
-                                                    <InputColor
+                                                {/*<div>
+                                                   <InputColor
                                                         colorFormat='hex'
                                                         initialHexColor= "#5e72e4"
                                                         onChange={this.changeColor}
@@ -282,7 +282,7 @@ class Form extends React.Component {
                                                             backgroundColor: this.state.classColor
                                                         }}
                                                     />
-                                                </div>
+                                                </div>*/}
                                             </div>
                                         </div>
                                         <div className="form-group row">
