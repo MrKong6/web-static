@@ -36,11 +36,33 @@ export function changeArrayItemToInt(data){
 export function changeArrayItemToString(data){
     let retval = "";
     if(data && data.length > 0){
+        console.log(data);
         let idx = 1;
         data.map(item => {
             retval += item;
             if(idx != data.length){
                 retval += ",";
+            }
+            idx ++;
+        });
+    }
+    return retval;
+}
+
+
+/**
+ * 对象数组转换为字符串
+ * @param data
+ * @returns {string}
+ */
+export function changeObjArrayItemToString(data,key){
+    let retval = "";
+    if(data && data.length > 0){
+        let idx = 1;
+        data.map(item => {
+            retval += item[key];
+            if(idx != data.length){
+                retval += "/";
             }
             idx ++;
         });

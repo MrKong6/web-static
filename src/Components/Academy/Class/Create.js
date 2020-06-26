@@ -74,19 +74,20 @@ class Create extends React.Component {
             return;
         }
 
-        query.createOn = this.form.state.createOn ? this.form.state.createOn.getTime() : "";
-        query.startDate = this.form.state.startTime ? this.form.state.startTime.getTime() : "";
-        query.endDate = this.form.state.endTime ? this.form.state.endTime.getTime() : "";
-        query.courseStartDate = this.form.state.courseStartTime ? this.form.state.courseStartTime.getTime() : "";
-        query.courseEndDate = this.form.state.courseEndTime ? this.form.state.courseEndTime.getTime() : "";
+        query.createOn = this.form.state.createOn ? this.form.state.createOn : null;
+        query.startDate = this.form.state.startTime ? this.form.state.startTime : null;
+        query.endDate = this.form.state.endTime ? this.form.state.endTime : null;
+        query.courseStartDate = this.form.state.courseStartTime ? this.form.state.courseStartTime : null;
+        query.courseEndDate = this.form.state.courseEndTime ? this.form.state.courseEndTime : null;
         query.orgId = this.state.group.id;
         query.mainTeacher = this.form.state.mainTeacherIds.toString();
+        query.createOn = null;
 
         this.setState({isAnimating: true});
 
         const request = async () => {
             try {
-                let rs = await ajax('/academy/class/add.do', query);
+                let rs = await ajax('/academy/class/add.do', {cls:JSON.stringify(query)}); //query
 
                 this.setState({isCreated: true, createdId: rs})
             } catch (err) {

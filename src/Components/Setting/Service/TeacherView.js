@@ -240,6 +240,17 @@ class TeacherView extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">学科</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.courseName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">出生年月</label>
                                                 <div className="col-7">
                                                     <input

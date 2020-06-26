@@ -113,9 +113,10 @@ class Form extends React.Component {
     }
 
     getFormValue() {
-        if (!this.form.checkValidity()) {
-            return
-        }
+        //TODO 暂时注释掉校验
+        // if (!this.form.checkValidity()) {
+        //     return
+        // }
 
         let query = {};
         query.throughTime = this.state.throughTime;

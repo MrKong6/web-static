@@ -46,6 +46,7 @@ import Academy from "../Setting/Academy/Academy";
 import Service from "../Setting/Service/Service";
 import CustomerService from "../Setting/Academy/CustomerService";
 import All from "../Sales/All/All";
+import Wechat from "../Setting/Wechat/Wechat";
 
 class Home extends React.Component {
   constructor(props) {
@@ -216,6 +217,8 @@ class Home extends React.Component {
                           component={Service}{...query}/>
             <PrivateRoute path="/home/setting/service" changedCrmGroup={this.state.group}
                         component={Academy}{...query}/>
+            <PrivateRoute path="/home/wechat" changedCrmGroup={this.state.group}
+                          component={Wechat}{...query}/>
             <Route path="/home/changepwd" component={ChangePwd}/>
             <Route render={(props) => (
               <NoMatch {...props} profile={this.state.profile.profile}/>

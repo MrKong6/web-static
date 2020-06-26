@@ -214,29 +214,7 @@ class Form extends React.Component {
                                     <div className="form-group">
                                         <label htmlFor="name"><em className="text-danger">*</em>父级营销活动</label>
                                         <div className="input-group">
-                                            {/*<input type="text" className="form-control" value={this.state.parentName} readOnly={true}/>
-                      <span className="input-group-btn">
-                        <button onClick={this.createActDialog} className="btn btn-secondary" type="button">
-                          <i className="fa fa-pencil-square-o fa-lg" aria-hidden="true"/>
-                        </button>
-                      </span>*/}
-                                            {/*<Input placeholder="输入关键字进行过滤" onChange={text=> this.tree.filter(text)} />*/}
-                                            <Tree
-                                                ref={e => this.tree = e}
-                                                data={this.state.marketTypes}
-                                                options={this.options}
-                                                isShowCheckbox={false}
-                                                highlightCurrent={true}
-                                                expandOnClickNode={false}
-                                                defaultExpandAll={false}
-                                                lazy={true}
-                                                load={this.loadNode.bind(this)}
-                                                onNodeClicked={this.handleCheckChange.bind(this)}
-                                                /*filterNodeMethod={(value, data)=>{
-                                                    if (!value) return true;
-                                                    return data.name.indexOf(value) !== -1;
-                                                }}*/
-                                            />
+                                            <input type="text" className="form-control" value={this.state.parentName} readOnly={true}/>
                                         </div>
                                     </div>
                                     <div data-toggle="datepicker" className="form-group">

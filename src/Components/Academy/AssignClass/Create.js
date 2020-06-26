@@ -33,17 +33,17 @@ class Create extends React.Component {
         mainSize();
     }
 
-    componentWillReceiveProps(nextProps) {
+   /* componentWillReceiveProps(nextProps) {
         if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
             this.setState({redirectToList: true})
         }
-    }
+    }*/
 
-    componentWillUnmount() {
+    /*componentWillUnmount() {
         if (this.tipsContainer) {
             document.body.removeChild(this.tipsContainer);
         }
-    }
+    }*/
 
     createDialogTips(text) {
         if (this.tips === undefined) {
@@ -69,6 +69,7 @@ class Create extends React.Component {
 
     create() {
         const selected = this.form.getFormValue();
+        console.log(selected);
         if (!selected) {
             return;
         }
@@ -81,7 +82,9 @@ class Create extends React.Component {
                     let param =  {classId: selected.chooseClass,
                         teacherId: selected.teacherId,registrarId: selected.registrarId,roomId: selected.chooseRoom,course: selected.course,
                         startTime: selected.startTime,endTime: selected.endTime,comment: selected.comment,xunhuanEndDate:selected.xunhuanEndDate,
-                        loopTrue:selected.loopTrue, loopId:selected.loopId, loopStartTime: selected.loopStartTime, classTime:selected.classTime};
+                        loopTrue:selected.loopTrue, loopId:selected.loopId,
+                        loopStartTime: selected.loopStartTime, classTime:selected.classTime,classCourseDtos: selected.classCourseDtos
+                    };
                     await ajax('/academy/class/assignClass.do',{"assignVo":JSON.stringify(param)});
                     Message({
                         message: "成功",

@@ -22,6 +22,7 @@ class Form extends React.Component {
             moneyList: [],
             oneAmount: null,
             oneDate : null,
+            oneId : null,
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -37,7 +38,8 @@ class Form extends React.Component {
                 if (this.props.isEditor) {
                     data = await ajax('/course/type/query.do', {id: this.props.editorId});
                     data = data.data
-                    let moneyList = [],oneAmount = (data.fields && data.fields.length > 0) ? data.fields[0].classHour : 0;
+                    let moneyList = [],oneAmount = (data.fields && data.fields.length > 0) ? data.fields[0].classHour : 0,
+                        oneId = (data.fields && data.fields.length > 0) ? data.fields[0].id : null;
                     if(data.fields){
                         data.fields.map(item => {
                             item.clsName = "cls"+item.periodNum;
@@ -48,7 +50,8 @@ class Form extends React.Component {
                     }
                     this.setState({
                         data: data,
-                        moneyList: moneyList
+                        moneyList: moneyList,
+                        oneId
                     }, () => {
                         const keys = Object.keys(data);
                         this.form["oneAmount"].value = oneAmount;
@@ -141,11 +144,11 @@ class Form extends React.Component {
 
         //课时数
         let list=[]
-        list.push({"periodNum":1,"classHour":this.form["oneAmount"].value})
+        list.push({"periodNum":1,"classHour":this.form["oneAmount"].value,"id": this.state.oneId})
         if(this.state.moneyList){
             this.state.moneyList.map(item => {
                 if(this.form[item.clsName] && this.form[item.clsName].value > 0){
-                    list.push({"periodNum":item.periodNum,"classHour":this.form[item.clsName].value})
+                    list.push({"periodNum":item.periodNum,"classHour":this.form[item.clsName].value,"id":item.id})
                 }
             });
         }
@@ -207,6 +210,24 @@ class Form extends React.Component {
                                             </label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="classTime"
+                                                       required={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>每周课时
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="classHourPerWeek"
+                                                       required={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>每周课次
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="classTimePerWeek"
                                                        required={true}/>
                                             </div>
                                         </div>

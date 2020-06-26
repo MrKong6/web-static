@@ -12,7 +12,10 @@ import Document from '../../Dic/Document';
 import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {DatePicker} from "element-react";
+import {DatePicker, Message, Select} from "element-react";
+import {changeArrayItemToString} from "../../../utils/objectToArray";
+import {$} from "../../../vendor";
+
 
 class Form extends React.Component {
     constructor(props) {
@@ -22,11 +25,14 @@ class Form extends React.Component {
             birthday: null,
             age: 0,
             option: {'gender':[],'positionList':[],'typeList':[],'rangeList':[],'accountTeacherList':[]},
-            data: null
+            data: null,
+            courseTypeList: [],
+            chooseCouse: [],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.getFormValue = this.getFormValue.bind(this);
+        this.changeCourse = this.changeCourse.bind(this);
     }
 
     componentDidMount() {
@@ -37,6 +43,7 @@ class Form extends React.Component {
                 let rangeList = await ajax('/academy/teacher/teacherRangeList.do');
                 let positionList = await ajax('/academy/teacher/teacherPosition.do');
                 let accountTeacherList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:2});
+                let courseTypeList = await ajax('/course/type/courseTypeList.do');
                 let data = null;
                 if (this.props.isEditor) {
                     data = await ajax('/academy/teacher/query.do', {id: this.props.editorId});
@@ -65,11 +72,13 @@ class Form extends React.Component {
                     birthday = data.birthday  ? new Date((data.birthday)) : new Date();
                     age = calculateAge(birthday);
                 }
+                $('.el-input__inner').attr('name','course')
                 this.setState({
                     option: {gender,typeList,rangeList,positionList,accountTeacherList},
                     data,
                     birthday,
-                    age
+                    age,
+                    courseTypeList: courseTypeList,
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -137,15 +146,27 @@ class Form extends React.Component {
         this.setState({birthday, age});
     }
 
+    //更改课程
+    changeCourse(value){
+        this.state.chooseCouse = value;
+    }
     getFormValue() {
         if (!this.form.checkValidity()) {
+            return
+        }
+
+        if (this.state.chooseCouse.length  <= 0) {
+            Message({
+                type: 'warning',
+                message: '请选择负责学科!'
+            });
             return
         }
 
         let query = {};
 
         query.birthday = this.state.birthday;
-
+        debugger
         for (let i = 0; i < this.form.length; i++) {
             if (this.form[i].name) {
                 /*if (this.form[i].name === 'startDate' || this.form[i].name === 'endDate') {
@@ -155,6 +176,16 @@ class Form extends React.Component {
                 /*}*/
             }
         }
+        let courseNames = [];
+        this.state.chooseCouse.map(cc => {
+            this.state.courseTypeList.map(item => {
+                if(cc == item.id){
+                    courseNames.push(item.name);
+                }
+            });
+        });
+        query.courseId = changeArrayItemToString(this.state.chooseCouse);
+        query.courseName = changeArrayItemToString(courseNames);
 
         return query;
     }
@@ -247,6 +278,21 @@ class Form extends React.Component {
                                                         )) : null
                                                     }
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">负责学科</label>
+                                            <div className="col-7">
+                                                <Select name={'course'} value={this.state.chooseCouse} placeholder="负责学科" name={'course'} multiple={true}
+                                                        filterable={true} clearable={true} style={{"width": "100%"}}
+                                                        onChange={this.changeCourse.bind(this)}>
+                                                    {
+                                                        (this.state.courseTypeList && this.state.courseTypeList.length > 0) ? this.state.courseTypeList.map(el => {
+                                                            return <Select.Option key={el.id} label={el.name}
+                                                                                  value={el.id}/>
+                                                        }) : null
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
                                         <div className="form-group row">

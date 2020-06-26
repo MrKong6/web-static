@@ -12,7 +12,8 @@ class Form extends React.Component {
     this.FUNC_ADMIN = "7";
     this.FUNC_ADMIN_TWO = "9";
     this.FUNC_ADMIN_THREE = "10";
-    this.FUNC_SYSTEM = "7,9,10";
+    this.FUNC_ADMIN_FOUR = "11";
+    this.FUNC_SYSTEM = "7,9,10,11";
     this.RANK_ADMIN = 4;
     this.RANK_MANGER = 1;
 
@@ -39,7 +40,8 @@ class Form extends React.Component {
         let funcDic = await ajax('/func/listAllFuncs.do');
         let rankDic = await ajax('/role/ranks.do');
 
-        funcDic = funcDic.filter(func => (func.cId === func.cRootId && func.cId !== this.FUNC_ADMIN && func.cId !== this.FUNC_ADMIN_TWO && func.cId !== this.FUNC_ADMIN_THREE && func.cId !== "8"));
+        funcDic = funcDic.filter(func => (func.cId === func.cRootId && func.cId !== this.FUNC_ADMIN
+            && func.cId !== this.FUNC_ADMIN_TWO && func.cId !== this.FUNC_ADMIN_THREE !== this.FUNC_ADMIN_FOUR && func.cId !== "8"));
         rankDic = rankDic.filter(rank => (rank.cId !== this.RANK_ADMIN));
 
         this.setState({funcDic, rankDic})

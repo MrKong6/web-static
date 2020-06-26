@@ -80,7 +80,7 @@ class Editor extends React.Component {
     query.endDate = this.form.state.endTime ? this.form.state.endTime.getTime() : "";
     query.courseStartDate = this.form.state.courseStartTime ? this.form.state.courseStartTime.getTime() : "";
     query.courseEndDate = this.form.state.courseEndTime ? this.form.state.courseEndTime.getTime() : "";
-    query.classColor = this.form.state.classColor.hex;
+    // query.classColor = this.form.state.classColor.hex;
     query.orgId = this.state.group.id;
     query.id = this.state.id;
     query.mainTeacher = this.form.state.mainTeacherIds.toString();

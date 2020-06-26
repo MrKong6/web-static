@@ -49,3 +49,7 @@
 .text-line-height{
   line-height: 60px;
 }
+.el-tabs__content{
+  position: relative;
+  overflow: inherit !important;
+}

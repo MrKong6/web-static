@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
+import Form from "./Form";
 import DialogTips from "../../Dialog/DialogTips";
 import Progress from "../../Progress/Progress"
 
@@ -9,7 +10,6 @@ import historyBack from "../../../utils/historyBack";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
-import CustomerService from "./CustomerService";
 
 class Editor extends React.Component {
   constructor(props) {
@@ -80,7 +80,7 @@ class Editor extends React.Component {
 
     const request = async () => {
       try {
-        await ajax('/course/type/add.do', {"course":JSON.stringify(query)});
+        await ajax('/course/type/mod.do', query);
         this.setState({isUpdated: true})
       } catch (err) {
         if (err.errCode === 401) {
@@ -108,14 +108,14 @@ class Editor extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/setting/service"/>
+        <Redirect to="/home/academy/course"/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/setting/service/${this.state.id}`,
+          pathname: `/home/academy/course/${this.state.id}`,
           state: {ids: this.ids}
         }}/>
       )
@@ -146,12 +146,10 @@ class Editor extends React.Component {
         <div id="main" className="main p-3">
           <Progress isAnimating={this.state.isAnimating}/>
 
-          <CustomerService
+          <Form
             isEditor={true}
             editorId={this.state.id}
             changedCrmGroup={this.state.group}
-            selectedCou={this.props.location.state.selectedCou}
-            selectedCouText={this.props.location.state.selectedCouText}
             ref={(dom) => {
               this.form = dom
             }}

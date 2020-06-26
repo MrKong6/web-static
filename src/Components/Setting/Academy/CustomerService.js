@@ -188,6 +188,7 @@ class CustomerService extends React.Component {
     getFormValue() {
         let query = {};
         query.id = this.state.data.id;
+        debugger
         this.state.moneyList.map(item => {
             item.amount = this.form[item.clsName].value;
         });

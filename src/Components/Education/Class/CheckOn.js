@@ -264,11 +264,11 @@ class Editor extends React.Component {
                             item.vos =deepClone(courseList.data);
                             item.vos.map(vo => {
                                 vo.rdate = new Date();
-                                vo.checkInToday = item[vo.ch] ? item[vo.ch].clocked : 2;
+                                vo.checkInToday = item[vo.courseName + vo.ch] ? item[vo.courseName + vo.ch].clocked : 2;
                                 //由下面反向选择上面
                                 if(vo.checkInToday == 1){
                                     courseList.data.map(itemTwo => {
-                                        if(itemTwo.checkInToday != 1 && itemTwo.ch == vo.ch){
+                                        if(itemTwo.checkInToday != 1 && itemTwo.ch == vo.ch && itemTwo.courseId == vo.courseId){
                                             itemTwo.check = true;
                                         }
                                     });
@@ -384,7 +384,8 @@ class Editor extends React.Component {
     }
 
     // 更新表单值  ch:课时数
-    handleSelect(key, ch, value) {
+    handleSelect(key, ch, courseId, value) {
+        debugger
         if(key == 'check'){
             let data = this.state.data;
             let courseLst = this.state.courseLst;
@@ -401,7 +402,7 @@ class Editor extends React.Component {
             }
             if(courseLst && courseLst.length > 0){
                 courseLst.map(item => {
-                    if(ch == item.ch){
+                    if(ch == item.ch && item.courseId == courseId){
                         item.check = value;
                     }
                 });
@@ -410,12 +411,13 @@ class Editor extends React.Component {
         }else if (key == 'innerCheck'){
             //选择下面的签到
             let dataList = this.state.data;
+            let courseLst = this.state.courseLst;
             if(dataList){
                 dataList.map(dt => {
                     if(dt.vos && dt.id == ch) {
                         dt.vos.map(vo => {
-                            this.state.courseLst.map(item => {
-                                if (item.check && item.ch == vo.ch) {
+                            courseLst.map(item => {
+                                if (item.check && item.ch == vo.ch && item.courseId == vo.courseId) {
                                     vo.checkInToday = value ? 1 : 2;
                                 }
                             });
@@ -427,13 +429,13 @@ class Editor extends React.Component {
         }else if (key == 'innerRdate'){
             //选择下面的签到
             let dataList = this.state.data,date = this.state.date;
-            console.log(value);
+            let courseLst = this.state.courseLst;
             if(dataList){
                 dataList.map(dt => {
                     if(dt.vos && dt.id == ch) {
                         dt.vos.map(vo => {
-                            this.state.courseLst.map(item => {
-                                if (item.check && item.ch == vo.ch) {
+                            courseLst.map(item => {
+                                if (item.check && item.ch == vo.ch && item.courseId == vo.courseId) {
                                     debugger
                                     vo.rdate = formatWithDateAndTime(date,value);
                                 }
@@ -523,7 +525,7 @@ class Editor extends React.Component {
                             return <div className="row">
                                     <div className="col-1"></div>
                                     <div className="col-1" style={{"textAlign": "center"}}>
-                                        <Checkbox checked={val.check == 1} onChange={that.handleSelect.bind(this,'check',val.ch)}>{val.ch}</Checkbox>
+                                        <Checkbox checked={val.check == 1} onChange={that.handleSelect.bind(this,'check',val.ch, val.courseId)}>{val.ch + val.courseName}</Checkbox>
                                     </div>
                                     <label className="col-2 col-form-label"
                                            style={{"textAlign": "center", "color": "red"}}>{val.time}</label>
@@ -543,10 +545,10 @@ class Editor extends React.Component {
                                style={{ "color": "red"}}>姓名</label>
                         {
                             that.state.courseLst.map(function(val){
-                                return <div className="col-3">
+                                return <div className="col-2">
                                             <div className="row">
                                                 <div className="col-4 col-form-label">
-                                                    课时{val.ch}
+                                                    课时{val.ch + val.courseName}
                                                     {/*<Checkbox>课时{val.ch}</Checkbox>*/}
                                                 </div>
                                                 <label className="col-8 col-form-label"
@@ -570,12 +572,12 @@ class Editor extends React.Component {
                                        style={{"textAlign": "left"}}>{val.index + '.'} {val.name}</label>
                                 {
                                    val.vos.map(function(valInner){
-                                        return <div className="col-3">
+                                        return <div className="col-2">
                                             <div className="row">
                                                 <div className="col-4 col-form-label">
                                                     <Checkbox checked={valInner.checkInToday == 1}
                                                               disabled={valInner.situation == 1}
-                                                              onChange={that.handleSelect.bind(this,'innerCheck',val.id)}
+                                                              onChange={that.handleSelect.bind(this,'innerCheck',val.id, valInner.courseId)}
                                                               >签到</Checkbox>
                                                     {/*onChange={check => {
                                                         val.checkInToday = check ? 1 : 2;
@@ -585,7 +587,7 @@ class Editor extends React.Component {
                                                     <TimePicker
                                                         selectableRange="08:30:00 - 21:30:00"
                                                         value={valInner.rdate}
-                                                        onChange={that.handleSelect.bind(this,'innerRdate',val.id)}
+                                                        onChange={that.handleSelect.bind(this,'innerRdate',val.id, valInner.courseId)}
                                                         placeholder="选择时间"
                                                     />
                                                 </div>

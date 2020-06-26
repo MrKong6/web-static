@@ -10,11 +10,11 @@ import mainSize from "../../../utils/mainSize";
 import historyBack from "../../../utils/historyBack";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
-import RoomForm from "./RoomForm";
 
 class Create extends React.Component {
     constructor(props) {
         super(props);
+
         this.title = fmtTitle(this.props.location.pathname);
         this.ids = this.props.location.state.ids;
         this.state = {
@@ -74,20 +74,17 @@ class Create extends React.Component {
         if (!query) {
             return;
         }
-
-        query.birthday = this.form.state.birthday ? this.form.state.birthday.getTime() : "";
         query.orgId = this.state.group.id;
-
         this.setState({isAnimating: true});
 
         const request = async () => {
             try {
-                let rs = await ajax('/academy/room/add.do', query);
+                let rs = await ajax('/course/type/add.do', query);
+                this.setState({isCreated: true, createdId: rs, redirectToList: true});
 
-                this.setState({isCreated: true, createdId: rs})
             } catch (err) {
                 if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
+                    this.setState({redirectToReferrer: true, redirectToList: true})
                 } else {
                     this.createDialogTips(`${err.errCode}: ${err.errText}`);
                 }
@@ -100,6 +97,7 @@ class Create extends React.Component {
     }
 
     render() {
+
         if (this.state.redirectToReferrer) {
             return (
                 <Redirect to={{
@@ -109,18 +107,9 @@ class Create extends React.Component {
             )
         }
 
-        /*if (this.state.redirectToList) {
+        if (this.state.redirectToList) {
             return (
-                <Redirect to={link}/>
-            )
-        }*/
-
-        if (this.state.isCreated) {
-
-            return (
-                <Redirect to={{
-                    pathname: ('/home/setting/academy/')
-                }}/>
+                <Redirect to="/home/academy/course"/>
             )
         }
 
@@ -129,7 +118,7 @@ class Create extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">教室创建</p>
+                    <p className="d-inline text-muted">{this.title.text}创建</p>
                     <div className="btn-group float-right" role="group">
                         <button onClick={() => {
                             historyBack(this.props.history)
@@ -149,7 +138,7 @@ class Create extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
 
-                    <RoomForm
+                    <Form
                         isEditor={false}
                         changedCrmGroup={this.state.group}
                         replace={this.props.history.replace}

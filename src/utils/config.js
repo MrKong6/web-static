@@ -589,6 +589,14 @@ export default {
             CATEGORY: '商品',
             NAME: ''
         },
+        "11": {ICON_CLASS: "fa-area-chart"},
+        "11-1": {
+            PATH: "home/wechat",
+            PATH_RULE: /^\/home\/wechat/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '微信后台',
+            NAME: ''
+        },
     },
     TYPE_ID: {1: '线索', 2: '新招', 3: '续报'},
     DOCUMENT: {1: '身份证'},

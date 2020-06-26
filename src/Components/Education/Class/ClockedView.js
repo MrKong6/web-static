@@ -114,13 +114,101 @@ class ClockedView extends React.Component {
         const request = async () => {
             try {
                 let data = await ajax('/academy/class/query.do', {id: this.state.id});
-                let times = 60,hourTime = 2;
+                let classAssignList = await ajax('/academy/class/assignClassList.do', {classId: this.state.id});
+                let times = 60,hourTime = 2, weekNum = 0;
                 let classTime = 0;
                 if(data && data.data && data.data.classHour){
                     times = data.data.classHour;
                     hourTime = data.data.classHour / data.data.classTime;
                     classTime = data.data.classTime;
+                    if(data.data.courses && data.data.courses.length > 0){
+                        data.data.courses.map(item => {
+                            if(item.classHour && item.classHourPerWeek && item.classHourPerWeek > 0){
+                                let wn = item.classHour / item.classHourPerWeek;
+                                if(wn > weekNum){
+                                    weekNum = wn;
+                                }
+                            }
+                        });
+                    }
                 }
+                if(classAssignList.data && classAssignList.data.length > 0){
+                    let head = [], objTwo = {};//label:null,subColumns:[]
+                    for (let i = 1; i <= weekNum; i++) {
+                        let obj={label: "周次(" + i + ")"};
+                        let sub = [];
+                        classAssignList.data.map(item => {
+                            if(i == item.weekTime){
+                                //周次相同
+                                let midArray = sub.filter(vv => (("课次(" + item.currentClassTime + ")") == vv.label));
+                                if(sub && sub.length > 0){
+                                    if(midArray.length > 0){
+                                        //课次已存在
+                                        midArray[0].subColumns.push({
+                                            label: item.courseName + item.currentClassHour,
+                                            prop: item.courseName + item.currentClassHour+"",
+                                            width: 160,
+                                            render: (row, column, data)=>{
+                                                if(row[column.prop] && row[column.prop].sign){
+                                                    return <Tooltip effect="dark" content={row[column.prop] ? row[column.prop].allStr : ''}
+                                                                    placement="top-start">
+                                                        {row[column.prop] ? row[column.prop].sign : ''}
+                                                    </Tooltip>
+                                                }
+                                            }
+                                        });
+                                    }else{
+                                        sub.push(
+                                            {
+                                                label: "课次(" + item.currentClassTime + ")",
+                                                subColumns:[
+                                                    {
+                                                        label: item.courseName + item.currentClassHour,
+                                                        prop: item.courseName + item.currentClassHour+"",
+                                                        width: 160,
+                                                        render: (row, column, data)=>{
+                                                            if(row[column.prop] && row[column.prop].sign){
+                                                                return <Tooltip effect="dark" content={row[column.prop] ? row[column.prop].allStr : ''}
+                                                                                placement="top-start">
+                                                                    {row[column.prop] ? row[column.prop].sign : ''}
+                                                                </Tooltip>
+                                                            }
+                                                        }
+                                                    }
+                                                ]
+                                            }
+                                        )
+                                    }
+                                }else{
+                                    sub.push(
+                                        {
+                                            label: "课次(" + item.currentClassTime + ")",
+                                            subColumns:[
+                                                {
+                                                    label: item.courseName + item.currentClassHour,
+                                                    prop: item.courseName + item.currentClassHour+"",
+                                                    width: 160,
+                                                    render: (row, column, data)=>{
+                                                        if(row[column.prop] && row[column.prop].sign){
+                                                            return <Tooltip effect="dark" content={row[column.prop] ? row[column.prop].allStr : ''}
+                                                                            placement="top-start">
+                                                                {row[column.prop] ? row[column.prop].sign : ''}
+                                                            </Tooltip>
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    )
+                                }
+                            }
+                        });
+                        obj.subColumns = sub;
+                        columnHeader.push(obj);
+                    }
+
+                }
+                /*console.log()
                 for (let i = 1; i <= times; i+=2) {
                     columnHeader.push({
                         label: "课次(" + (i + 1)/2 + ")",
@@ -155,7 +243,7 @@ class ClockedView extends React.Component {
                         label: i+"",
                         prop: i+"",
                     });
-                }
+                }*/
                 //老师列表
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let mainTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教

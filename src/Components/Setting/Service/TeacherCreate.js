@@ -78,6 +78,8 @@ class Create extends React.Component {
         query.birthday = this.form.state.birthday ? this.form.state.birthday.getTime() : "";
         query.orgId = this.state.group.id;
 
+        console.log(query);
+
         this.setState({isAnimating: true});
 
         const request = async () => {
@@ -116,14 +118,9 @@ class Create extends React.Component {
         }*/
 
         if (this.state.isCreated) {
-            let ids = this.ids;
-
-            ids.push(this.state.createdId);
-
             return (
                 <Redirect to={{
-                    pathname: ('/home/setting/academy'),
-                    state: {ids: ids}
+                    pathname: ('/home/setting/academy/')
                 }}/>
             )
         }

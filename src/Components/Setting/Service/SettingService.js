@@ -117,6 +117,10 @@ class SettingService extends React.Component {
                     prop: "rangeName",
                 },
                 {
+                    label: "学科",
+                    prop: "courseName",
+                },
+                {
                     label: "备注",
                     prop: "comment",
                 },

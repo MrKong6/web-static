@@ -7,7 +7,9 @@ import DialogTips from "../../Dialog/DialogTips";
 import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {ColorPicker, DatePicker, Select} from "element-react";
+import {Cascader, ColorPicker, DatePicker, Message, Popover, Select} from "element-react";
+import CourseTypeHover from "../../Dic/CourseTypeHover";
+import {changeObjArrayItemToString} from "../../../utils/objectToArray";
 // import InputColor from 'react-input-color';
 
 class Form extends React.Component {
@@ -27,7 +29,9 @@ class Form extends React.Component {
             createOn: null,
             classColor: null,
             mainTeacherIds: [],
-            allClassCourseRange: []
+            allClassCourseRange: [],
+            chooseCourseTypes:[],
+            courseTypes: [],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -35,6 +39,7 @@ class Form extends React.Component {
         this.changeColor = this.changeColor.bind(this);
         this.chooseMainTeacher = this.chooseMainTeacher.bind(this);
         this.changeCourseType = this.changeCourseType.bind(this);
+        this.changeClsName = this.changeClsName.bind(this);
 
     }
 
@@ -49,6 +54,7 @@ class Form extends React.Component {
                 let allClassRange = await ajax('/academy/class/classRange.do');
                 let allClassCourse = await ajax('/academy/class/classCourseType.do',{orgId: this.state.group.id});
                 let mainTeacher = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
+                let list = await ajax('/course/type/listTypeAndSons.do',{orgId: this.state.group.id});  //课程类别
                 let data = null,allClassCourseType=[],allClassCourseRange=[];
                 if(mainTeacher){
                     mainTeacher = mainTeacher.data.items;
@@ -96,6 +102,7 @@ class Form extends React.Component {
                     option: {allClassStatus, allClassType, allClassRange, allClassCourseType,mainTeacher},
                     mainTeacherIds: main,
                     allClassCourseRange: allClassCourseRange,
+                    courseTypes: list.data ? list.data : []
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -177,16 +184,53 @@ class Form extends React.Component {
         this.setState({birthday, age});
     }
 
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
+
     getFormValue() {
+        console.log(this.state.chooseCourseTypes);
+
+        //处理课程产品
+        let hasCourse = [], courseRange = '';
+        this.state.chooseCourseTypes.map(item => {
+            let courseTypeId = null;
+            this.state.courseTypes.map(vo => {
+                if(vo.courses && vo.courses.length > 0){
+                    vo.courses.map(cou => {
+                        if(cou.id == item){
+                            courseTypeId = vo.id;
+                            courseRange += (vo.name+'('+ cou.name +')');
+                        }
+                    })
+                }
+            });
+            if(hasCourse.filter(item => item == courseTypeId).length > 0){
+                this.errorMsg("同一课程产品下只能选择一个");
+                return
+            }else{
+                hasCourse.push(courseTypeId);
+            }
+        });
+
         if (!this.form.checkValidity()) {
+            this.errorMsg("请补全信息");
             return
         }
 
-        let query = {};
+        if(!this.state.chooseCourseTypes){
+            this.errorMsg("请选择课程产品");
+            return
+        }
 
+        let query = {courseRelIds: this.state.chooseCourseTypes,courseRange:courseRange};
         /*query.stuBirthday = this.state.birthday;
         query.stuCode = this.form.code.value;
         query.courseType = this.form.courseId.options[this.form.courseId.selectedIndex].text;*/
+
 
         for (let i = 0; i < this.form.length; i++) {
             if (this.form[i].name) {
@@ -207,6 +251,11 @@ class Form extends React.Component {
 
     chooseMainTeacher(data){
         this.state.mainTeacherIds = data;
+    }
+    //选中课程
+    changeClsName(data){
+        this.state.chooseCourseTypes = data;
+        this.setState({chooseCourseTypes:data});
     }
 
     changeCourseType(evt){
@@ -285,20 +334,7 @@ class Form extends React.Component {
                                                 </div>*/}
                                             </div>
                                         </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">班级状态</label>
-                                            <div className="col-7">
-                                                <select className="form-control"
-                                                        name={this.props.classStatus || "classStatus"}>
-                                                    {
-                                                        this.state.option ? this.state.option.allClassStatus.map(item => (
-                                                            <option key={item.code}
-                                                                    value={item.code}>{item.name}</option>
-                                                        )) : null
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
+
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>班级类型
@@ -330,11 +366,44 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">班级状态</label>
+                                            <div className="col-7">
+                                                <select className="form-control"
+                                                        name={this.props.classStatus || "classStatus"}>
+                                                    {
+                                                        this.state.option ? this.state.option.allClassStatus.map(item => (
+                                                            <option key={item.code}
+                                                                    value={item.code}>{item.name}</option>
+                                                        )) : null
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
-                                                校区
+                                                <em className="text-danger">*</em>课程类别
                                             </label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="schoolArea"/>
+                                                <Select value={this.state.chooseCourseTypes} multiple={true} onChange={this.changeClsName.bind(this)}>
+                                                    {
+                                                        this.state.courseTypes.map(group => {
+                                                            return (
+                                                                <Select.OptionGroup key={group.id} label={group.name}>
+                                                                    {
+                                                                        group.courses.map(el => {
+                                                                            return (
+                                                                                <Select.Option key={el.id} label={el.name} value={el.id}>
+                                                                                    <span style={{float: 'left'}}>{el.name}</span>
+                                                                                </Select.Option>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Select.OptionGroup>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
 
@@ -399,79 +468,6 @@ class Form extends React.Component {
                                                        required={true}/>
                                             </div>
                                         </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">主教</label>
-                                            <div className="col-7">
-                                                {/*<input type="text" className="form-control" name="mainTeacher"/>*/}
-                                                <Select value={this.state.mainTeacherIds} multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
-                                                    {
-                                                        (this.state.option && this.state.option.mainTeacher) ? this.state.option.mainTeacher.map(el => {
-                                                            return <Select.Option key={el.id} label={el.name}
-                                                                                  value={el.id}/>
-                                                        }) : null
-                                                    }
-                                                </Select>
-                                            </div>
-                                        </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">客服</label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="registrar"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col">
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>课程类别
-                                            </label>
-                                            <div className="col-7">
-                                                <select className="form-control" name={this.props.name || "courseType"} onChange={this.changeCourseType}>
-                                                    {
-                                                        this.state.option ? this.state.option.allClassCourseType.map(item => (
-                                                            <option key={item}
-                                                                    value={item}>{item}</option>
-                                                        )) : null
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>课程阶段
-                                            </label>
-                                            <div className="col-7">
-                                                <select className="form-control" name={this.props.name || "courseRange"}>
-                                                    {/*<option>请选择类别</option>*/}
-                                                    {
-                                                        this.state.allClassCourseRange ? this.state.allClassCourseRange.map(item => (
-                                                            <option key={item}
-                                                                    value={item}>{item}</option>
-                                                        )) : null
-                                                    }
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">课程表</label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="course"/>
-                                            </div>
-                                        </div>
-                                        {/*
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">创建时间</label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="createOn"
-                                                       readOnly={true}/>
-                                            </div>
-                                        </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">创建人</label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="createBy"/>
-                                            </div>
-                                        </div>*/}
                                     </div>
                                     <div className="col">
                                         <div className="form-group row">
@@ -507,9 +503,74 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">主教</label>
+                                            <div className="col-7">
+                                                {/*<input type="text" className="form-control" name="mainTeacher"/>*/}
+                                                {/*<Select value={this.state.mainTeacherIds} multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
+                                                    {
+                                                        (this.state.option && this.state.option.mainTeacher) ? this.state.option.mainTeacher.map(el => {
+                                                            return <Select.Option key={el.id} label={el.name}
+                                                                                  value={el.id}/>
+                                                        }) : null
+                                                    }
+                                                </Select>*/}
+                                                <input type="text" className="form-control" name="mainTeacher" readOnly={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">助教</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="registrar" readOnly={true}/>
+                                            </div>
+                                        </div>
+                                        {/*<div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>课程阶段
+                                            </label>
+                                            <div className="col-7">
+                                                <select className="form-control" name={this.props.name || "courseRange"}>
+                                                    {
+                                                        this.state.allClassCourseRange ? this.state.allClassCourseRange.map(item => (
+                                                            <option key={item}
+                                                                    value={item}>{item}</option>
+                                                        )) : null
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>*/}
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">课程表</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="course"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="col">
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">创建时间</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="createOn"
+                                                       readOnly={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="createBy"/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                校区
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="schoolArea"/>
+                                            </div>
+                                        </div>
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">备注</label>
                                             <div className="col-7">
-                                                {/*<select className="form-control"
+                                                <select className="form-control"
                                                         name={this.props.name || "beforeClassCode"}>
                                                     <option value="">请选择</option>
                                                     {
@@ -518,10 +579,10 @@ class Form extends React.Component {
                                                                     value={item.code}>{item.name}</option>
                                                         )) : null
                                                     }
-                                                </select>*/}
+                                                </select>
                                                 <input type="text" className="form-control" name="beforeClassCode"/>
                                             </div>
-                                        </div>
+                                        </div>*/}
                                     </div>
                                 </div>
                             </div>

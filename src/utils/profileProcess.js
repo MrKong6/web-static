@@ -60,6 +60,7 @@ export default function (data) {
         cName: data.org.cName
     };
     profile.roles = [];
+    profile.qrCode = data.qrCode;
 
     data.roles.map(item => {
         func = func.concat(item.functions);
