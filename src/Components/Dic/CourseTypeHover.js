@@ -66,7 +66,6 @@ class CourseTypeHover extends React.Component {
     }
     //加载节点下的数据
     loadNode(node, resolve) {
-        debugger
         this.setState({checkId: node.data.id, checkName: node.name});
         //第一级
         if (node.level === 0) {

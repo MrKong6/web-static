@@ -15,7 +15,6 @@ import StudentSituation from "./StudentSituation";
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '2-3'));
     groupCommands = groupCommands[0];
-    debugger
     return (
         <Switch>
             <Route path={`${match.url}/situation/changeClassAdd/:contractId`} render={(props) => (

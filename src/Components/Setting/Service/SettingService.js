@@ -178,21 +178,27 @@ class SettingService extends React.Component {
                     this.refreshCourse(selectedCou);
                 }else if(this.state.tabNum == 2){
                     let list = await ajax('/academy/teacher/list.do', {orgId: this.state.groupId,pageNum:this.state.currentPage,pageSize:(this.state.pageSize > 100 ? 10: this.state.pageSize)});
-                    const ids = list.data.items.map((contract) => (contract.id));
-                    list.data.items.map(item => {
-                        if(item.birthday != null){
-                            item.birthday = fmtDate(item.birthday);
-                        }
-                    });
-                    this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
+                    let ids = [];
+                    if(list.data.items && list.data.items.length > 0){
+                        ids = list.data.items.map((contract) => (contract.id));
+                        list.data.items.map(item => {
+                            if(item.birthday != null){
+                                item.birthday = fmtDate(item.birthday);
+                            }
+                        });
+                    }
+                    this.setState({list: list.data.items  ? list.data.items : [], ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
                 }else if(this.state.tabNum == 3){
                     let list = await ajax('/academy/room/list.do', {orgId: this.state.groupId,pageNum:this.state.currentPage,pageSize:(this.state.pageSize > 100 ? 10: this.state.pageSize)});
-                    list.data.items.map(item => {
-                        if(item.createOn != null){
-                            item.createOn = fmtDate(item.createOn);
-                        }
-                    });
-                    this.setState({list: list.data.items, totalPage: list.data.totalPage,totalCount: list.data.count});
+                    if(list.data.items && list.data.items.length > 0){
+                        list.data.items.map(item => {
+                            if(item.createOn != null){
+                                item.createOn = fmtDate(item.createOn);
+                            }
+                        });
+                    }
+
+                    this.setState({list: list.data.items ? list.data.items : [], totalPage: list.data.totalPage,totalCount: list.data.count});
                 }
 
             } catch (err) {

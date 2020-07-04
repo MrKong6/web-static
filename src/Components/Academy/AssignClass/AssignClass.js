@@ -19,7 +19,7 @@ const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     )}/>
       <Route path={`${match.url}/:contractId`} render={(props) => (
         <View key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
-              changedCrmGroup={changedCrmGroup}/>
+              changedCrmGroup={changedCrmGroup} />
       )}/>
       <Route path={`${match.url}`} render={(props) => (
         <List {...props} profile={profile} commands={groupCommands.commands} changedCrmGroup={changedCrmGroup}/>

@@ -143,6 +143,7 @@ class Create extends React.Component {
 
                     <AssignForm
                         isEditor={false}
+                        classId={this.props.location.state.classId}
                         changedCrmGroup={this.state.group}
                         replace={this.props.history.replace}
                         from={this.props.location}

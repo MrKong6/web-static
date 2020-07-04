@@ -385,7 +385,6 @@ class Editor extends React.Component {
 
     // 更新表单值  ch:课时数
     handleSelect(key, ch, courseId, value) {
-        debugger
         if(key == 'check'){
             let data = this.state.data;
             let courseLst = this.state.courseLst;
@@ -436,7 +435,6 @@ class Editor extends React.Component {
                         dt.vos.map(vo => {
                             courseLst.map(item => {
                                 if (item.check && item.ch == vo.ch && item.courseId == vo.courseId) {
-                                    debugger
                                     vo.rdate = formatWithDateAndTime(date,value);
                                 }
                             });

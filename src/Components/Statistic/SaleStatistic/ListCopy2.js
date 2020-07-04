@@ -25,7 +25,6 @@ class List extends React.Component {
         this.panelOpporReqSplit = this.panelOpporReqSplit.bind(this);
         this.panelVisitorReq = this.panelVisitorReq.bind(this);
         this.panelAcademyReq = this.panelAcademyReq.bind(this);
-        debugger
         this.first = !(this.props.commands.filter(view => (view.id == '8-1-1')) == false) ? 'normal' : 'none';
         this.second = !(this.props.commands.filter(view => (view.id == '8-1-2')) == false) ? 'normal' : 'none';
         this.third = !(this.props.commands.filter(view => (view.id == '8-1-3')) == false) ? 'normal' : 'none';

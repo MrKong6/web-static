@@ -78,7 +78,7 @@ class Header extends React.Component {
                         <a onClick={this.createDialogTips} href="javascript:void(0)" className="dropdown-item">登出系统</a>
                         <hr/>
                         <div>
-                            <img src={this.state.imgUrl} alt="" width="100px" height="100px" style={{"margin-left":"10px"}} />
+                            <img src={this.state.imgUrl} alt="" width="100px" height="100px" style={{"marginLeft":"10px"}} />
                         </div>
                     </div>
                 </div>

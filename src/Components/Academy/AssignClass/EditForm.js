@@ -9,7 +9,7 @@ import CONFIG from '../../../utils/config';
 
 import fmtDate, {getTimeByWeek, getTimeFourByDate} from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {Button, Checkbox, DatePicker, Form, Input, Layout, Radio, Select, TimePicker} from "element-react";
+import {Button,  Tabs, DatePicker, Icon, Input, Layout, Radio, Select, TimePicker} from "element-react";
 import {changeArrayItemToInt, changeStringToArrayInt} from "../../../utils/objectToArray";
 
 const WEEKNAME=CONFIG.WEEKNAME;
@@ -32,72 +32,6 @@ class EditForm extends React.Component {
             roomId: null,
             roomCode: null,
             loopTrue: "2",
-            weeks:[],
-            weeksDataSource:[
-                {
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:1,
-                    name: '周一',
-                    items:[],
-                },{
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:2,
-                    name: '周二',
-                    items:[],
-                },{
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:3,
-                    name: '周三',
-                    items:[],
-                },{
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:4,
-                    name: '周四',
-                    items:[],
-                },{
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:5,
-                    name: '周五',
-                    items:[],
-                },{
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:6,
-                    name: '周六',
-                    items:[],
-                },{
-                    date1: null,
-                    week1: false,
-                    roomId1: null,
-                    teacherId1: [],
-                    teacherId2: [],
-                    idx:7,
-                    name: '周日',
-                    items:[],
-                }],
             roomList: [],
             teacherList: [],
             teacherId: [],
@@ -106,6 +40,241 @@ class EditForm extends React.Component {
             checkMuiltiWeek: [],
             form: {},
             rules: {},
+            weeks: [
+                {
+                    date1: null,
+                    week1: true,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 1,
+                    name: '周一',
+                    items: [],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 2,
+                    name: '周二',
+                    items: [],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 3,
+                    name: '周三',
+                    items: [],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 4,
+                    name: '周四',
+                    items: [],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 5,
+                    name: '周五',
+                    items: [],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 6,
+                    name: '周六',
+                    items: [],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 7,
+                    name: '周日',
+                    items: [],
+                }],
+            weeksDataSource: [
+                {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 1,
+                    name: '周一',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 2,
+                    name: '周二',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 3,
+                    name: '周三',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 4,
+                    name: '周四',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 5,
+                    name: '周五',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 6,
+                    name: '周六',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }, {
+                    date1: null,
+                    week1: false,
+                    roomId1: null,
+                    teacherId1: [],
+                    teacherId2: [],
+                    idx: 7,
+                    name: '周日',
+                    items: [
+                        {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 1,
+                        }, {
+                            date1: null,
+                            week1: false,
+                            roomId1: null,
+                            teacherId1: [],
+                            teacherId2: [],
+                            idx: 2,
+                        }],
+                }],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -115,6 +284,9 @@ class EditForm extends React.Component {
         this.changeCourseType = this.changeCourseType.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.changedDate = this.changedDate.bind(this);
+        this.changeTabs = this.changeTabs.bind(this);
+        this.changeWeekItem = this.changeWeekItem.bind(this);
+        this.weekContentChange = this.weekContentChange.bind(this);
 
     }
 
@@ -130,67 +302,28 @@ class EditForm extends React.Component {
 
                 let weeks = [],checkWeek = null,checkMuiltiWeek = [],weeksDataSource = this.state.weeksDataSource;
                 data = data.data;
+                let mid = null;
                 weeksDataSource.map(source => {
-                        /*source.week1 = true;
-                        checkWeek = source.name;
-                        checkMuiltiWeek.push(source.name);*/
-                        let items = [],idx = 1;
-                        data.map(vo => {
-                            if(vo.weekName == source.name){
-                                idx = 1;
-                                if(items.length > 0){
-                                    items.push(this.packItems(vo,items.length + 1));
-                                }else{
-                                    checkWeek = source.name;
-                                    checkMuiltiWeek.push(source.name);
-                                    items.push(this.packItems(vo,1));
-                                }
-                            }
-                        });
-                        if(items.length > 0){
-                            source.week1 = true;
-                            source.items = items;
-                            weeks.push(source);
-                        }
-
-                });
-               /* this.state.weeksDataSource.map(source => {
-                    if(data[0].weekName == source.name){
-                        source.week1 = true;
-                        checkWeek = source.name;
-                        checkMuiltiWeek.push(source.name);
-                        let items = [],idx = 1;
-                        data.map(vo => {
-                            let one =  {
-                                date1: new Date(vo.startTime),
+                    mid = source;
+                    mid.items = [];
+                    data.map(vo => {
+                        if(vo.weekName == mid.name){
+                            mid.items.push({date1: new Date(vo.startTime),
                                 week1: true,
                                 roomId1: Number(vo.roomId),
-                                teacherId1: [],
-                                teacherId2: [],
-                                idx:idx++,
+                                teacherId1: changeStringToArrayInt(vo.teacherId),
+                                teacherId2: changeStringToArrayInt(vo.registrarId),
                                 ch:vo.currentClassHour,
                                 ct:vo.currentClassTime,
-                                id:vo.id,
-                            }, teacherId = [],registrarId=[];
-                            if (vo.teacherId && vo.teacherId.indexOf(",") != -1) {
-                                teacherId = vo.teacherId.split(",");
-                            } else if(vo.teacherId){
-                                teacherId.push(Number(vo.teacherId));
-                            }
-                            if (vo.registrarId && vo.registrarId.indexOf(",") != -1) {
-                                registrarId = vo.registrarId.split(",");
-                            } else  if(vo.registrarId){
-                                registrarId.push(Number(vo.registrarId));
-                            }
-                            one.teacherId1 = changeArrayItemToInt(teacherId);
-                            one.teacherId2 = changeArrayItemToInt(registrarId);
-                            items.push(one);
-                        });
-                        source.items = items;
-                        weeks.push(source);
+                                id:vo.id});
+                            mid.week1 = true;
+                        }
+                    });
+                    if(mid.items.length > 0){
+                        source.items = mid.items;
                     }
+                    weeks.push(mid);
                 });
-*/
                 data = data[0];
 
                 this.setState({
@@ -208,7 +341,7 @@ class EditForm extends React.Component {
                     startDate: new Date(data.loopStartTime),
                     endDate: new Date(data.xunhuanEndDate),
                     data: data,
-                    weeks
+                    weeks,weeksDataSource
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -269,56 +402,37 @@ class EditForm extends React.Component {
     handleSelect(type, key, value) {
         if(key == 'showWeek'){
             //选择显示排周几的课
-            let weeks = [];
-            let oldItem = this.state.weeks[0];
-            if(value && value.length > 0){
-                let size = (this.state.data.classHour / this.state.data.classTime);
+            let weeks = this.state.weeks;
+            if (value && value.length > 0) {
+                let size = (this.state.form.classHour / this.state.form.classTime);
                 size = size ? size : 2;
-                this.state.weeksDataSource.map(item => {
-                    value.map(we => {
-                        if(we == item.name){
-                            let chooseItems = [],ch=null,ct=null,id=null;
-                            if(item.items.length > 0){
-                                chooseItems = item.items;
-                            }else{
-                                for(let i=0;i<size;i++){
-                                    oldItem.items.map(oi => {
-                                        if(oi.idx == i+1){
-                                            ch = oi.currentClassHour;
-                                            ct = oi.currentClassTime;
-                                            id = oi.id;
-                                        }
-                                    });
-                                    chooseItems.push({
-                                        date1: getTimeByWeek(we,this.state.startTime),
-                                        week1: true,
-                                        roomId1: null,
-                                        teacherId1: this.state.chooseTeacher,
-                                        teacherId2: [],
-                                        idx:(i+1),
-                                        ch:chooseItems.length + 1,
-                                        ct:weeks.length + 1,
-                                        id:id,
-                                    });
-                                }
-                            }
-                            item.items = chooseItems;
+                weeks.map(item => {
+                    if (item.idx == value[0]) {
+                        if (item.items && item.items.length > 0) {
                             item.week1 = true;
-                            weeks.push(item);
+                        } else {
+                            /* let chooseItems = [];
+                             for (let i = 0; i < size; i++) {
+                                 chooseItems.push({
+                                     date1: null,
+                                     week1: true,
+                                     roomId1: null,
+                                     teacherId1: this.state.form.teacherId,
+                                     teacherId2: this.state.form.registrar,
+                                     idx: (i + 1),
+                                     show: i == 0 ? "none" : "normal",
+                                     teacherList: []
+                                 });
+                             }
+                             item.items = chooseItems;*/
                         }
-                    });
+                    }else{
+                        // item.week1 = false;
+
+                    }
                 });
             }
-            let classTime = 1,classCourse = 1;
-            weeks.map(item => {
-                item.items.map(vo => {
-                    vo.ct = classTime;
-                    vo.ch = classCourse;
-                    classCourse++;
-                });
-                classTime ++;
-            });
-            this.setState({weeks,checkWeek:value});
+            this.setState({weeks});
         }else if(key == 'week'){
             let weeks = this.state.weeks;
             weeks[(type-1)].week1 = value;
@@ -465,13 +579,9 @@ class EditForm extends React.Component {
     }
 
     getFormValue() {
-        if (!this.form.checkValidity()) {
-            return
-        }
 
         let query = this.state.data;
-        let course = null;
-        let helpTeacherId = null;
+        query.showType = this.state.showType;
 
         let items = [];
         this.state.weeks.map(vo => {
@@ -480,39 +590,40 @@ class EditForm extends React.Component {
                 items.push(id);
             });
         });
+        if (items.length <= 0) {
+            return
+        }
         query.courseList = items;
-        query.weekName = this.state.weeks[0].name;
-        query.loopTrue = this.state.loopTrue; //1是循环 2是不循环
+        // query.weekName = this.state.weeks[0].name;
+        // query.loopTrue = this.state.loopTrue; //1是循环 2是不循环
         query.loopStartTime = new Date(query.loopStartTime);
         query.xunhuanEndDate = new Date(query.xunhuanEndDate);
         query.startTime = new Date(this.state.startTime);
         query.endTime = new Date(this.state.endTime);
         query.createOn = new Date();
-        query.id = this.state.id;
-        // query.roomId = this.state.roomId;
-        // query.roomCode = this.state.roomCode;
-        let teacherId=null;
-        if(this.state.mainTeacherIds && this.state.mainTeacherIds.length >0){
-            let idx = 1;
-            this.state.mainTeacherIds.map(id=> {
-                teacherId = teacherId + id;
-                if(idx != this.state.mainTeacherIds.length){
-                    teacherId = teacherId + ",";
-                }
-                idx++;
-            });
-        }
-        query.teacherId = teacherId;
-
-        for (let i = 0; i < this.form.length; i++) {
-            if (this.form[i].name) {
-                if (this.form[i].name === 'startTime' || this.form[i].name === 'endTime') {
-                    query[this.form[i].name] = new Date(this.form[i].value).getTime();
-                } else {
-                    query[this.form[i].name] = this.form[i].value;
-                }
-            }
-        }
+        // query.id = this.state.id;
+        // let teacherId=null;
+        // if(this.state.mainTeacherIds && this.state.mainTeacherIds.length >0){
+        //     let idx = 1;
+        //     this.state.mainTeacherIds.map(id=> {
+        //         teacherId = teacherId + id;
+        //         if(idx != this.state.mainTeacherIds.length){
+        //             teacherId = teacherId + ",";
+        //         }
+        //         idx++;
+        //     });
+        // }
+        // query.teacherId = teacherId;
+        //
+        // for (let i = 0; i < this.form.length; i++) {
+        //     if (this.form[i].name) {
+        //         if (this.form[i].name === 'startTime' || this.form[i].name === 'endTime') {
+        //             query[this.form[i].name] = new Date(this.form[i].value).getTime();
+        //         } else {
+        //             query[this.form[i].name] = this.form[i].value;
+        //         }
+        //     }
+        // }
 
         return query;
     }
@@ -542,6 +653,95 @@ class EditForm extends React.Component {
         request()
     }
 
+    //改变导航
+    changeTabs(evg) {
+        this.handleSelect(null, "showWeek", [evg.props.name])
+    }
+
+    //增加或删除排课课时
+    changeWeekItem(type, itemId, weekIdx) {
+        let weeks = this.state.weeks;
+        let that = this;
+
+        if (type == 2) {
+            //新增一课时
+            let index = 0;
+            weeks.map(item => {
+                if (item.items && item.idx == weekIdx) {
+                    //设置当前课时数
+                    if(item.items && item.items.length > 0){
+                        index = item.items[item.items.length-1].ch + 1;
+                    }else{
+                        index = this.state.data.currentClassHour;
+                    }
+                    item.items.push({
+                        date1: null,
+                        week1: true,
+                        roomId1: null,
+                        teacherId1: that.state.teacherId,
+                        teacherId2: that.state.registrar,
+                        idx: (item.items.length + 1),
+                        ch: index,
+                        ct: this.state.data.currentClassTime
+                    });
+                }
+            });
+        } else {
+            weeks.map(item => {
+                if (item.items && item.items.length > 0 && item.idx == weekIdx) {
+                    item.items = item.items.filter(vo => vo.ch != itemId);
+                }
+            });
+            this.resetIndx(weeks);
+        }
+        this.setState({weeks});
+    }
+
+    //课时条目的内容发生变动
+    weekContentChange(itemId, weekIdx, value){
+        let weeks = this.state.weeks;
+
+        this.resetIndx(weeks);
+        weeks.map(item => {
+            if (item.items && item.items.length > 0 && item.idx == weekIdx) {
+                item.items.map(vv => {
+                    if(vv.idx == itemId){
+                        //找到相应的课时
+                        this.state.courses.map(cou => {
+                            if(cou.courseId == value){
+                                vv.teacherId1 = cou.teacherId;
+                                vv.teacherId2 = cou.registrar;
+                                vv.courseId = value;
+                                vv.teacherList = cou.teacherList;
+                                if(value){
+                                    item.week1 = true;
+                                }
+                                if(!vv.ch){
+                                    vv.ch = cou.ch + 1;
+                                }
+                            }
+                        })
+                    }
+                });
+            }
+        });
+        this.resetIndx(weeks);
+        this.setState({weeks});
+    }
+
+    //重置显示课时
+    resetIndx(weeks){
+        //最初的课时
+        let startCourse = this.state.data.currentClassHour;
+        weeks.map(item => {
+            if(item.items && item.items.length > 0){
+                item.items.map(vv => {
+                    vv.ch = startCourse++;
+                });
+            }
+        });
+    }
+
     render() {
         let that = this;
         return (
@@ -563,7 +763,7 @@ class EditForm extends React.Component {
                                                        required={true} disabled={true}/>
                                             </div>
                                         </div>
-                                        <div className="form-group row">
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>课程类型
                                             </label>
@@ -571,17 +771,17 @@ class EditForm extends React.Component {
                                                 <input type="text" className="form-control" name="courseType"
                                                        required={true} disabled={true}/>
                                             </div>
-                                        </div>
+                                        </div>*/}
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>课程阶段
                                             </label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="courseRange"
+                                                <input type="text" className="form-control" name="courseName"
                                                        required={true} disabled={true}/>
                                             </div>
                                         </div>
-                                        <div className="form-group row">
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>总课时
                                             </label>
@@ -607,7 +807,7 @@ class EditForm extends React.Component {
                                                 <input type="text" className="form-control" name="time"
                                                        required={true} disabled={true}/>
                                             </div>
-                                        </div>
+                                        </div>*/}
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>当前课次
@@ -692,157 +892,122 @@ class EditForm extends React.Component {
 
                                     </div>
                                 </div>
-                                <Form ref="form" model={this.state.form} rules={this.state.rules} labelWidth="80"
-                                      className="demo-ruleForm">
-                                    <div className="row">
-                                        <Layout.Col span="12">
-                                            <Form.Item label="排课时间">
-                                                {this.state.showType == 2 ?
-                                                    <Radio.Group value={this.state.checkWeek} onChange={this.handleSelect.bind(this,null, 'showWeek')}>
-                                                        <Radio value={WEEKNAME[0]}></Radio>
-                                                        <Radio value={WEEKNAME[1]}></Radio>
-                                                        <Radio value={WEEKNAME[2]}></Radio>
-                                                        <Radio value={WEEKNAME[3]}></Radio>
-                                                        <Radio value={WEEKNAME[4]}></Radio>
-                                                        <Radio value={WEEKNAME[5]}></Radio>
-                                                        <Radio value={WEEKNAME[6]}></Radio>
-                                                    </Radio.Group>
-                                                    :
-                                                    <Checkbox.Group value={this.state.checkMuiltiWeek} onChange={this.handleSelect.bind(this,null, 'showWeek')}>
-                                                        <Checkbox label={WEEKNAME[0]}></Checkbox>
-                                                        <Checkbox label={WEEKNAME[1]}></Checkbox>
-                                                        <Checkbox label={WEEKNAME[2]}></Checkbox>
-                                                        <Checkbox label={WEEKNAME[3]}></Checkbox>
-                                                        <Checkbox label={WEEKNAME[4]}></Checkbox>
-                                                        <Checkbox label={WEEKNAME[5]}></Checkbox>
-                                                        <Checkbox label={WEEKNAME[6]}></Checkbox>
-                                                    </Checkbox.Group>
-                                                }
-
-                                            </Form.Item>
-                                        </Layout.Col>
-                                        <Layout.Col span="6">
-                                        </Layout.Col>
-                                    </div>
+                                <Tabs type="border-card" activeName={1} className="col-10"
+                                      onTabClick={this.changeTabs.bind(this)}>
                                     {that.state.weeks.map(function (vo) {
-                                        return (
-                                            <div  key={vo.idx}>
+                                        return (  /*vo.name*/
+                                            <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name}</span>} name={vo.idx}>
+                                                <div className="row">
+                                                    <div className="col-2 grid-content bg-purple"
+                                                        /*style={{"display": item.show}}*/>
+                                                        <Button type="primary" icon="plus" size='small'
+                                                                onClick={that.changeWeekItem.bind(this, 2, vo.idx, vo.idx)}></Button>
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-1">课时</div>
+                                                    <div className="col-2">开始上课时间</div>
+                                                    <div className="col-2">教室</div>
+                                                    <div className="col-2">主教</div>
+                                                    <div className="col-2">助教</div>
+                                                </div>
                                                 {
                                                     vo.items.map(function (item) {
-                                                        return  (
-                                                            <div className="row" key={item.idx}>
-                                                                <Layout.Col span="2">
-                                                                    <div className="grid-content bg-purple" style={{"display":item.idx == 1 ? "normal" : "none"}}>
-                                                                        <Checkbox label={vo.name} name={vo.name} checked={vo.week1} disabled={true} onChange={that.handleSelect.bind(this, vo.idx, 'week')}></Checkbox>
-                                                                    </div>
-                                                                    <div className="grid-content bg-purple">
-                                                                        <div style={{"display":item.idx != 1 ? "normal" : "none"}}>
-                                                                            {item.ct}({fmtDate(item.date1)})
-                                                                        </div>
-                                                                        <div style={{"display":"none"}}>
-                                                                            <Checkbox label={vo.name} name={vo.name} checked={vo.week1} disabled={true}></Checkbox>
-                                                                        </div>
-                                                                    </div>
-                                                                </Layout.Col>
-                                                                <Layout.Col span="1">
-                                                                    ({item.ch})
-                                                                </Layout.Col>
-                                                                <Layout.Col span="4">
-                                                                    <div className="grid-content bg-purple">
-                                                                        <TimePicker
-                                                                            value={item.date1}
-                                                                            selectableRange="6:30:00 - 22:30:00"
-                                                                            placeholder="请选择开始上课时间"
-                                                                            onChange={date=>{
-                                                                                item.date1 = date;
+                                                        return (
+                                                            <div className="row" key={item.idx} style={{"marginTop":"20px"}}>
+                                                                <div className="col-1">{item.ch}</div>
+                                                                <div className="col-2 grid-content bg-purple">
+                                                                    {
+                                                                        that.props.type == 2 ?
+                                                                            <DatePicker
+                                                                                value={item.date1}
+                                                                                isShowTime={true}
+                                                                                format="yyyy-MM-dd HH:mm"
+                                                                                // selectableRange="6:30:00 - 22:30:00"
+                                                                                placeholder="开始上课日期"
+                                                                                onChange={date => {
+                                                                                    item.date1 = date;
+                                                                                }}
+                                                                            />
+                                                                            :
+                                                                            <TimePicker
+                                                                                value={item.date1}
+                                                                                selectableRange="6:30:00 - 22:30:00"
+                                                                                placeholder="开始上课日期"
+                                                                                onChange={date => {
+                                                                                    item.date1 = date;
+                                                                                }}
+                                                                            />
+                                                                    }
+
+                                                                </div>
+
+                                                                <div className="col-2 grid-content bg-purple">
+                                                                    <Select value={item.roomId1} placeholder="教室"
+                                                                            filterable={true}
+                                                                            clearable={true} style={{"width": "100%"}}
+                                                                            onChange={data => {
+                                                                                item.roomId1 = data;
                                                                             }}
-                                                                        />
-                                                                    </div>
-                                                                </Layout.Col>
-                                                                <Layout.Col span="5">
-                                                                    <div className="grid-content bg-purple">
-                                                                        <Form.Item>
-                                                                            <Select value={item.roomId1} placeholder="请选择教室"
-                                                                                    filterable={true}
-                                                                                    clearable={true} style={{"width":"100%"}}
-                                                                                    onChange={data=>{item.roomId1 = data;}}
-                                                                            >
-                                                                                {
-                                                                                    that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
-                                                                                        return <Select.Option key={el.id} label={el.code}
-                                                                                                              value={el.id}/>
-                                                                                    }) : null
-                                                                                }
-                                                                            </Select>
-                                                                        </Form.Item>
-                                                                    </div>
-                                                                </Layout.Col>
-                                                                <Layout.Col span="5">
-                                                                    <div className="grid-content bg-purple">
-                                                                        <Form.Item>
-                                                                            <Select value={item.teacherId1} placeholder={item.teacherId1 && item.teacherId1.length > 0 ? " " : "请选择主教"}
-                                                                                    filterable={true} multiple={true}
-                                                                                    clearable={true} style={{"width":"100%"}}
-                                                                                    onChange={data=>{item.teacherId1 = data;}}
-                                                                            >
-                                                                                {
-                                                                                    that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
-                                                                                        return <Select.Option key={el.id} label={el.name}
-                                                                                                              value={el.id}/>
-                                                                                    }) : null
-                                                                                }
-                                                                            </Select>
-                                                                        </Form.Item>
-                                                                    </div>
-                                                                </Layout.Col>
-                                                                <Layout.Col span="5">
-                                                                    <div className="grid-content bg-purple">
-                                                                        <Form.Item>
-                                                                            <Select value={item.teacherId2} placeholder="请选择助教"
-                                                                                    filterable={true} multiple={true}
-                                                                                    clearable={true} style={{"width":"100%"}}
-                                                                                    onChange={data=>{item.teacherId2 = data;}}
-                                                                            >
-                                                                                {
-                                                                                    that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
-                                                                                        return <Select.Option key={el.id} label={el.name}
-                                                                                                              value={el.id}/>
-                                                                                    }) : null
-                                                                                }
-                                                                            </Select>
-                                                                        </Form.Item>
-                                                                    </div>
-                                                                </Layout.Col>
+                                                                    >
+                                                                        {
+                                                                            that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
+                                                                                return <Select.Option key={el.id}
+                                                                                                      label={el.code}
+                                                                                                      value={el.id}/>
+                                                                            }) : null
+                                                                        }
+                                                                    </Select>
+                                                                </div>
+
+                                                                <div className="col-2 grid-content bg-purple">
+                                                                    <Select value={item.teacherId1} placeholder="请选择主教"
+                                                                            filterable={true} multiple={true}
+                                                                            clearable={true} style={{"width": "100%"}}
+                                                                            onChange={data => {
+                                                                                item.teacherId1 = data;
+                                                                            }}
+                                                                    >
+                                                                        {
+                                                                            that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                                                return <Select.Option key={el.id}
+                                                                                                      label={el.name}
+                                                                                                      value={el.id}/>
+                                                                            }) : null
+                                                                        }
+                                                                    </Select>
+                                                                </div>
+
+                                                                <div className="col-2 grid-content bg-purple">
+                                                                    <Select value={item.teacherId2} placeholder="请选择助教"
+                                                                            filterable={true} multiple={true}
+                                                                            clearable={true} style={{"width": "100%"}}
+                                                                            onChange={data => {
+                                                                                item.teacherId2 = data;
+                                                                            }}
+                                                                    >
+                                                                        {
+                                                                            that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                                                return <Select.Option key={el.id}
+                                                                                                      label={el.name}
+                                                                                                      value={el.id}/>
+                                                                            }) : null
+                                                                        }
+                                                                    </Select>
+                                                                </div>
+                                                                <div className="col-1 grid-content bg-purple"
+                                                                    /*style={{"display": item.show}}*/>
+                                                                    <Button type="danger" icon="close"
+                                                                            onClick={that.changeWeekItem.bind(this, 1, item.ch, vo.idx)}></Button>
+                                                                </div>
                                                             </div>
                                                         );
                                                     })
                                                 }
-                                            </div>
+                                            </Tabs.Pane>
                                         )
                                     })}
-                                    {/*<div className="row">
-                                        <Layout.Col span="5">
-                                            <Form.Item label="开课日期">
-                                                <DatePicker
-                                                    name="startDate"
-                                                    value={this.state.startDate}
-                                                    placeholder="选择日期"
-                                                    isDisabled={true}
-                                                    onChange={this.handleSelect.bind(this, 1, 'startDate')}
-                                                />
-                                            </Form.Item>
-                                        </Layout.Col>
-                                        <Layout.Col span="5">
-                                            <Form.Item label="结课日期">
-                                                <DatePicker
-                                                    name="endDate"
-                                                    value={this.state.endDate}
-                                                    isDisabled={true}
-                                                />
-                                            </Form.Item>
-                                        </Layout.Col>
-                                    </div>*/}
-                                </Form>
+                                </Tabs>
                             </div>
                         </div>
                     </div>

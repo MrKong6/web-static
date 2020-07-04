@@ -53,7 +53,7 @@ class List extends React.Component {
                     width: 100,
                     fixed: 'left',
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student ? row.student.name: ""}</Button></span>
                     }
                 },
                 {

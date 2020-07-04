@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {Button, DatePicker, Form, Icon, Layout, Select, Tabs, TimePicker} from "element-react";
+import {Button, DatePicker, Form, Icon, Input, Layout, Select, Tabs, TimePicker} from "element-react";
 import 'react-day-picker/lib/style.css';
 import './AssignClass.css';
 
@@ -376,7 +376,9 @@ class AssignForm extends React.Component {
                     }
                 });
                 // this.handleSelect(null, "showWeek", [1])
-
+                if(this.props.classId){
+                    this.handleSelect(null, "classId", this.props.classId)
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -863,7 +865,7 @@ class AssignForm extends React.Component {
                                 <Form.Item label="班级" prop="classId">
                                     <Select value={this.state.classId} clearable={true}
                                             style={{"width": "100%"}} placeholder="请选择班级"
-                                            filterable={true}
+                                            filterable={true} disabled={true}
                                             onChange={this.handleSelect.bind(this, 1, "classId")}>
                                         {
                                             this.state.classList.map(el => {
@@ -926,7 +928,7 @@ class AssignForm extends React.Component {
                                             />
                                         </Form.Item>
                                     </div>
-                                    <div className="col-5">
+                                    {/*<div className="col-5">
                                         <Form.Item label="结课日期">
                                             <DatePicker
                                                 name="endDate"
@@ -934,7 +936,7 @@ class AssignForm extends React.Component {
                                                 disabled={true}
                                             />
                                         </Form.Item>
-                                    </div>
+                                    </div>*/}
 
                                 </div>
                             </Layout.Col>

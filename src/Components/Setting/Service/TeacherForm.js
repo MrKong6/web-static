@@ -166,7 +166,6 @@ class Form extends React.Component {
         let query = {};
 
         query.birthday = this.state.birthday;
-        debugger
         for (let i = 0; i < this.form.length; i++) {
             if (this.form[i].name) {
                 /*if (this.form[i].name === 'startDate' || this.form[i].name === 'endDate') {

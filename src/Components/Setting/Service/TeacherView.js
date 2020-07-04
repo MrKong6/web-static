@@ -35,7 +35,6 @@ class TeacherView extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                debugger
                 let data = await ajax('/academy/teacher/query.do', {id: this.state.id});
                 this.setState({data: data.data});
             } catch (err) {

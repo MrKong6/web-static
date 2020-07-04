@@ -30,7 +30,6 @@ class DialogForEvent extends React.Component {
         this.closed = this.closed.bind(this);
         this.changedDate = this.changedDate.bind(this);
         this.chooseClass = this.chooseClass.bind(this);
-        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             startTime: this.props.chooseStartDate,

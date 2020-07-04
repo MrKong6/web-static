@@ -67,7 +67,7 @@ const TableItem = data => {
                     <td>{item.cOwner}</td>
                     <td>{item.cOwnerPhone}</td>
                     <td>
-                        <img src={qrCode} alt="" width="80px" height="80px" style={{"margin-left":"10px"}} />
+                        <img src={qrCode} alt="" width="80px" height="80px" style={{"marginLeft":"10px"}} />
                     </td>
                 </tr>
             );

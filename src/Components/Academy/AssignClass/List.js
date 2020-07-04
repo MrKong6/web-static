@@ -58,6 +58,7 @@ class List extends React.Component {
         this.title.name  = this.title.name ? this.title.name : "All"
         this.eventMouseEnter = this.eventMouseEnter.bind(this);
         this.eventMouseLeave = this.eventMouseLeave.bind(this);
+        this.eventOnClick = this.eventOnClick.bind(this);
         this.chooseTopCondition = this.chooseTopCondition.bind(this);
         this.delAssignClass = this.delAssignClass.bind(this);
         this.mid = this.mid.bind(this);
@@ -120,23 +121,30 @@ class List extends React.Component {
     }
 
     eventOnClick = (evt) => {
+        debugger
+        this.state.id = evt.event.id;
+        this.setState({id:evt.event.id})
         // this.state.chooseEvent = evt.event;
         // this.handleDateClick();
         // this.props.history.push(`${this.props.match.url}/`+evt.event.id);
         this.actContainer = document.createElement('div');
         ReactDOM.render(
-            <DialogAssignClass
-                accept={this.acceptActDialog}
-                changedCrmGroup={this.state.group}
-                toDirect={this.toDirect}
-                id={evt.event.id}
-                defaults={this.state.channelId}
-                replace={this.props.replace}
-                from={this.props.from}
-                ref={(dom) => {
-                    this.act = dom
-                }}
-            />,
+            <div>
+                <DialogAssignClass
+                    accept={this.acceptActDialog}
+                    changedCrmGroup={this.state.group}
+                    toDirect={this.toDirect.bind(this)}
+                    id={evt.event.id}
+                    key={new Date().getTime()}
+                    defaults={this.state.channelId}
+                    replace={this.props.replace}
+                    from={this.props.from}
+                    ref={(dom) => {
+                        this.act = dom
+                    }}
+                />
+            </div>
+            ,
             document.body.appendChild(this.actContainer)
         );
         this.act.dialog.modal('show');
@@ -144,9 +152,9 @@ class List extends React.Component {
 
     toDirect(value,id){
         if(value == 2){
-            this.props.history.push(`${this.props.match.url}/`+id,{type:value});
+            this.props.history.push(`${this.props.match.url}/`+this.state.id,{type:value});
         }else{
-            this.props.history.push(`${this.props.match.url}/`+id,{type:value});
+            this.props.history.push(`${this.props.match.url}/`+this.state.id,{type:value});
         }
     }
 
@@ -177,12 +185,12 @@ class List extends React.Component {
                 let items = this.state.classList.filter(item => (item.id == evt));
                 this.state.chooseTeacher = null;
                 this.state.chooseRoom = null;
-                this.state.chooseClass = Number(evt);
+                this.state.chooseClass = evt;
                 this.title.name = (items.length >0 ? items[0].code: "");
                 this.setState({
                     chooseTeacher : null,
                     chooseRoom : null,
-                    chooseClass : Number(evt),
+                    chooseClass : evt,
                 });
                 break;
             }
@@ -204,7 +212,7 @@ class List extends React.Component {
                 this.state.chooseRoom = evt;
                 this.state.chooseTeacher = null;
                 this.state.chooseClass = null;
-                this.title.name = (items.length >0 ? items[0].code: "");;
+                this.title.name = (items.length >0 ? items[0].code: "");
                 this.setState({
                     chooseTeacher : null,
                     chooseRoom : evt,
@@ -217,7 +225,14 @@ class List extends React.Component {
     }
     //添加自定义事件
     handleDateClick = (arg) => {
-        this.props.history.push(`${this.props.match.url}/create`);
+        if(this.state.chooseClass){
+            this.props.history.push(`${this.props.match.url}/create`,{"classId":Number(this.state.chooseClass)});
+        }else{
+            Message({
+                type: 'warning',
+                message: '请先选择班级!'
+            });
+        }
     }
 
     mid(){
@@ -235,7 +250,7 @@ class List extends React.Component {
                     let calendarEvents = [];
                     assignClassList.data.map(item => {
                         calendarEvents.push({
-                            title: '班级：' + (item.classCode ? item.classCode : "")  + '\n教师：' + (item.teacherName ? item.teacherName : "") + '\n教室：' + (item.roomCode ? item.roomCode : "") + '\n课次：' + (item.currentClassTime ? item.currentClassTime : ""),
+                            title: '班级：' + (item.classCode ? item.classCode : "") + '课程：' + (item.courseName ? item.courseName : "")  + '\n教师：' + (item.teacherName ? item.teacherName : "") + '\n教室：' + (item.roomCode ? item.roomCode : "") + '\n课次：' + (item.currentClassTime ? item.currentClassTime : ""),
                             start: new Date(item.startTime),
                             end: new Date(item.endTime),
                             color: item.classColor ? item.classColor : "#ECF5FF",
@@ -362,7 +377,7 @@ class List extends React.Component {
                             </div>*/}
                         </div>
                     <div className="row">
-                        <div className="row">
+                        <div className="row" style={{width: '100%'}}>
                             <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>班级：</label>
                             </div>
@@ -372,7 +387,7 @@ class List extends React.Component {
                                       >
                                     {
                                         this.state.classList ? this.state.classList.map(item => (
-                                            <Menu.Item index={item.id}>{item.code}</Menu.Item>
+                                            <Menu.Item index={item.id + ''} key={item.code}>{item.code}</Menu.Item>
                                         )) : null
                                     }
                                 </Menu>
@@ -381,7 +396,7 @@ class List extends React.Component {
                                 <Button type="text" size="large" onClick={this.changeFold.bind(this,1)}>{this.state.classMore}</Button>
                             </div>
                         </div>
-                        <div className="row">
+                        <div className="row" style={{width: '100%'}}>
                             <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>教师：</label>
                             </div>
@@ -390,7 +405,7 @@ class List extends React.Component {
                                       onSelect={this.chooseTopCondition.bind(this, 2)}>
                                     {
                                         this.state.teacherList ? this.state.teacherList.map(item2 => (
-                                            <Menu.Item index={item2.id}>{item2.name}</Menu.Item>
+                                            <Menu.Item index={item2.id+''} key={item2.id}>{item2.name}</Menu.Item>
                                         )) : null
                                     }
                                 </Menu>
@@ -399,7 +414,7 @@ class List extends React.Component {
                                 <Button type="text" size="large" onClick={this.changeFold.bind(this,2)}>{this.state.classMoreTeacher}</Button>
                             </div>
                         </div>
-                        <div className="row">
+                        <div className="row" style={{width: '100%'}}>
                             <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>教室：</label>
                             </div>
@@ -408,7 +423,7 @@ class List extends React.Component {
                                       onSelect={this.chooseTopCondition.bind(this, 3)}>
                                     {
                                         this.state.roomList ? this.state.roomList.map(item3 => (
-                                            <Menu.Item index={item3.id}>{item3.code}</Menu.Item>
+                                            <Menu.Item index={item3.id+''} key={item3.id}>{item3.code}</Menu.Item>
                                         )) : null
                                     }
                                 </Menu>

@@ -8,9 +8,7 @@ import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {Cascader, ColorPicker, DatePicker, Message, Popover, Select} from "element-react";
-import CourseTypeHover from "../../Dic/CourseTypeHover";
-import {changeObjArrayItemToString} from "../../../utils/objectToArray";
-// import InputColor from 'react-input-color';
+import InputColor from 'react-input-color';
 
 class Form extends React.Component {
     constructor(props) {
@@ -55,7 +53,7 @@ class Form extends React.Component {
                 let allClassCourse = await ajax('/academy/class/classCourseType.do',{orgId: this.state.group.id});
                 let mainTeacher = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
                 let list = await ajax('/course/type/listTypeAndSons.do',{orgId: this.state.group.id});  //课程类别
-                let data = null,allClassCourseType=[],allClassCourseRange=[];
+                let data = null,allClassCourseType=[],allClassCourseRange=[],chooseCourseTypes=[];
                 if(mainTeacher){
                     mainTeacher = mainTeacher.data.items;
                 }
@@ -98,11 +96,19 @@ class Form extends React.Component {
                         main.push(Number(data.mainTeacher));
                     }
                 }
+
+                //课程
+                if(data && data.courses){
+                    data.courses.map(item => {
+                        chooseCourseTypes.push(item.id);
+                    });
+                }
                 this.setState({
                     option: {allClassStatus, allClassType, allClassRange, allClassCourseType,mainTeacher},
                     mainTeacherIds: main,
                     allClassCourseRange: allClassCourseRange,
-                    courseTypes: list.data ? list.data : []
+                    courseTypes: list.data ? list.data : [],
+                    chooseCourseTypes
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -237,7 +243,7 @@ class Form extends React.Component {
                 if (this.form[i].name === 'startDate' || this.form[i].name === 'endDate') {
                     query[this.form[i].name] = new Date(this.form[i].value);
                 } else {
-                    query[this.form[i].name] = this.form[i].value;
+                    query[this.form[i].name] = this.form[i].value ? this.form[i].value : null;
                 }
             }
         }
@@ -316,7 +322,7 @@ class Form extends React.Component {
                                                 {/*<ColorPicker ref='myInput' value={this.state.classColor ? this.state.classColor : null}
                                                              onChange={this.changeColor}
                                                 ></ColorPicker>*/}
-                                                {/*<div>
+                                                <div>
                                                    <InputColor
                                                         colorFormat='hex'
                                                         initialHexColor= "#5e72e4"
@@ -325,13 +331,13 @@ class Form extends React.Component {
                                                     />
                                                     <div
                                                         style={{
+                                                            backgroundColor: this.state.classColor,
                                                             width: 50,
                                                             height: 50,
                                                             marginTop: 20,
-                                                            backgroundColor: this.state.classColor
                                                         }}
                                                     />
-                                                </div>*/}
+                                                </div>
                                             </div>
                                         </div>
 
@@ -369,11 +375,13 @@ class Form extends React.Component {
                                             <label className="col-5 col-form-label font-weight-bold">班级状态</label>
                                             <div className="col-7">
                                                 <select className="form-control"
-                                                        name={this.props.classStatus || "classStatus"}>
+                                                        name={this.props.classStatus || "classStatus"} disabled={!this.props.isEditor}>/**/
                                                     {
                                                         this.state.option ? this.state.option.allClassStatus.map(item => (
-                                                            <option key={item.code}
-                                                                    value={item.code}>{item.name}</option>
+                                                            (item.showStr) == '2' ?
+                                                                <option key={item.code} value={item.code} disabled={'disabled'} style={{"background":"#e9ecef"}}>{item.name}</option>
+                                                            :
+                                                                <option key={item.code} value={item.code}>{item.name}</option>
                                                         )) : null
                                                     }
                                                 </select>
@@ -514,7 +522,7 @@ class Form extends React.Component {
                                                         }) : null
                                                     }
                                                 </Select>*/}
-                                                <input type="text" className="form-control" name="mainTeacher" readOnly={true}/>
+                                                <input type="text" className="form-control" name="mainTeacherName" readOnly={true}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -541,7 +549,7 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">课程表</label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="course"/>
+                                                <input type="text" className="form-control" name="course" readOnly={true}/>
                                             </div>
                                         </div>
                                     </div>

@@ -79,7 +79,7 @@ class Editor extends React.Component {
 
         const request = async () => {
             try {
-                await ajax('/academy/class/assignClass.do', {"assignVo": JSON.stringify(query)});
+                await ajax('/academy/class/updateAssignClass.do', {"assignVo": JSON.stringify(query)});
                 this.setState({isUpdated: true})
             } catch (err) {
                 if (err.errCode === 401) {

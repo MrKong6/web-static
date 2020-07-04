@@ -37,7 +37,6 @@ class ActHouver extends React.Component {
     refreshMarketType(parentId){
         const request = async () => {
             try {
-                debugger
                 let list = await ajax('/mkt/activity/getMarketType.do', {orgId: this.props.parent.state.group.id, parentId:parentId});
                 this.setState({marketTypes: list})
             } catch (err) {

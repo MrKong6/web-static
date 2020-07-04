@@ -89,7 +89,6 @@ class CourseName extends React.Component{
     }
 
     changeFirstCourse(id){
-        debugger
         if(!this.props.parent){
             return ;
         }

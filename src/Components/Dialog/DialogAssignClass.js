@@ -1,19 +1,15 @@
 import React from 'react'
-import ReactDOM from "react-dom";
 import {$} from "../../vendor";
 
-import ajax from "../../utils/ajax";
-import {DatePicker, DateRangePicker, Message, MessageBox, Select, Radio, Input} from "element-react";
-import DialogTips from "./DialogTips";
-import fmtDate from "../../utils/fmtDate";
-import {Redirect} from "react-router-dom";
+import {Radio} from "element-react";
 
 class DialogAssignClass extends React.Component {
     constructor(props) {
         super(props);
+        this.dialogId = `d-${new Date().getTime()}`;
         debugger
-        this.cancel = this.cancel.bind(this);
         this.state = {
+            key: this.props.key,
             group: this.props.changedCrmGroup,
             id : this.props.id ? this.props.id : null,
             value: 1,
@@ -22,9 +18,12 @@ class DialogAssignClass extends React.Component {
         // if(this.props.data && this.props.data.start)
         this.changeType = this.changeType.bind(this);
         this.confirmAdd = this.confirmAdd.bind(this);
+        this.cancel = this.cancel.bind(this);
     }
 
     componentDidMount() {
+        this.setState({ id: this.props.id});
+        this.forceUpdate();
         this.dialog = $(`#accountView`);
         this.dialog.on('hidden.bs.modal', () => {
             this.cancel();
@@ -38,17 +37,17 @@ class DialogAssignClass extends React.Component {
 
     //更改radio button
     changeType(value) {
-        this.setState({ value});
+        this.setState({value});
     }
     //保存数据
-    confirmAdd(){
+    confirmAdd(value,id){
         this.props.toDirect(this.state.value,this.state.id);
         this.cancel();
     }
 
     render() {
         return (
-            <form ref={(dom) => {
+            <form id={this.dialogId} ref={(dom) => {
                 this.form = dom
             }} encType='multipart/form-data'>
                 <div id="accountView" className="modal fade" tabIndex="-1" role="dialog">
@@ -73,7 +72,7 @@ class DialogAssignClass extends React.Component {
                                 <button onClick={this.cancel} type="button" className="btn btn-secondary"
                                         data-dismiss="modal">取消
                                 </button>
-                                <button onClick={this.confirmAdd} type="button" className="btn btn-primary">确认</button>
+                                <button onClick={this.confirmAdd.bind(this)} type="button" className="btn btn-primary">确认</button>
                             </div>
                         </div>
                     </div>

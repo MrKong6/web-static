@@ -233,7 +233,6 @@ class Form extends React.Component {
     }
 
     changeCourse(children,data){
-        debugger
         if(data){
             // console.log(data);
             const keys = Object.keys(data);
