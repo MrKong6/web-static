@@ -11,9 +11,9 @@ import Editor from "./Editor";
 import AssignClassView from "./AssignClassView";
 import ClockedView from "./ClockedView";
 import StudentSituation from "./StudentSituation";
-import StudentSituationBackMoneyAdd from "./StudentSituationBackMoneyAdd";
-import StudentSituationChangeClassAdd from "./StudentSituationChangeClassAdd";
-import StudentSituationPauseClassAdd from "./StudentSituationPauseClassAdd";
+import StudentSituationBackMoneyAdd from "../../Service/Customer/StudentSituationBackMoneyAdd";
+import StudentSituationChangeClassAdd from "../../Service/Customer/StudentSituationChangeClassAdd";
+import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituationPauseClassAdd";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '5-4'));

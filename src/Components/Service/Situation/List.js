@@ -3,20 +3,16 @@ import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
-import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Tabs} from 'element-react';
-import {formatWithTime} from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
-import StudentSituationBackMoney from "../../Academy/Class/StudentSituationBackMoney";
-import StudentSituationPauseClass from "../../Academy/Class/StudentSituationPauseClass";
-import StudentSituationChangeClass from "../../Academy/Class/StudentSituationChangeClass";
 import fmtDate from "../../../utils/fmtDate";
 import ajaxFile from "../../../utils/ajaxFile";
+import StudentSituation from "./StudentSituation";
+import {Message, Pagination} from "element-react";
 
 class List extends React.Component {
     constructor(props) {
@@ -35,7 +31,7 @@ class List extends React.Component {
             redirectToReferrer: false,
             totalPage:0,
             currentPage:1,
-            pageSize:10,
+            pageSize:1000,
             totalCount:0,
         };
     }
@@ -45,7 +41,7 @@ class List extends React.Component {
             try {
                 let list = await ajax('/student/situation/list.do', {
                     orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize, situationType:this.state.situationView,stuId:this.state.id
+                    pageSize: this.state.pageSize,stuId:this.state.id
                 });
                 if(list && list.items){
                     list.items.map(item => {
@@ -119,6 +115,19 @@ class List extends React.Component {
         ajaxFile('/student/situation/export.do',{orgId: this.state.group.id})
     }
 
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -132,7 +141,7 @@ class List extends React.Component {
             className:"upload-demo",
             showFileList:false,
             withCredentials:true,
-            data:{'type':4,'orgId':this.state.group.id,"userId":this.state.userId,"importType":2},
+            data:{'orgId':this.state.group.id,"userId":this.state.userId,"importType":1},
             action: AJAX_PATH + '/student/situation/import.do',
             onSuccess: (response, file, fileList) => {
                 if(response.code && response.code == 200){
@@ -156,17 +165,16 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     <div className="row" style={{"height": '80%'}}>
-                        <Tabs activeName="1" onTabClick={ this.changePanel }>
-                            <Tabs.Pane label="退费" name="1">
-                                <StudentSituationBackMoney type={"class"} id={this.state.id} data={this.state.list} />
-                            </Tabs.Pane>
-                            <Tabs.Pane label="休学" name="2">
-                                <StudentSituationPauseClass type={"class"} id={this.state.id} data={this.state.list} />
-                            </Tabs.Pane>
-                            <Tabs.Pane label="转班" name="3">
-                                <StudentSituationChangeClass type={"class"} id={this.state.id} data={this.state.list} />
-                            </Tabs.Pane>
-                        </Tabs>
+                        <StudentSituation type={"class"} id={this.state.id} data={this.state.list} />
+                        {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
+                                    total={this.state.totalCount}
+                                    pageSizes={[10, 50, 100]}
+                                    pageSize={this.state.pageSize}
+                                    currentPage={this.state.currentPage}
+                                    pageCount={this.state.totalPage}
+                                    className={"page_bottom"}
+                                    onCurrentChange={(currentPage) => this.pageChange(currentPage)}
+                                    onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
                     </div>
                 </div>
             </div>

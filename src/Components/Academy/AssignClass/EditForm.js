@@ -7,10 +7,10 @@ import DialogTips from "../../Dialog/DialogTips";
 import ajax from "../../../utils/ajax";
 import CONFIG from '../../../utils/config';
 
-import fmtDate, {getTimeByWeek, getTimeFourByDate} from "../../../utils/fmtDate";
+import fmtDate, {addDate, formatWithDateAndTime, getNumByWeek, getWeekDate} from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {Button,  Tabs, DatePicker, Icon, Input, Layout, Radio, Select, TimePicker} from "element-react";
-import {changeArrayItemToInt, changeStringToArrayInt} from "../../../utils/objectToArray";
+import {changeArrayItemToInt, changeArrayItemToString, changeStringToArrayInt} from "../../../utils/objectToArray";
 
 const WEEKNAME=CONFIG.WEEKNAME;
 class EditForm extends React.Component {
@@ -40,6 +40,7 @@ class EditForm extends React.Component {
             checkMuiltiWeek: [],
             form: {},
             rules: {},
+            defaultClickTab: 1,
             weeks: [
                 {
                     date1: null,
@@ -275,6 +276,7 @@ class EditForm extends React.Component {
                             idx: 2,
                         }],
                 }],
+            weekDate: []
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -303,6 +305,8 @@ class EditForm extends React.Component {
                 let weeks = [],checkWeek = null,checkMuiltiWeek = [],weeksDataSource = this.state.weeksDataSource;
                 data = data.data;
                 let mid = null;
+                let weekDate = getWeekDate(data[0].startTime);
+                //根据日期找到当前日期对应的当前周的日期
                 weeksDataSource.map(source => {
                     mid = source;
                     mid.items = [];
@@ -322,12 +326,15 @@ class EditForm extends React.Component {
                     if(mid.items.length > 0){
                         source.items = mid.items;
                     }
+                    mid.weekDate = weekDate[source.idx-1];
                     weeks.push(mid);
                 });
                 data = data[0];
+                let defaultClickTab = Number(getNumByWeek(data.weekName));
+
 
                 this.setState({
-                    checkWeek,checkMuiltiWeek,weeksDataSource,
+                    checkWeek,checkMuiltiWeek,weeksDataSource,weekDate,
                     roomList: roomList.data.items,
                     teacherList: teacherList.data.items,
                     registrarList: registrarList,
@@ -341,7 +348,7 @@ class EditForm extends React.Component {
                     startDate: new Date(data.loopStartTime),
                     endDate: new Date(data.xunhuanEndDate),
                     data: data,
-                    weeks,weeksDataSource
+                    weeks,weeksDataSource,defaultClickTab
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -460,7 +467,7 @@ class EditForm extends React.Component {
                 });
             }
         } else if(key == 'teacherId'){
-            this.state.chooseTeacher = value;
+            this.state.teacherId = value;
             // let weeks = this.state.weeks;
             // weeks.map(item => {
             //     if(item.items && item.items.length > 0){
@@ -471,7 +478,7 @@ class EditForm extends React.Component {
             // })
             // this.setState({weeks});
         }else if(key == 'registrar'){
-            this.state.form.registrar = value;
+            this.state.registrar = value;
             // let weeks = this.state.weeks;
             // weeks.map(item => {
             //     if(item.items && item.items.length > 0){
@@ -587,6 +594,7 @@ class EditForm extends React.Component {
         this.state.weeks.map(vo => {
             vo.items.map(id => {
                 id.name = vo.name;
+                id.date1 = formatWithDateAndTime(vo.weekDate,id.date1);
                 items.push(id);
             });
         });
@@ -602,18 +610,24 @@ class EditForm extends React.Component {
         query.endTime = new Date(this.state.endTime);
         query.createOn = new Date();
         // query.id = this.state.id;
-        // let teacherId=null;
-        // if(this.state.mainTeacherIds && this.state.mainTeacherIds.length >0){
-        //     let idx = 1;
-        //     this.state.mainTeacherIds.map(id=> {
-        //         teacherId = teacherId + id;
-        //         if(idx != this.state.mainTeacherIds.length){
-        //             teacherId = teacherId + ",";
-        //         }
-        //         idx++;
-        //     });
-        // }
-        // query.teacherId = teacherId;
+        let teacherNames=[];
+        if(this.state.teacherId && this.state.teacherId.length >0){
+            this.state.teacherId.map(id=> {
+                let teacher = this.state.teacherList.filter(item => item.id == id);
+                teacherNames.push(teacher[0].name);
+            });
+        }
+        query.teacherId = changeArrayItemToString(this.state.teacherId);
+        query.teacherName = changeArrayItemToString(teacherNames);
+        let rNames=[];
+        if(this.state.registrar && this.state.registrar.length >0){
+            this.state.registrar.map(id=> {
+                let teacher = this.state.teacherList.filter(item => item.id == id);
+                rNames.push(teacher[0].name);
+            });
+        }
+        query.registrarId = changeArrayItemToString(this.state.registrar);
+        query.registrarName = changeArrayItemToString(teacherNames);
         //
         // for (let i = 0; i < this.form.length; i++) {
         //     if (this.form[i].name) {
@@ -740,6 +754,30 @@ class EditForm extends React.Component {
                 });
             }
         });
+    }
+
+    //改变日期范围
+    changeDateRange(val1, evt){
+        let weekDate = this.state.weekDate;
+        let weeks = this.state.weeks;
+        if(val1 == 1){
+            //右移一周
+            weekDate.map(item => {
+                item = addDate(item, 7);
+            });
+            weeks.map(item => {
+                item.weekDate = addDate(item.weekDate, 7);
+            });
+        }else if(val1 == 2){
+            //左移一周
+            weekDate.map(item => {
+                item = addDate(item, -7);
+            });
+            weeks.map(item => {
+                item.weekDate = addDate(item.weekDate, -7);
+            });
+        }
+        this.setState({weekDate,weeks});
     }
 
     render() {
@@ -892,122 +930,131 @@ class EditForm extends React.Component {
 
                                     </div>
                                 </div>
-                                <Tabs type="border-card" activeName={1} className="col-10"
-                                      onTabClick={this.changeTabs.bind(this)}>
-                                    {that.state.weeks.map(function (vo) {
-                                        return (  /*vo.name*/
-                                            <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name}</span>} name={vo.idx}>
-                                                <div className="row">
-                                                    <div className="col-2 grid-content bg-purple"
-                                                        /*style={{"display": item.show}}*/>
-                                                        <Button type="primary" icon="plus" size='small'
-                                                                onClick={that.changeWeekItem.bind(this, 2, vo.idx, vo.idx)}></Button>
+                                <div className="row">
+                                    <div className="col-0.5">
+                                        <Button type="primary" icon="arrow-left" onClick={this.changeDateRange.bind(this,2)}></Button>
+                                    </div>
+                                    <Tabs type="border-card" activeName={this.state.defaultClickTab} className="col-11"
+                                          onTabClick={this.changeTabs.bind(this)}>
+                                        {that.state.weeks.map(function (vo) {
+                                            return (  /*vo.name*/
+                                                <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name + '(' +vo.weekDate + ')'}</span>} name={vo.idx}>
+                                                    <div className="row">
+                                                        <div className="col-2 grid-content bg-purple"
+                                                            /*style={{"display": item.show}}*/>
+                                                            <Button type="primary" icon="plus" size='small'
+                                                                    onClick={that.changeWeekItem.bind(this, 2, vo.idx, vo.idx)}></Button>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div className="row">
-                                                    <div className="col-1">课时</div>
-                                                    <div className="col-2">开始上课时间</div>
-                                                    <div className="col-2">教室</div>
-                                                    <div className="col-2">主教</div>
-                                                    <div className="col-2">助教</div>
-                                                </div>
-                                                {
-                                                    vo.items.map(function (item) {
-                                                        return (
-                                                            <div className="row" key={item.idx} style={{"marginTop":"20px"}}>
-                                                                <div className="col-1">{item.ch}</div>
-                                                                <div className="col-2 grid-content bg-purple">
-                                                                    {
-                                                                        that.props.type == 2 ?
-                                                                            <DatePicker
-                                                                                value={item.date1}
-                                                                                isShowTime={true}
-                                                                                format="yyyy-MM-dd HH:mm"
-                                                                                // selectableRange="6:30:00 - 22:30:00"
-                                                                                placeholder="开始上课日期"
-                                                                                onChange={date => {
-                                                                                    item.date1 = date;
+                                                    <div className="row">
+                                                        <div className="col-1">课时</div>
+                                                        <div className="col-2">开始上课时间</div>
+                                                        <div className="col-2">教室</div>
+                                                        <div className="col-2">主教</div>
+                                                        <div className="col-2">助教</div>
+                                                    </div>
+                                                    {
+                                                        vo.items.map(function (item) {
+                                                            return (
+                                                                <div className="row" key={item.idx} style={{"marginTop":"20px"}}>
+                                                                    <div className="col-1">{item.ch}</div>
+                                                                    <div className="col-2 grid-content bg-purple">
+                                                                        {
+                                                                            that.props.type == 2 ?
+                                                                                <DatePicker
+                                                                                    value={item.date1}
+                                                                                    isShowTime={true}
+                                                                                    format="yyyy-MM-dd HH:mm"
+                                                                                    // selectableRange="6:30:00 - 22:30:00"
+                                                                                    placeholder="开始上课日期"
+                                                                                    onChange={date => {
+                                                                                        item.date1 = date;
+                                                                                    }}
+                                                                                />
+                                                                                :
+                                                                                <TimePicker
+                                                                                    value={item.date1}
+                                                                                    selectableRange="6:30:00 - 22:30:00"
+                                                                                    placeholder="开始上课日期"
+                                                                                    onChange={date => {
+                                                                                        item.date1 = date;
+                                                                                    }}
+                                                                                />
+                                                                        }
+
+                                                                    </div>
+
+                                                                    <div className="col-2 grid-content bg-purple">
+                                                                        <Select value={item.roomId1} placeholder="教室"
+                                                                                filterable={true}
+                                                                                clearable={true} style={{"width": "100%"}}
+                                                                                onChange={data => {
+                                                                                    item.roomId1 = data;
                                                                                 }}
-                                                                            />
-                                                                            :
-                                                                            <TimePicker
-                                                                                value={item.date1}
-                                                                                selectableRange="6:30:00 - 22:30:00"
-                                                                                placeholder="开始上课日期"
-                                                                                onChange={date => {
-                                                                                    item.date1 = date;
+                                                                        >
+                                                                            {
+                                                                                that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
+                                                                                    return <Select.Option key={el.id}
+                                                                                                          label={el.code}
+                                                                                                          value={el.id}/>
+                                                                                }) : null
+                                                                            }
+                                                                        </Select>
+                                                                    </div>
+
+                                                                    <div className="col-2 grid-content bg-purple">
+                                                                        <Select value={item.teacherId1} placeholder="请选择主教"
+                                                                                filterable={true} multiple={true}
+                                                                                clearable={true} style={{"width": "100%"}}
+                                                                                onChange={data => {
+                                                                                    item.teacherId1 = data;
                                                                                 }}
-                                                                            />
-                                                                    }
+                                                                        >
+                                                                            {
+                                                                                that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                                                    return <Select.Option key={el.id}
+                                                                                                          label={el.name}
+                                                                                                          value={el.id}/>
+                                                                                }) : null
+                                                                            }
+                                                                        </Select>
+                                                                    </div>
 
+                                                                    <div className="col-2 grid-content bg-purple">
+                                                                        <Select value={item.teacherId2} placeholder="请选择助教"
+                                                                                filterable={true} multiple={true}
+                                                                                clearable={true} style={{"width": "100%"}}
+                                                                                onChange={data => {
+                                                                                    item.teacherId2 = data;
+                                                                                }}
+                                                                        >
+                                                                            {
+                                                                                that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                                                    return <Select.Option key={el.id}
+                                                                                                          label={el.name}
+                                                                                                          value={el.id}/>
+                                                                                }) : null
+                                                                            }
+                                                                        </Select>
+                                                                    </div>
+                                                                    <div className="col-1 grid-content bg-purple"
+                                                                        /*style={{"display": item.show}}*/>
+                                                                        <Button type="danger" icon="close"
+                                                                                onClick={that.changeWeekItem.bind(this, 1, item.ch, vo.idx)}></Button>
+                                                                    </div>
                                                                 </div>
+                                                            );
+                                                        })
+                                                    }
+                                                </Tabs.Pane>
+                                            )
+                                        })}
+                                    </Tabs>
+                                    <div className="col-0.5">
+                                        <Button type="primary" onClick={this.changeDateRange.bind(this,1)}><i className="el-icon-arrow-right el-icon-right"></i></Button>
+                                    </div>
+                                </div>
 
-                                                                <div className="col-2 grid-content bg-purple">
-                                                                    <Select value={item.roomId1} placeholder="教室"
-                                                                            filterable={true}
-                                                                            clearable={true} style={{"width": "100%"}}
-                                                                            onChange={data => {
-                                                                                item.roomId1 = data;
-                                                                            }}
-                                                                    >
-                                                                        {
-                                                                            that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
-                                                                                return <Select.Option key={el.id}
-                                                                                                      label={el.code}
-                                                                                                      value={el.id}/>
-                                                                            }) : null
-                                                                        }
-                                                                    </Select>
-                                                                </div>
-
-                                                                <div className="col-2 grid-content bg-purple">
-                                                                    <Select value={item.teacherId1} placeholder="请选择主教"
-                                                                            filterable={true} multiple={true}
-                                                                            clearable={true} style={{"width": "100%"}}
-                                                                            onChange={data => {
-                                                                                item.teacherId1 = data;
-                                                                            }}
-                                                                    >
-                                                                        {
-                                                                            that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
-                                                                                return <Select.Option key={el.id}
-                                                                                                      label={el.name}
-                                                                                                      value={el.id}/>
-                                                                            }) : null
-                                                                        }
-                                                                    </Select>
-                                                                </div>
-
-                                                                <div className="col-2 grid-content bg-purple">
-                                                                    <Select value={item.teacherId2} placeholder="请选择助教"
-                                                                            filterable={true} multiple={true}
-                                                                            clearable={true} style={{"width": "100%"}}
-                                                                            onChange={data => {
-                                                                                item.teacherId2 = data;
-                                                                            }}
-                                                                    >
-                                                                        {
-                                                                            that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
-                                                                                return <Select.Option key={el.id}
-                                                                                                      label={el.name}
-                                                                                                      value={el.id}/>
-                                                                            }) : null
-                                                                        }
-                                                                    </Select>
-                                                                </div>
-                                                                <div className="col-1 grid-content bg-purple"
-                                                                    /*style={{"display": item.show}}*/>
-                                                                    <Button type="danger" icon="close"
-                                                                            onClick={that.changeWeekItem.bind(this, 1, item.ch, vo.idx)}></Button>
-                                                                </div>
-                                                            </div>
-                                                        );
-                                                    })
-                                                }
-                                            </Tabs.Pane>
-                                        )
-                                    })}
-                                </Tabs>
                             </div>
                         </div>
                     </div>

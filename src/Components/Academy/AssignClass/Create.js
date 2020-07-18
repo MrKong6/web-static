@@ -121,7 +121,7 @@ class Create extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">{this.title.text}创建</p>
+                    <p className="d-inline text-muted">{this.props.location.state.classCode}</p>
                     <div className="btn-group float-right" role="group">
                         <button onClick={() => {
                             historyBack(this.props.history)

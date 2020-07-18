@@ -124,6 +124,11 @@ class ContractView extends React.Component {
                     width: 100,
                 },
                 {
+                    label: "合同状态",
+                    prop: "contractStatusName",
+                    width: 100,
+                },
+                {
                     label: "学员姓名",
                     prop: "stuName",
                     width: 95,

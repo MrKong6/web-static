@@ -112,8 +112,8 @@ class ClockedView extends React.Component {
             try {
                 let data = await ajax('/academy/class/query.do', {id: this.state.id});
                 let times = 100;
-                if(data && data.data && data.data.classTime){
-                    times = data.data.classTime;
+                if(data && data.courses && data.courses.length > 0){
+                    times = data.courses[0].classTime;
                 }
                 console.log('one    '+new Date().getTime());
                 for (let i = 1; i <= times; i++) {
@@ -265,8 +265,6 @@ class ClockedView extends React.Component {
                 <Redirect to="/home/academy/class"/>
             )
         }
-
-
         return (
             <div>
                 <h5 id="subNav">

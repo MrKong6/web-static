@@ -9,7 +9,7 @@ import Commands from "../../Commands/Commands";
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
+import fmtDate, {formatWithTime, getNumByWeek, getWeekDate} from "../../../utils/fmtDate";
 import {
     Button,
     Checkbox,
@@ -211,6 +211,7 @@ class View extends React.Component {
             teacherList: [],
             form: {},
             rules: {},
+            defaultClickTab: 1,
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
@@ -230,6 +231,7 @@ class View extends React.Component {
                 roomList = roomList.data.items;
                 teacherList = teacherList.data.items;
                 let weeks = [],weeksDataSource = this.state.weeksDataSource;
+                let weekDate = getWeekDate(data[0].startTime);
                 if(data.length > 0){
                     weeksDataSource.map(source => {
                         source.items = [];
@@ -248,12 +250,14 @@ class View extends React.Component {
                             }
 
                         });
+                        source.weekDate = weekDate[source.idx-1];
                         weeks.push(source);
 
                     });
                     data = data[0];
                 }
-                this.setState({roomList, teacherList, data, weeks});
+                let defaultClickTab = Number(getNumByWeek(data.weekName));
+                this.setState({roomList, teacherList, data, weeks,defaultClickTab});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -282,7 +286,7 @@ class View extends React.Component {
     handleSelect(type, key, value) {
     }
 
-        createDialogTips(text) {
+    createDialogTips(text) {
         if (this.tips === undefined) {
             this.tipsContainer = document.createElement('div');
 
@@ -479,92 +483,103 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <Tabs type="border-card" activeName={1} className="col-10"
-                                          onTabClick={this.changeTabs.bind(this)}>
-                                        {that.state.weeks.map(function (vo) {
-                                            return (  /*vo.name*/
-                                                <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name}</span>} name={vo.idx}>
-                                                    <div className="row">
-                                                        <div className="col-1">课时</div>
-                                                        <div className="col-2">开始上课时间</div>
-                                                        <div className="col-2">教室</div>
-                                                        <div className="col-2">主教</div>
-                                                        <div className="col-2">助教</div>
-                                                    </div>
-                                                    {
-                                                        vo.items.map(function (item) {
-                                                            return (
-                                                                <div className="row" key={item.idx} style={{"marginTop":"20px"}}>
-                                                                    <div className="col-1">{item.index}</div>
-                                                                    <div className="col-2 grid-content bg-purple">
-                                                                        <input
-                                                                            type="text"
-                                                                            readOnly={true}
-                                                                            className="form-control-plaintext"
-                                                                            value={formatWithTime(item.date1)}
-                                                                        />
-                                                                    </div>
+                                    <div className="row">
+                                        {/*<div className="col-0.5">
+                                            <Button type="primary" icon="arrow-left"></Button>
+                                        </div>*/}
+                                        <div className="col-11">
+                                            <Tabs type="border-card" activeName={this.state.defaultClickTab}
+                                                  onTabClick={this.changeTabs.bind(this)}>
+                                                {that.state.weeks.map(function (vo) {
+                                                    return (  /*vo.name*/
+                                                        <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name + '(' +vo.weekDate + ')'}</span>} name={vo.idx}>
+                                                            <div className="row">
+                                                                <div className="col-1">课时</div>
+                                                                <div className="col-2">开始上课时间</div>
+                                                                <div className="col-2">教室</div>
+                                                                <div className="col-2">主教</div>
+                                                                <div className="col-2">助教</div>
+                                                            </div>
+                                                            {
+                                                                vo.items.map(function (item) {
+                                                                    return (
+                                                                        <div className="row" key={item.idx} style={{"marginTop":"20px"}}>
+                                                                            <div className="col-1">{item.index}</div>
+                                                                            <div className="col-2 grid-content bg-purple">
+                                                                                <input
+                                                                                    type="text"
+                                                                                    readOnly={true}
+                                                                                    className="form-control-plaintext"
+                                                                                    value={formatWithTime(item.date1)}
+                                                                                />
+                                                                            </div>
 
-                                                                    <div className="col-2 grid-content bg-purple">
-                                                                        <Select value={item.roomId1} placeholder="教室"
-                                                                                disabled={true} style={{"width": "100%"}}
-                                                                                onChange={data => {
-                                                                                    item.roomId1 = data;
-                                                                                }}
-                                                                        >
-                                                                            {
-                                                                                that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
-                                                                                    return <Select.Option key={el.id}
-                                                                                                          label={el.code}
-                                                                                                          value={el.id}/>
-                                                                                }) : null
-                                                                            }
-                                                                        </Select>
-                                                                    </div>
+                                                                            <div className="col-2 grid-content bg-purple">
+                                                                                <Select value={item.roomId1} placeholder="教室"
+                                                                                        disabled={true} style={{"width": "100%"}}
+                                                                                        onChange={data => {
+                                                                                            item.roomId1 = data;
+                                                                                        }}
+                                                                                >
+                                                                                    {
+                                                                                        that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
+                                                                                            return <Select.Option key={el.id}
+                                                                                                                  label={el.code}
+                                                                                                                  value={el.id}/>
+                                                                                        }) : null
+                                                                                    }
+                                                                                </Select>
+                                                                            </div>
 
-                                                                    <div className="col-2 grid-content bg-purple">
-                                                                        <Select value={item.teacherId1} placeholder="请选择主教"
-                                                                                disabled={true} filterable={true} multiple={true}
-                                                                                clearable={true} style={{"width": "100%"}}
-                                                                                onChange={data => {
-                                                                                    item.teacherId1 = data;
-                                                                                }}
-                                                                        >
-                                                                            {
-                                                                                that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
-                                                                                    return <Select.Option key={el.id}
-                                                                                                          label={el.name}
-                                                                                                          value={el.id}/>
-                                                                                }) : null
-                                                                            }
-                                                                        </Select>
-                                                                    </div>
+                                                                            <div className="col-2 grid-content bg-purple">
+                                                                                <Select value={item.teacherId1} placeholder="请选择主教"
+                                                                                        disabled={true} filterable={true} multiple={true}
+                                                                                        clearable={true} style={{"width": "100%"}}
+                                                                                        onChange={data => {
+                                                                                            item.teacherId1 = data;
+                                                                                        }}
+                                                                                >
+                                                                                    {
+                                                                                        that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                                                            return <Select.Option key={el.id}
+                                                                                                                  label={el.name}
+                                                                                                                  value={el.id}/>
+                                                                                        }) : null
+                                                                                    }
+                                                                                </Select>
+                                                                            </div>
 
-                                                                    <div className="col-2 grid-content bg-purple">
-                                                                        <Select value={item.teacherId2} placeholder="请选择助教"
-                                                                                disabled={true} filterable={true} multiple={true}
-                                                                                clearable={true} style={{"width": "100%"}}
-                                                                                onChange={data => {
-                                                                                    item.teacherId2 = data;
-                                                                                }}
-                                                                        >
-                                                                            {
-                                                                                that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
-                                                                                    return <Select.Option key={el.id}
-                                                                                                          label={el.name}
-                                                                                                          value={el.id}/>
-                                                                                }) : null
-                                                                            }
-                                                                        </Select>
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        })
-                                                    }
-                                                </Tabs.Pane>
-                                            )
-                                        })}
-                                    </Tabs>
+                                                                            <div className="col-2 grid-content bg-purple">
+                                                                                <Select value={item.teacherId2} placeholder="请选择助教"
+                                                                                        disabled={true} filterable={true} multiple={true}
+                                                                                        clearable={true} style={{"width": "100%"}}
+                                                                                        onChange={data => {
+                                                                                            item.teacherId2 = data;
+                                                                                        }}
+                                                                                >
+                                                                                    {
+                                                                                        that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                                                            return <Select.Option key={el.id}
+                                                                                                                  label={el.name}
+                                                                                                                  value={el.id}/>
+                                                                                        }) : null
+                                                                                    }
+                                                                                </Select>
+                                                                            </div>
+                                                                        </div>
+                                                                    );
+                                                                })
+                                                            }
+                                                        </Tabs.Pane>
+                                                    )
+                                                })}
+                                            </Tabs>
+                                        </div>
+                                        {/*<div className="col-0.5">
+                                            <Button type="primary"><i className="el-icon-arrow-right el-icon-right"></i></Button>
+                                        </div>*/}
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

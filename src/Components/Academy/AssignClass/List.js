@@ -10,7 +10,7 @@ import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 import './AssignClass.css'
 import DialogForEvent from "../../Dialog/DialogForEvent";
 import fmtDate from "../../../utils/fmtDate";
-import {Button, Card, Menu, Message, MessageBox, Select} from "element-react";
+import {Button, Card, Dialog, Menu, Message, MessageBox, Radio, Select} from "element-react";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
@@ -18,6 +18,7 @@ import {$} from "../../../vendor";
 import DialogForEventEdit from "../../Dialog/DialogForEventEdit";
 import Commands from "../../Commands/Commands";
 import DialogAssignClass from "../../Dialog/DialogAssignClass";
+import historyBack from "../../../utils/historyBack";
 
 const MORE = "更多";
 const FOLD = "收起";
@@ -34,6 +35,7 @@ class List extends React.Component {
             roomList: [],
             classList: [],
             teacherList: [],
+            classStatusList: [],
             group: this.props.changedCrmGroup,
             calendarEvents: [ // initial event data
                 {
@@ -52,6 +54,8 @@ class List extends React.Component {
             classMore:MORE,
             classMoreTeacher:MORE,
             classMoreRoom:MORE,
+            value: 1,//弹窗编辑方式默认值
+            canAssign: true,
         }
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
@@ -67,19 +71,24 @@ class List extends React.Component {
     }
 
     componentDidMount() {
+        $("#clsFilter").hide();
+        $("#multiCls").hide();
         const request = async () => {
             try {
                 //顶部
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,pageNum:1,pageSize:9999});
                 let classList = await ajax('/academy/class/list.do', {orgId: this.state.group.id,limit:9999,showAssignStatus:1});
+                let allClassStatus = await ajax('/academy/class/classStatus.do');
 
                 this.setState({
                     teacherList: teacherList.data.items,
                     classList: classList.data.items,
-                    roomList: roomList.data.items
+                    roomList: roomList.data.items,
+                    classStatusList: allClassStatus
                 });
                 this.refreshAssignClass();
+                debugger
             } catch (err) {
                 /*if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -121,41 +130,33 @@ class List extends React.Component {
     }
 
     eventOnClick = (evt) => {
-        debugger
+        this.setState({ dialogVisible3: true });
         this.state.id = evt.event.id;
+        /*
         this.setState({id:evt.event.id})
         // this.state.chooseEvent = evt.event;
         // this.handleDateClick();
         // this.props.history.push(`${this.props.match.url}/`+evt.event.id);
         this.actContainer = document.createElement('div');
         ReactDOM.render(
-            <div>
-                <DialogAssignClass
-                    accept={this.acceptActDialog}
-                    changedCrmGroup={this.state.group}
-                    toDirect={this.toDirect.bind(this)}
-                    id={evt.event.id}
-                    key={new Date().getTime()}
-                    defaults={this.state.channelId}
-                    replace={this.props.replace}
-                    from={this.props.from}
-                    ref={(dom) => {
-                        this.act = dom
-                    }}
-                />
-            </div>
+            <DialogAssignClass
+                accept={this.acceptActDialog}
+                changedCrmGroup={this.state.group}
+                toDirect={this.toDirect.bind(this)}
+                toChangeId={this.toChangeId.bind(this)}
+                id={evt.event.id}
+                key={new Date().getTime()}
+                defaults={this.state.channelId}
+                replace={this.props.replace}
+                from={this.props.from}
+                ref={(dom) => {
+                    this.act = dom
+                }}
+            />
             ,
             document.body.appendChild(this.actContainer)
         );
-        this.act.dialog.modal('show');
-    }
-
-    toDirect(value,id){
-        if(value == 2){
-            this.props.history.push(`${this.props.match.url}/`+this.state.id,{type:value});
-        }else{
-            this.props.history.push(`${this.props.match.url}/`+this.state.id,{type:value});
-        }
+        this.act.dialog.modal('show');*/
     }
 
     windowResize(view) {
@@ -183,14 +184,19 @@ class List extends React.Component {
         switch (type) {
             case(1): {
                 let items = this.state.classList.filter(item => (item.id == evt));
+                let canAssign = true;
                 this.state.chooseTeacher = null;
                 this.state.chooseRoom = null;
                 this.state.chooseClass = evt;
                 this.title.name = (items.length >0 ? items[0].code: "");
+                if(items[0].classStatus == 1){
+                    canAssign = false;
+                }
                 this.setState({
                     chooseTeacher : null,
                     chooseRoom : null,
                     chooseClass : evt,
+                    canAssign
                 });
                 break;
             }
@@ -226,7 +232,13 @@ class List extends React.Component {
     //添加自定义事件
     handleDateClick = (arg) => {
         if(this.state.chooseClass){
-            this.props.history.push(`${this.props.match.url}/create`,{"classId":Number(this.state.chooseClass)});
+            let classCode = "";
+            this.state.classList.map(item => {
+                if(item.id == this.state.chooseClass){
+                    classCode = item.code;
+                }
+            });
+            this.props.history.push(`${this.props.match.url}/create`,{"classId":Number(this.state.chooseClass),"classCode":classCode});
         }else{
             Message({
                 type: 'warning',
@@ -308,13 +320,43 @@ class List extends React.Component {
         }else if(type == 3){
             className = ".list-fold-panel-room";
             this.setState({classMoreRoom: evt.target.innerText == MORE ? FOLD : MORE})
+        }else if(type == 4){
+            //多选
+            $("#singleCls").hide();
+            $("#multiCls").show();
+            $(className).css("height", "auto");
+            $(className).css("overflow", "display");
+            this.setState({classMoreRoom: MORE});
+        }else if(type == 5){
+            //取消
+
+            $("#singleCls").show();
+            $("#multiCls").hide();
+            this.setState({classMore: MORE})
         }
+
         if(evt.target.innerText == MORE){
             $(className).css("height", "auto");
             $(className).css("overflow", "display");
+            $("#clsFilter").show();
+            this.setState({classStatusList: this.state.classStatusList});
         }else{
             $(className).css("height", "50px");
             $(className).css("overflow", "hidden");
+            $("#clsFilter").hide();
+        }
+    }
+    //更改弹出框的radio button
+    changeType(value) {
+        this.setState({value});
+    }
+    //跳转至编辑页面
+    toDirect(){
+        this.setState({ dialogVisible3: false });
+        if(this.state.value == 2){
+            this.props.history.push(`${this.props.match.url}/`+this.state.id,{type:this.state.value});
+        }else{
+            this.props.history.push(`${this.props.match.url}/`+this.state.id,{type:this.state.value});
         }
     }
 
@@ -331,10 +373,15 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}|&nbsp;&nbsp;{this.title.name}
-                    <Commands
-                        commands={this.commands}
-                        thAction={this.handleDateClick}
-                    />
+                    <div className="btn-group float-right" role="group">
+                        <div className="btn-group float-right" role="group">
+                            <button onClick={this.handleDateClick} type="button" className="btn btn-primary" id="btnChoose" disabled={this.state.canAssign}>
+                                排课
+                            </button>
+                        </div>
+
+                    </div>
+
                 </h5>
                 <div id="main" className="main p-3">
 
@@ -381,7 +428,20 @@ class List extends React.Component {
                             <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>班级：</label>
                             </div>
-                            <div className="col-10 list-fold-panel">
+                            {/*单选*/}
+                            <div className="col-10 list-fold-panel" id="singleCls">
+                                {/*<ul class="el-menu el-menu--horizontal el-menu-demo" id="clsFilter">
+                                    {
+                                        this.state.classStatusList ? this.state.classStatusList.map(vo => {
+                                           <li className="el-menu-item">{vo.name}</li>
+                                        }) : null
+                                    }
+                                </ul>*/}
+                                <ul className="el-menu el-menu--horizontal el-menu-demo" id="clsFilter">
+                                    <li className="el-menu-item">所有班级</li>
+                                    <li className="el-menu-item">排课中</li>
+                                    <li className="el-menu-item">未排课</li>
+                                </ul>
                                 <Menu defaultActive={this.state.chooseClass} className="el-menu-demo" mode="horizontal"
                                       onSelect={this.chooseTopCondition.bind(this, 1)}
                                       >
@@ -392,8 +452,23 @@ class List extends React.Component {
                                     }
                                 </Menu>
                             </div>
+                            {/*多选*/}
+                            <div className="col-10 list-fold-panel" id="multiCls">
+                                <ul className="el-menu el-menu--horizontal el-menu-demo" id="clsFilter">
+                                    {
+                                        this.state.classList ? this.state.classList.map(item => (
+                                            <li className="el-menu-item">
+                                                <input type="checkbox" name={item.id} value={item.id}/> &nbsp; {item.code}
+                                            </li>
+                                        )) : null
+                                    }
+                                </ul>
+                                <Button type="primary" size="small" onClick={this.changeFold.bind(this,1)}>确定</Button>
+                                <Button plain={true} size="small" onClick={this.changeFold.bind(this,5)}>取消</Button>
+                            </div>
                             <div className="col-1 text-line-height">
                                 <Button type="text" size="large" onClick={this.changeFold.bind(this,1)}>{this.state.classMore}</Button>
+                                {/*<Button type="text" size="large" onClick={this.changeFold.bind(this,4)}>多选</Button>*/}
                             </div>
                         </div>
                         <div className="row" style={{width: '100%'}}>
@@ -479,6 +554,28 @@ class List extends React.Component {
                             </div>
                         </div>
                     </div>
+                    <Dialog
+                        title="请选择编辑方式"
+                        size="tiny"
+                        visible={ this.state.dialogVisible3 }
+                        onCancel={ () => this.setState({ dialogVisible3: false }) }
+                    >
+                        <Dialog.Body>
+                            <div className="form-group row">
+                                <div className="col-2"></div>
+                                <div className="col-10">
+                                    <Radio value="2" checked={this.state.value === 2} onChange={this.changeType.bind(this)}>仅此课次</Radio>
+                                    <Radio value="1" checked={this.state.value === 1} onChange={this.changeType.bind(this)}>此课次及后续课次（不包括已上课时）</Radio>
+                                </div>
+                            </div>
+                        </Dialog.Body>
+
+                        <Dialog.Footer className="dialog-footer">
+                            <Button onClick={ () => this.setState({ dialogVisible3: false }) }>取 消</Button>
+                            <Button type="primary" onClick={this.toDirect.bind(this)}>确 定</Button>
+                        </Dialog.Footer>
+                    </Dialog>
+
                 </div>
             </div>
         )

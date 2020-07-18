@@ -10,9 +10,9 @@ import ParentEditor from './ParentEditor';
 import AccountView from "./AccountView";
 import ContractCreate from "../Contract/Create"
 import StudentSituation from "./StudentSituation";
-import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
-import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
-import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
+import StudentSituationChangeClassAdd from "./StudentSituationChangeClassAdd";
+import StudentSituationPauseClassAdd from "./StudentSituationPauseClassAdd";
+import StudentSituationBackMoneyAdd from "./StudentSituationBackMoneyAdd";
 import ClassView from "./ClassView";
 import ChargeView from "./ChargeView";
 

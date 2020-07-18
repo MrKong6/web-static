@@ -7,9 +7,9 @@ import ParentView from './ParentView';
 import ContractView from './ContractView';
 import StudentEditor from './StudentEditor';
 import ParentEditor from './ParentEditor';
-import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
-import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
-import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
+import StudentSituationChangeClassAdd from "../../Service/Customer/StudentSituationChangeClassAdd";
+import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituationPauseClassAdd";
+import StudentSituationBackMoneyAdd from "../../Service/Customer/StudentSituationBackMoneyAdd";
 import StudentSituation from "./StudentSituation";
 
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {

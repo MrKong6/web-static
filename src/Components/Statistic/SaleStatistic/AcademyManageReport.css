@@ -1,0 +1,75 @@
+/*
+.tb1 {
+    position: absolute;
+}
+
+.tb2 {
+    position: sticky;
+    top: 0px;
+    margin-left: 100px;
+    width: 500px;
+    z-index: 1000;
+}
+thead{
+    font-weight: bolder;
+}
+tr:nth-child(even) {
+    background: #f1f1f1;
+}
+td {
+    white-space: nowrap;
+    padding: 7px;
+}*/
+#chanceGridTable1 table {
+    border-collapse: collapse;
+}
+
+#chanceGridTable1,#chanceGridTable2 td{
+    height: 28px!important;
+    min-height: 28px;
+    max-height: 28px;
+    font-size: 12px;
+    text-align: center;
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    padding: 0!important;;
+    line-height: 28px;
+}
+#chanceGridTable1 td{
+    height: 28px!important;
+    min-height: 28px;
+    max-height: 28px;
+    font-size: 12px;
+    text-align: center;
+    width: 80px;
+    min-width: 80px;
+    max-width: 80px;
+    padding: 0!important;;
+    line-height: 28px;
+}
+
+.report-box {
+    width: 500px;
+    height: 300px;
+    overflow: hidden;
+}
+
+.left-table,
+.right-table {
+    float: left;
+}
+
+.content-table {
+    overflow: scroll;
+}
+
+.left-title,
+.right-title {
+    overflow: hidden;
+}
+
+#chanceGridTable1 tr:first-child td:first-child,
+#chanceGridTable2 tr:first-child td:first-child {
+    border-top: none;
+}

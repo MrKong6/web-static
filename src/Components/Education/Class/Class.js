@@ -16,9 +16,9 @@ import AssignClassView from "./AssignClassView";
 import ClockedView from "./ClockedView";
 import StudentSituation from "./StudentSituation";
 import ContractView from "../../Service/Customer/ContractView"
-import StudentSituationChangeClassAdd from "../../Academy/Class/StudentSituationChangeClassAdd";
-import StudentSituationPauseClassAdd from "../../Academy/Class/StudentSituationPauseClassAdd";
-import StudentSituationBackMoneyAdd from "../../Academy/Class/StudentSituationBackMoneyAdd";
+import StudentSituationChangeClassAdd from "../../Service/Customer/StudentSituationChangeClassAdd";
+import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituationPauseClassAdd";
+import StudentSituationBackMoneyAdd from "../../Service/Customer/StudentSituationBackMoneyAdd";
 import CheckOn from "./CheckOn";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {

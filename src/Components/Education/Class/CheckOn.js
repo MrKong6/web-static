@@ -80,6 +80,14 @@ class Editor extends React.Component {
             try {
                 //事件列表
                 let maxVo = await ajax('/student/clocked/getRecentClassTime.do', {classId: this.props.location.state.classId});
+                //暂时打开开关：start
+                maxVo = this.props.location.state.classTimes;
+                let vo = [];
+                for(let i=1;i<=maxVo;i++){
+                    vo.push(i);
+                }
+                maxVo = vo;
+                //暂时打开开关：end
                 this.setState({
                     classTimeList: maxVo,
                 });

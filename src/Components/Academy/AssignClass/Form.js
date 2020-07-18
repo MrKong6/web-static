@@ -39,6 +39,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 1,
+                    ct:null,
                     name: '周一',
                     items: [],
                 }, {
@@ -48,6 +49,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 2,
+                    ct:null,
                     name: '周二',
                     items: [],
                 }, {
@@ -57,6 +59,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 3,
+                    ct:null,
                     name: '周三',
                     items: [],
                 }, {
@@ -66,6 +69,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 4,
+                    ct:null,
                     name: '周四',
                     items: [],
                 }, {
@@ -75,6 +79,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 5,
+                    ct:null,
                     name: '周五',
                     items: [],
                 }, {
@@ -84,6 +89,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 6,
+                    ct:null,
                     name: '周六',
                     items: [],
                 }, {
@@ -93,6 +99,7 @@ class AssignForm extends React.Component {
                     teacherId1: [],
                     teacherId2: [],
                     idx: 7,
+                    ct:null,
                     name: '周日',
                     items: [],
                 }],
@@ -775,6 +782,7 @@ class AssignForm extends React.Component {
 
         if (type == 2) {
             //新增一课时
+            let classTime = 0;
             weeks.map(item => {
                 if (item.items && item.idx == weekIdx) {
                     item.items.push({
@@ -786,6 +794,11 @@ class AssignForm extends React.Component {
                         idx: (item.items.length + 1),
                     });
                 }
+                if(item.items &&item.items.length > 0){
+                    item.ct = ++classTime;
+                }else{
+                    item.ct = null;
+                }
             });
         } else {
             weeks.map(item => {
@@ -796,6 +809,7 @@ class AssignForm extends React.Component {
             let course = this.state.courses;
             this.resetIndx(course,weeks);
         }
+        debugger
         this.setState({weeks});
     }
     //课时条目的内容发生变动
@@ -835,6 +849,7 @@ class AssignForm extends React.Component {
         course.map(item => {
             item.index = 0;
         });
+        let classTime = 0;
         weeks.map(item => {
             item.items.map(vv => {
                 let idx = 1;
@@ -850,6 +865,11 @@ class AssignForm extends React.Component {
                     }
                 });
             });
+            if(item.items && item.items.length > 0){
+                item.ct = ++classTime;
+            }else{
+                item.ct = null;
+            }
         });
     }
 
@@ -862,7 +882,7 @@ class AssignForm extends React.Component {
                           className="demo-ruleForm">
                         <div className="row">
                             <Layout.Col span="6">
-                                <Form.Item label="班级" prop="classId">
+                                <Form.Item label="班级编号" prop="classId">
                                     <Select value={this.state.classId} clearable={true}
                                             style={{"width": "100%"}} placeholder="请选择班级"
                                             filterable={true} disabled={true}
@@ -928,16 +948,15 @@ class AssignForm extends React.Component {
                                             />
                                         </Form.Item>
                                     </div>
-                                    {/*<div className="col-5">
+                                    <div className="col-5">
                                         <Form.Item label="结课日期">
                                             <DatePicker
                                                 name="endDate"
                                                 value={this.state.form.endDate}
-                                                disabled={true}
+                                                isDisabled={true}
                                             />
                                         </Form.Item>
-                                    </div>*/}
-
+                                    </div>
                                 </div>
                             </Layout.Col>
                             {/*<Layout.Col span="6">
@@ -1019,6 +1038,7 @@ class AssignForm extends React.Component {
                                             <div className="row">
                                                 <div className="col-2 grid-content bg-purple"
                                                     /*style={{"display": item.show}}*/>
+                                                    <label>{vo.ct}</label>
                                                     <Button type="primary" icon="plus" size='small'
                                                             onClick={that.changeWeekItem.bind(this, 2, vo.idx, vo.idx)}></Button>
                                                 </div>

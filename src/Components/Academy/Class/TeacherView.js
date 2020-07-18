@@ -148,18 +148,20 @@ class TeacherView extends React.Component {
                     orgId: this.state.group.id, pageNum: this.state.currentPage,
                     pageSize: this.state.pageSize, classId: this.state.id
                 });
-                const ids = list.data.items.map((contract) => (contract.id));
-                list.data.items.map(item => {
-                    if (item.birthday != null) {
-                        item.birthday = fmtDate(item.birthday);
-                    }
-                });
-                this.setState({
-                    list: list.data.items,
-                    ids: ids,
-                    totalPage: list.data.totalPage,
-                    totalCount: list.data.count
-                });
+                if(list.data && list.data.items){
+                    const ids = list.data.items.map((contract) => (contract.id));
+                    list.data.items.map(item => {
+                        if (item.birthday != null) {
+                            item.birthday = fmtDate(item.birthday);
+                        }
+                    });
+                    this.setState({
+                        list: list.data.items,
+                        ids: ids,
+                        totalPage: list.data.totalPage,
+                        totalCount: list.data.count
+                    });
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})

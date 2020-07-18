@@ -134,6 +134,8 @@ class Form extends React.Component {
                                 this.changeColor(data[key]);
                             }
                         });
+                    }else{
+                        this.form['classStatus'].value = '1';
                     }
 
                 });
@@ -481,7 +483,7 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">开课日期</label>
                                             <div className="col-7">
-                                                <DatePicker
+                                                {/*<DatePicker
                                                     name="createTime"
                                                     value={this.state.courseStartTime}
                                                     isShowTime={false}
@@ -491,13 +493,14 @@ class Form extends React.Component {
                                                         console.debug('DatePicker1 changed: ', date)
                                                         this.setState({courseStartTime: date})
                                                     }}
-                                                />
+                                                />*/}
+                                                <input type="text" className="form-control" name="registrar" readOnly={true}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">结课日期</label>
                                             <div className="col-7">
-                                                <DatePicker
+                                                {/*<DatePicker
                                                     name="createTime"
                                                     value={this.state.courseEndTime}
                                                     isShowTime={false}
@@ -507,7 +510,8 @@ class Form extends React.Component {
                                                         console.debug('DatePicker1 changed: ', date)
                                                         this.setState({courseEndTime: date})
                                                     }}
-                                                />
+                                                />*/}
+                                                <input type="text" className="form-control" name="registrar" readOnly={true}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -564,7 +568,7 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">创建人</label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="createBy"/>
+                                                <input type="text" className="form-control" name="createBy" readOnly={true}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">

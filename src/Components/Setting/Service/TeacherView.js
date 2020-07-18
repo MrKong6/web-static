@@ -138,7 +138,7 @@ class TeacherView extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">{this.state.data.name}</p>
+                    <p className="d-inline text-muted">{this.state.data? this.state.data.name : ""}</p>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
                             this.props.history.push('/home/setting/academy');

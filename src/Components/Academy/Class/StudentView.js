@@ -114,6 +114,14 @@ class StudentView extends React.Component {
                     prop: "parent.relation",
                 },
                 {
+                    label: "学员状态",
+                    prop: "classStuStatusName",
+                },
+                {
+                    label: "异动状态",
+                    prop: "classStatusTag",
+                },
+                /*{
                     label: "缴费总课时",
                     prop: "",
                 },
@@ -124,24 +132,7 @@ class StudentView extends React.Component {
                 {
                     label: "是否升学",
                     prop: "",
-                },
-                {
-                    label: "状态",
-                    prop: "classStatusName",
-                    render: (row, column, data) => {
-                        if(row.transType && row.transType == 1){
-                            //转出班级
-                            return <span style={{"color":"red"}}>{row.classStuStatusName} （{row.transClassCode}）</span>
-                        }else if(row.transType && row.transType == 2){
-                            //转入班级
-                            return <span style={{"color":"red"}}>{row.classStatusName}（{row.transClassCode}）</span>
-                        }else{
-                            return <span>{row.classStatusName}</span>
-                        }
-
-                    }
-
-                },
+                }*/
             ],
             totalPage: 0,
             currentPage: 1,
@@ -238,6 +229,14 @@ class StudentView extends React.Component {
         this.state.pageSize = pageSize;
         this.componentDidMount();
     }
+    //表格行内底色
+    rowClassName(row, index) {
+        if (row.transType === 1) {
+            //已开班
+            return 'back_table_tr_grew';
+        }
+        return '';
+    }
 
     render() {
 
@@ -288,6 +287,7 @@ class StudentView extends React.Component {
                             className="leadlist_search"
                             columns={this.state.columns}
                             data={this.state.list}
+                            rowClassName={this.rowClassName.bind(this)}
                             border={true}
                             fit={true}
                             height='80%'

@@ -1,17 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
-import {$} from "../../../vendor";
 import DialogTips from "../../Dialog/DialogTips";
-import actProcess from "../../../utils/actProcess";
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
-import ajax from "../../../utils/ajax";
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Card, Menu} from 'element-react';
-import ReactEcharts from 'echarts-for-react';
-import Commands from "../../Commands/Commands";
-import {getBarOption, getChartOption, getFuuelChartOption, getPieOption, getMulYOption, getGanteType} from "../../../utils/const";
-import fmtDate from "../../../utils/fmtDate";
+import {Menu} from 'element-react';
+import {getChartOption} from "../../../utils/const";
 import SaleManageReport from "./SaleManageReport";
 import CustomerServiceReport from "./CustomerServiceReport";
 import AcademyManageReport from "./AcademyManageReport";
@@ -122,8 +116,13 @@ class List extends React.Component {
                 this.state.fromWay = 0;
                 break;
             }
-            case("4"):{
-                this.state.typeId = 0;
+            case("4-1"):{
+                this.state.typeId = 8;
+                this.state.fromWay = 0;
+                break;
+            }
+            case("4-2"):{
+                this.state.typeId = 9;
                 this.state.fromWay = 0;
                 break;
             }
@@ -163,7 +162,10 @@ class List extends React.Component {
                         <Menu.SubMenu index="3" title="市场管理" style={{"display":this.third}}>
                             <Menu.Item index="3-1">营销活动</Menu.Item>
                         </Menu.SubMenu>
-                        <Menu.Item index="4" style={{"display":this.fourth}}>教务管理</Menu.Item>
+                        <Menu.SubMenu index="4" title="教务管理" style={{"display":this.fourth}}>
+                            <Menu.Item index="4-1">班级</Menu.Item>
+                            <Menu.Item index="4-2">教室</Menu.Item>
+                        </Menu.SubMenu>
                     </Menu>
                     <div id="saleView">
                         <SaleManageReport changedCrmGroup={this.state.group} fromWay={this.state.fromWay} typeId={this.state.typeId} />
@@ -172,7 +174,7 @@ class List extends React.Component {
                         <CustomerServiceReport changedCrmGroup={this.state.group} indexNum={this.state.indexNum} />
                     </div>
                     <div id="academyView">
-                        <AcademyManageReport changedCrmGroup={this.state.group} indexNum={this.state.indexNum} />
+                        <AcademyManageReport changedCrmGroup={this.state.group} indexNum={this.state.indexNum} typeId={this.state.typeId} />
                     </div>
                 </div>
             </div>

@@ -9,7 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message} from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message, Select} from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
@@ -33,7 +33,7 @@ class List extends React.Component {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
-            typeId: 1,
+            typeId: null,
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
@@ -84,6 +84,11 @@ class List extends React.Component {
                 {
                     label: "合同类型",
                     prop: "typeName",
+                    width: 100,
+                },
+                {
+                    label: "合同状态",
+                    prop: "contractStatusName",
                     width: 100,
                 },
                 {
@@ -295,8 +300,8 @@ class List extends React.Component {
         this.componentDidMount();
     }
     //切换tab
-    changeTabs(tab){
-        this.state.typeId = tab.props.name;
+    changeTabs(value){
+        this.state.typeId = value;
         this.componentDidMount();
     }
     /**
@@ -357,9 +362,13 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <Select value={this.state.chooseStatusName} placeholder="请选择合同类型" clearable={true} onChange={this.changeTabs} className={"leftMargin"}>
+                        <Select.Option key={1} label='新招' value={1} />
+                        <Select.Option key={2} label='续报' value={2} />
+                    </Select>
 
-                    <Tabs activeName="1" onTabClick={this.changeTabs.bind(this)}>{/*(tab) => console.log(tab.props.name)*/}
-                        <Tabs.Pane label="新招" name="1">
+                    {/*<Tabs activeName="1" onTabClick={this.changeTabs.bind(this)}>(tab) => console.log(tab.props.name)
+                        <Tabs.Pane label="新招" name="1">*/}
                             <Table
                                 style={{width: '100%'}}
                                 columns={this.state.columns}
@@ -377,7 +386,7 @@ class List extends React.Component {
                                         className={"leadlist_page"}
                                         onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                         onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
-                        </Tabs.Pane>
+                        {/*</Tabs.Pane>
                         <Tabs.Pane label="续报" name="2">
                             <Table
                                 style={{width: '100%'}}
@@ -397,7 +406,7 @@ class List extends React.Component {
                                         onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                         onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                         </Tabs.Pane>
-                    </Tabs>
+                    </Tabs>*/}
                 </div>
             </div>
         )

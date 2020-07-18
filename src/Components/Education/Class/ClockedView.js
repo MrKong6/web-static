@@ -1,13 +1,14 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
-import {Pagination, Table, Tooltip} from 'element-react';
+import {Button, Message, Pagination, Table, Tooltip, Upload} from 'element-react';
 
 import DialogTips from "../../Dialog/DialogTips";
 import fmtTitle from "../../../utils/fmtTitle";
-import ajax from "../../../utils/ajax";
+import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import DialogForClocked from "../../Dialog/DialogForClocked";
+import Import from "../../Import/Import";
 
 class ClockedView extends React.Component {
 
@@ -117,20 +118,16 @@ class ClockedView extends React.Component {
                 let classAssignList = await ajax('/academy/class/assignClassList.do', {classId: this.state.id});
                 let times = 60,hourTime = 2, weekNum = 0;
                 let classTime = 0;
-                if(data && data.data && data.data.classHour){
-                    times = data.data.classHour;
-                    hourTime = data.data.classHour / data.data.classTime;
-                    classTime = data.data.classTime;
-                    if(data.data.courses && data.data.courses.length > 0){
-                        data.data.courses.map(item => {
-                            if(item.classHour && item.classHourPerWeek && item.classHourPerWeek > 0){
-                                let wn = item.classHour / item.classHourPerWeek;
-                                if(wn > weekNum){
-                                    weekNum = wn;
-                                }
+                if(data.data.courses && data.data.courses.length > 0){
+                    data.data.courses.map(item => {
+                        if(item.classHour && item.classHourPerWeek && item.classHourPerWeek > 0){
+                            let wn = item.classHour / item.classHourPerWeek;
+                            if(wn > weekNum){
+                                weekNum = wn;
+                                classTime = item.classTime;
                             }
-                        });
-                    }
+                        }
+                    });
                 }
                 if(classAssignList.data && classAssignList.data.length > 0){
                     let head = [], objTwo = {};//label:null,subColumns:[]
@@ -335,8 +332,35 @@ class ClockedView extends React.Component {
             classTimes: this.state.classTimes,hourTime: this.state.hourTime});
     }
 
-    render() {
+    successMsg(msg) {
+        Message({
+            message: msg,
+            type: 'info'
+        });
+    }
+    errorMsg(msg) {
+        Message({
+            message: msg,
+            type: 'error'
+        });
+    }
 
+    render() {
+        const uploadConfig = {
+            className:"upload-demo",
+            showFileList:false,
+            withCredentials:true,
+            data:{'orgId':this.state.group.id,"classId":this.state.id},
+            action: AJAX_PATH + '/student/clocked/import.do',
+            onSuccess: (response, file, fileList) => {
+                if(response.code && response.code == 200){
+                    this.successMsg("导入成功");
+                    this.componentDidMount();
+                }else{
+                    this.errorMsg(response.detail);
+                }
+            }
+        };
         return (
             <div>
                 <h5 id="subNav">
@@ -350,9 +374,10 @@ class ClockedView extends React.Component {
                         </button>
                     </div>
                     <div className="btn-group float-right" role="group">
-                        <button onClick={this.thAction} type="button" className="btn btn-primary" id="btnChoose">
-                            签到
-                        </button>
+                        <Upload {...uploadConfig}>
+                            <Button type="primary" size="large" icon="upload2">导入</Button>
+                        </Upload>
+                        <Button type="success" size="large" onClick={this.thAction} icon="edit" id="btnChoose">签到</Button>
                         {/*<button onClick={this.thAction} type="button" className="btn btn-warning" id="btnChoose">
                             签退
                         </button>*/}

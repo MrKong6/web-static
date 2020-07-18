@@ -79,6 +79,7 @@ class Form extends React.Component {
                     birthday,
                     age,
                     courseTypeList: courseTypeList,
+                    chooseCouse: data && data.courseId ? data.courseId.split(",") : [],
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -287,8 +288,8 @@ class Form extends React.Component {
                                                         onChange={this.changeCourse.bind(this)}>
                                                     {
                                                         (this.state.courseTypeList && this.state.courseTypeList.length > 0) ? this.state.courseTypeList.map(el => {
-                                                            return <Select.Option key={el.id} label={el.name}
-                                                                                  value={el.id}/>
+                                                            return <Select.Option key={el.id+''} label={el.name}
+                                                                                  value={el.id+''}/>
                                                         }) : null
                                                     }
                                                 </Select>

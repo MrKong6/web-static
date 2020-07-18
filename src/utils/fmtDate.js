@@ -152,3 +152,45 @@ export function getTimeByWeek(week,date){
     return new Date(future); // 转成时间对象
 
 }
+
+//根据传入日期（字符串）返回日期当前周的七天日期
+export function getWeekDate(date){
+    //获取所传日期是周几
+    let newDate = new Date(date);
+    let num = newDate.getDay();
+    let weekDate = [];
+    for(let i=1;i<=7;i++){
+        if(i <= num){
+            weekDate.push(new Date(newDate.getTime() - (num - i) * 24 * 3600 * 1000).format("yyyy-MM-dd"));
+        }else{
+            weekDate.push(new Date(newDate.getTime() + (i - num) * 24 * 3600 * 1000).format("yyyy-MM-dd"));
+        }
+    }
+    return weekDate; // 转成时间对象
+}
+
+//根据传入日期（日期）返回日期当前周的七天日期
+export function getWeekDateByDate(date){
+    //获取所传日期是周几
+    let newDate = date;
+    let num = newDate.getDay();
+    let weekDate = [];
+    for(let i=1;i<=7;i++){
+        if(i <= num){
+            weekDate.push(new Date(newDate.getTime() - (num - i) * 24 * 3600 * 1000).format("yyyy-MM-dd"));
+        }else{
+            weekDate.push(new Date(newDate.getTime() + (i - num) * 24 * 3600 * 1000).format("yyyy-MM-dd"));
+        }
+    }
+    return weekDate; // 转成时间对象
+}
+
+//根据传入日期(字符串)加减几天 返回字符串
+export function addDate(date, addnum){
+    return new Date(stringToDate(date,null).getTime() + addnum * 24 * 3600 * 1000).format("yyyy-MM-dd"); // 转成时间对象
+}
+
+//根据传入日期(字符串)加减几天 返回日志
+export function addDateReturnDate(date, addnum){
+    return new Date(stringToDate(date,null).getTime() + addnum * 24 * 3600 * 1000); // 转成时间对象
+}

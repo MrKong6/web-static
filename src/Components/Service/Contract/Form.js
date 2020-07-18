@@ -42,6 +42,7 @@ class Form extends React.Component {
                 let relation = await ajax('/mkt/relation/list.do');
                 let gender = await ajax('/mkt/gender/list.do');
                 let contractAllStatus = await ajax('/service/contract/contractAllStatus.do');
+                let contractStuAllStatus = await ajax('/service/contract/contractStuAllStatus.do');
                 let classAllType = await ajax('/academy/class/classType.do');
                 let classList = await ajax('/academy/class/getClassShortList.do',{statusId:4,orgId:this.state.group.id});
                 let data = null,oneDate = null,oneAmount = null;
@@ -95,11 +96,13 @@ class Form extends React.Component {
                     oneAmount,
                     oneDate,
                     contractAllStatus,
+                    contractStuAllStatus,
                     classAllType,
                     classList,
                     startDate,
                     typeId: data ? data.typeId : null,
                     contractStatus: data ? data.contractStatus : null,
+                    contractStuStatus: data ? data.contractStuStatus : null,
                 }, () => {
                     const keys = Object.keys(data);
 
@@ -196,6 +199,8 @@ class Form extends React.Component {
         query.courseType = this.form.courseTypeId.options[this.form.courseTypeId.selectedIndex].text;
         query.courseName = this.form.courseId.options[this.form.courseId.selectedIndex].text;
         query.courseId = this.state.data.courseId;
+        query.contractStuStatus = this.state.contractStuStatus;
+        query.contractStatus = this.state.contractStatus;
 
         for (let i = 0; i < this.form.length; i++) {
             if (this.form[i].name) {
@@ -252,6 +257,14 @@ class Form extends React.Component {
                 });
                 this.setState({moneyList:data.fields});
             }
+        }
+    }
+
+    changeSelect(value,val){
+        if(value == "1"){
+            this.setState({contractStatus: val});
+        }else if(value == "2"){
+            this.setState({contractStuStatus: val});
         }
     }
 
@@ -433,10 +446,26 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>合同状态
                                                 </label>
                                                 <div className="col-7">
-                                                    <Select value={this.state.contractStatus} placeholder="请选择">
+                                                    <Select value={this.state.contractStatus} placeholder="请选择"
+                                                            onChange={this.changeSelect.bind(this, "1")}>
                                                         {
                                                             this.state.contractAllStatus ? this.state.contractAllStatus.map(el => {
-                                                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                                                return <Select.Option key={el.code} label={el.name} value={el.code} />
+                                                            }) : null
+                                                        }
+                                                    </Select>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">
+                                                    <em className="text-danger">*</em>(学员合同状态)
+                                                </label>
+                                                <div className="col-7">
+                                                    <Select value={this.state.contractStuStatus} placeholder="请选择"
+                                                            onChange={this.changeSelect.bind(this, "2")}>
+                                                        {
+                                                            this.state.contractStuAllStatus ? this.state.contractStuAllStatus.map(el => {
+                                                                return <Select.Option key={el.code} label={el.name} value={el.code} />
                                                             }) : null
                                                         }
                                                     </Select>

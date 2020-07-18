@@ -79,12 +79,12 @@ class View extends React.Component {
         const request = async () => {
             try {
                 let data = await ajax('/service/contract/query.do', {id: this.state.id});
-                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
-                const ids = list.data.map((contract) => (contract.id));
+                // let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
+                // const ids = list.data.map((contract) => (contract.id));
                 if(data.startDate){
                     data.startDate = fmtDate(data.startDate);
                 }
-                this.setState({data, ids, moneyList: data.list});
+                this.setState({data,  moneyList: data.list});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -427,6 +427,17 @@ class View extends React.Component {
                                                         readOnly={true}
                                                         className="form-control-plaintext"
                                                         value={this.state.data.contractStatusName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">(学员合同状态)</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.contractStuStatusName}
                                                     />
                                                 </div>
                                             </div>

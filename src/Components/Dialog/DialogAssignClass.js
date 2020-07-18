@@ -6,8 +6,6 @@ import {Radio} from "element-react";
 class DialogAssignClass extends React.Component {
     constructor(props) {
         super(props);
-        this.dialogId = `d-${new Date().getTime()}`;
-        debugger
         this.state = {
             key: this.props.key,
             group: this.props.changedCrmGroup,
@@ -15,19 +13,23 @@ class DialogAssignClass extends React.Component {
             value: 1,
             redirectTo: false,
         }
-        // if(this.props.data && this.props.data.start)
-        this.changeType = this.changeType.bind(this);
-        this.confirmAdd = this.confirmAdd.bind(this);
         this.cancel = this.cancel.bind(this);
     }
 
     componentDidMount() {
-        this.setState({ id: this.props.id});
-        this.forceUpdate();
         this.dialog = $(`#accountView`);
         this.dialog.on('hidden.bs.modal', () => {
             this.cancel();
         });
+    }
+
+    componentWillReceiveProps(nextProps) {
+        debugger
+        if (this.props.id !== nextProps.id) {
+            this.setState({
+                id: nextProps.id,
+            })
+        }
     }
 
     cancel() {
@@ -40,14 +42,14 @@ class DialogAssignClass extends React.Component {
         this.setState({value});
     }
     //保存数据
-    confirmAdd(value,id){
-        this.props.toDirect(this.state.value,this.state.id);
+    confirmAdd(){
+        this.props.toDirect(this.state.value,$("#btnValue").val());
         this.cancel();
     }
 
     render() {
         return (
-            <form id={this.dialogId} ref={(dom) => {
+            <form ref={(dom) => {
                 this.form = dom
             }} encType='multipart/form-data'>
                 <div id="accountView" className="modal fade" tabIndex="-1" role="dialog">
@@ -63,8 +65,9 @@ class DialogAssignClass extends React.Component {
                                 <div className="form-group row">
                                     <div className="col-2"></div>
                                     <div className="col-10">
-                                        <Radio value="2" checked={this.state.value === 2} onChange={this.changeType.bind(this)}>仅此课次</Radio>
-                                        <Radio value="1" checked={this.state.value === 1} onChange={this.changeType.bind(this)}>此课次及后续课次（不包括已上课时）</Radio>
+                                        <input id={"btnValue"} value={this.state.id} style={{"disable":"none"}}/>
+                                        <Radio value="2" checked={this.state.value === 2} onChange={this.changeType}>仅此课次</Radio>
+                                        <Radio value="1" checked={this.state.value === 1} onChange={this.changeType}>此课次及后续课次（不包括已上课时）</Radio>
                                     </div>
                                 </div>
                             </div>
