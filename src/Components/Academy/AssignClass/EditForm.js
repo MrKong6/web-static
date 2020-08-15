@@ -959,29 +959,14 @@ class EditForm extends React.Component {
                                                                 <div className="row" key={item.idx} style={{"marginTop":"20px"}}>
                                                                     <div className="col-1">{item.ch}</div>
                                                                     <div className="col-2 grid-content bg-purple">
-                                                                        {
-                                                                            that.props.type == 2 ?
-                                                                                <DatePicker
-                                                                                    value={item.date1}
-                                                                                    isShowTime={true}
-                                                                                    format="yyyy-MM-dd HH:mm"
-                                                                                    // selectableRange="6:30:00 - 22:30:00"
-                                                                                    placeholder="开始上课日期"
-                                                                                    onChange={date => {
-                                                                                        item.date1 = date;
-                                                                                    }}
-                                                                                />
-                                                                                :
-                                                                                <TimePicker
-                                                                                    value={item.date1}
-                                                                                    selectableRange="6:30:00 - 22:30:00"
-                                                                                    placeholder="开始上课日期"
-                                                                                    onChange={date => {
-                                                                                        item.date1 = date;
-                                                                                    }}
-                                                                                />
-                                                                        }
-
+                                                                        <TimePicker
+                                                                            value={item.date1}
+                                                                            selectableRange="6:30:00 - 22:30:00"
+                                                                            placeholder="开始上课日期"
+                                                                            onChange={date => {
+                                                                                item.date1 = date;
+                                                                            }}
+                                                                        />
                                                                     </div>
 
                                                                     <div className="col-2 grid-content bg-purple">

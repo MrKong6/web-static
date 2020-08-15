@@ -306,6 +306,10 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
+
+
+                                        </div>
+                                        <div className="col">
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">课程阶段</label>
                                                 <div className="col-7">
@@ -314,31 +318,6 @@ class View extends React.Component {
                                                         readOnly={true}
                                                         className="form-control-plaintext"
                                                         value={this.state.data.courseRange}
-                                                    />
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">开班日期</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={fmtDate(this.state.data.startDate)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">结班日期</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={fmtDate(this.state.data.endDate)}
                                                     />
                                                 </div>
                                             </div>
@@ -364,30 +343,30 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">开班日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={fmtDate(this.state.data.startDate)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">结班日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={fmtDate(this.state.data.endDate)}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                         <div className="col">
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">开课日期</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={fmtDate(this.state.data.courseStartDate)}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">结课日期</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={fmtDate(this.state.data.courseEndDate)}
-                                                    />
-                                                </div>
-                                            </div>
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">主教</label>
                                                 <div className="col-7">
@@ -451,6 +430,28 @@ class View extends React.Component {
                                                         readOnly={true}
                                                         className="form-control-plaintext"
                                                         value={this.state.data.course}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">开课日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={fmtDate(this.state.data.courseStartDate)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">结课日期</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={fmtDate(this.state.data.courseEndDate)}
                                                     />
                                                 </div>
                                             </div>

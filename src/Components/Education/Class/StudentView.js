@@ -91,6 +91,10 @@ class StudentView extends React.Component {
                     }
                 },
                 {
+                    label: "学员编号",
+                    prop: "code",
+                },
+                {
                     label: "英文名",
                     prop: "enName",
                 },
@@ -115,21 +119,12 @@ class StudentView extends React.Component {
                     prop: "parent.relation",
                 },
                 {
-                    label: "缴费总课时",
-                    prop: "",
+                    label: "学员状态",
+                    prop: "classStuStatusName",
                 },
                 {
-                    label: "剩余课时",
-                    prop: "",
-                },
-                {
-                    label: "是否升学",
-                    prop: "",
-                },
-                {
-                    label: "状态",
-                    prop: "classStatusName",
-
+                    label: "异动状态",
+                    prop: "classStatusTag",
                 },
             ],
             totalPage: 0,

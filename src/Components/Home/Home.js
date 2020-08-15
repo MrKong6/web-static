@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Route, Switch, Redirect} from 'react-router-dom'
+import {Redirect, Route, Switch} from 'react-router-dom'
 
 import PrivateRoute from '../PrivateRoute/PrivateRoute'
 import Drawer from "../Drawer/Drawer";
@@ -44,46 +44,48 @@ import Situation from "../Service/Situation/Situation";
 import Import from "../Import/Import";
 import Academy from "../Setting/Academy/Academy";
 import Service from "../Setting/Service/Service";
-import CustomerService from "../Setting/Academy/CustomerService";
 import All from "../Sales/All/All";
 import Wechat from "../Setting/Wechat/Wechat";
+import WechatType from "../Setting/WechatType/WechatType";
+import WechatCourse from "../Setting/WechatCourse/WechatCourse";
+import WechatCls from "../Setting/WechatCls/WechatCls";
 
 class Home extends React.Component {
-  constructor(props) {
-    super(props);
-    // debugger
-    this.state = {
-      profile: null,
-      group: null,
-      redirectToReferrer: false
-    };
-    this.createDialogTips = this.createDialogTips.bind(this);
-    this.changedCrmGroup = this.changedCrmGroup.bind(this);
-  }
+    constructor(props) {
+        super(props);
+        // debugger
+        this.state = {
+            profile: null,
+            group: null,
+            redirectToReferrer: false
+        };
+        this.createDialogTips = this.createDialogTips.bind(this);
+        this.changedCrmGroup = this.changedCrmGroup.bind(this);
+    }
 
-  componentDidMount() {
-    const request = async () => {
-      try {
-        let profile = await ajax('/user/profile.do');
-        const fmtProfile = profileProcess(profile);
-        this.setState({
-          profile: fmtProfile,
-          group: {
-            id: fmtProfile.profile.org.cId,
-            name: fmtProfile.profile.org.cName
-          }
-        });
-      } catch (err) {
-        if (err.errCode === 401) {
-          this.setState({redirectToReferrer: true})
-        } else {
-          this.createDialogTips(`${err.errCode}: ${err.errText}`);
-        }
-      }
-    };
+    componentDidMount() {
+        const request = async () => {
+            try {
+                let profile = await ajax('/user/profile.do');
+                const fmtProfile = profileProcess(profile);
+                this.setState({
+                    profile: fmtProfile,
+                    group: {
+                        id: fmtProfile.profile.org.cId,
+                        name: fmtProfile.profile.org.cName
+                    }
+                });
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            }
+        };
 
-    request();
-  }
+        request();
+    }
 
     componentWillUnmount() {
         if (this.tipsContainer) {
@@ -91,143 +93,149 @@ class Home extends React.Component {
         }
     }
 
-  createDialogTips(text) {
-    if (this.tips === undefined) {
-      this.tipsContainer = document.createElement('div');
+    createDialogTips(text) {
+        if (this.tips === undefined) {
+            this.tipsContainer = document.createElement('div');
 
-      ReactDOM.render(
-        <DialogTips
-          accept={this.logout}
-          title="提示"
-          text={text}
-          ref={(dom) => {
-            this.tips = dom
-          }}
-        />,
-        document.body.appendChild(this.tipsContainer)
-      );
-    } else {
-      this.tips.setText(text);
+            ReactDOM.render(
+                <DialogTips
+                    accept={this.logout}
+                    title="提示"
+                    text={text}
+                    ref={(dom) => {
+                        this.tips = dom
+                    }}
+                />,
+                document.body.appendChild(this.tipsContainer)
+            );
+        } else {
+            this.tips.setText(text);
+        }
+
+        this.tips.dialog.modal('show');
     }
 
-    this.tips.dialog.modal('show');
-  }
-
-  changedCrmGroup(group) {
-    this.setState({group});
-  }
-
-  render() {
-    if (this.state.redirectToReferrer) {
-      return (
-        <Redirect to={{
-          pathname: '/login',
-          state: {from: this.props.location}
-        }}/>
-      )
+    changedCrmGroup(group) {
+        this.setState({group});
     }
 
-    if (!this.state.profile) {
-      return (
-        <div className="container-fluid">
-          <p className="p-2">程序准备中...</p>
-        </div>
-      );
+    render() {
+        if (this.state.redirectToReferrer) {
+            return (
+                <Redirect to={{
+                    pathname: '/login',
+                    state: {from: this.props.location}
+                }}/>
+            )
+        }
+
+        if (!this.state.profile) {
+            return (
+                <div className="container-fluid">
+                    <p className="p-2">程序准备中...</p>
+                </div>
+            );
+        }
+        const query = {
+            access: this.state.profile.access,
+            profile: this.state.profile.profile,
+            commands: this.state.profile.commands
+        };
+
+        return (
+            <div className="container-fluid">
+                <Drawer
+                    profile={this.state.profile.profile}
+                    menu={this.state.profile.menu}
+                    hasChangeGroupBtn={this.state.profile.hasChangeGroupBtn}
+                    changed={this.changedCrmGroup}
+                />
+
+                <main>
+                    <Header profile={this.state.profile.profile}/>
+
+                    <Switch>
+                        <Route
+                            exact
+                            path={this.props.match.url}
+                            render={() => (<div/>)}
+                        />
+                        <PrivateRoute path="/home/groups" component={Group}{...query}/>
+                        <PrivateRoute path="/home/roles" component={Roles}{...query}/>
+                        <PrivateRoute path="/home/permissions" component={Permissions}{...query}/>
+                        <PrivateRoute path="/home/users" component={User}{...query}/>
+                        <PrivateRoute path="/home/mkt/act" changedCrmGroup={this.state.group} component={Act}{...query}/>
+                        <PrivateRoute path="/home/mkt/leads" changedCrmGroup={this.state.group} component={Leads}{...query}/>
+                        <PrivateRoute path="/home/mkt/leadspublic" changedCrmGroup={this.state.group} component={Leads}{...query}/>
+                        <PrivateRoute path="/home/sales/allleads" changedCrmGroup={this.state.group} component={All}{...query}/>
+                        <PrivateRoute path="/home/mkt/statistic" changedCrmGroup={this.state.group} component={Statistic}{...query}/>
+                        <PrivateRoute path="/home/sales/oppor" changedCrmGroup={this.state.group} component={Appor}{...query}/>
+                        <PrivateRoute path="/home/sales/opporpublic" changedCrmGroup={this.state.group} component={Appor}{...query}/>
+                        <PrivateRoute path="/home/sales/contract" changedCrmGroup={this.state.group}
+                                      component={SalesContract}{...query}/>
+                        <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
+                                      component={SalesCustomer}{...query}/>
+                        <PrivateRoute path="/home/sales/statistic" changedCrmGroup={this.state.group} component={SaleStatistic}{...query}/>
+                        <PrivateRoute path="/home/sales/through" changedCrmGroup={this.state.group}
+                                      component={SalesThrough}{...query} />
+                        <PrivateRoute path="/home/service/visitorin" changedCrmGroup={this.state.group}
+                                      component={ServiceVisitor}{...query} />
+                        <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
+                                      component={ServiceVisitor}{...query}/>
+                        <PrivateRoute path="/home/service/contract" changedCrmGroup={this.state.group}
+                                      component={ServiceContract}{...query}/>
+                        <PrivateRoute path="/home/service/customer" changedCrmGroup={this.state.group}
+                                      component={ServiceCustomer}{...query}/>
+                        <PrivateRoute path="/home/service/through" changedCrmGroup={this.state.group}
+                                      component={ServiceThrough}{...query}/>
+                        <PrivateRoute path="/home/service/situation" changedCrmGroup={this.state.group}
+                                      component={Situation}{...query}/>
+                        <PrivateRoute path="/home/service/statistic" changedCrmGroup={this.state.group} component={ServiceStatistic}{...query}/>
+                        <PrivateRoute path="/home/finance/account" changedCrmGroup={this.state.group}
+                                      component={FinanceAccount}{...query}/>
+                        <PrivateRoute path="/home/finance/charge" changedCrmGroup={this.state.group}
+                                      component={FinanceCharge}{...query}/>
+                        <PrivateRoute path="/home/academy/course" changedCrmGroup={this.state.group}
+                                      component={AcademyCourse}{...query}/>
+                        <PrivateRoute path="/home/academy/teacher" changedCrmGroup={this.state.group}
+                                      component={AcademyTeacher}{...query}/>
+                        <PrivateRoute path="/home/academy/class" changedCrmGroup={this.state.group}
+                                      component={AcademyClass}{...query}/>
+                        <PrivateRoute path="/home/academy/room" changedCrmGroup={this.state.group}
+                                      component={AcademyRoom}{...query}/>
+                        <PrivateRoute path="/home/academy/assignclass" changedCrmGroup={this.state.group}
+                                      component={AcademyAssignClass}{...query}/>
+                        <PrivateRoute path="/home/education/class" changedCrmGroup={this.state.group}
+                                      component={EducationClass}{...query}/>
+                        <PrivateRoute path="/home/education/course" changedCrmGroup={this.state.group}
+                                      component={EducationCourse}{...query}/>
+                        <PrivateRoute path="/home/education/through" changedCrmGroup={this.state.group}
+                                      component={EducationThrough}{...query}/>
+                        <PrivateRoute path="/home/statistic" changedCrmGroup={this.state.group}
+                                      component={AllStatistic}{...query}/>
+                        <PrivateRoute path="/home/import" changedCrmGroup={this.state.group}
+                                      component={Import}{...query}/>
+                        <PrivateRoute path="/home/setting/academy" changedCrmGroup={this.state.group}
+                                      component={Service}{...query}/>
+                        <PrivateRoute path="/home/setting/service" changedCrmGroup={this.state.group}
+                                      component={Academy}{...query}/>
+                        <PrivateRoute path="/home/wechat/record" changedCrmGroup={this.state.group}
+                                      component={Wechat}{...query}/>
+                        <PrivateRoute path="/home/wechat/type" changedCrmGroup={this.state.group}
+                                      component={WechatType}{...query}/>
+                        <PrivateRoute path="/home/wechat/course" changedCrmGroup={this.state.group}
+                                      component={WechatCourse}{...query}/>
+                        <PrivateRoute path="/home/wechat/clsinfo" changedCrmGroup={this.state.group}
+                                      component={WechatCls}{...query}/>
+                        <Route path="/home/changepwd" component={ChangePwd}/>
+                        <Route render={(props) => (
+                            <NoMatch {...props} profile={this.state.profile.profile}/>
+                        )}/>
+                    </Switch>
+                </main>
+            </div>
+        )
     }
-    const query = {
-      access: this.state.profile.access,
-      profile: this.state.profile.profile,
-      commands: this.state.profile.commands
-    };
-
-    return (
-      <div className="container-fluid">
-        <Drawer
-          profile={this.state.profile.profile}
-          menu={this.state.profile.menu}
-          hasChangeGroupBtn={this.state.profile.hasChangeGroupBtn}
-          changed={this.changedCrmGroup}
-        />
-
-        <main>
-          <Header profile={this.state.profile.profile}/>
-
-          <Switch>
-            <Route
-              exact
-              path={this.props.match.url}
-              render={() => (<div/>)}
-            />
-            <PrivateRoute path="/home/groups" component={Group}{...query}/>
-            <PrivateRoute path="/home/roles" component={Roles}{...query}/>
-            <PrivateRoute path="/home/permissions" component={Permissions}{...query}/>
-            <PrivateRoute path="/home/users" component={User}{...query}/>
-            <PrivateRoute path="/home/mkt/act" changedCrmGroup={this.state.group} component={Act}{...query}/>
-            <PrivateRoute path="/home/mkt/leads" changedCrmGroup={this.state.group} component={Leads}{...query}/>
-            <PrivateRoute path="/home/mkt/leadspublic" changedCrmGroup={this.state.group} component={Leads}{...query}/>
-            <PrivateRoute path="/home/sales/allleads" changedCrmGroup={this.state.group} component={All}{...query}/>
-            <PrivateRoute path="/home/mkt/statistic" changedCrmGroup={this.state.group} component={Statistic}{...query}/>
-            <PrivateRoute path="/home/sales/oppor" changedCrmGroup={this.state.group} component={Appor}{...query}/>
-            <PrivateRoute path="/home/sales/opporpublic" changedCrmGroup={this.state.group} component={Appor}{...query}/>
-            <PrivateRoute path="/home/sales/contract" changedCrmGroup={this.state.group}
-                          component={SalesContract}{...query}/>
-            <PrivateRoute path="/home/sales/customer" changedCrmGroup={this.state.group}
-                          component={SalesCustomer}{...query}/>
-            <PrivateRoute path="/home/sales/statistic" changedCrmGroup={this.state.group} component={SaleStatistic}{...query}/>
-            <PrivateRoute path="/home/sales/through" changedCrmGroup={this.state.group}
-                          component={SalesThrough}{...query} />
-            <PrivateRoute path="/home/service/visitorin" changedCrmGroup={this.state.group}
-                        component={ServiceVisitor}{...query} />
-            <PrivateRoute path="/home/service/visitor" changedCrmGroup={this.state.group}
-                          component={ServiceVisitor}{...query}/>
-            <PrivateRoute path="/home/service/contract" changedCrmGroup={this.state.group}
-                          component={ServiceContract}{...query}/>
-            <PrivateRoute path="/home/service/customer" changedCrmGroup={this.state.group}
-                          component={ServiceCustomer}{...query}/>
-            <PrivateRoute path="/home/service/through" changedCrmGroup={this.state.group}
-                          component={ServiceThrough}{...query}/>
-            <PrivateRoute path="/home/service/situation" changedCrmGroup={this.state.group}
-                          component={Situation}{...query}/>
-            <PrivateRoute path="/home/service/statistic" changedCrmGroup={this.state.group} component={ServiceStatistic}{...query}/>
-            <PrivateRoute path="/home/finance/account" changedCrmGroup={this.state.group}
-                          component={FinanceAccount}{...query}/>
-              <PrivateRoute path="/home/finance/charge" changedCrmGroup={this.state.group}
-                            component={FinanceCharge}{...query}/>
-            <PrivateRoute path="/home/academy/course" changedCrmGroup={this.state.group}
-                          component={AcademyCourse}{...query}/>
-            <PrivateRoute path="/home/academy/teacher" changedCrmGroup={this.state.group}
-                          component={AcademyTeacher}{...query}/>
-            <PrivateRoute path="/home/academy/class" changedCrmGroup={this.state.group}
-                          component={AcademyClass}{...query}/>
-            <PrivateRoute path="/home/academy/room" changedCrmGroup={this.state.group}
-                          component={AcademyRoom}{...query}/>
-            <PrivateRoute path="/home/academy/assignclass" changedCrmGroup={this.state.group}
-                          component={AcademyAssignClass}{...query}/>
-            <PrivateRoute path="/home/education/class" changedCrmGroup={this.state.group}
-                          component={EducationClass}{...query}/>
-            <PrivateRoute path="/home/education/course" changedCrmGroup={this.state.group}
-                          component={EducationCourse}{...query}/>
-            <PrivateRoute path="/home/education/through" changedCrmGroup={this.state.group}
-                          component={EducationThrough}{...query}/>
-            <PrivateRoute path="/home/statistic" changedCrmGroup={this.state.group}
-                          component={AllStatistic}{...query}/>
-            <PrivateRoute path="/home/import" changedCrmGroup={this.state.group}
-                          component={Import}{...query}/>
-            <PrivateRoute path="/home/setting/academy" changedCrmGroup={this.state.group}
-                          component={Service}{...query}/>
-            <PrivateRoute path="/home/setting/service" changedCrmGroup={this.state.group}
-                        component={Academy}{...query}/>
-            <PrivateRoute path="/home/wechat" changedCrmGroup={this.state.group}
-                          component={Wechat}{...query}/>
-            <Route path="/home/changepwd" component={ChangePwd}/>
-            <Route render={(props) => (
-              <NoMatch {...props} profile={this.state.profile.profile}/>
-            )}/>
-          </Switch>
-        </main>
-      </div>
-    )
-  }
 }
 
 export default Home;

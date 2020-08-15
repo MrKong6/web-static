@@ -36,51 +36,28 @@ class StudentSituationChangeClassAdd extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/customer/student/classStuList.do', {
-                    orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize, id: this.state.id, needParent: 1,needStuBalance:1
-                });
                 let classList = await ajax('/academy/class/getClassShortList.do', {
                     orgId: this.state.group.id
                 });
-                let classData = await ajax('/academy/class/query.do', {id: this.state.id});
-                list.data.map(item => {
-                    if (item.idType != null) {
-                        item.idType = CONFIG.DOCUMENT[item.idType];
-                    }
-                    if (item.birthday != null) {
-                        item.age = calculateAge(fmtDate(item.birthday));
-                        item.birthday = fmtDate(item.birthday);
-                    }
-                });
-                let classOneData,stuOneData;
-                if(classList && classList.data && classList.data.length > 0){
-                    classOneData = classList.data[0];
-                }
-                if(list.data != null && list.data.length > 0){
-                    stuOneData = list.data[0];
-                }
-                this.setState({list: list.data, totalPage: list.totalPage, totalCount: list.count,classList:classList.data,classData:classOneData,stuData:stuOneData},()=>{
+                let data = await ajax('/student/situation/getStuInfo.do', {id: this.state.id});
+                this.setState({data: data,classList:classList.data,},()=>{
+                    let dataOne = data;
                     //学生信息
-                    if(list.data != null && list.data.length > 0){
-                        let dataOne = list.data[0];
-                        this.form["stuId"].value = dataOne.id;
-                        this.form["code"].value = dataOne.code;
-                        this.form["classStatusName"].value = dataOne.classStatusName;
-                        if(dataOne.parent){
-                            this.form["parentName"].value = dataOne.parent.name;
-                            this.form["relation"].value = dataOne.parent.relation;
-                            this.form["cellphone"].value = dataOne.parent.cellphone;
-                        }
+                    if(dataOne){
+                        this.form["stuName"].value = dataOne.stuName;
+                        this.form["stuCode"].value = dataOne.stuCode;
+                        this.form["parentName"].value = dataOne.parentName;
+                        this.form["relation"].value = dataOne.relation;
+                        this.form["cellphone"].value = dataOne.cellphone;
                         this.form["applyPerson"].value = this.props.profile.cRealname;
                     }
                     //班级信息
-                    if(classData != null && classData.data != null){
-                        classData = classData.data;
-                        this.form["noUseCourseHour"].value = classData.noUseCourseHour ? classData.noUseCourseHour : "";
-                        this.form["useCourseHour"].value = classData.useCourseHour ? classData.useCourseHour : "";
-                        this.form["classCode"].value = classData.code;
-                        this.form["mainTeacherName"].value = classData.mainTeacherName;
+                    if(dataOne.classByStuId != null && dataOne.classByStuId.length > 0){
+                        let zeor = dataOne.classByStuId[0];
+                        this.form["classStatusName"].value = zeor.classStatusName ? zeor.classStatusName : "";
+                        this.form["noUseCourseHour"].value = zeor.noUseCourseHour ? zeor.noUseCourseHour : "";
+                        this.form["useCourseHour"].value = zeor.useCourseHour ? zeor.useCourseHour : "";
+                        this.form["mainTeacherName"].value = zeor.mainTeacherName ? zeor.mainTeacherName : "";
                     }
                     //转入班级下拉列表
                     if(classList && classList.data && classList.data.length > 0){
@@ -105,7 +82,6 @@ class StudentSituationChangeClassAdd extends React.Component {
     }
     //切换班级
     changeClass(evt){
-
         if(evt.target.value && this.state.classList){
             this.state.classList.map(item => {
                 if(item.id == evt.target.value){
@@ -120,20 +96,14 @@ class StudentSituationChangeClassAdd extends React.Component {
     }
     //切换学生
     changeStu(evt){
-        if(evt.target.value && this.state.list){
-            this.state.list.map(item => {
-                if(item.id == evt.target.value){
-                    let dataOne = item;
-                    this.form["stuId"].value = dataOne.id;
-                    this.form["code"].value = dataOne.code;
-                    this.form["classStatusName"].value = dataOne.classStatusName;
-                    if(dataOne.parent){
-                        this.form["parentName"].value = dataOne.parent.name;
-                        this.form["relation"].value = dataOne.parent.relation;
-                        this.form["cellphone"].value = dataOne.parent.cellphone;
-                    }
-                    this.form["applyPerson"].value = this.props.profile.cRealname;
-                    this.state.stuData = item;
+        if(evt.target.value && this.state.data && this.state.data.classByStuId && this.state.data.classByStuId.length > 0){
+            this.state.data.classByStuId.map(item => {
+                if(item.classId == evt.target.value){
+                    let zeor = item;
+                    this.form["classStatusName"].value = zeor.classStatusName ? zeor.classStatusName : "";
+                    this.form["noUseCourseHour"].value = zeor.noUseCourseHour ? zeor.noUseCourseHour : "";
+                    this.form["useCourseHour"].value = zeor.useCourseHour ? zeor.useCourseHour : "";
+                    this.form["mainTeacherName"].value = zeor.mainTeacherName ? zeor.mainTeacherName : "";
                     return ;
                 }
             });
@@ -151,10 +121,7 @@ class StudentSituationChangeClassAdd extends React.Component {
                     }
                 }
                 query.type = 3;
-                query.classId=this.state.id;
-                query.stuCode = this.state.stuData.code;
-                query.stuName = this.state.stuData.name;
-                query.classStatus = this.state.stuData.classStatusName;
+                query.stuId = this.state.data.stuId;
                 query.applyTime = this.state.applyTime.getTime();
 
                 let rs = await ajax('/student/situation/situationAdd.do', query);
@@ -207,15 +174,8 @@ class StudentSituationChangeClassAdd extends React.Component {
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">请选择学生</label>
                                                 <div className="col-7">
-                                                    <select className="form-control"
-                                                            name={this.props.stuId || "stuId"} onChange={this.changeStu}>
-                                                        {
-                                                            this.state.list ? this.state.list.map(item => (
-                                                                <option key={item.id}
-                                                                        value={item.id}>{item.name}</option>
-                                                            )) : null
-                                                        }
-                                                    </select>
+                                                    <input type="text" className="form-control" name="stuName"
+                                                           readOnly={true}/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -223,7 +183,7 @@ class StudentSituationChangeClassAdd extends React.Component {
                                                     <em className="text-danger">*</em>学员编号
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="code"
+                                                    <input type="text" className="form-control" name="stuCode"
                                                            readOnly={true}/>
                                                 </div>
                                             </div>
@@ -258,7 +218,7 @@ class StudentSituationChangeClassAdd extends React.Component {
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div className="form-group row">
+                                            {/*<div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>转入时间
                                                 </label>
@@ -266,7 +226,7 @@ class StudentSituationChangeClassAdd extends React.Component {
                                                     <input type="text" className="form-control" name="inTime"
                                                     />
                                                 </div>
-                                            </div>
+                                            </div>*/}
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>转入班级教师
@@ -298,8 +258,15 @@ class StudentSituationChangeClassAdd extends React.Component {
                                                     <em className="text-danger">*</em>班级名称
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="classCode"
-                                                           readOnly={true}/>
+                                                    <select className="form-control"
+                                                            name="classId" onChange={this.changeStu}>
+                                                        {
+                                                            (this.state.data && this.state.data.classByStuId) ? this.state.data.classByStuId.map(item => (
+                                                                <option key={item.classId}
+                                                                        value={item.classId}>{item.classCode}</option>
+                                                            )) : null
+                                                        }
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div className="form-group row">

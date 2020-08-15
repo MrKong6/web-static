@@ -90,6 +90,10 @@ class StudentView extends React.Component {
                     }
                 },
                 {
+                    label: "学员编号",
+                    prop: "code",
+                },
+                {
                     label: "英文名",
                     prop: "enName",
                 },

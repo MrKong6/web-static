@@ -3,7 +3,6 @@ import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
 
 import DialogTips from "../../Dialog/DialogTips";
-import Commands from "../../Commands/Commands";
 
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";

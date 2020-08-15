@@ -9,6 +9,7 @@ import {getChartOption} from "../../../utils/const";
 import SaleManageReport from "./SaleManageReport";
 import CustomerServiceReport from "./CustomerServiceReport";
 import AcademyManageReport from "./AcademyManageReport";
+import EducationReport from "./EducationReport";
 
 class List extends React.Component {
     constructor(props) {
@@ -49,6 +50,8 @@ class List extends React.Component {
             this.changeIndex("3-1");
         }else if(this.fourth && this.fourth == 'normal'){
             this.changeIndex("4");
+        }else if(this.fifth && this.fourth == 'normal'){
+            this.changeIndex("5");
         }
         mainSize()
     }
@@ -126,6 +129,16 @@ class List extends React.Component {
                 this.state.fromWay = 0;
                 break;
             }
+            case("5-1"):{
+                this.state.typeId = 11;
+                this.state.fromWay = 0;
+                break;
+            }
+            case("5-2"):{
+                this.state.typeId = 12;
+                this.state.fromWay = 0;
+                break;
+            }
             default:{
                 break;
             }
@@ -166,6 +179,9 @@ class List extends React.Component {
                             <Menu.Item index="4-1">班级</Menu.Item>
                             <Menu.Item index="4-2">教室</Menu.Item>
                         </Menu.SubMenu>
+                        <Menu.SubMenu index="5" title="教学管理" style={{"display":this.fourth}}>
+                            <Menu.Item index="5-1">教师课时</Menu.Item>
+                        </Menu.SubMenu>
                     </Menu>
                     <div id="saleView">
                         <SaleManageReport changedCrmGroup={this.state.group} fromWay={this.state.fromWay} typeId={this.state.typeId} />
@@ -175,6 +191,9 @@ class List extends React.Component {
                     </div>
                     <div id="academyView">
                         <AcademyManageReport changedCrmGroup={this.state.group} indexNum={this.state.indexNum} typeId={this.state.typeId} />
+                    </div>
+                    <div id="educationView">
+                        <EducationReport changedCrmGroup={this.state.group} indexNum={this.state.indexNum} typeId={this.state.typeId} />
                     </div>
                 </div>
             </div>

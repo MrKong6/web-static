@@ -44,7 +44,7 @@ class Form extends React.Component {
                 let contractAllStatus = await ajax('/service/contract/contractAllStatus.do');
                 let contractStuAllStatus = await ajax('/service/contract/contractStuAllStatus.do');
                 let classAllType = await ajax('/academy/class/classType.do');
-                let classList = await ajax('/academy/class/getClassShortList.do',{statusId:4,orgId:this.state.group.id});
+                let classList = await ajax('/academy/class/getClassShortList.do',{orgId:this.state.group.id});/*statusId:4,*/
                 let data = null,oneDate = null,oneAmount = null;
                 classList = classList.data;
                 if (this.props.isEditor) {
@@ -100,9 +100,11 @@ class Form extends React.Component {
                     classAllType,
                     classList,
                     startDate,
-                    typeId: data ? data.typeId : null,
+                    typeId: data ? data.typeId+'' : null,
                     contractStatus: data ? data.contractStatus : null,
                     contractStuStatus: data ? data.contractStuStatus : null,
+                    classId: data? data.classId : null,
+                    classType: data? data.classType : null,
                 }, () => {
                     const keys = Object.keys(data);
 
@@ -190,7 +192,7 @@ class Form extends React.Component {
             });
         }
 
-        query.typeId = this.state.typeId ? this.state.typeId : 1;
+        query.typeId = this.state.typeId ? this.state.typeId+'' : '1';
         query.stuId = this.state.data ? this.state.data.stuId : null;
         query.parId = this.state.data ? this.state.data.parId : null;
         query.listStr=JSON.stringify(this.state.moneyList);
@@ -211,7 +213,7 @@ class Form extends React.Component {
                 }
             }
         }
-
+        query.classId = this.state.classId;
         return query;
     }
     //添加付费信息Item
@@ -227,9 +229,9 @@ class Form extends React.Component {
             [key] : value}
         )
     }
-
+    //改变班级
     changeClass(value){
-
+        this.setState({classId:value});
     }
 
     changeCourse(children,data){
@@ -501,7 +503,7 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>班级编号
                                                 </label>
                                                 <div className="col-7">
-                                                    <Select value={this.state.classId} placeholder="请选择" onChange={this.changeClass}>
+                                                    <Select value={this.state.classId} placeholder="请选择" onChange={this.changeClass} filterable={true} clearable={true}>
                                                         {
                                                             this.state.classList ? this.state.classList.map(el => {
                                                                 return <Select.Option key={el.id} label={el.code} value={el.id} />
@@ -633,11 +635,29 @@ class Form extends React.Component {
                                         <div className="col">
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">
-                                                    <em className="text-danger">*</em>创建人
+                                                    <em className="text-danger">*</em>所属组织
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="cRealname"
-                                                           required={true} value={this.state.profiles && this.state.profiles.cRealname ? this.state.profiles.cRealname : ''} />
+                                                    <input type="text" className="form-control" name="orgName" readOnly={true}
+                                                           required={true} />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">
+                                                    <em className="text-danger">*</em>所属用户
+                                                </label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="executiveName"
+                                                           required={true} readOnly={true}/>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">
+                                                    <em className="text-danger">*</em>创建用户
+                                                </label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="cRealname" readOnly={true}
+                                                           required={true} />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -646,9 +666,7 @@ class Form extends React.Component {
                                                 </label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="startDate"
-                                                           required={true}
-                                                           value={formatWithTime(new Date())}
-                                                           placeholder={fmtDate(new Date())}/>
+                                                           required={true} readOnly={true}/>
                                                 </div>
                                             </div>
                                         </div>

@@ -65,6 +65,7 @@ class Editor extends React.Component {
                 tn1:'主教2',
                 tn2:'助教2',
             }*/],
+            teacherList:[],
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.updated = this.updated.bind(this);
@@ -80,6 +81,9 @@ class Editor extends React.Component {
             try {
                 //事件列表
                 let maxVo = await ajax('/student/clocked/getRecentClassTime.do', {classId: this.props.location.state.classId});
+                let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
+                let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
+
                 //暂时打开开关：start
                 maxVo = this.props.location.state.classTimes;
                 let vo = [];
@@ -90,6 +94,8 @@ class Editor extends React.Component {
                 //暂时打开开关：end
                 this.setState({
                     classTimeList: maxVo,
+                    teacherList: teacherList.data.items,
+                    roomList: roomList.data.items,
                 });
 
             } catch (err) {
@@ -157,33 +163,18 @@ class Editor extends React.Component {
             return;
         }
         let dataList = this.state.data;
-        /*let pushData = [];
-        if (dataList && dataList.length > 0) {
-            //封装数据提交格式  把没必要的数据去掉
-            dataList.map(item => {
-                if (item.startTime) {
-                    item.startTime = formatWithDateAndTime(this.state.date, item.startTime);
-                    pushData.push({
-                        "checkInToday": item.checkInToday,
-                        "classId": item.classId,
-                        "checkOutToday": item.checkOutToday,
-                        "maxClassTime": item.maxClassTime,
-                        "name": item.name,
-                        "id": item.id,
-                        "situation": item.situation,
-                        "idx": item.idx,
-                        "index": item.index,
-                        "startTime": item.startTime,
-                        "endTime": item.endTime,
-                        "classTime": this.state.selectedClassTime,
-                    });
-                }
-            });
-        }*/
+        let courseList = this.state.courseLst;
+        let idx = 0;
         dataList.map(item => {
+            idx = 0;
             item.vos.map(vo => {
                 vo.time = null;
+                vo.tn2Id =  courseList[idx].tn2Id;
+                vo.rcId =  courseList[idx].rcId;
+                vo.tn2 = courseList[idx].tn2;
+                idx++;
             });
+
         });
         let commitVo = {
             "vos": dataList,
@@ -272,6 +263,9 @@ class Editor extends React.Component {
                             item.vos =deepClone(courseList.data);
                             item.vos.map(vo => {
                                 vo.rdate = new Date();
+                                if(item[vo.courseName+vo.ch] && item[vo.courseName+vo.ch].clocked == 1){
+                                    vo.rdate = new Date(item[vo.courseName+vo.ch].startTime);
+                                }
                                 vo.checkInToday = item[vo.courseName + vo.ch] ? item[vo.courseName + vo.ch].clocked : 2;
                                 //由下面反向选择上面
                                 if(vo.checkInToday == 1){
@@ -403,6 +397,9 @@ class Editor extends React.Component {
                             if(ch == vo.ch){
                                 vo.checkInToday = value ? 1 : 2;
                             }
+                           if(!vo.tn2Id){
+                               vo.tn2Id = null;
+                           }
                         });
                     }
                 });
@@ -516,6 +513,10 @@ class Editor extends React.Component {
                             </Select>
                         </div>
                         <label className="col-1 col-form-label"
+                               style={{"textAlign": "center", "color": "red"}}>课次</label>
+                        <label className="col-1 col-form-label"
+                               style={{"textAlign": "center", "color": "red"}}>课程</label>
+                        <label className="col-1 col-form-label"
                                style={{"textAlign": "center", "color": "red"}}>课时</label>
                         <label className="col-2 col-form-label"
                                style={{"textAlign": "center", "color": "red"}}>上课时间</label>
@@ -531,16 +532,47 @@ class Editor extends React.Component {
                             return <div className="row">
                                     <div className="col-1"></div>
                                     <div className="col-1" style={{"textAlign": "center"}}>
-                                        <Checkbox checked={val.check == 1} onChange={that.handleSelect.bind(this,'check',val.ch, val.courseId)}>{val.ch + val.courseName}</Checkbox>
+                                        <Checkbox checked={val.check == 1} onChange={that.handleSelect.bind(this,'check',val.ch, val.courseId)}>{val.ct}</Checkbox>
                                     </div>
+                                    <div className="col-1">{val.courseName}</div>
+                                    <div className="col-1" style={{"textAlign": "center"}}>{val.ch}</div>
                                     <label className="col-2 col-form-label"
                                            style={{"textAlign": "center", "color": "red"}}>{val.time}</label>
+                                    <Select className="col-1 col-form-label" value={val.rcId} placeholder="请选择教室"
+                                            filterable={true}
+                                            clearable={true} style={{"width": "100%"}}
+                                            onChange={data => {
+                                                val.rcId = data+"";
+                                            }}
+                                    >
+                                        {
+                                            that.state.roomList && that.state.roomList.length > 0 ? that.state.roomList.map(el => {
+                                                return <Select.Option key={el.id+""}
+                                                                      label={el.code}
+                                                                      value={el.id+""}/>
+                                            }) : null
+                                        }
+                                    </Select>
                                     <label className="col-1 col-form-label"
-                                           style={{"textAlign": "center", "color": "red"}}>{val.rc}</label>
-                                    <label className="col-1 col-form-label"
-                                           style={{"textAlign": "center", "color": "red"}}>{val.tn1}</label>
-                                    <label className="col-1 col-form-label"
-                                           style={{"textAlign": "center", "color": "red"}}>{val.tn2}</label>
+                                       style={{"textAlign": "center", "color": "red"}}>{val.tn1}</label>
+                                    <Select className="col-1 col-form-label" value={val.tn2Id} placeholder="请选择助教"
+                                            filterable={true}
+                                            clearable={true} style={{"width": "100%"}}
+                                            onChange={(data,row) => {
+                                                val.tn2Id = data+"";
+                                                val.tn2 = row.props.label;
+                                                debugger
+                                            }}
+                                    >
+                                        {
+                                            that.state.teacherList && that.state.teacherList.length > 0 ? that.state.teacherList.map(el => {
+                                                return <Select.Option key={el.id+""}
+                                                                      label={el.name}
+                                                                      value={el.id+""}/>
+                                            }) : null
+                                        }
+                                    </Select>
+
                                 </div>
                         })
                     }

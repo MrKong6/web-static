@@ -36,6 +36,7 @@ class List extends React.Component {
             typeId: null,
             isAnimating: true,
             redirectToReferrer: false,
+            chooseCode: null, // 模糊搜索条件
             columns: [
                 {
                     // label: "序号",
@@ -191,7 +192,7 @@ class List extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,
-                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:this.state.typeId});
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:this.state.typeId,chooseCode: this.state.chooseCode});
                 const ids = list.data.map((contract) => (contract.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -304,6 +305,17 @@ class List extends React.Component {
         this.state.typeId = value;
         this.componentDidMount();
     }
+    //学员姓名和班级编号模糊搜索
+    onChange(value){
+        this.componentDidMount();
+    }
+
+    onChangeCls(value){
+        this.setState({
+            chooseCode: value
+        });
+    }
+
     /**
      * 导出
      */
@@ -362,11 +374,22 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <Select value={this.state.chooseStatusName} placeholder="请选择合同类型" clearable={true} onChange={this.changeTabs} className={"leftMargin"}>
-                        <Select.Option key={1} label='新招' value={1} />
-                        <Select.Option key={2} label='续报' value={2} />
-                    </Select>
-
+                    <div className="row">
+                        <div className="col-3">
+                            <Input placeholder="请输入学员姓名/合同编号"
+                                   className={"leadlist_search"}
+                                   value={this.state.chooseCode}
+                                   onChange={this.onChangeCls.bind(this)}
+                                   append={<Button type="primary" icon="search" onClick={this.onChange.bind(this)}>搜索</Button>}
+                            />
+                        </div>
+                        <div className="col-2">
+                            <Select value={this.state.chooseStatusName} placeholder="请选择合同类型" clearable={true} onChange={this.changeTabs} className={"leftMargin"}>
+                                <Select.Option key={1} label='新招' value={1} />
+                                <Select.Option key={2} label='续报' value={2} />
+                            </Select>
+                        </div>
+                    </div>
                     {/*<Tabs activeName="1" onTabClick={this.changeTabs.bind(this)}>(tab) => console.log(tab.props.name)
                         <Tabs.Pane label="新招" name="1">*/}
                             <Table

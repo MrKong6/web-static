@@ -247,6 +247,7 @@ class ClockedView extends React.Component {
                 let helpTeacherData = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});  //助教   ,position:2  ,position:2
                 this.setState({columns: columnHeader,teacherColumns:teacherColumnHeader,classTimes: classTime,mainTeacher:mainTeacherData.data.items,
                     helpTeacher:helpTeacherData.data.items,roomList:roomList.data.items,hourTime});
+                debugger
                 this.refreshList();
             } catch (err) {
                 if (err.errCode === 401) {

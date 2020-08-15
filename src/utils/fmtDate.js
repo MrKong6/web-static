@@ -158,6 +158,9 @@ export function getWeekDate(date){
     //获取所传日期是周几
     let newDate = new Date(date);
     let num = newDate.getDay();
+    if(num == 0){
+        num = 7;
+    }
     let weekDate = [];
     for(let i=1;i<=7;i++){
         if(i <= num){

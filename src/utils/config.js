@@ -591,10 +591,31 @@ export default {
         },
         "11": {ICON_CLASS: "fa-area-chart"},
         "11-1": {
-            PATH: "home/wechat",
-            PATH_RULE: /^\/home\/wechat/,
+            PATH: "home/wechat/record",
+            PATH_RULE: /^\/home\/wechat\/record/,
             ICON_CLASS: "fa-sitemap",
             CATEGORY: '微信后台',
+            NAME: ''
+        },
+        "11-2": {
+            PATH: "home/wechat/type",
+            PATH_RULE: /^\/home\/wechat\/type/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '年级',
+            NAME: ''
+        },
+        "11-3": {
+            PATH: "home/wechat/course",
+            PATH_RULE: /^\/home\/wechat\/course/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '课程',
+            NAME: ''
+        },
+        "11-4": {
+            PATH: "home/wechat/clsinfo",
+            PATH_RULE: /^\/home\/wechat\/clsinfo/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '班级',
             NAME: ''
         },
     },

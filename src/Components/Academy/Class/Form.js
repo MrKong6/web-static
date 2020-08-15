@@ -116,6 +116,10 @@ class Form extends React.Component {
                             if (this.form[key]) {
                                 if (key === 'createOn') {
                                     this.form[key].value = fmtDate(data[key]);
+                                }else if (key === 'courseStartDate') {
+                                    this.form[key].value =fmtDate(data[key]);
+                                }else if (key === 'courseEndDate') {
+                                    this.form[key].value =fmtDate(data[key]);
                                 }else{
                                     this.form[key].value = data[key];
                                 }
@@ -390,6 +394,8 @@ class Form extends React.Component {
                                             </div>
                                         </div>
 
+                                    </div>
+                                    <div className="col">
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>课程类别
@@ -417,8 +423,33 @@ class Form extends React.Component {
                                             </div>
                                         </div>
 
-                                    </div>
-                                    <div className="col">
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>计划人数
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="planNum"
+                                                       required={true}/>
+                                            </div>
+                                        </div>
+                                        {/*<div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>开班人数
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="startNum"
+                                                       required={true}/>
+                                            </div>
+                                        </div>*/}
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>实际人数
+                                            </label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="factNum" readOnly={true}
+                                                       required={true}/>
+                                            </div>
+                                        </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">开班日期</label>
                                             <div className="col-7">
@@ -451,69 +482,8 @@ class Form extends React.Component {
                                                 />
                                             </div>
                                         </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>计划人数
-                                            </label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="planNum"
-                                                       required={true}/>
-                                            </div>
-                                        </div>
-                                        {/*<div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>开班人数
-                                            </label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="startNum"
-                                                       required={true}/>
-                                            </div>
-                                        </div>*/}
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">
-                                                <em className="text-danger">*</em>实际人数
-                                            </label>
-                                            <div className="col-7">
-                                                <input type="text" className="form-control" name="factNum"
-                                                       required={true}/>
-                                            </div>
-                                        </div>
                                     </div>
                                     <div className="col">
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">开课日期</label>
-                                            <div className="col-7">
-                                                {/*<DatePicker
-                                                    name="createTime"
-                                                    value={this.state.courseStartTime}
-                                                    isShowTime={false}
-                                                    placeholder="选择日期"
-                                                    format="yyyy-MM-dd"
-                                                    onChange={date => {
-                                                        console.debug('DatePicker1 changed: ', date)
-                                                        this.setState({courseStartTime: date})
-                                                    }}
-                                                />*/}
-                                                <input type="text" className="form-control" name="registrar" readOnly={true}/>
-                                            </div>
-                                        </div>
-                                        <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">结课日期</label>
-                                            <div className="col-7">
-                                                {/*<DatePicker
-                                                    name="createTime"
-                                                    value={this.state.courseEndTime}
-                                                    isShowTime={false}
-                                                    placeholder="选择日期"
-                                                    format="yyyy-MM-dd"
-                                                    onChange={date => {
-                                                        console.debug('DatePicker1 changed: ', date)
-                                                        this.setState({courseEndTime: date})
-                                                    }}
-                                                />*/}
-                                                <input type="text" className="form-control" name="registrar" readOnly={true}/>
-                                            </div>
-                                        </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">主教</label>
                                             <div className="col-7">
@@ -556,8 +526,55 @@ class Form extends React.Component {
                                                 <input type="text" className="form-control" name="course" readOnly={true}/>
                                             </div>
                                         </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">开课日期</label>
+                                            <div className="col-7">
+                                                {/*<DatePicker
+                                                    name="createTime"
+                                                    value={this.state.courseStartTime}
+                                                    isShowTime={false}
+                                                    placeholder="选择日期"
+                                                    format="yyyy-MM-dd"
+                                                    onChange={date => {
+                                                        console.debug('DatePicker1 changed: ', date)
+                                                        this.setState({courseStartTime: date})
+                                                    }}
+                                                />*/}
+                                                <input type="text" className="form-control" name="courseStartDate" readOnly={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">结课日期</label>
+                                            <div className="col-7">
+                                                {/*<DatePicker
+                                                    name="createTime"
+                                                    value={this.state.courseEndTime}
+                                                    isShowTime={false}
+                                                    placeholder="选择日期"
+                                                    format="yyyy-MM-dd"
+                                                    onChange={date => {
+                                                        console.debug('DatePicker1 changed: ', date)
+                                                        this.setState({courseEndTime: date})
+                                                    }}
+                                                />*/}
+                                                <input type="text" className="form-control" name="courseEndDate" readOnly={true}/>
+                                            </div>
+                                        </div>
                                     </div>
                                     <div className="col">
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">所属用户</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="crea"
+                                                       readOnly={true}/>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">所属组织</label>
+                                            <div className="col-7">
+                                                <input type="text" className="form-control" name="orgName" readOnly={true}/>
+                                            </div>
+                                        </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">创建时间</label>
                                             <div className="col-7">

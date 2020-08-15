@@ -28,6 +28,7 @@ class List extends React.Component {
 
     constructor(props) {
         super(props);
+        let storage = window.sessionStorage;
         this.state = {
             calendarWeekends: true,
             droppable: false,
@@ -49,14 +50,14 @@ class List extends React.Component {
             ],
             eventCommont: '',
             chooseRoom: null,
-            chooseClass: null,
+            chooseClass: storage.getItem("chooseCls") ? storage.getItem("chooseCls") : null,
             chooseTeacher: null,
             classMore:MORE,
             classMoreTeacher:MORE,
             classMoreRoom:MORE,
             value: 1,//弹窗编辑方式默认值
             canAssign: true,
-        }
+        };
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
         this.title = fmtTitle(this.props.location.pathname);
         this.title.name  = this.title.name ? this.title.name : "All"
@@ -88,7 +89,9 @@ class List extends React.Component {
                     classStatusList: allClassStatus
                 });
                 this.refreshAssignClass();
-                debugger
+                if(this.state.chooseClass){
+                    this.chooseTopCondition(1,this.state.chooseClass);
+                }
             } catch (err) {
                 /*if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -198,6 +201,7 @@ class List extends React.Component {
                     chooseClass : evt,
                     canAssign
                 });
+                window.sessionStorage.setItem("chooseCls",evt);
                 break;
             }
             case(2): {
@@ -546,6 +550,7 @@ class List extends React.Component {
                                     titleFormat={this.titleF}
                                     eventMouseEnter={this.eventMouseEnter}
                                     eventMouseLeave={this.eventMouseLeave}
+                                    lazyFetching={true}
 
                                     /*handleWindowResize={false}
                                     windowReSize={this.windowResize}

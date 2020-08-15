@@ -1,20 +1,15 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
-import {Button, Pagination, Table, Tabs} from 'element-react';
-
 import DialogTips from "../../Dialog/DialogTips";
 import Commands from "../../Commands/Commands";
 
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import CONFIG from "../../../utils/config";
-import calculateAge from "../../../utils/calculateAge";
 import fmtDate from "../../../utils/fmtDate";
-import StudentSituationBackMoney from "../../Academy/Class/StudentSituationBackMoney";
-import StudentSituationPauseClass from "../../Academy/Class/StudentSituationPauseClass";
-import StudentSituationChangeClass from "../../Academy/Class/StudentSituationChangeClass";
+import StudentSit from "../../Service/Situation/StudentSituation"
+
 
 class StudentSituation extends React.Component {
     constructor(props) {
@@ -177,17 +172,7 @@ class StudentSituation extends React.Component {
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     <p>班级异动信息</p>
                     <div className="row" style={{"height": '80%'}}>
-                        <Tabs activeName="1" onTabClick={ this.changePanel }>
-                            <Tabs.Pane label="退费" name="1">
-                                <StudentSituationBackMoney type={"class"} id={this.state.id} data={this.state.list} />
-                            </Tabs.Pane>
-                            <Tabs.Pane label="休学" name="2">
-                                <StudentSituationPauseClass type={"class"} id={this.state.id} data={this.state.list} />
-                            </Tabs.Pane>
-                            <Tabs.Pane label="转班" name="3">
-                                <StudentSituationChangeClass type={"class"} id={this.state.id} data={this.state.list} />
-                            </Tabs.Pane>
-                        </Tabs>
+                        <StudentSit type={"class"} id={this.state.id} data={this.state.list} />
                     </div>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
