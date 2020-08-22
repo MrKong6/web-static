@@ -49,6 +49,7 @@ import Wechat from "../Setting/Wechat/Wechat";
 import WechatType from "../Setting/WechatType/WechatType";
 import WechatCourse from "../Setting/WechatCourse/WechatCourse";
 import WechatCls from "../Setting/WechatCls/WechatCls";
+import WechatOrder from "../Setting/WechatOrder/WechatOrder";
 
 class Home extends React.Component {
     constructor(props) {
@@ -227,6 +228,8 @@ class Home extends React.Component {
                                       component={WechatCourse}{...query}/>
                         <PrivateRoute path="/home/wechat/clsinfo" changedCrmGroup={this.state.group}
                                       component={WechatCls}{...query}/>
+                        <PrivateRoute path="/home/wechat/order" changedCrmGroup={this.state.group}
+                                      component={WechatOrder}{...query}/>
                         <Route path="/home/changepwd" component={ChangePwd}/>
                         <Route render={(props) => (
                             <NoMatch {...props} profile={this.state.profile.profile}/>

@@ -589,33 +589,41 @@ export default {
             CATEGORY: '商品',
             NAME: ''
         },
-        "11": {ICON_CLASS: "fa-area-chart"},
+        "11": {ICON_CLASS: "fa-microchip"},
         "11-1": {
             PATH: "home/wechat/record",
             PATH_RULE: /^\/home\/wechat\/record/,
             ICON_CLASS: "fa-sitemap",
-            CATEGORY: '微信后台',
+            CATEGORY: '实时访客',
             NAME: ''
         },
-        "11-2": {
+        "12": {ICON_CLASS: "fa-microchip"},
+        "12-2": {
             PATH: "home/wechat/type",
             PATH_RULE: /^\/home\/wechat\/type/,
             ICON_CLASS: "fa-sitemap",
             CATEGORY: '年级',
             NAME: ''
         },
-        "11-3": {
+        "12-3": {
             PATH: "home/wechat/course",
             PATH_RULE: /^\/home\/wechat\/course/,
             ICON_CLASS: "fa-sitemap",
             CATEGORY: '课程',
             NAME: ''
         },
-        "11-4": {
+        "12-4": {
             PATH: "home/wechat/clsinfo",
             PATH_RULE: /^\/home\/wechat\/clsinfo/,
             ICON_CLASS: "fa-sitemap",
             CATEGORY: '班级',
+            NAME: ''
+        },
+        "12-5": {
+            PATH: "home/wechat/order",
+            PATH_RULE: /^\/home\/wechat\/order/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '预约信息',
             NAME: ''
         },
     },
