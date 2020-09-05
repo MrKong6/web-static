@@ -80,7 +80,7 @@ class Editor extends React.Component {
 
     const request = async () => {
       try {
-        await ajax('/wechat/addCls.do', {"wechatClass":JSON.stringify(query)});
+        await ajax('/wechat/addCourse.do', query);
         this.setState({isUpdated: true})
       } catch (err) {
         if (err.errCode === 401) {
@@ -108,14 +108,14 @@ class Editor extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/wechat/clsinfo"/>
+        <Redirect to="/home/wechat/coursestage"/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/wechat/clsinfo/${this.state.id}`,
+          pathname: `/home/wechat/coursestage/${this.state.id}`,
           state: {ids: this.ids}
         }}/>
       )
@@ -150,7 +150,6 @@ class Editor extends React.Component {
             isEditor={true}
             editorId={this.state.id}
             changedCrmGroup={this.state.group}
-            obj={this.props.location.state.obj}
             ref={(dom) => {
               this.form = dom
             }}

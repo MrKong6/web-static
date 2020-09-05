@@ -7,7 +7,7 @@ import Progress from "../../Progress/Progress";
 import Commands from "../../Commands/Commands";
 
 import fmtTitle from "../../../utils/fmtTitle";
-import ajax from "../../../utils/ajax";
+import ajax, {ajaxGet, IMG_URL} from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 
 const NextBtn = ({id, ids}) => {
@@ -73,10 +73,12 @@ class View extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let data = await ajax('/wechat/getType.do', {id: this.state.id});
-                let list = await ajax('/wechat/getTypeList.do', {orgId: this.state.group.id});
+                let data = await ajax('/wechat/getCourse.do', {id: this.state.id});
+                let list = await ajaxGet('/wechat/getCouerseList.do', {orgId: this.state.group.id});
                 const ids = list.data.items.map((contract) => (contract.id + ''));
-
+                if(data.data && data.data.logoUrl){
+                    data.data.logoUrl = IMG_URL + data.data.logoUrl;
+                }
                 this.setState({data: data.data, ids: ids});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -132,7 +134,7 @@ class View extends React.Component {
     delAction() {
         const request = async () => {
             try {
-                await ajax('/wechat/addType.do', {id: this.state.id, status: 2});
+                await ajax('/wechat/addCourse.do', {id: this.state.id, status: 2});
                 this.setState({redirectToList: true});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -145,7 +147,7 @@ class View extends React.Component {
             }
         };
 
-        request();
+        //request();
     }
 
     render() {
@@ -160,7 +162,7 @@ class View extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/wechat/type"/>
+                <Redirect to="/home/wechat/coursestage"/>
             )
         }
 
@@ -173,7 +175,7 @@ class View extends React.Component {
 
                         <div className="btn-group float-right ml-4" role="group">
                             <button onClick={() => {
-                                this.props.history.push('/home/wechat/type');
+                                this.props.history.push('/home/wechat/coursestage');
                             }} type="button" className="btn btn-light">返回
                             </button>
                         </div>
@@ -197,7 +199,7 @@ class View extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">{this.state.data.name}</p>
+                    <p className="d-inline text-muted">{this.state.data.stuName}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
@@ -205,7 +207,7 @@ class View extends React.Component {
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
-                            this.props.history.push('/home/wechat/type');
+                            this.props.history.push('/home/wechat/coursestage');
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
@@ -226,7 +228,7 @@ class View extends React.Component {
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">年级类别</label>
+                                                <label className="col-5 col-form-label font-weight-bold">年级名称</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -237,7 +239,18 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">年级名称</label>
+                                                <label className="col-5 col-form-label font-weight-bold">课程类别</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.parentName}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">课程阶段</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -245,6 +258,12 @@ class View extends React.Component {
                                                         className="form-control-plaintext"
                                                         value={this.state.data.name}
                                                     />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">阶段图标</label>
+                                                <div className="col-7">
+                                                    <img src={this.state.data.logoUrl} alt="" width="80px" height="80px" style={{"marginLeft":"10px"}} />
                                                 </div>
                                             </div>
                                         </div>

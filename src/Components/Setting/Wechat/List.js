@@ -1,17 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
-
-import DialogTips from "../../Dialog/DialogTips";
-import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
-import CONFIG from "../../../utils/config";
-import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
+import {Table, Pagination, Select} from 'element-react';
+import {formatWithTime} from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 
 class List extends React.Component {
@@ -29,11 +24,60 @@ class List extends React.Component {
             redirectToReferrer: false,
             columns: [
                 {
+                    type: 'expand',
+                    expandPannel: function(data){
+                        if(data.orderList && data.orderList.length > 0){
+                            return (
+                                <table className="table table-sm">
+                                    <tr>
+                                        <th style={{"border": 0}}>课程类别</th>
+                                        <th style={{"border": 0}}>学员姓名</th>
+                                        <th style={{"border": 0}}>性别</th>
+                                        <th style={{"border": 0}}>在读年级</th>
+                                        <th style={{"border": 0}}>预约时间</th>
+                                        <th style={{"border": 0}}>家庭住址</th>
+                                    </tr>
+                                    <tbody>
+                                    {
+                                        data.orderList.map(function (evt) {
+                                            return <tr key={evt.id}>
+                                                <td style={{"border": 0}}>{evt.typeName}</td>
+                                                <td style={{"border": 0}}>{evt.name}</td>
+                                                <td style={{"border": 0}}>{evt.genderText}</td>
+                                                <td style={{"border": 0}}>{evt.grade}</td>
+                                                <td style={{"border": 0}}>{evt.createOn ? formatWithTime(evt.createOn) : ""}</td>
+                                                <td style={{"border": 0}}>{evt.address}</td>
+                                            </tr>
+                                        })
+                                    }
+                                    </tbody>
+                                </table>
+
+
+                            )
+                        }else{
+                            return (
+                                <div>暂无信息</div>
+                            )
+                        }
+                    }
+                },
+                {
                     type: 'index'
                 },
                 {
                     label: "访问时间",
                     prop: "time",
+                    showOverflowTooltip: true,
+                },
+                {
+                    label: "访问状态",
+                    prop: "visitStatusName",
+                    showOverflowTooltip: true,
+                },
+                {
+                    label: "阶段",
+                    prop: "stageName",
                     showOverflowTooltip: true,
                 },
                 {
@@ -43,6 +87,13 @@ class List extends React.Component {
                 },
                 {
                     label: "来源",
+                    prop: "sourceName",
+                    render: (row, column, data) => {
+                        return <span>Wechat In</span>
+                    }
+                },
+                {
+                    label: "渠道",
                     prop: "sourceActivityName",
                     sortable: true
                 },
@@ -59,21 +110,43 @@ class List extends React.Component {
                     prop: "visitCert",
                 },
                 {
+                    label: "访客设备型号",
+                    prop: "phoneVersion",
+                },
+                {
                     label: "注册手机号",
                     prop: "visitPhone",
-                }
+                },
+                {
+                    label: "学员昵称",
+                    prop: "name",
+                },
+                {
+                    label: "性别",
+                    prop: "gender",
+                },
+                {
+                    label: "在读年级",
+                    prop: "grade",
+                },
+
             ],
             totalPage:0,
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            userList:[],
+            chooseUser: this.props.location.state && this.props.location.state.phone ? this.props.location.state.phone : null
+
         };
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/wechat/getVisitRecordList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/wechat/getVisitRecordList.do', {orgId: this.state.group.id,phone:this.state.chooseUser,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let userList = await ajax('/wechat/getWechatUserList.do', {orgId: this.state.group.id,pageNum:1,pageSize:9999});
+
                 if(list.data && list.data.items){
                     const ids = list.data.items.map((contract) => (contract.id));
                     list.data.items.map(item => {
@@ -81,8 +154,13 @@ class List extends React.Component {
                             item.time = formatWithTime(item.time);
                         }
                     });
-                    this.setState({list: list.data && list.data.items ? list.data.items : null, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
+                    this.setState({list: list.data && list.data.items ? list.data.items : [],
+                        ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,
+                        userList: userList.data && userList.data.items ? userList.data.items : null,});
 
+                }else{
+                    this.setState({list: [],userList: userList.data && userList.data.items ? userList.data.items : null,
+                        totalPage: 0,totalCount: 0});
                 }
             } catch (err) {
                 if (err.errCode === 401) {
@@ -127,6 +205,12 @@ class List extends React.Component {
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
     }
 
+    chooseUser(value){
+        this.state.chooseUser = value;
+        this.setState({chooseUser:value});
+        this.componentDidMount();
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -147,6 +231,18 @@ class List extends React.Component {
                     />
                 </h5>
                 <div id="main" className="main p-3">
+                    <div className="row" style={{"margin-bottom":"10px"}}>
+                        <div className="col-2">
+                            <Select value={this.state.chooseUser} placeholder="请选择注册用户" clearable={true}
+                                    onChange={this.chooseUser.bind(this)}>
+                                {
+                                    this.state.userList.map(el => {
+                                        return <Select.Option key={el.phone} label={el.name} value={el.phone}/>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                    </div>
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}

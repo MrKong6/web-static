@@ -78,6 +78,7 @@ class View extends React.Component {
                 const ids = list.data.items.map((contract) => (contract.id + ''));
                 if(data.data && data.data.logoUrl){
                     data.data.logoUrl = IMG_URL + data.data.logoUrl;
+                    data.data.listUrl = IMG_URL + data.data.listUrl;
                 }
                 this.setState({data: data.data, ids: ids});
             } catch (err) {
@@ -147,7 +148,7 @@ class View extends React.Component {
             }
         };
 
-        //request();
+        request();
     }
 
     render() {
@@ -199,7 +200,7 @@ class View extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">{this.state.data.stuName}</p>
+                    <p className="d-inline text-muted">{this.state.data.name}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
@@ -228,29 +229,7 @@ class View extends React.Component {
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">年级名称</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data.typeName}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">课程类别</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data.parentName}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">课程阶段</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -261,9 +240,15 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">阶段图标</label>
+                                                <label className="col-5 col-form-label font-weight-bold">目录缩略图</label>
                                                 <div className="col-7">
                                                     <img src={this.state.data.logoUrl} alt="" width="80px" height="80px" style={{"marginLeft":"10px"}} />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">列表头图</label>
+                                                <div className="col-7">
+                                                    <img src={this.state.data.listUrl} alt="" width="80px" height="80px" style={{"marginLeft":"10px"}} />
                                                 </div>
                                             </div>
                                         </div>

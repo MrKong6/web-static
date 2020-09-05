@@ -50,6 +50,9 @@ import WechatType from "../Setting/WechatType/WechatType";
 import WechatCourse from "../Setting/WechatCourse/WechatCourse";
 import WechatCls from "../Setting/WechatCls/WechatCls";
 import WechatOrder from "../Setting/WechatOrder/WechatOrder";
+import WechatCourseStage from "../Setting/WechatCourseStage/WechatCourseStage";
+import WechatIdxImage from "../Setting/WechatIdxImage/WechatIdxImage";
+import WechatUser from "../Setting/WechatUser/WechatUser";
 
 class Home extends React.Component {
     constructor(props) {
@@ -226,10 +229,16 @@ class Home extends React.Component {
                                       component={WechatType}{...query}/>
                         <PrivateRoute path="/home/wechat/course" changedCrmGroup={this.state.group}
                                       component={WechatCourse}{...query}/>
+                        <PrivateRoute path="/home/wechat/coursestage" changedCrmGroup={this.state.group}
+                                      component={WechatCourseStage}{...query}/>
                         <PrivateRoute path="/home/wechat/clsinfo" changedCrmGroup={this.state.group}
                                       component={WechatCls}{...query}/>
                         <PrivateRoute path="/home/wechat/order" changedCrmGroup={this.state.group}
                                       component={WechatOrder}{...query}/>
+                        <PrivateRoute path="/home/wechat/user" changedCrmGroup={this.state.group}
+                                      component={WechatUser}{...query}/>
+                        <PrivateRoute path="/home/wechat/idxImg" changedCrmGroup={this.state.group}
+                                      component={WechatIdxImage}{...query}/>
                         <Route path="/home/changepwd" component={ChangePwd}/>
                         <Route render={(props) => (
                             <NoMatch {...props} profile={this.state.profile.profile}/>

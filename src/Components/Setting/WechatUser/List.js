@@ -9,7 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Upload, Input, Tooltip, Select} from 'element-react';
+import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
@@ -32,93 +32,66 @@ class List extends React.Component {
                     type: 'index'
                 },
                 {
-                    label: "课程类别",
-                    prop: "typeName",
+                    label: "学员名称",
+                    prop: "name",
                     sortable: true,
                 },
                 {
-                    label: "姓名",
-                    prop: "name",
+                    label: "联系电话",
+                    prop: "phone",
                     showOverflowTooltip: true,
                 },
                 {
                     label: "性别",
-                    prop: "genderText",
+                    prop: "gender",
                     sortable: true,
-                },
-                {
-                    label: "出生年月",
-                    prop: "date",
-                },
-                {
-                    label: "就读学校",
-                    prop: "schoolName",
-                    sortable: true
                 },
                 {
                     label: "在读年级",
                     prop: "grade",
+                },
+                {
+                    label: "注册时间",
+                    prop: "createOn",
                     sortable: true
                 },
                 {
-                    label: "与学员关系",
-                    prop: "relation",
+                    label: "预约次数",
+                    prop: "orderCount",
+                    render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.id, 1)}>{row.orderCount}</Button></span>
+                    }
                 },
                 {
-                    label: "家长姓名",
-                    prop: "parentName",
+                    label: "访问次数",
+                    prop: "sourceInfoCount",
+                    render: (row, column, data) => {
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.phone, 2)}>{row.sourceInfoCount}</Button></span>
+                    }
                 },
-                {
-                    label: "与学员关系",
-                    prop: "relation",
-                },
-                {
-                    label: "联系电话",
-                    prop: "mobile",
-                },
-                {
-                    label: "家庭住址",
-                    prop: "address",
-                },
-                {
-                    label: "创建时间",
-                    prop: "createOn",
-                }
             ],
             totalPage:0,
             currentPage:1,
             pageSize:10,
             totalCount:0,
-            userList:[],
-            chooseUser: this.props.location.state && this.props.location.state.phone ? this.props.location.state.phone : null
-
         };
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/wechat/getOrderRecordList.do', {orgId: this.state.group.id,userId:this.state.chooseUser,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
-                let userList = await ajax('/wechat/getWechatUserList.do', {orgId: this.state.group.id,pageNum:1,pageSize:9999});
-
+                let list = await ajax('/wechat/getWechatUserList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
                 if(list.data && list.data.items){
                     const ids = list.data.items.map((contract) => (contract.id));
                     list.data.items.map(item => {
                         if(item.createOn != null){
                             item.createOn = formatWithTime(item.createOn);
                         }
-                        if(item.date != null){
-                            item.date = formatWithTime(item.date);
-                        }
-
                     });
-                    this.setState({list: list.data && list.data.items ? list.data.items : null,
-                        ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,
-                        userList: userList.data && userList.data.items ? userList.data.items : null,});
+                    this.setState({list: list.data && list.data.items ? list.data.items : null, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
 
-                }else{
-                    this.setState({list: [],userList: userList.data && userList.data.items ? userList.data.items : null,
-                        totalPage: 0,totalCount: 0});
                 }
             } catch (err) {
                 if (err.errCode === 401) {
@@ -140,10 +113,16 @@ class List extends React.Component {
         }
     }
 
-    goToDetails(evt) {
-        const url = `${this.props.match.url}/${evt}`;
-
-        this.props.history.push(url);
+    goToDetails(evt,type) {
+        if(type == 2){
+            //实时访客
+            const url = `/home/wechat/record`;
+            this.props.history.push(url,{phone: evt});
+        }else{
+            //预约
+            const url = `/home/wechat/order`;
+            this.props.history.push(url,{phone: evt});
+        }
     }
 
     pageChange(currentPage){
@@ -162,13 +141,6 @@ class List extends React.Component {
     addAction(){
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
     }
-
-    chooseUser(value){
-        this.state.chooseUser = value;
-        this.setState({chooseUser:value});
-        this.componentDidMount();
-    }
-
 
     render() {
         if (this.state.redirectToReferrer) {
@@ -190,18 +162,6 @@ class List extends React.Component {
                     />
                 </h5>
                 <div id="main" className="main p-3">
-                    <div className="row" style={{"margin-bottom":"10px"}}>
-                        <div className="col-2">
-                            <Select value={this.state.chooseUser} placeholder="请选择注册用户" clearable={true}
-                                    onChange={this.chooseUser.bind(this)}>
-                                {
-                                    this.state.userList.map(el => {
-                                        return <Select.Option key={el.id} label={el.name} value={el.id}/>
-                                    })
-                                }
-                            </Select>
-                        </div>
-                    </div>
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}

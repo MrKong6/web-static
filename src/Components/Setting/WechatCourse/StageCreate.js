@@ -10,7 +10,8 @@ import mainSize from "../../../utils/mainSize";
 import historyBack from "../../../utils/historyBack";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
-class Create extends React.Component {
+import StageForm from "./StageForm";
+class StageCreate extends React.Component {
     constructor(props) {
         super(props);
         this.title = fmtTitle(this.props.location.pathname);
@@ -21,8 +22,6 @@ class Create extends React.Component {
             isAnimating: false,
             isCreated: false,
             createdId: null,
-            // selectedCou: this.props.location.state.selectedCou,
-            // selectedCouText: this.props.location.state.selectedCouText,
         };
         this.state.group.cRealName = this.props.profile.cRealname;
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -78,8 +77,8 @@ class Create extends React.Component {
 
         const request = async () => {
             try {
-                let rs = await ajax('/wechat/addCourse.do', {"typeId":query.typeId,"name":query.name,
-                    "parentId":query.parentId,"orgId":query.orgId,"logoUrl":query.logoUrl,"listUrl":query.listUrl});
+                let rs = await ajax('/wechat/addCourse.do', {"typeId":query.typeId,"typeName":query.typeName,"name":query.name,
+                    "parentId":query.parentId,"orgId":query.orgId,"logoUrl":query.logoUrl});
                 this.setState({isCreated: true, createdId: rs, redirectToList: true});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -138,13 +137,11 @@ class Create extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
 
-                    <Form
+                    <StageForm
                         isEditor={false}
                         changedCrmGroup={this.state.group}
                         replace={this.props.history.replace}
                         from={this.props.location}
-                        // selectedCou={this.state.selectedCou}
-                        // selectedCouText={this.state.selectedCouText}
                         ref={(dom) => {
                             this.form = dom
                         }}
@@ -155,4 +152,4 @@ class Create extends React.Component {
     }
 }
 
-export default Create;
+export default StageCreate;

@@ -11,7 +11,7 @@ import * as Message from "element-react";
 class Form extends React.Component {
     constructor(props) {
         super(props);
-
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             birthday: null,
@@ -23,7 +23,10 @@ class Form extends React.Component {
             chooseCourseType: null,
             chooseCourseId: null,
             payList:[],
-            imgurl: null,
+            imgUrl: null,
+            indexUrl: null,
+            obj: this.props.isEditor ? this.props.obj  : this.props.from.state.obj,
+            teacherUrl: null
         };
         this.handleSelect = this.handleSelect.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -33,23 +36,26 @@ class Form extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajaxGet('/wechat/getCouerseList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:9999,type:2});
+                /*let list = await ajaxGet('/wechat/getCouerseList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:9999,type:2});
                 if(list.data && list.data.items){
                     list = list.data.items;
                 }
                 let listCourse = await ajaxGet('/wechat/getCouerseList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:9999,type:1});
                 if(listCourse.data && listCourse.data.items){
                     listCourse = listCourse.data.items;
-                }
+                }*/
                 let data = null;
                 if (this.props.isEditor) {
                     data = await ajaxGet('/wechat/getCls.do', {id: this.props.editorId});
                     data = data.data;
                 }
-                this.setState({courseList: list,
-                    courseTypeList: listCourse,
+                this.setState({
+                    // courseList: list,
+                    // courseTypeList: listCourse,
                     chooseCourseId: data ? Number(data.courseStageId) : null,
                     chooseCourseType: data ? Number(data.courseTypeId) : null,
+                    imgUrl:data ? data.imgUrl : null,
+                    indexUrl:data ? data.indexUrl : null
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -149,9 +155,12 @@ class Form extends React.Component {
                 }
             }
         }
-        query.courseStageId = this.state.chooseCourseId;
-        query.courseTypeId = this.state.chooseCourseType;
-        query.imgUrl = this.state.imgurl;
+        query.courseStageId = this.state.obj.id;
+        query.courseTypeId = this.state.obj.parentId;
+        query.imgUrl = this.state.imgUrl;
+        query.indexUrl = this.state.indexUrl;
+        query.teacherUrl = this.state.teacherUrl;
+
         query.ordId = this.state.group.id;
         return query;
     }
@@ -171,7 +180,17 @@ class Form extends React.Component {
     }
     //上传成功时绑定方法
     upLoadSuccess(response, file, fileList){
-        this.state.imgurl = response.data.url;
+        this.state.imgUrl = response.data.url;
+    }
+
+    //上传成功时绑定方法
+    upLoadSuccess1(response, file, fileList){
+        this.state.indexUrl = response.data.url;
+    }
+
+    //上传成功时绑定方法
+    upLoadSuccess2(response, file, fileList){
+        this.state.teacherUrl = response.data.url;
     }
 
     render() {
@@ -191,7 +210,8 @@ class Form extends React.Component {
                                                 <em className="text-danger">*</em>课程类别
                                             </label>
                                             <div className="col-7">
-                                                <Select value={this.state.chooseCourseType} clearable={true}
+                                                <input type="text" className="form-control" value={this.state.obj.parentName} readOnly={true}/>
+                                                {/*<Select value={this.state.chooseCourseType} clearable={true}
                                                         style={{"width": "100%"}} placeholder="请选择课程类别"
                                                         filterable={true}
                                                         onChange={this.handleSelect.bind(this)}>
@@ -200,7 +220,7 @@ class Form extends React.Component {
                                                             return <Select.Option key={el.id} label={el.name} value={el.id}/>
                                                         })
                                                     }
-                                                </Select>
+                                                </Select>*/}
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -208,7 +228,9 @@ class Form extends React.Component {
                                                 <em className="text-danger">*</em>课程阶段
                                             </label>
                                             <div className="col-7">
-                                                <Select value={this.state.chooseCourseId} clearable={true}
+                                                <input type="text" className="form-control" value={this.state.obj.name} readOnly={true}/>
+
+                                                {/*<Select value={this.state.chooseCourseId} clearable={true}
                                                         style={{"width": "100%"}} placeholder="请选择课程阶段"
                                                         filterable={true}
                                                         onChange={this.handleClass.bind(this)}>
@@ -217,7 +239,7 @@ class Form extends React.Component {
                                                             return <Select.Option key={el.id} label={el.name} value={el.id}/>
                                                         })
                                                     }
-                                                </Select>
+                                                </Select>*/}
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -295,6 +317,52 @@ class Form extends React.Component {
 
                                         <div className="form-group row">
                                             <label className="col-2 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>教师头像
+                                            </label>
+                                            <div className="col-7">
+                                                {/*<input type="text" className="form-control" name="imgUrl"/>*/}
+                                                <Upload
+                                                    className="upload-demo"
+                                                    action={AJAX_PATH + '/file/fileupload.do'}
+                                                    onPreview={file => this.handlePreview(file)}
+                                                    // onRemove={(file, fileList) => this.handleRemove(file, fileList)}
+                                                    limit={1}
+                                                    onExceed={(files, fileList) => {
+                                                        Message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+                                                    }}
+                                                    tip={<div className="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>}
+                                                    onSuccess={this.upLoadSuccess2.bind(this)}
+                                                >
+                                                    <Button size="small" type="primary">点击上传</Button>
+                                                </Upload>
+                                            </div>
+                                        </div>
+
+                                        <div className="form-group row">
+                                            <label className="col-2 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>详情头图
+                                            </label>
+                                            <div className="col-7">
+                                                {/*<input type="text" className="form-control" name="imgUrl"/>*/}
+                                                <Upload
+                                                    className="upload-demo"
+                                                    action={AJAX_PATH + '/file/fileupload.do'}
+                                                    onPreview={file => this.handlePreview(file)}
+                                                    // onRemove={(file, fileList) => this.handleRemove(file, fileList)}
+                                                    limit={1}
+                                                    onExceed={(files, fileList) => {
+                                                        Message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+                                                    }}
+                                                    tip={<div className="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>}
+                                                    onSuccess={this.upLoadSuccess1.bind(this)}
+                                                >
+                                                    <Button size="small" type="primary">点击上传</Button>
+                                                </Upload>
+                                            </div>
+                                        </div>
+
+                                        <div className="form-group row">
+                                            <label className="col-2 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>详情图片
                                             </label>
                                             <div className="col-7">
@@ -315,6 +383,7 @@ class Form extends React.Component {
                                                 </Upload>
                                             </div>
                                         </div>
+
                                         <div className="form-group row">
                                             <label className="col-2 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>相关

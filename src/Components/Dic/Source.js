@@ -22,7 +22,7 @@ class Source extends React.Component {
 
     const request = async () => {
       try {
-        let list = await ajax('/mkt/leads/source/list.do', {typeId: this.props.typeId});
+        let list = await ajax('/mkt/leads/source/list.do', {typeId: 1});
 
         this.setState({list})
       } catch (err) {

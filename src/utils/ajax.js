@@ -3,11 +3,11 @@ import {$} from '../vendor';
 import {Message} from "element-react";
 
 //生产
-// export const AJAX_PATH = 'http://www.schooloms.com:8080/web/ajax';
-// export const IMG_URL = 'http://www.schooloms.com:8084/';
+export const AJAX_PATH = 'http://www.schooloms.com:8080/web/ajax';
+export const IMG_URL = 'http://www.schooloms.com:8084/';
 //本地
-export const AJAX_PATH = 'http://localhost:8081/ajax';
-export const IMG_URL = 'http://localhost:4040/';
+// export const AJAX_PATH = 'http://localhost:8081/ajax';
+// export const IMG_URL = 'http://localhost:4040/';
 
 // export const AJAX_PATH = 'http://192.168.0.107:8081/ajax';
 // export const IMG_URL = 'http://192.168.0.107:4040/';

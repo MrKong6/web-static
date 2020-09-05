@@ -10,8 +10,9 @@ import historyBack from "../../../utils/historyBack";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
+import StageForm from "./StageForm";
 
-class Editor extends React.Component {
+class StageEditor extends React.Component {
   constructor(props) {
     super(props);
 
@@ -80,7 +81,7 @@ class Editor extends React.Component {
 
     const request = async () => {
       try {
-        await ajax('/wechat/addCls.do', {"wechatClass":JSON.stringify(query)});
+        await ajax('/wechat/addCourse.do', query);
         this.setState({isUpdated: true})
       } catch (err) {
         if (err.errCode === 401) {
@@ -108,14 +109,14 @@ class Editor extends React.Component {
 
     if (this.state.redirectToList) {
       return (
-        <Redirect to="/home/wechat/clsinfo"/>
+        <Redirect to="/home/wechat/course"/>
       )
     }
 
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/wechat/clsinfo/${this.state.id}`,
+          pathname: `/home/wechat/course/stage/${this.state.id}`,
           state: {ids: this.ids}
         }}/>
       )
@@ -146,11 +147,10 @@ class Editor extends React.Component {
         <div id="main" className="main p-3">
           <Progress isAnimating={this.state.isAnimating}/>
 
-          <Form
+          <StageForm
             isEditor={true}
             editorId={this.state.id}
             changedCrmGroup={this.state.group}
-            obj={this.props.location.state.obj}
             ref={(dom) => {
               this.form = dom
             }}
@@ -161,4 +161,4 @@ class Editor extends React.Component {
   }
 }
 
-export default Editor;
+export default StageEditor;

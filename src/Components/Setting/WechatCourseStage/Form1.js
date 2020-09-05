@@ -41,9 +41,10 @@ class Form extends React.Component {
                 let courseType = await ajax('/wechat/getCourse.do', {id: this.props.selectedCou});
                 let parentName = null,typeName=null,name=null;
                 if(courseType.data){
-                    parentName = courseType.data.name;
-                    typeName = courseType.data.typeName;
+                  parentName = courseType.data.name;
+                  typeName = courseType.data.typeName;
                 }
+                debugger
                 if (this.props.isEditor) {
                     //修改
                     let data = await ajax('/wechat/getCourse.do', {id: this.props.editorId});
@@ -53,7 +54,7 @@ class Form extends React.Component {
                         typeName = data.typeName;
                         name = data.name;
                     }
-                    this.setState({data,courseType:courseType.data,parentName,typeName,logoUrl:data.logoUrl,listUrl:data.listUrl},()=>{
+                    this.setState({data,courseType:courseType.data,parentName,typeName},()=>{
                         const keys = Object.keys(data);
                         keys.map(key => {
                             if (this.form[key]) {
@@ -62,7 +63,8 @@ class Form extends React.Component {
                         })
                     });
                 }else{
-
+                    //新增
+                    this.setState({courseType:courseType.data,parentName,typeName});
                 }
             } catch (err) {
                 if (err.errCode === 401) {
@@ -111,6 +113,10 @@ class Form extends React.Component {
         if(this.state.data){
             query.id = this.state.data.id;
             query.parentId = this.state.data.parentId;
+            query.typeId = this.state.data.typeId;
+        }else{
+            query.parentId = this.state.courseType.id;
+            query.typeId = this.state.courseType.typeId;
         }
         query.name = this.form["name"].value;
         query.logoUrl = this.state.logoUrl;
@@ -146,7 +152,7 @@ class Form extends React.Component {
                     <div className="col">
                         <div className="form-group row">
                             <label className="col-2 col-form-label font-weight-bold">
-                                <em className="text-danger">*</em>课程类别
+                                <em className="text-danger">*</em>课程类别名称
                             </label>
                             <div className="col-7">
                                 <input type="text" className="form-control" name="name" value={this.state.name} />

@@ -63,7 +63,8 @@ class View extends React.Component {
             isAnimating: false,
             id: this.props.match.params.contractId,
             data: {},
-            ids: []
+            ids: [],
+            courseData: {}
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
@@ -75,11 +76,23 @@ class View extends React.Component {
             try {
                 let data = await ajaxGet('/wechat/getCls.do', {id: this.state.id});
                 let list = await ajax('/wechat/getClsList.do', {orgId: this.state.group.id});
+
+
                 const ids = list.data.items.map((contract) => (contract.id + ''));
                 if(data.data && data.data.imgUrl){
                     data.data.imgUrl = IMG_URL + data.data.imgUrl;
                 }
-                this.setState({data: data.data, ids: ids});
+                if(data.data && data.data.indexUrl){
+                    data.data.indexUrl = IMG_URL + data.data.indexUrl;
+                }
+
+                if(data.data && data.data.teacherUrl){
+                    data.data.teacherUrl = IMG_URL + data.data.teacherUrl;
+                }
+
+                let courseData = await ajax('/wechat/getCourse.do', {id: data.data.courseStageId});
+                courseData = courseData.data;
+                this.setState({data: data.data, ids: ids,courseData});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -128,13 +141,15 @@ class View extends React.Component {
     }
 
     modAction() {
-        this.props.history.push(`${this.props.match.url}/edit`, {ids: this.ids});
+        debugger
+        this.props.history.push(`${this.props.match.url}/edit`, {obj: this.state.courseData});
     }
 
     delAction() {
         const request = async () => {
             try {
-                await ajax('/wechat/addType.do', {id: this.state.id, status: 2});
+                let obj = {id: this.state.id, status: 2};
+                await ajax('/wechat/addCls.do', {"wechatClass":JSON.stringify(obj)});
                 this.setState({redirectToList: true});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -147,7 +162,7 @@ class View extends React.Component {
             }
         };
 
-        //request();
+        request();
     }
 
     render() {
@@ -319,6 +334,18 @@ class View extends React.Component {
                                                         className="form-control-plaintext"
                                                         value={this.state.data.teacherName}
                                                     />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">教师头图</label>
+                                                <div className="col-7">
+                                                    <img src={this.state.data.teacherUrl} alt="" width="80px" height="80px" style={{"marginLeft":"10px"}} />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">详情头图</label>
+                                                <div className="col-7">
+                                                    <img src={this.state.data.indexUrl} alt="" width="80px" height="80px" style={{"marginLeft":"10px"}} />
                                                 </div>
                                             </div>
                                             <div className="form-group row">

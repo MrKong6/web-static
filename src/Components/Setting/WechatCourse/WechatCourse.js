@@ -5,6 +5,9 @@ import List from './List'
 import View from './View';
 import Editor from "./Editor";
 import Create from "./Create";
+import StageView from "./StageView";
+import StageCreate from "./StageCreate";
+import StageEditor from "./StageEditor";
 
 const WechatCourse = ({commands, location, match, profile, changedCrmGroup}) => {
 
@@ -12,14 +15,24 @@ const WechatCourse = ({commands, location, match, profile, changedCrmGroup}) => 
 
     return (
         <Switch>
-            <Route path={`${match.url}/create`} render={(props) => (
+            <Route path={`${match.url}/type/create`} render={(props) => (
                 <Create {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
             )}/>
-            <Route path={`${match.url}/:contractId/edit`} render={(props) => (
+            <Route path={`${match.url}/stage/create`} render={(props) => (
+                <StageCreate {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/type/:contractId/edit`} render={(props) => (
                 <Editor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
             )}/>
-            <Route path={`${match.url}/:contractId`} render={(props) => (
+            <Route path={`${match.url}/stage/:contractId/edit`} render={(props) => (
+                <StageEditor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/type/:contractId`} render={(props) => (
                 <View key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                      changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/stage/:contractId`} render={(props) => (
+                <StageView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
                       changedCrmGroup={changedCrmGroup}/>
             )}/>
             <Route path={`${match.url}`} render={(props) => (

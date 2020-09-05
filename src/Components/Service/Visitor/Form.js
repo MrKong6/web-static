@@ -46,7 +46,7 @@ class Form extends React.Component {
                 let source = await ajax('/mkt/leads/source/list.do', {typeId: 1});
                 let relation = await ajax('/mkt/relation/list.do');
                 let gender = await ajax('/mkt/gender/list.do');
-                let courseTypeId = await ajax('/course/type/list.do');
+                let courseTypeId = await ajax('/course/type/courseTypeList.do');
                 let courseId = await ajax('/course/session/queryListByTypeId.do',{id : 0});
                 let data = null;
 

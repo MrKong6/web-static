@@ -42,12 +42,10 @@ class Form extends React.Component {
       try {
         let status = await ajax('/mkt/leads/status/list.do', {typeId: 2});
         let stage = await ajax('/mkt/leads/stage/list.do', {typeId: 2});
-        let source = await ajax('/mkt/leads/source/list.do', {typeId: 2});
+        let source = await ajax('/mkt/leads/source/list.do', {typeId: 1});
         let relation = await ajax('/mkt/relation/list.do');
         let gender = await ajax('/mkt/gender/list.do');
-          let courseTypeId = await ajax('/course/type/list.do');
-          let courseId = await ajax('/course/session/queryListByTypeId.do',{id : 0});
-          let data = null;
+        let data = null;
 
         if (this.props.isEditor) {
           data = await ajax('/sales/oppor/query.do', {id: this.props.editorId});
@@ -76,7 +74,7 @@ class Form extends React.Component {
             this.form.courseId.value = this.state.data.courseId ? this.state.data.courseId : '';
             this.form.courseTypeId.value = this.state.data.courseTypeId ? this.state.data.courseTypeId : '';
             this.form.note.value = this.state.data.note;
-            this.form.sourceId.value = this.state.data.sourceId;
+            this.form.sourceId.value = Number(this.state.data.sourceId);
             this.form.stageId.value = this.state.data.stageId;
             this.form.statusId.value = this.state.data.statusId;
             this.state.createTime = new Date(this.state.data.createTime)

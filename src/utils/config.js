@@ -597,6 +597,20 @@ export default {
             CATEGORY: '实时访客',
             NAME: ''
         },
+        "11-2": {
+            PATH: "home/wechat/order",
+            PATH_RULE: /^\/home\/wechat\/order/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '预约信息',
+            NAME: ''
+        },
+        "11-3": {
+            PATH: "home/wechat/user",
+            PATH_RULE: /^\/home\/wechat\/user/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '用户信息',
+            NAME: ''
+        },
         "12": {ICON_CLASS: "fa-microchip"},
         "12-2": {
             PATH: "home/wechat/type",
@@ -612,6 +626,13 @@ export default {
             CATEGORY: '课程',
             NAME: ''
         },
+        "12-6": {
+            PATH: "home/wechat/coursestage",
+            PATH_RULE: /^\/home\/wechat\/coursestage/,
+            ICON_CLASS: "fa-sitemap",
+            CATEGORY: '课程阶段',
+            NAME: ''
+        },
         "12-4": {
             PATH: "home/wechat/clsinfo",
             PATH_RULE: /^\/home\/wechat\/clsinfo/,
@@ -619,11 +640,12 @@ export default {
             CATEGORY: '班级',
             NAME: ''
         },
-        "12-5": {
-            PATH: "home/wechat/order",
-            PATH_RULE: /^\/home\/wechat\/order/,
+
+        "12-7": {
+            PATH: "home/wechat/idxImg",
+            PATH_RULE: /^\/home\/wechat\/idxImg/,
             ICON_CLASS: "fa-sitemap",
-            CATEGORY: '预约信息',
+            CATEGORY: '轮播图',
             NAME: ''
         },
     },

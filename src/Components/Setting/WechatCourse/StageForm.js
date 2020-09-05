@@ -1,7 +1,7 @@
 import ReactDOM from "react-dom";
 import React from "react";
 import permissionsProcess from "../../../utils/permissionsProcess";
-import ajax, {AJAX_PATH} from "../../../utils/ajax";
+import ajax, {AJAX_PATH, ajaxGet} from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import {Redirect} from "react-router-dom";
 import Progress from "../../Progress/Progress";
@@ -11,8 +11,9 @@ import fmtDate from "../../../utils/fmtDate";
 import {Table, Button, MessageBox, Message, Tabs, Input, DatePicker, Select, Upload} from "element-react";
 import DialogCourse from "../../Dialog/DialogCourse";
 import historyBack from "../../../utils/historyBack";
+import {changeArrayItemToInt, changeArrayItemToString, changeStringToArrayInt} from "../../../utils/objectToArray";
 
-class Form extends React.Component {
+class StageForm extends React.Component {
     constructor(props) {
         super(props);
 
@@ -29,8 +30,10 @@ class Form extends React.Component {
             courseType: null,
             typeName: null,
             parentName: null,
-            logoUrl: null,
-            listUrl: null,
+            imgurl: null,
+            types:[],
+            parentId: null,
+            typeId: []
         };
         this.createDialogTips = this.createDialogTips.bind(this);
     }
@@ -39,6 +42,13 @@ class Form extends React.Component {
         const request = async () => {
             try {
                 let courseType = await ajax('/wechat/getCourse.do', {id: this.props.selectedCou});
+                let list = await ajax("/wechat/getTypeList.do", {orgId: this.state.groupId,pageNum:1,pageSize:9999});
+                let typeList = await ajaxGet('/wechat/getCouerseList.do', {orgId: this.state.groupId,pageNum:1,pageSize:9999,type:1});
+                let courseTypes = [];
+                if(typeList.data && typeList.data.items){
+                    courseTypes = typeList.data.items;
+                }
+
                 let parentName = null,typeName=null,name=null;
                 if(courseType.data){
                     parentName = courseType.data.name;
@@ -53,16 +63,14 @@ class Form extends React.Component {
                         typeName = data.typeName;
                         name = data.name;
                     }
-                    this.setState({data,courseType:courseType.data,parentName,typeName,logoUrl:data.logoUrl,listUrl:data.listUrl},()=>{
-                        const keys = Object.keys(data);
-                        keys.map(key => {
-                            if (this.form[key]) {
-                                this.form[key].value = data[key];
-                            }
-                        })
-                    });
+                    this.setState({types: (list && list.data ? list.data.items : []),courseTypes,
+                        name,parentId: data.parentId,typeId: data.typeId ? changeStringToArrayInt(data.typeId) : [],imgurl:data.logoUrl,
+                        data,courseType:courseType.data,parentName,typeName},()=>{
+                            this.form["sonName"].value = data["name"];
+                        });
                 }else{
-
+                    //新增
+                    this.setState({types: (list && list.data ? list.data.items : []),courseTypes, courseType:courseType.data,parentName,typeName});
                 }
             } catch (err) {
                 if (err.errCode === 401) {
@@ -110,22 +118,45 @@ class Form extends React.Component {
         let query = {};
         if(this.state.data){
             query.id = this.state.data.id;
-            query.parentId = this.state.data.parentId;
         }
-        query.name = this.form["name"].value;
-        query.logoUrl = this.state.logoUrl;
-        query.listUrl = this.state.listUrl;
+        //处理年级
+        query.typeId = changeArrayItemToString(this.state.chooseTypeId);
+        if(this.state.chooseTypeId.length > 0){
+            let tyNames = [];
+            this.state.types.map(tt => {
+                this.state.chooseTypeId.map(t2 => {
+                    if(tt.id == t2){
+                        tyNames.push(tt.name);
+                    }
+                });
+            });
+            if(tyNames.length > 0){
+                query.typeName = changeArrayItemToString(tyNames);
+            }
+        }
+        query.parentId = this.state.parentId;
+        query.name = this.form["sonName"].value;
+        query.logoUrl = this.state.imgurl;
         return query;
     }
 
     //上传成功时绑定方法
     upLoadSuccess(response, file, fileList){
-        this.state.logoUrl = response.data.url;
+        this.state.imgurl = response.data.url;
     }
 
-    upLoadSuccess2(response, file, fileList){
-        this.state.listUrl = response.data.url;
+    //改变年级下拉框
+    changeType(type, evt) {
+        if(type == 1){
+            this.state.chooseTypeId = evt;
+            this.setState({chooseTypeId:evt});
+        }else{
+            this.state.parentId = evt;
+            this.setState({parentId:evt});
+        }
+
     }
+
 
 
     render() {
@@ -146,21 +177,61 @@ class Form extends React.Component {
                     <div className="col">
                         <div className="form-group row">
                             <label className="col-2 col-form-label font-weight-bold">
-                                <em className="text-danger">*</em>课程类别
+                                <em className="text-danger">*</em>年级
                             </label>
                             <div className="col-7">
-                                <input type="text" className="form-control" name="name" value={this.state.name} />
+                                <Select value={this.state.typeId} placeholder="年级"
+                                        filterable={true} multiple={true} name={"typeId"}
+                                        clearable={true} style={{"width": "100%"}}
+                                        onChange={this.changeType.bind(this,1)}
+                                >
+                                    {
+                                        this.state.types && this.state.types.length > 0 ? this.state.types.map(el => {
+                                            return <Select.Option key={el.id}
+                                                                  label={el.name}
+                                                                  value={el.id}/>
+                                        }) : null
+                                    }
+                                </Select>
                             </div>
                         </div>
                         <div className="form-group row">
                             <label className="col-2 col-form-label font-weight-bold">
-                                <em className="text-danger">*</em>目录缩略图
+                                <em className="text-danger">*</em>课程类别
+                            </label>
+                            <div className="col-7">
+                                <Select value={this.state.parentId} placeholder="课程"
+                                        filterable={true} name={"parentId"}
+                                        clearable={true} style={{"width": "100%"}}
+                                        onChange={this.changeType.bind(this,2)}
+                                >
+                                    {
+                                        this.state.courseTypes && this.state.courseTypes.length > 0 ? this.state.courseTypes.map(el => {
+                                            return <Select.Option key={el.id}
+                                                                  label={el.name}
+                                                                  value={el.id}/>
+                                        }) : null
+                                    }
+                                </Select>
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label className="col-2 col-form-label font-weight-bold">
+                                <em className="text-danger">*</em>课程阶段
+                            </label>
+                            <div className="col-7">
+                                <input type="text" className="form-control" name="sonName" />
+                            </div>
+                        </div>
+                        <div className="form-group row">
+                            <label className="col-2 col-form-label font-weight-bold">
+                                <em className="text-danger">*</em>阶段图标
                             </label>
                             <div className="col-7">
                                 {/*<input type="text" className="form-control" name="imgUrl"/>*/}
                                 <Upload
                                     className="upload-demo"
-                                    action={AJAX_PATH + '/file/fileupload.do'}
+                                    action={AJAX_PATH + '/file/uploadCourseImg.do'}
                                     onPreview={file => this.handlePreview(file)}
                                     // onRemove={(file, fileList) => this.handleRemove(file, fileList)}
                                     limit={1}
@@ -174,28 +245,6 @@ class Form extends React.Component {
                                 </Upload>
                             </div>
                         </div>
-                        <div className="form-group row">
-                            <label className="col-2 col-form-label font-weight-bold">
-                                <em className="text-danger">*</em>列表头图
-                            </label>
-                            <div className="col-7">
-                                {/*<input type="text" className="form-control" name="imgUrl"/>*/}
-                                <Upload
-                                    className="upload-demo"
-                                    action={AJAX_PATH + '/file/fileupload.do'}
-                                    onPreview={file => this.handlePreview(file)}
-                                    // onRemove={(file, fileList) => this.handleRemove(file, fileList)}
-                                    limit={1}
-                                    onExceed={(files, fileList) => {
-                                        Message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
-                                    }}
-                                    tip={<div className="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>}
-                                    onSuccess={this.upLoadSuccess2.bind(this)}
-                                >
-                                    <Button size="small" type="primary">点击上传</Button>
-                                </Upload>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </form>
@@ -203,4 +252,4 @@ class Form extends React.Component {
     }
 }
 
-export default Form;
+export default StageForm;

@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from "react-dom";
 import {Link, Redirect} from 'react-router-dom'
+import {$} from '../../../vendor';
 
 import ContactList from "../../Contact/List";
 import DialogTips from "../../Dialog/DialogTips";
@@ -13,7 +14,7 @@ import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import {formatWithTime} from "../../../utils/fmtDate";
 import config from "../../../utils/config";
-import {Menu, Message, Tabs} from "element-react";
+import {Message, Tabs} from "element-react";
 import "./Appor.css"
 
 const NextBtn = ({id, ids, link}) => {
@@ -93,8 +94,12 @@ class View extends React.Component {
                     fromWay: 3
                 });
                 const ids = list.data.map((leads) => (leads.id));
+                if(data && data.courseId){
+                    data.courseId = Number(data.courseId);
+                }
 
                 this.setState({data, ids});
+                this.changeCourseType(data.courseId);
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -110,11 +115,11 @@ class View extends React.Component {
     }
 
     //加载课程类别下拉列表
-    loadFilter(){
+    loadFilter() {
         const request = async () => {
             try {
                 let courseTypeList = await ajax('/course/type/courseTypeList.do');
-                this.setState({courseTypeList:courseTypeList});
+                this.setState({courseTypeList: courseTypeList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -270,7 +275,7 @@ class View extends React.Component {
         this.user.dialog.modal('show');
     }
 
-    thActionAccept(selected){
+    thActionAccept(selected) {
         const request = async () => {
             try {
                 await ajax('/sales/oppor/thAssign.do', {id: this.state.id, throughId: selected.throughId, type: 1});
@@ -291,8 +296,20 @@ class View extends React.Component {
         request()
     }
 
-    changeCourseType(){
+    changeCourseType(value) {
 
+        if(value.props){
+            this.setState({courseTypeId: value.props.name+""});
+        }else{
+            this.setState({courseTypeId: value+""});
+        }
+        this.state.courseTypeList.map(item => {
+            if(this.state.data.courseTypeId+"" == value+""){
+                $("#"+item.id).show();
+            }else{
+                $("#"+item.id+"hide").show();
+            }
+        });
     }
 
     render() {
@@ -304,7 +321,6 @@ class View extends React.Component {
                 }}/>
             )
         }
-
         let link = "/home/sales/oppor";
         if (this.props.location.pathname.indexOf("opporpublic") != -1) {
             link = "/home/sales/opporpublic";
@@ -445,7 +461,7 @@ class View extends React.Component {
                                                             type="text"
                                                             readOnly={true}
                                                             className="form-control-plaintext"
-                                                            value={this.state.data && this.state.data.parent  ? this.state.data.parent.name : ''}
+                                                            value={this.state.data && this.state.data.parent ? this.state.data.parent.name : ''}
                                                         />
                                                     </div>
                                                 </div>
@@ -495,7 +511,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <p className="ht pb-3 b-b">
+                                        {/*<p className="ht pb-3 b-b">*/}
                                             {/*<Menu defaultActive="1" className="el-menu-demo" mode="horizontal" onSelect={this.changeCourseType.bind(this)}>
                                                 {
                                                     this.state.courseTypeList.map(item => {
@@ -503,127 +519,127 @@ class View extends React.Component {
                                                     })
                                                 }
                                             </Menu>*/}
-                                            <Tabs activeName={'7'} onTabClick={ (tab) => console.log(tab.props.name) }>
+                                            <Tabs activeName={this.state.courseTypeId} onTabClick={this.changeCourseType.bind(this)}>{/*onTabClick={ (tab) => console.log(tab.props.name) }*/}
                                                 {
                                                     this.state.courseTypeList.map(item => {
                                                         return <Tabs.Pane label={item.name} name={item.id + ''}>
-                                                                    <div className="row" style={{display:this.state.data.courseTypeId == item.id ? "normal" : "none"}}>
-                                                                        <div className="col">
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">信息来源</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.sourceName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">具体渠道</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.channelName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className="col">
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">类型</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? config.TYPE_ID[this.state.data.typeId] : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">阶段</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.stageName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">状态</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.statusName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className="col">
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">所属组织</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.organizationName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">所属用户</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.executiveName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div className="col">
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">创建人</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? this.state.data.creatorName : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
-                                                                            <div className="form-group row">
-                                                                                <label className="col-5 col-form-label font-weight-bold">创建时间</label>
-                                                                                <div className="col-7">
-                                                                                    <input
-                                                                                        type="text"
-                                                                                        readOnly={true}
-                                                                                        className="form-control-plaintext"
-                                                                                        value={this.state.data ? formatWithTime(this.state.data.createTime) : ''}
-                                                                                    />
-                                                                                </div>
-                                                                            </div>
+                                                            <div className="row"  id={item.id+""}>
+                                                                <div className="col">
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">信息来源</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.sourceName : ''}
+                                                                            />
                                                                         </div>
                                                                     </div>
-                                                                    <div className="row" style={{display:this.state.data.courseTypeId == item.id ? "none" : "normal"}}>
-                                                                        <label>该类别下暂无信息</label>
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">具体渠道</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.channelName : ''}
+                                                                            />
+                                                                        </div>
                                                                     </div>
-                                                                </Tabs.Pane>
+                                                                </div>
+                                                                <div className="col">
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">类型</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? config.TYPE_ID[this.state.data.typeId] : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">阶段</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.stageName : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">状态</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.statusName : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col">
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">所属组织</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.organizationName : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">所属用户</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.executiveName : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div className="col">
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? this.state.data.creatorName : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="form-group row">
+                                                                        <label className="col-5 col-form-label font-weight-bold">创建时间</label>
+                                                                        <div className="col-7">
+                                                                            <input
+                                                                                type="text"
+                                                                                readOnly={true}
+                                                                                className="form-control-plaintext"
+                                                                                value={this.state.data ? formatWithTime(this.state.data.createTime) : ''}
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="row" id={item.id+"hide"}>
+                                                                <label>该类别下暂无信息</label>
+                                                            </div>
+                                                        </Tabs.Pane>
                                                     })
                                                 }
                                             </Tabs>
-                                        </p>
+                                        {/*</p>*/}
 
                                     </div>
                                     {/*<ContactList
