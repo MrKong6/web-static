@@ -69,6 +69,18 @@ class List extends React.Component {
                     }*/
                 },
                 {
+                    label: "创建人",
+                    prop: "creatorName",
+                    width: 100,
+                    fixed: 'left',
+                },
+                {
+                    label: "创建时间",
+                    prop: "createTime",
+                    width: 150,
+                    fixed: 'left',
+                },
+                {
                     label: "性别",
                     prop: "student.genderText",
                     width: 65
@@ -174,18 +186,7 @@ class List extends React.Component {
                     prop: "schoolArea",
                     width: 120
                 },
-                {
-                    label: "创建人",
-                    prop: "creatorName",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 150,
-                    sortable: true
-                },
+
             ],
             totalPage:0,
             currentPage:1,

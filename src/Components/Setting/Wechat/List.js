@@ -68,6 +68,7 @@ class List extends React.Component {
                 {
                     label: "访问时间",
                     prop: "time",
+                    width: 150,
                     showOverflowTooltip: true,
                 },
                 {
@@ -83,6 +84,7 @@ class List extends React.Component {
                 {
                     label: "地域",
                     prop: "location",
+                    width: 150,
                     sortable: true,
                 },
                 {
@@ -100,6 +102,7 @@ class List extends React.Component {
                 {
                     label: "码类别",
                     prop: "sourceActivityType",
+                    width: 100,
                 },
                 {
                     label: "访问IP",
@@ -116,10 +119,12 @@ class List extends React.Component {
                 {
                     label: "注册手机号",
                     prop: "visitPhone",
+                    width: 150,
                 },
                 {
                     label: "学员昵称",
                     prop: "name",
+                    width: 50,
                 },
                 {
                     label: "性别",
@@ -128,6 +133,10 @@ class List extends React.Component {
                 {
                     label: "在读年级",
                     prop: "grade",
+                },
+                {
+                    label: "详细来源",
+                    prop: "sourceDetail",
                 },
 
             ],
@@ -156,10 +165,10 @@ class List extends React.Component {
                     });
                     this.setState({list: list.data && list.data.items ? list.data.items : [],
                         ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,
-                        userList: userList.data && userList.data.items ? userList.data.items : null,});
+                        userList: userList.data && userList.data.items ? userList.data.items : [],});
 
                 }else{
-                    this.setState({list: [],userList: userList.data && userList.data.items ? userList.data.items : null,
+                    this.setState({list: [],userList: userList.data && userList.data.items ? userList.data.items : [],
                         totalPage: 0,totalCount: 0});
                 }
             } catch (err) {
@@ -231,7 +240,7 @@ class List extends React.Component {
                     />
                 </h5>
                 <div id="main" className="main p-3">
-                    <div className="row" style={{"margin-bottom":"10px"}}>
+                    <div className="row" style={{"marginBottom":"10px"}}>
                         <div className="col-2">
                             <Select value={this.state.chooseUser} placeholder="请选择注册用户" clearable={true}
                                     onChange={this.chooseUser.bind(this)}>

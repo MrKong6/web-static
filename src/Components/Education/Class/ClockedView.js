@@ -130,6 +130,9 @@ class ClockedView extends React.Component {
                     });
                 }
                 if(classAssignList.data && classAssignList.data.length > 0){
+                    if(classAssignList.data[classAssignList.data.length-1].weekTime > weekNum){
+                        weekNum = classAssignList.data[classAssignList.data.length-1].weekTime;
+                    }
                     let head = [], objTwo = {};//label:null,subColumns:[]
                     for (let i = 1; i <= weekNum; i++) {
                         let obj={label: "周次(" + i + ")"};

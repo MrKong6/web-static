@@ -189,6 +189,11 @@ class CustomerServiceReport extends React.Component {
                                 name:'访客数量',
                                 type:'bar',
                                 stack: '无',
+                                label: {
+                                    show: true,
+                                    formatter: '{c}',
+                                    position: 'insideBottom',
+                                },
                                 data: data
                             },
                         ]

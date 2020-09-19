@@ -7,7 +7,7 @@ import DialogTips from "../../Dialog/DialogTips";
 import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {Cascader, ColorPicker, DatePicker, Message, Popover, Select} from "element-react";
+import {DatePicker, Message, Select} from "element-react";
 import InputColor from 'react-input-color';
 
 class Form extends React.Component {
@@ -88,7 +88,7 @@ class Form extends React.Component {
                 // const age = calculateAge(birthday);
                 let main = [];
                 if(data && data.mainTeacher){
-                    if(data.mainTeacher.indexOf(",") != -1){
+                    if(data.mainTeacher.indexOf(",") !== -1){
                         data.mainTeacher.split(",").map(item => {
                             main.push(Number(item))
                         });

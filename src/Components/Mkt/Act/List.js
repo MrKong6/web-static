@@ -1,18 +1,15 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
-import {$} from "../../../vendor";
 
 import DialogTips from "../../Dialog/DialogTips";
-import Commands from "../../Commands/Commands";
 import Progress from "../../Progress/Progress"
 
-import actProcess from "../../../utils/actProcess";
 import mainSize from "../../../utils/mainSize";
 import fmtDate from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tree, MessageBox, Message} from 'element-react';
+import {Button, Table, Tree, MessageBox, Message} from 'element-react';
 import DialogMarketType from "../../Dialog/DialogMarketType";
 
 class List extends React.Component {
@@ -52,6 +49,7 @@ class List extends React.Component {
                     label: "活动名称",
                     prop: "name",
                     sortable: true,
+                    width: 150,
                     render: (row, column, data)=>{
                         return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.name}</Button></span>
                     }

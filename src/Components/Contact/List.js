@@ -6,168 +6,12 @@ import {$} from '../../vendor';
 import DialogTips from "../Dialog/DialogTips";
 import Approach from '../Dic/Approach';
 import ajax from "../../utils/ajax";
-import {DatePicker} from "element-react";
+import {Button, DatePicker, Dialog, Form, Input, Message, MessageBox} from "element-react";
 import {formatWithTime} from '../../utils/fmtDate';
 import fmtDate from "../../utils/fmtDate";
 import {VerticalTimeline, VerticalTimelineElement} from "react-vertical-timeline-component";
 import 'react-vertical-timeline-component/style.min.css';
 import {BsBook} from "react-icons/bs/index";
-
-
-const TableTitle = ({canEdit}) => {
-    const base = [
-        {key: 'index', name: '序号'},
-        {key: 'approachName', name: '沟通方式'},
-        {key: 'datetime', name: '咨询时间'},
-        {key: 'orgName', name: '所属组织'},
-        {key: 'executiveName', name: '所属用户'},
-        {key: 'summary', name: '备注'}
-    ];
-
-    if (canEdit === true) {
-        base.push({
-            key: 'action',
-            name: '操作'
-        })
-    }
-
-    return (
-        <tr>{base.map(item => (<th key={item.key}>{item.name}</th>))}</tr>
-    )
-};
-
-const TableControl = ({canEdit, groupName, userName, action}) => {
-    if (!canEdit) {
-        return null;
-    }
-
-    return (
-        <tr>
-            <td>--</td>
-            <td>
-                <Approach/>
-            </td>
-            <td>--</td>
-            <td>{groupName}</td>
-            <td>{userName}</td>
-            <td>
-                <input type="text" className="form-control" name="summary"/>
-            </td>
-            <td>
-                <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={action}
-                >保存
-                </button>
-            </td>
-        </tr>
-    )
-};
-
-const TableItems = ({list, canEdit, action}) => {
-    if (!list.length) {
-        return null;
-    }
-    list.map((item, index) => {
-        if (item.datetime) {
-            item.datetime = new Date(item.datetime);
-        }
-    });
-
-    return (
-        list.map((item, index) => (
-            <tr cid={item.id}>
-                <td>{index + 1}</td>
-                <td>
-                    <div className="view">{item.approachName}</div>
-                    <div className="edit" style={{display: 'none'}}>
-                        <Approach/>
-                    </div>
-                </td>
-                <td>
-                    <div className="view">{formatWithTime(item.datetime)}</div>
-                    <div className="edit" style={{display: 'none'}}>
-                        <DatePicker
-                            name="createTime"
-                            value={item.datetime}
-                            className='dateVal'
-                            isShowTime={true}
-                            /*isDisabled={canEdit}*/
-                            placeholder="选择日期"
-                            format="yyyy-MM-dd HH:mm"
-                            onChange={date => {
-                                console.debug('DatePicker1 changed: ', date)
-                                item.datetime = date;
-                            }}
-                        />
-                    </div>
-                    {/*{fmtDate(item.datetime)}*/}
-
-                </td>
-                <td>{item.orgName}</td>
-                <td>{item.executiveName}</td>
-                <td>
-                    <div className="view">{item.summary}</div>
-                    <div className="edit" style={{display: 'none'}}>
-                        <input type="text" className="form-control summ" name="summary"/>
-                    </div>
-                </td>
-                {/*{
-                    canEdit ? <td>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            aid={item.approachId}
-                            summary={item.summary}
-                            onClick={toggleEditor}
-                        >编辑
-                        </button>
-                        <button
-                            type="button"
-                            className="btn btn-primary"
-                            onClick={action}
-                            style={{display: 'none'}}
-                        >保存
-                        </button>
-                    </td> : null
-                }*/}
-                <div className="view">
-                    {canEdit ? <button
-                        type="button"
-                        className="btn btn-primary"
-                        aid={item.approachId}
-                        summary={item.summary}
-                        onClick={toggleEditor}
-                    >编辑
-                    </button> : null}
-                </div>
-                <div className="edit" style={{display: 'none'}}>
-                    <button
-                        type="button"
-                        className="btn btn-primary saveBtn"
-                        onClick={action}
-                    >保存
-                    </button>
-                </div>
-            </tr>
-        ))
-    )
-};
-
-const toggleEditor = (evt) => {
-    const elem = $(evt.target).parents('tr');
-    const aid = $(evt.target).attr('aid');
-    const summary = $(evt.target).attr('summary');
-
-    $(evt.target).toggle();
-    $(evt.target).siblings().toggle();
-    elem.find('.view').toggle();
-    elem.find('.edit').toggle();
-    elem.find('select').val(aid);
-    elem.find('.summ').val(summary);
-    elem.find('saveBtn').show();
-};
 
 class List extends React.Component {
     constructor(props) {
@@ -179,7 +23,11 @@ class List extends React.Component {
             groupName: this.props.groupName,
             userName: this.props.userName,
             canEdit: this.props.canEdit,
-            list: []
+            list: [],
+            form: {
+                "summary":"",
+                "datetime": new Date()
+            }
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.addContact = this.addContact.bind(this);
@@ -229,20 +77,24 @@ class List extends React.Component {
     }
 
     addContact(evt) {
-        const elem = $(evt.target).parents('tr');
+        if(this.state.contactId){
+            this.modContact();
+            return;
+        }
         let query = {};
 
         query.leadsId = this.state.id;
-        query.approachId = elem.find('select').val();
-        query.summary = elem.find('input').val();
+        query.summary = this.state.summary;
+        query.datetime = this.state.datetime;
+        if(query.datetime){
+            query.datetime = new Date(query.datetime).getTime();
+        }
 
         const request = async () => {
             try {
                 await ajax('/contact/add.do', query);
                 let list = await ajax('/contact/list.do', {leadsId: this.state.id});
-
-                this.setState({list});
-                elem.find('input').val('');
+                this.setState({list,dialogVisible3:false,summary:""});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -256,15 +108,12 @@ class List extends React.Component {
     }
 
     modContact(evt) {
-        const elem = $(evt.target).parents('tr');
-        const approachName = elem.find('select')[0].options[elem.find('select')[0].selectedIndex].text;
         let query = {};
 
         query.leadsId = this.state.id;
-        query.approachId = elem.find('select').val();
-        query.summary = elem.find('.summ').val();
-        query.id = elem.attr('cid');
-        query.datetime = elem.find('.dateVal').find("input").val();
+        query.summary = this.state.summary;
+        query.id = this.state.contactId;
+        query.datetime = this.state.datetime;
         if(query.datetime){
           query.datetime = new Date(query.datetime).getTime();
         }
@@ -274,18 +123,11 @@ class List extends React.Component {
                 const list = this.state.list.map(item => {
                     if (item.id === query.id) {
                         item.approachId = query.approachId;
-                        item.approachName = approachName;
                         item.summary = query.summary;
                     }
-
                     return item;
                 });
-                this.setState({list}, () => {
-                    $(evt.target).toggle();
-                    $(evt.target).siblings().toggle();
-                    elem.find('.view').toggle();
-                    elem.find('.edit').toggle();
-                });
+                this.setState({list,dialogVisible3:false,summary:"",contactId:null});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -294,8 +136,37 @@ class List extends React.Component {
                 }
             }
         };
-
         request()
+    }
+
+    delContact(id){
+
+    }
+    //展示和关闭弹框框
+    showDialog(){
+        let dialogVisible3 = this.state.dialogVisible3;
+        this.setState({dialogVisible3:!dialogVisible3});
+    }
+    //编辑沟通记录
+    editDialog(item){
+        if(item){
+            this.setState({datetime:new Date(item.datetime),summary:item.summary,contactId:item.id});
+            this.showDialog();
+        }
+    }
+
+    //删除沟通记录
+    delDialog(item){
+        MessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
+            type: 'warning'
+        }).then(() => {
+
+        }).catch(() => {
+            Message({
+                type: 'info',
+                message: '已取消删除'
+            });
+        });
     }
 
     render() {
@@ -311,26 +182,70 @@ class List extends React.Component {
         /*if (!this.state.canEdit && !this.state.list.length) {
           return null;
         }*/
-
+        let that = this;
         return (
-            <VerticalTimeline  layout='1-column'>
-                {
-                    this.state.list.map(item => {
-                        return <VerticalTimelineElement
-                            className="vertical-timeline-element--work"
-                            contentStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
-                            contentArrowStyle={{ borderRight: '7px solid  rgb(33, 150, 243)' }}
-                            date={formatWithTime(item.datetime) + '  ' + item.executiveName}
-                            iconStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
-                            icon={<BsBook />}
-                        >
-                            <p>
-                                {item.summary}
-                            </p>
-                        </VerticalTimelineElement>
-                    })
-                }
-            </VerticalTimeline>
+            <div>
+                <Button type="text" style={{"marginLeft":"26px"}} onClick={this.showDialog.bind(this)}><i className="el-icon-plus el-icon-right"></i> &nbsp;&nbsp;新增沟通记录</Button>
+                <VerticalTimeline  layout='1-column'>
+                    {
+                        this.state.list.map(item => {
+                            return <VerticalTimelineElement
+                                className="vertical-timeline-element--work"
+                                contentStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
+                                contentArrowStyle={{ borderRight: '7px solid  rgb(33, 150, 243)' }}
+                                date={formatWithTime(item.datetime) + '  ' + item.executiveName}
+                                iconStyle={{ background: 'rgb(33, 150, 243)', color: '#fff' }}
+                                icon={<BsBook />}
+                            >
+                                <div style={{"position": "absolute","right": "0px","top": "0px","display":item.executiveName == that.state.userName ? "normal" : "none"}}>
+
+                                    <Button type="text" style={{"marginLeft":"26px"}} onClick={that.editDialog.bind(this,item)}><i className="el-icon-edit el-icon-right"></i> &nbsp;&nbsp;编辑</Button>
+                                </div>
+                                <p>
+                                    {item.summary}
+                                </p>
+                            </VerticalTimelineElement>
+                        })
+                    }
+                </VerticalTimeline>
+                <Dialog
+                    title="沟通记录"
+                    size="tiny"
+                    visible={ this.state.dialogVisible3 }
+                    onCancel={ () => this.setState({ dialogVisible3: false }) }
+                >
+                    <Dialog.Body>
+                        <div className="form-group row contact">
+                            <Form model={this.state.form}  labelWidth="120" style={{"width":"80%"}}>
+                                <Form.Item label="沟通时间">
+                                    <DatePicker
+                                        value={this.state.datetime}
+                                        isShowTime={true}
+                                        placeholder="选择沟通时间"
+                                        format="yyyy-MM-dd HH:mm"
+                                        onChange={date=>{
+                                            console.debug('DatePicker1 changed: ', date)
+                                            this.setState({datetime: date})
+                                        }}
+                                    />
+                                </Form.Item>
+                                <Form.Item label="沟通内容">
+                                    <Input type="textarea" value={this.state.summary}
+                                           onChange={date=>{
+                                               this.setState({summary: date})
+                                           }}></Input>
+                                </Form.Item>
+                            </Form>
+                        </div>
+                    </Dialog.Body>
+
+                    <Dialog.Footer className="dialog-footer">
+                        <Button onClick={ () => this.setState({ dialogVisible3: false }) }>取 消</Button>
+                        <Button type="primary" onClick={this.addContact.bind(this)}>确 定</Button>
+                    </Dialog.Footer>
+                </Dialog>
+            </div>
+
         )
     }
 }

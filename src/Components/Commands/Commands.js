@@ -57,7 +57,6 @@ const Export = ({action}) => (
 
 const Commands = (props) => {
     // const list = props.commands.map(command => (command.name));
-
     return (
         <div className="btn-group float-right" role="group">
             {

@@ -10,6 +10,7 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax, {IMG_URL} from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import fmtDate from "../../../utils/fmtDate";
+import {Button} from "element-react";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -134,7 +135,9 @@ class View extends React.Component {
                     createTime: fmtDate(data.createTime),
                     totalAmount: data.totalAmount,
                     roi: data.roi,
-                    imgUrl: IMG_URL + data.qrCode
+                    imgUrl: IMG_URL + data.qrCode,
+                    imgSmallUrl: IMG_URL + data.smallQrCode,
+                    imgBigUrl: IMG_URL + data.bigQrCode
                 });
 
                 chartInit({
@@ -297,6 +300,11 @@ class View extends React.Component {
                                     <div className="row">
                                         <p className="h6">小程序码</p>
                                         <img src={this.state.imgUrl} alt="" width="200px" height="200px" />
+                                    </div>
+                                    <div className="row" style={{"marginTop":"20px"}}>
+                                        <a style={{"marginLeft":"20px"}} href={this.state.imgSmallUrl} target="_blank">280*280px下载</a>
+                                        <a style={{"marginLeft":"20px"}} href={this.state.imgUrl} target="_blank">800*800px下载</a>
+                                        <a style={{"marginLeft":"20px"}} href={this.state.imgBigUrl} target="_blank">1280*1280px下载</a>
                                     </div>
                                 </div>
                             </div>

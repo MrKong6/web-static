@@ -51,11 +51,6 @@ class List extends React.Component {
                     prop: "date",
                 },
                 {
-                    label: "就读学校",
-                    prop: "schoolName",
-                    sortable: true
-                },
-                {
                     label: "在读年级",
                     prop: "grade",
                     sortable: true
@@ -67,10 +62,6 @@ class List extends React.Component {
                 {
                     label: "家长姓名",
                     prop: "parentName",
-                },
-                {
-                    label: "与学员关系",
-                    prop: "relation",
                 },
                 {
                     label: "联系电话",
@@ -112,12 +103,12 @@ class List extends React.Component {
                         }
 
                     });
-                    this.setState({list: list.data && list.data.items ? list.data.items : null,
+                    this.setState({list: list.data && list.data.items ? list.data.items : [],
                         ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,
-                        userList: userList.data && userList.data.items ? userList.data.items : null,});
+                        userList: userList.data && userList.data.items ? userList.data.items : [],});
 
                 }else{
-                    this.setState({list: [],userList: userList.data && userList.data.items ? userList.data.items : null,
+                    this.setState({list: [],userList: userList.data && userList.data.items ? userList.data.items : [],
                         totalPage: 0,totalCount: 0});
                 }
             } catch (err) {

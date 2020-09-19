@@ -211,7 +211,7 @@ class Form extends React.Component {
                     this.form = dom
                 }}>
                     <div className="row justify-content-md-center">
-                        <div className="col col-12">
+                        <div className="col col-8">
                             <div className="card">
                                 <div className="card-body">
                                     <p className="ht pb-3 b-b">访客信息</p>
@@ -306,8 +306,6 @@ class Form extends React.Component {
                                                     <CourseName data={this.state.option.courseId} typeId={this.form.courseTypeId}/>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col">
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label">备注</label>
                                                 <div className="col-7">
@@ -342,7 +340,7 @@ class Form extends React.Component {
                                                              visible={this.state.visible} content={(
                                                         <ActHouver parent={this} />
                                                     )}>
-                                                        <input type="text" className="form-control"
+                                                        <input type="text" className="form-control" placeholder="请选择具体渠道"
                                                                style={{"width": "70%"}}
                                                                value={this.state.channelText} readOnly={true}/>
                                                     </Popover>
@@ -350,14 +348,6 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="col">
-                                            {/*<div className="form-group row">*/}
-                                                {/*<label className="col-5 col-form-label">*/}
-                                                    {/*/!*<em className="text-danger">*</em>*!/访客阶段*/}
-                                                {/*</label>*/}
-                                                {/*<div className="col-7">*/}
-                                                    {/*<Stages data={this.state.option.stage}/>*/}
-                                                {/*</div>*/}
-                                            {/*</div>*/}
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label">
                                                     {/*<em className="text-danger">*</em>*/}访客状态
@@ -382,18 +372,13 @@ class Form extends React.Component {
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label">创建时间</label>
                                                 <div className="col-7">
-                                                    {/*<input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data ? formatWithTime(this.state.data.createTime) : ''}
-                                                    />*/}
                                                     <DatePicker
                                                         name="createTime"
                                                         value={this.state.createTime}
                                                         isShowTime={true}
                                                         placeholder="选择日期"
                                                         format="yyyy-MM-dd HH:mm"
+                                                        isDisabled={true}
                                                         onChange={date=>{
                                                             console.debug('DatePicker1 changed: ', date)
                                                             this.setState({createTime: date})
@@ -402,18 +387,19 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col"/>
                                     </div>
-                                    {
-                                        this.props.isEditor && this.state.data ? <ContactList
-                                            id={this.state.data.id}
-                                            canEdit={true}
-                                            groupName={this.props.contactOrgName}
-                                            userName={this.props.contactUserName}
-                                        /> : null
-                                    }
                                 </div>
                             </div>
+                        </div>
+                        <div className="col col-4">
+                            {
+                                this.props.isEditor && this.state.data ? <ContactList
+                                    id={this.state.data.id}
+                                    canEdit={true}
+                                    groupName={this.props.contactOrgName}
+                                    userName={this.props.contactUserName}
+                                /> : null
+                            }
                         </div>
                     </div>
                 </form>

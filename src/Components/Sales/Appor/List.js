@@ -190,7 +190,7 @@ class List extends React.Component {
                     label: "学员姓名",
                     prop: "student.name",
                     sortable: true,
-                    width: 100,
+                    width: 130,
                     fixed: 'left',
                     render: (row, column, data)=>{
                         return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>

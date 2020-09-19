@@ -361,7 +361,7 @@ class View extends React.Component {
                     <Progress isAnimating={this.state.isAnimating}/>
 
                     <div className="row justify-content-md-center">
-                        <div className="col col-12">
+                        <div className="col col-8">
                             <div className="card">
                                 <div className="card-body">
                                     <p className="ht pb-3 b-b">访客信息</p>
@@ -503,8 +503,6 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col">
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label">备注</label>
                                                 <div className="col-7">
@@ -625,14 +623,17 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <ContactList
-                                        id={this.state.id}
-                                        canEdit={false}
-                                        groupName={this.state.data.organizationName}
-                                        userName={this.state.data.executiveName}
-                                    />
+
                                 </div>
                             </div>
+                        </div>
+                        <div className="col col-4">
+                            <ContactList
+                                id={this.state.id}
+                                canEdit={false}
+                                groupName={this.state.data.organizationName}
+                                userName={this.state.data.executiveName}
+                            />
                         </div>
                     </div>
                 </div>

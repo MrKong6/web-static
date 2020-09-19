@@ -7,6 +7,8 @@ import DialogGroup from "../Dialog/DialogGroup"
 import isPhone from "../../utils/isPhone";
 import SCHOOLPAL_CONFIG from "../../utils/config";
 import ReactDOM from "react-dom";
+import './Drawer.css'
+import {Button} from "element-react";
 
 const GroupDialogBBtn = ({groupName, action}) => (
     <div>
@@ -174,9 +176,13 @@ class Drawer extends React.Component {
 
         this.props.changed(selected)
     }
+    //改变功能菜单
+    changeFunctionList(){
+
+    }
 
     render() {
-        console.log(this.props.menu);
+        // console.log(this.props.menu);
         return (
             <div id="drawer" className="aside-bar">
                 <div className="drawer">
@@ -188,6 +194,11 @@ class Drawer extends React.Component {
                             <GroupDialogBBtn groupName={this.state.groupName} action={this.createGroupsDialog}/> : null}
                         <Menu data={this.props.menu}/>
                     </div>
+                    {/*<div className="function_panel">
+                        <Button type="text" style={{"paddingLeft":"10px","fontSize":"18px","border":"none"}} onClick={this.changeFunctionList.bind(this,1)}>OMS</Button>&nbsp;&nbsp;|
+                        <Button type="text" style={{"fontSize":"18px"}} onClick={this.changeFunctionList.bind(this,1)}>微校通</Button>&nbsp;&nbsp;|
+                        <Button type="text" style={{"fontSize":"18px"}} onClick={this.changeFunctionList.bind(this,1)}>小程序</Button>
+                    </div>*/}
                 </div>
             </div>
         );

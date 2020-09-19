@@ -14,7 +14,7 @@ import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import {formatWithTime} from "../../../utils/fmtDate";
 import config from "../../../utils/config";
-import {Message, Tabs} from "element-react";
+import {Button, Dialog, Message, Tabs} from "element-react";
 import "./Appor.css"
 
 const NextBtn = ({id, ids, link}) => {
@@ -71,6 +71,7 @@ class View extends React.Component {
             data: null,
             ids: [],
             courseTypeList: [],
+            courseTypeId: null,
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
@@ -83,6 +84,7 @@ class View extends React.Component {
     }
 
     componentDidMount() {
+        this.loadFilter();
         const request = async () => {
             try {
                 let data = await ajax('/sales/oppor/query.do', {id: this.state.id});
@@ -98,8 +100,8 @@ class View extends React.Component {
                     data.courseId = Number(data.courseId);
                 }
 
-                this.setState({data, ids});
-                this.changeCourseType(data.courseId);
+                this.setState({data, ids, courseTypeId:data.courseId});
+                // this.changeCourseType(data.courseId);
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -111,7 +113,6 @@ class View extends React.Component {
 
         request();
         mainSize();
-        this.loadFilter();
     }
 
     //加载课程类别下拉列表
@@ -297,7 +298,6 @@ class View extends React.Component {
     }
 
     changeCourseType(value) {
-
         if(value.props){
             this.setState({courseTypeId: value.props.name+""});
         }else{
@@ -519,10 +519,10 @@ class View extends React.Component {
                                                     })
                                                 }
                                             </Menu>*/}
-                                            <Tabs activeName={this.state.courseTypeId} onTabClick={this.changeCourseType.bind(this)}>{/*onTabClick={ (tab) => console.log(tab.props.name) }*/}
+                                            <Tabs onTabClick={this.changeCourseType.bind(this)}>{/*onTabClick={ (tab) => console.log(tab.props.name) }*/}
                                                 {
                                                     this.state.courseTypeList.map(item => {
-                                                        return <Tabs.Pane label={item.name} name={item.id + ''}>
+                                                        return <Tabs.Pane label={item.name} name={item.id}>
                                                             <div className="row"  id={item.id+""}>
                                                                 <div className="col">
                                                                     <div className="form-group row">

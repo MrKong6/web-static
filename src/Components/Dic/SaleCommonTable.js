@@ -273,7 +273,7 @@ class ActHouver extends React.Component {
                 <p>请选择具体渠道：</p>
                 <div className="row">
                     <Table
-                        style={{width: '100%',"margin-bottom":"30px"}}
+                        style={{width: '100%',"marginBottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}

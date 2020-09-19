@@ -7,14 +7,13 @@ import Commands from "../../Commands/Commands";
 import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
-import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
+import {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
 import {Button, Table, Pagination, Message, Input, Tooltip, Select} from 'element-react';
 import './Leads.css'
 
-import {$} from "../../../vendor";
 import ajaxFile from "../../../utils/ajaxFile";
 import DialogUser from "../../Dialog/DialogUser";
 
@@ -613,7 +612,7 @@ class List extends React.Component {
                     </Select>
                     {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
                     <Table
-                        style={{width: '100%',"margin-bottom":"30px"}}
+                        style={{width: '100%',"marginBottom":"30px"}}
                         columns={this.state.columns}
                         data={this.state.list}
                         border={true}

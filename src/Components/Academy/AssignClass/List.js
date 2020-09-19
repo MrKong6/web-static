@@ -1,5 +1,4 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import {Redirect} from 'react-router-dom'
 
 import '../../Mkt/Leads/Leads.css'
@@ -8,17 +7,12 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction' // needed for dayClick
 import './AssignClass.css'
-import DialogForEvent from "../../Dialog/DialogForEvent";
 import fmtDate from "../../../utils/fmtDate";
 import {Button, Card, Dialog, Menu, Message, MessageBox, Radio, Select} from "element-react";
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
 import {$} from "../../../vendor";
-import DialogForEventEdit from "../../Dialog/DialogForEventEdit";
-import Commands from "../../Commands/Commands";
-import DialogAssignClass from "../../Dialog/DialogAssignClass";
-import historyBack from "../../../utils/historyBack";
 
 const MORE = "更多";
 const FOLD = "收起";

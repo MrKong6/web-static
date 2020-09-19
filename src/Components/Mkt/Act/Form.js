@@ -5,7 +5,6 @@ import DialogDate from '../../Dialog/DialogDate';
 import DialogAct from "../../Dialog/DialogAct"
 
 import fmtDate from '../../../utils/fmtDate'
-import {Tree} from "element-react";
 import ajax from "../../../utils/ajax";
 
 class Form extends React.Component {
@@ -143,7 +142,7 @@ class Form extends React.Component {
 
     handleCheckChange(data, node) {
         console.log(data, node);
-        this.setState({checkId: data.id,checkName: data.name,checkRootId:data.rootId ? data.rootId : data.id});
+        this.setState({checkId: data.id, checkName: data.name, checkRootId: data.rootId ? data.rootId : data.id});
         this.state.checkId = data.id;
         this.loadActivity();
         // if(checked){
@@ -227,10 +226,10 @@ class Form extends React.Component {
                                                 readOnly={true}
                                             />
                                             <span className="input-group-btn">
-                        <button onClick={this.createDateDialog} className="btn btn-secondary" type="button">
-                          <i className="fa fa-calendar-o fa-lg" aria-hidden="true"/>
-                        </button>
-                      </span>
+                                                <button onClick={this.createDateDialog} className="btn btn-secondary" type="button">
+                                                  <i className="fa fa-calendar-o fa-lg" aria-hidden="true"/>
+                                                </button>
+                                              </span>
                                         </div>
                                     </div>
                                     <div className="form-group">

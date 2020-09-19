@@ -31,7 +31,7 @@ class List extends React.Component {
             redirectToReferrer: false,
             totalPage:0,
             currentPage:1,
-            pageSize:1000,
+            pageSize:10,
             totalCount:0,
         };
     }
@@ -50,7 +50,7 @@ class List extends React.Component {
                         }
                     });
                 }
-                this.setState({list: list.items});
+                this.setState({list: list.items,totalPage: list.totalPage,totalCount: list.count});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -166,15 +166,14 @@ class List extends React.Component {
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     <div className="row" style={{"height": '80%'}}>
                         <StudentSituation type={"class"} id={this.state.id} data={this.state.list} />
-                        {/*<Pagination layout="total, sizes, prev, pager, next, jumper"
+                        <Pagination layout="total, sizes, prev, pager, next, jumper"
                                     total={this.state.totalCount}
                                     pageSizes={[10, 50, 100]}
                                     pageSize={this.state.pageSize}
                                     currentPage={this.state.currentPage}
                                     pageCount={this.state.totalPage}
-                                    className={"page_bottom"}
                                     onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                    onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>*/}
+                                    onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                     </div>
                 </div>
             </div>
