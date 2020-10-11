@@ -15,6 +15,7 @@ import {Button, Table, Pagination, Upload, Input, Tooltip, Select, Message, Chec
 import '../../Mkt/Leads/Leads.css'
 import ajaxFile from "../../../utils/ajaxFile";
 import DialogUser from "../../Dialog/DialogUser";
+import {changeArrayItemToString} from "../../../utils/objectToArray";
 
 class List extends React.Component {
     constructor(props) {
@@ -54,7 +55,7 @@ class List extends React.Component {
                     width: 100,
                     fixed: 'left',
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.student.id)}>{row.student.name}</Button></span>
                     }
                 },
                 {
@@ -85,7 +86,8 @@ class List extends React.Component {
                     sortable: true,
                     width: 100,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent ? row.parent.name : null}</Button></span>
+                        debugger
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.student.id)}>{row.parent ? row.parent.name : null}</Button></span>
                     }
                 },
                 {
@@ -193,7 +195,7 @@ class List extends React.Component {
                     width: 130,
                     fixed: 'left',
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.student.id)}>{row.student.name}</Button></span>
                     }
                 },
                 {
@@ -224,7 +226,7 @@ class List extends React.Component {
                     sortable: true,
                     width: 100,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent ? row.parent.name : null}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.student.id)}>{row.parent ? row.parent.name : null}</Button></span>
                     }
                 },
                 {
@@ -319,8 +321,8 @@ class List extends React.Component {
     }
 
     componentDidMount() {
-        this.changeShowType(1);
-        this.loadData();
+        this.changeShowType(2);
+        // this.loadData();
         this.loadFilter();
         mainSize()
     }
@@ -393,7 +395,11 @@ class List extends React.Component {
                 let advisorList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:1});
                 let courseTypeList = await ajax('/course/type/courseTypeList.do');
                 this.setState({stageName:stage,
-                    statusName:status,advisorList:advisorList,courseTypeList:courseTypeList});
+                    statusName:status,advisorList:advisorList,courseTypeList:courseTypeList,courseTypeId:courseTypeList[0].id});
+                if(courseTypeList && courseTypeList.length > 0){
+                    this.state.courseTypeId=courseTypeList[0].id;
+                    this.loadData();
+                }
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -621,26 +627,37 @@ class List extends React.Component {
             $("#shortTwo2").show();
             $("#shortOne2").show();
         }
-        this.loadData();
     }
     //处理课程类别
     handleType(value){
-        if(value && value.length > 1){
-            this.state.showType = 2;
-            this.changeShowType(2,value);
-        }else{
-            let courseTypeId=null;
-            this.state.showType = 1;
-            if(value.length == 1){
-                this.state.courseTypeList.map(item => {
-                    if(item.name == value[0]){
-                        courseTypeId = item.id;
+        // if(value && value.length > 1){
+        //     this.state.showType = 2;
+        //     this.changeShowType(2,value);
+        // }else{
+        //     let courseTypeId=null;
+        //     this.state.showType = 1;
+        //     if(value.length == 1){
+        //         this.state.courseTypeList.map(item => {
+        //             if(item.name == value[0]){
+        //                 courseTypeId = item.id;
+        //             }
+        //         });
+        //     }
+        //     this.state.courseTypeId = courseTypeId;
+        //     this.state.currentPage = 1;
+        //     this.changeShowType(1);
+        //     this.loadData();
+        // }
+        if(value && value.length >= 1){
+            let ids = [];
+            this.state.courseTypeList.map(item => {
+                value.map(name => {
+                    if(item.name == name){
+                        ids.push(item.id);
                     }
                 });
-            }
-            this.state.courseTypeId = courseTypeId;
-            this.state.currentPage = 1;
-            this.changeShowType(1);
+            });
+            this.state.courseTypeId = changeArrayItemToString(ids);
             this.loadData();
         }
     }
@@ -751,7 +768,7 @@ class List extends React.Component {
                     </div>
                     <div className="row" id="shortTwo2">
                         <Table
-                            style={{width: '100%',"margin-bottom":"30px"}}
+                            style={{width: '100%',height:'500px',"margin-bottom":"30px"}}
                             columns={this.state.columnsShort}
                             data={this.state.list}
                             border={true}

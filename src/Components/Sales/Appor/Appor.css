@@ -11,3 +11,17 @@
 .contact textarea{
     height: 150px;
 }
+
+.txt input{
+    border: none;
+    font-size: 15px;
+}
+
+.rightBtn1{
+    padding-left:93%;
+    padding-bottom: 10px;
+}
+.rightBtn2{
+    padding-left:83%;
+    padding-bottom: 10px;
+}
