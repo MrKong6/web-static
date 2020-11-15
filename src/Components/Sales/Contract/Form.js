@@ -9,11 +9,12 @@ import Grade from '../../Dic/Grade';
 import CourseType from '../../Dic/CourseType';
 import CourseName from '../../Dic/CourseName';
 import Document from '../../Dic/Document';
+import {$} from '../../../vendor'
 
 import ajax from "../../../utils/ajax";
-import fmtDate, {formatWithOnlyTime, formatWithTime} from "../../../utils/fmtDate";
+import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {Button, DatePicker, Select} from 'element-react';
+import {DatePicker, Select} from 'element-react';
 
 class Form extends React.Component {
     constructor(props) {
@@ -32,6 +33,7 @@ class Form extends React.Component {
             classAllType: [],
             classList: [],
             startDate: null,
+            readCourse:false,//是否只读课程类别和课程阶段
         };
         this.addPayItem = this.addPayItem.bind(this);
         this.changeBirthday = this.changeBirthday.bind(this);
@@ -40,6 +42,8 @@ class Form extends React.Component {
         this.changeInput = this.changeInput.bind(this);
         this.changeClass = this.changeClass.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
+        $("#courseRead").hide();
+        $("#courseTypeRead").hide();
     }
 
     componentDidMount() {
@@ -52,6 +56,8 @@ class Form extends React.Component {
                 let classList = await ajax('/academy/class/getClassShortList.do',{statusId:4,orgId:this.state.group.id});
                 let data = null,oneDate = null,oneAmount = null;
                 classList = classList.data;
+                let courseInfo = {},readCourse = false;
+
                 if (this.props.isEditor) {
                     data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
                     //处理付款信息中的时间
@@ -69,21 +75,29 @@ class Form extends React.Component {
                         });
                     }
                 } else {
-
+                    //获取课程信息
+                    if(this.props.apporData.courseId){
+                        courseInfo = await ajax('/course/type/query.do',{id:this.props.apporData.courseId});
+                        if(courseInfo.data){
+                            courseInfo = courseInfo.data;
+                            readCourse = true;
+                        }
+                    }
                     data = {
-                        stuName: this.props.apporData.student.name,
-                        stuGrade: this.props.apporData.student.classGrade,
-                        stuBirthday: this.props.apporData.student.birthday ? new Date(this.props.apporData.student.birthday) : new Date(),
-                        stuGenderId: this.props.apporData.student.genderId || '',
-                        stuSchoolName: this.props.apporData.student.schoolName,
+                        stuName: this.props.apporData.name,
+                        stuGrade: this.props.apporData.classGrade,
+                        stuBirthday: this.props.apporData.birthday ? new Date(this.props.apporData.birthday) : new Date(),
+                        stuGenderId: this.props.apporData.genderId || '',
+                        stuSchoolName: this.props.apporData.schoolName,
+                        age: this.props.apporData.age,
                         parName: this.props.apporData.parent.name,
                         relation: this.props.apporData.parent.relation,
                         parCellphone: this.props.apporData.parent.cellphone,
                         parWechat: this.props.apporData.parent.wechat || '',
                         parAddress: this.props.apporData.parent.address,
-                        courseId: this.props.apporData.courseId || '',
-                        courseName: this.props.apporData.courseName || '',
-                        age: this.props.apporData.student.age,
+                        courseId: courseInfo ? courseInfo.id : '',
+                        courseTypeId: courseInfo ? courseInfo.courseTypeId : '',
+                        courseName: this.props.apporData.courseName || ''
                     }
                 }
 
@@ -106,6 +120,7 @@ class Form extends React.Component {
                     startDate,
                     typeId: data ? data.typeId : null,
                     contractStatus: data ? data.contractStatus : null,
+                    readCourse
                 }, () => {
                     const keys = Object.keys(data);
 
@@ -117,13 +132,20 @@ class Form extends React.Component {
                                 this.form[key].value = data[key];
                             }
                         }
-                    })
-                    if(data.list && data.list.length > 0){
-                        // data.list.map(item => {
-                        //     this.form["cls"+item.contractTime].value = item.amount;
-                        // });
+                    });
+                    if(courseInfo){
+                        $("#course").hide();
+                        $("#courseType").hide();
+                        $("#courseRead").show();
+                        $("#courseTypeRead").show();
+                        this.form["classHour"].value = courseInfo.classHour;
+                        this.form["classTime"].value = courseInfo.classTime;
+                        this.form["price"].value = courseInfo.price;
+                        this.form["time"].value = courseInfo.time;
+                        this.form["oriPrice"].value = courseInfo.amount;
+                        this.form["courseTypeName"].value = courseInfo.courseType;
+                        this.form["courseName"].value = courseInfo.name;
                     }
-                    // this.form["oneAmount"].value = oneAmount;
                 });
             } catch (err) {
                 if (err.errCode === 401) {
@@ -192,16 +214,6 @@ class Form extends React.Component {
             });
         }
 
-        query.typeId = this.state.typeId ? this.state.typeId : 1;
-        query.stuId = this.state.data ? this.state.data.stuId : null;
-        query.parId = this.state.data ? this.state.data.parId : null;
-        query.listStr=JSON.stringify(this.state.moneyList);
-        query.stuBirthday = this.state.birthday;
-        query.startDate = this.state.startDate;
-        query.courseType = this.form.courseTypeId.options[this.form.courseTypeId.selectedIndex].text;
-        query.courseName = this.form.courseId.options[this.form.courseId.selectedIndex].text;
-        query.courseId = this.state.data.courseId;
-
         for (let i = 0; i < this.form.length; i++) {
             if (this.form[i].name) {
                 if (this.form[i].name === 'startDate' || this.form[i].name === 'endDate') {
@@ -211,6 +223,20 @@ class Form extends React.Component {
                 }
             }
         }
+
+        query.typeId = this.state.typeId ? this.state.typeId : 1;
+        query.stuId = this.state.data ? this.state.data.stuId : null;
+        query.parId = this.state.data ? this.state.data.parId : null;
+        query.listStr=JSON.stringify(this.state.moneyList);
+        query.stuBirthday = this.state.birthday;
+        query.startDate = this.state.startDate;
+        if(this.state.readCourse){
+            query.courseType = this.state.data.courseTypeId;
+        }else{
+            query.courseType = this.form.courseTypeId.options[this.form.courseTypeName.selectedIndex].text;
+            query.courseName = this.form.courseId.options[this.form.courseId.selectedIndex].text;
+        }
+        query.courseId = this.state.data.courseId;
 
         return query;
     }
@@ -233,6 +259,9 @@ class Form extends React.Component {
     }
 
     changeCourse(children,data){
+        if(this.state.readCourse){
+            return;
+        }
         if(data){
             // console.log(data);
             const keys = Object.keys(data);
@@ -496,16 +525,24 @@ class Form extends React.Component {
                                                 <label className="col-5 col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>课程类别
                                                 </label>
-                                                <div className="col-7">
+                                                <div className="col-7" id="courseType">
                                                     <CourseType/>
+                                                </div>
+                                                <div className="col-7" id="courseTypeRead">
+                                                    <input type="text" className="form-control" name="courseTypeName"
+                                                           readOnly={true}/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>课程阶段
                                                 </label>
-                                                <div className="col-7">
+                                                <div className="col-7" id="course">
                                                     <CourseName parent={this} />
+                                                </div>
+                                                <div className="col-7" id="courseRead">
+                                                    <input type="text" className="form-control" name="courseName"
+                                                           readOnly={true}/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">

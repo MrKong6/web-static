@@ -84,12 +84,11 @@ class CourseName extends React.Component{
     }
 
     changeCourse(evt){
-        // console.log(evt.target.value);
         this.changeFirstCourse(evt.target.value);
     }
 
     changeFirstCourse(id){
-        if(!this.props.parent){
+        if(!this.props || !this.props.parent){
             return ;
         }
         if(id == null){

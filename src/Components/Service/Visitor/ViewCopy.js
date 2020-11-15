@@ -11,9 +11,8 @@ import Commands from "../../Commands/Commands";
 import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import {formatWithTime} from "../../../utils/fmtDate";
-import config from "../../../utils/config";
-import {Message} from "element-react";
+import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
+import {Message, MessageBox} from "element-react";
 
 const NextBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
@@ -21,12 +20,11 @@ const NextBtn = ({id, ids, link}) => {
     if ((curIndex + 1) === ids.length) {
         return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
     }
-
     return (
         <Link
             className="btn btn-light"
             to={{
-                pathname: link + `/${ids[curIndex + 1]}`,
+                pathname: (link+`/${ids[curIndex + 1]}`),
                 state: {ids: ids}
             }}
         >
@@ -46,7 +44,7 @@ const PrevBtn = ({id, ids, link}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: link + `/${ids[curIndex - 1]}`,
+                pathname: (link+`/${ids[curIndex - 1]}`),
                 state: {ids: ids}
             }}
         >
@@ -56,43 +54,40 @@ const PrevBtn = ({id, ids, link}) => {
 };
 
 class View extends React.Component {
+
     constructor(props) {
         super(props);
+
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export'));
+        this.ids = this.props.location.state.ids;
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
             redirectToList: false,
+            redirectToConvert: false,
             isAnimating: false,
-            id: this.props.match.params.opporId,
-            data: null,
-            ids: []
+            id: this.props.match.params.leadsId,
+            data: null
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
         this.delAction = this.delAction.bind(this);
-        this.SignAction = this.SignAction.bind(this);
+        this.convertAction = this.convertAction.bind(this);
+        this.convertAccept = this.convertAccept.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
-        this.thAction = this.thAction.bind(this);
-        this.thActionAccept = this.thActionAccept.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let data = await ajax('/sales/oppor/query.do', {id: this.state.id});
-                let list = await ajax('/sales/oppor/list.do', {
-                    orgId: this.state.group.id,
-                    typeId: 2,
-                    pageNum: 1,
-                    pageSize: 10,
-                    fromWay: 3
-                });
-                const ids = list.data.map((leads) => (leads.id));
+                let data = await ajax('/service/visitor/query.do', {id: this.state.id});
+                if(data.statusId != 19){
+                    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export' && command.name !== 'Mod'));
 
-                this.setState({data, ids});
+                }
+                this.setState({data: data});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -145,9 +140,19 @@ class View extends React.Component {
     }
 
     delAction() {
+        MessageBox.confirm('此操作将永久删除该线索信息, 是否继续?', '提示', {
+            type: 'warning'
+        }).then(() => {
+            request();
+        }).catch(() => {
+            Message({
+                type: 'info',
+                message: '已取消删除'
+            });
+        });
         const request = async () => {
             try {
-                await ajax('/sales/oppor/del.do', {id: this.state.id});
+                await ajax('/service/visitor/del.do', {id: this.state.id});
                 this.setState({redirectToList: true});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -159,31 +164,27 @@ class View extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
-
-        request();
     }
 
-    SignAction() {
-        this.props.history.push('/home/sales/contract/create', {data: this.state.data, oriId: this.state.id});
-    }
-
-    assignAction() {
+    convertAction() {
         const defaults = {
             groupId: this.state.data.organizationId,
             groupName: this.state.data.organizationName,
             userId: this.state.data.executiveId,
             userName: this.state.data.executiveName,
+            type: 1
         };
         this.userContainer = document.createElement('div');
         ReactDOM.render(
             <DialogUser
-                accept={this.assignAccept}
+                accept={this.convertAccept}
                 title={this.state.data.student.name}
                 container={this.userContainer}
                 defaults={defaults}
                 replace={this.props.history.replace}
                 from={this.props.location}
-                path="/sales/oppor/listAssignableUsers.do"
+                path="/mkt/leads/listAssignableUsers.do"
+                typeName="1"
                 ref={(dom) => {
                     this.user = dom
                 }}
@@ -194,18 +195,12 @@ class View extends React.Component {
         this.user.dialog.modal('show');
     }
 
-    assignAccept(selected) {
+    convertAccept(selected) {
         this.setState({isAnimating: true});
         const request = async () => {
             try {
-                await ajax('/sales/oppor/assign.do', {id: this.state.id, assigneeId: selected.user.id, type: 2});
-                let data = Object.assign({}, this.state.data);
-
-                data.organizationId = selected.group.id;
-                data.organizationName = selected.group.name;
-                data.executiveId = selected.user.id;
-                data.executiveName = selected.user.name;
-                this.setState({data})
+                await ajax('/service/visitor/convert.do', {id: this.state.id, assigneeId: selected.user.id});
+                this.setState({redirectToConvert: true});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -220,24 +215,25 @@ class View extends React.Component {
         request()
     }
 
-    thAction() {
+    assignAction() {
         const defaults = {
             groupId: this.state.data.organizationId,
             groupName: this.state.data.organizationName,
             userId: this.state.data.executiveId,
             userName: this.state.data.executiveName,
-            type: 30
+            type: 1
         };
         this.userContainer = document.createElement('div');
         ReactDOM.render(
             <DialogUser
-                accept={this.thActionAccept}
+                accept={this.assignAccept}
                 title={this.state.data.student.name}
                 container={this.userContainer}
                 defaults={defaults}
                 replace={this.props.history.replace}
                 from={this.props.location}
-                path="/service/through/list.do"
+                typeName="4"
+                path="/mkt/leads/listAssignableUsers.do"
                 ref={(dom) => {
                     this.user = dom
                 }}
@@ -246,16 +242,26 @@ class View extends React.Component {
         );
 
         this.user.dialog.modal('show');
+
     }
 
-    thActionAccept(selected){
+    assignAccept(selected) {
+        this.setState({isAnimating: true});
         const request = async () => {
             try {
-                await ajax('/sales/oppor/thAssign.do', {id: this.state.id, throughId: selected.throughId, type: 1});
+                await ajax('/service/visitor/assign.do', {id: this.state.id, assigneeId: selected.user.id, type: (selected.typeId ? selected.typeId : 1)});
+                let data = Object.assign({}, this.state.data);
+
+                data.organizationId = selected.group.id;
+                data.organizationName = selected.group.name;
+                data.executiveId = selected.user.id;
+                data.executiveName = selected.user.name;
+                this.setState({data})
                 Message({
-                    message: "成功",
+                    message: "已分配",
                     type: 'info'
                 });
+                this.props.history.push(`/home/service/visitor`);
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -266,6 +272,7 @@ class View extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
+
         request()
     }
 
@@ -279,17 +286,22 @@ class View extends React.Component {
             )
         }
 
-        let link = "/home/sales/oppor";
-        if (this.props.location.pathname.indexOf("opporpublic") != -1) {
-            link = "/home/sales/opporpublic";
-        }
-
         if (this.state.redirectToList) {
             return (
-                <Redirect to={link}/>
+                <Redirect to="/home/service/visitor"/>
             )
         }
 
+        if (this.state.redirectToConvert) {
+            return (
+                <Redirect to={`/home/sales/oppor/${this.state.id}`}/>
+            )
+        }
+
+        let link = "/home/service/visitor";
+        if(this.props.location.pathname.indexOf("visitorin") != -1){
+            link = "/home/service/visitorin";
+        }
         if (!this.state.data) {
             return (
                 <div>
@@ -326,11 +338,12 @@ class View extends React.Component {
                     <p className="d-inline text-muted">{this.state.data ? this.state.data.student.name : ''}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
-                        <PrevBtn id={this.state.id} ids={this.state.ids} link={link}/>
-                        <NextBtn id={this.state.id} ids={this.state.ids} link={link}/>
+                        <PrevBtn id={this.state.id} ids={this.ids} link={link}/>
+                        <NextBtn id={this.state.id} ids={this.ids} link={link}/>
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
+                            console.log(link);
                             this.props.history.push(link);
                         }} type="button" className="btn btn-light">返回
                         </button>
@@ -340,8 +353,7 @@ class View extends React.Component {
                         modAction={this.modAction}
                         delAction={this.delAction}
                         assignAction={this.assignAction}
-                        SignAction={this.SignAction}
-                        thAction={this.thAction}
+                        convertAction={this.convertAction}
                     />
                 </h5>
 
@@ -349,14 +361,14 @@ class View extends React.Component {
                     <Progress isAnimating={this.state.isAnimating}/>
 
                     <div className="row justify-content-md-center">
-                        <div className="col col-12">
+                        <div className="col col-8">
                             <div className="card">
                                 <div className="card-body">
-                                    <p className="ht pb-3 b-b">线索信息</p>
+                                    <p className="ht pb-3 b-b">访客信息</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">学员姓名</label>
+                                                <label className="col-5 col-form-label">学员姓名</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -367,7 +379,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">学员性别</label>
+                                                <label className="col-5 col-form-label">学员性别</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -378,7 +390,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">学员年龄</label>
+                                                <label className="col-5 col-form-label">学员年龄</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -389,7 +401,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">在读年级</label>
+                                                <label className="col-5 col-form-label">在读年级</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -400,7 +412,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">所在学校</label>
+                                                <label className="col-5 col-form-label">所在学校</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -413,64 +425,64 @@ class View extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">家长姓名</label>
+                                                <label className="col-5 col-form-label">家长姓名</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent  ? this.state.data.parent.name : ''}
+                                                        value={this.state.data ? this.state.data.parent.name : ''}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">与孩子关系</label>
+                                                <label className="col-5 col-form-label">与孩子关系</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.relation : ''}
+                                                        value={this.state.data ? this.state.data.parent.relation : ''}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">联系电话</label>
+                                                <label className="col-5 col-form-label">联系电话</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.cellphone : ''}
+                                                        value={this.state.data ? this.state.data.parent.cellphone : ''}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">微信号</label>
+                                                <label className="col-5 col-form-label">微信号</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.wechat : ''}
+                                                        value={this.state.data ? this.state.data.parent.wechat : ''}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">家庭住址</label>
+                                                <label className="col-5 col-form-label">家庭住址</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.address : ''}
+                                                        value={this.state.data ? this.state.data.parent.address : ''}
                                                     />
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">课程类别</label>
+                                                <label className="col-5 col-form-label">课程类别</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -481,7 +493,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">课程阶段</label>
+                                                <label className="col-5 col-form-label">课程阶段</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -491,23 +503,32 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">备注</label>
+                                                <label className="col-5 col-form-label">备注</label>
                                                 <div className="col-7">
                                                     <p className="form-control-plaintext">
                                                         {this.state.data ? this.state.data.note : ''}
                                                     </p>
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label">(校区)</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data ? this.state.data.schoolArea !== 'null' ? this.state.data.schoolArea : '' : ''}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <p className="ht pt-3 pb-3 b-t b-b">线索进程</p>
+                                    <p className="ht pt-3 pb-3 b-t b-b">访客进程</p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">信息来源</label>
+                                                <label className="col-5 col-form-label">信息来源</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -518,7 +539,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">具体渠道</label>
+                                                <label className="col-5 col-form-label">具体渠道</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -530,30 +551,19 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                         <div className="col">
+                                            {/*<div className="form-group row">*/}
+                                                {/*<label className="col-5 col-form-label">线索阶段</label>*/}
+                                                {/*<div className="col-7">*/}
+                                                    {/*<input*/}
+                                                        {/*type="text"*/}
+                                                        {/*readOnly={true}*/}
+                                                        {/*className="form-control-plaintext"*/}
+                                                        {/*value={this.state.data ? this.state.data.stageName : ''}*/}
+                                                    {/*/>*/}
+                                                {/*</div>*/}
+                                            {/*</div>*/}
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">类型</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data ? config.TYPE_ID[this.state.data.typeId] : ''}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">阶段</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data ? this.state.data.stageName : ''}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">状态</label>
+                                                <label className="col-5 col-form-label">访客状态</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -566,7 +576,7 @@ class View extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">所属组织</label>
+                                                <label className="col-5 col-form-label">所属组织</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -577,7 +587,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">所属用户</label>
+                                                <label className="col-5 col-form-label">所属用户</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -590,7 +600,7 @@ class View extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                                                <label className="col-5 col-form-label">创建人</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -601,7 +611,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">创建时间</label>
+                                                <label className="col-5 col-form-label">创建时间</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -613,14 +623,17 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <ContactList
-                                        id={this.state.id}
-                                        canEdit={false}
-                                        groupName={this.state.data.organizationName}
-                                        userName={this.state.data.executiveName}
-                                    />
+
                                 </div>
                             </div>
+                        </div>
+                        <div className="col col-4">
+                            <ContactList
+                                id={this.state.id}
+                                canEdit={false}
+                                groupName={this.state.data.organizationName}
+                                userName={this.state.data.executiveName}
+                            />
                         </div>
                     </div>
                 </div>

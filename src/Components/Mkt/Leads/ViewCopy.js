@@ -12,8 +12,7 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import {formatWithTime} from "../../../utils/fmtDate";
-import config from "../../../utils/config";
-import {Message} from "element-react";
+import {Message, MessageBox} from "element-react";
 
 const NextBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
@@ -59,40 +58,38 @@ class View extends React.Component {
     constructor(props) {
         super(props);
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export'));
+        this.ids = this.props.location.state.ids;
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
             redirectToList: false,
+            redirectToConvert: false,
             isAnimating: false,
-            id: this.props.match.params.opporId,
-            data: null,
-            ids: []
+            id: this.props.match.params.leadsId,
+            data: null
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
         this.delAction = this.delAction.bind(this);
-        this.SignAction = this.SignAction.bind(this);
+        this.convertAction = this.convertAction.bind(this);
+        this.convertAccept = this.convertAccept.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
-        this.thAction = this.thAction.bind(this);
-        this.thActionAccept = this.thActionAccept.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let data = await ajax('/sales/oppor/query.do', {id: this.state.id});
-                let list = await ajax('/sales/oppor/list.do', {
-                    orgId: this.state.group.id,
-                    typeId: 2,
-                    pageNum: 1,
-                    pageSize: 10,
-                    fromWay: 3
-                });
-                const ids = list.data.map((leads) => (leads.id));
+                let data = await ajax('/mkt/leads/query.do', {id: this.state.id});
+                if (!data.parent) {
+                    data.parent = {"cellphone": "", "name": ""};
+                }
+                if (data.statusId > 7) {
+                    this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export' && command.name !== 'Mod'));
+                }
+                this.setState({data: data});
 
-                this.setState({data, ids});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -122,6 +119,7 @@ class View extends React.Component {
         if (this.tips === undefined) {
             this.tipsContainer = document.createElement('div');
 
+
             ReactDOM.render(
                 <DialogTips
                     accept={this.logout}
@@ -145,9 +143,19 @@ class View extends React.Component {
     }
 
     delAction() {
+        MessageBox.confirm('此操作将永久删除该线索信息, 是否继续?', '提示', {
+            type: 'warning'
+        }).then(() => {
+            request();
+        }).catch(() => {
+            Message({
+                type: 'info',
+                message: '已取消删除'
+            });
+        });
         const request = async () => {
             try {
-                await ajax('/sales/oppor/del.do', {id: this.state.id});
+                await ajax('/mkt/leads/del.do', {id: this.state.id});
                 this.setState({redirectToList: true});
             } catch (err) {
                 if (err.errCode === 401) {
@@ -160,11 +168,54 @@ class View extends React.Component {
             }
         };
 
-        request();
     }
 
-    SignAction() {
-        this.props.history.push('/home/sales/contract/create', {data: this.state.data, oriId: this.state.id});
+    convertAction() {
+        const defaults = {
+            groupId: this.state.data.organizationId,
+            groupName: this.state.data.organizationName,
+            userId: this.state.data.executiveId,
+            userName: this.state.data.executiveName
+        };
+        this.userContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogUser
+                accept={this.convertAccept}
+                title={this.state.data.student.name}
+                container={this.userContainer}
+                defaults={defaults}
+                typeName="1"
+                replace={this.props.history.replace}
+                from={this.props.location}
+                path="/mkt/leads/listAssignableUsers.do"
+                ref={(dom) => {
+                    this.user = dom
+                }}
+            />,
+            document.body.appendChild(this.userContainer)
+        );
+
+        this.user.dialog.modal('show');
+    }
+
+    convertAccept(selected) {
+        this.setState({isAnimating: true});
+        const request = async () => {
+            try {
+                await ajax('/mkt/leads/convert.do', {id: this.state.id, assigneeId: selected.user.id});
+                this.setState({redirectToConvert: true});
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
     }
 
     assignAction() {
@@ -172,7 +223,7 @@ class View extends React.Component {
             groupId: this.state.data.organizationId,
             groupName: this.state.data.organizationName,
             userId: this.state.data.executiveId,
-            userName: this.state.data.executiveName,
+            userName: this.state.data.executiveName
         };
         this.userContainer = document.createElement('div');
         ReactDOM.render(
@@ -183,7 +234,8 @@ class View extends React.Component {
                 defaults={defaults}
                 replace={this.props.history.replace}
                 from={this.props.location}
-                path="/sales/oppor/listAssignableUsers.do"
+                typeName="1"
+                path="/mkt/leads/listAssignableUsers.do"
                 ref={(dom) => {
                     this.user = dom
                 }}
@@ -198,7 +250,7 @@ class View extends React.Component {
         this.setState({isAnimating: true});
         const request = async () => {
             try {
-                await ajax('/sales/oppor/assign.do', {id: this.state.id, assigneeId: selected.user.id, type: 2});
+                await ajax('/mkt/leads/assign.do', {id: this.state.id, assigneeId: selected.user.id, type: 1});
                 let data = Object.assign({}, this.state.data);
 
                 data.organizationId = selected.group.id;
@@ -220,55 +272,6 @@ class View extends React.Component {
         request()
     }
 
-    thAction() {
-        const defaults = {
-            groupId: this.state.data.organizationId,
-            groupName: this.state.data.organizationName,
-            userId: this.state.data.executiveId,
-            userName: this.state.data.executiveName,
-            type: 30
-        };
-        this.userContainer = document.createElement('div');
-        ReactDOM.render(
-            <DialogUser
-                accept={this.thActionAccept}
-                title={this.state.data.student.name}
-                container={this.userContainer}
-                defaults={defaults}
-                replace={this.props.history.replace}
-                from={this.props.location}
-                path="/service/through/list.do"
-                ref={(dom) => {
-                    this.user = dom
-                }}
-            />,
-            document.body.appendChild(this.userContainer)
-        );
-
-        this.user.dialog.modal('show');
-    }
-
-    thActionAccept(selected){
-        const request = async () => {
-            try {
-                await ajax('/sales/oppor/thAssign.do', {id: this.state.id, throughId: selected.throughId, type: 1});
-                Message({
-                    message: "成功",
-                    type: 'info'
-                });
-            } catch (err) {
-                if (err.errCode === 401) {
-                    this.setState({redirectToReferrer: true})
-                } else {
-                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
-                }
-            } finally {
-                this.setState({isAnimating: false});
-            }
-        };
-        request()
-    }
-
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -279,14 +282,24 @@ class View extends React.Component {
             )
         }
 
-        let link = "/home/sales/oppor";
-        if (this.props.location.pathname.indexOf("opporpublic") != -1) {
-            link = "/home/sales/opporpublic";
+        if (this.state.data && this.state.data.statusId > 7) {
+            this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Import' && command.name !== 'Export' && command.name !== 'Mod'));
+        }
+
+        let link = "/home/mkt/leads";
+        if (this.props.location.pathname.indexOf("leadspublic") != -1) {
+            link = "/home/mkt/leadspublic";
         }
 
         if (this.state.redirectToList) {
             return (
                 <Redirect to={link}/>
+            )
+        }
+
+        if (this.state.redirectToConvert) {
+            return (
+                <Redirect to={`/home/sales/oppor/${this.state.id}`}/>
             )
         }
 
@@ -326,8 +339,8 @@ class View extends React.Component {
                     <p className="d-inline text-muted">{this.state.data ? this.state.data.student.name : ''}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
-                        <PrevBtn id={this.state.id} ids={this.state.ids} link={link}/>
-                        <NextBtn id={this.state.id} ids={this.state.ids} link={link}/>
+                        <PrevBtn id={this.state.id} ids={this.ids} link={link}/>
+                        <NextBtn id={this.state.id} ids={this.ids} link={link}/>
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
@@ -335,13 +348,12 @@ class View extends React.Component {
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
-                    <Commands
+                    <CommandsconvertAction
                         commands={this.commands}
                         modAction={this.modAction}
                         delAction={this.delAction}
                         assignAction={this.assignAction}
-                        SignAction={this.SignAction}
-                        thAction={this.thAction}
+                        convertAction={this.convertAction}
                     />
                 </h5>
 
@@ -349,7 +361,7 @@ class View extends React.Component {
                     <Progress isAnimating={this.state.isAnimating}/>
 
                     <div className="row justify-content-md-center">
-                        <div className="col col-12">
+                        <div className="col col-8">
                             <div className="card">
                                 <div className="card-body">
                                     <p className="ht pb-3 b-b">线索信息</p>
@@ -419,7 +431,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent  ? this.state.data.parent.name : ''}
+                                                        value={this.state.data ? this.state.data.parent.name : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -430,7 +442,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.relation : ''}
+                                                        value={this.state.data ? this.state.data.parent.relation : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -441,7 +453,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.cellphone : ''}
+                                                        value={this.state.data ? this.state.data.parent.cellphone : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -452,7 +464,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.wechat : ''}
+                                                        value={this.state.data ? this.state.data.parent.wechat : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -463,7 +475,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data && this.state.data.parent ? this.state.data.parent.address : ''}
+                                                        value={this.state.data ? this.state.data.parent.address : ''}
                                                     />
                                                 </div>
                                             </div>
@@ -491,8 +503,6 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col">
                                             <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">备注</label>
                                                 <div className="col-7">
@@ -531,18 +541,7 @@ class View extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">类型</label>
-                                                <div className="col-7">
-                                                    <input
-                                                        type="text"
-                                                        readOnly={true}
-                                                        className="form-control-plaintext"
-                                                        value={this.state.data ? config.TYPE_ID[this.state.data.typeId] : ''}
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">阶段</label>
+                                                <label className="col-5 col-form-label font-weight-bold">线索阶段</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -553,7 +552,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">状态</label>
+                                                <label className="col-5 col-form-label font-weight-bold">线索状态</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
@@ -613,14 +612,17 @@ class View extends React.Component {
                                             </div>
                                         </div>
                                     </div>
-                                    <ContactList
-                                        id={this.state.id}
-                                        canEdit={false}
-                                        groupName={this.state.data.organizationName}
-                                        userName={this.state.data.executiveName}
-                                    />
+
                                 </div>
                             </div>
+                        </div>
+                        <div className="col col-4">
+                            <ContactList
+                                id={this.state.id}
+                                canEdit={false}
+                                groupName={this.state.data.organizationName}
+                                userName={this.state.data.executiveName}
+                            />
                         </div>
                     </div>
                 </div>

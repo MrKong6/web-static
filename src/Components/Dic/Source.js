@@ -72,13 +72,13 @@ class Source extends React.Component {
     }
 
     return (
-      <select className="form-control" name="sourceId">
-        {
-          this.state.list.map(item => (
-            <option key={item.id} value={item.id}>{item.name}</option>
-          ))
-        }
-      </select>
+        <select className="form-control" name="sourceId">
+            {
+                this.state.list.map(item => (
+                    <option key={item.id} value={item.id}>{item.name}</option>
+                ))
+            }
+        </select>
     )
   }
 }

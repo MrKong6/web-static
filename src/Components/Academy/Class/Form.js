@@ -206,7 +206,7 @@ class Form extends React.Component {
     getFormValue() {
         console.log(this.state.chooseCourseTypes);
 
-        //处理课程产品
+        //处理课程阶段
         let hasCourse = [], courseRange = '';
         this.state.chooseCourseTypes.map(item => {
             let courseTypeId = null;
@@ -221,7 +221,7 @@ class Form extends React.Component {
                 }
             });
             if(hasCourse.filter(item => item == courseTypeId).length > 0){
-                this.errorMsg("同一课程产品下只能选择一个");
+                this.errorMsg("同一课程阶段下只能选择一个");
                 return
             }else{
                 hasCourse.push(courseTypeId);
@@ -234,7 +234,7 @@ class Form extends React.Component {
         }
 
         if(!this.state.chooseCourseTypes){
-            this.errorMsg("请选择课程产品");
+            this.errorMsg("请选择课程阶段");
             return
         }
 

@@ -526,3 +526,12 @@ main h5 p {
 .right{
   text-align: right;
 }
+#subNav{
+  height: 60px;
+}
+#secondSubNav{
+  height: 70px;
+}
+#subView{
+
+}

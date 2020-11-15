@@ -12,7 +12,7 @@ class Relation extends React.Component {
 
     this.state = {
       redirectToReferrer: false,
-      list: objectToArray(this.props.data) || []
+      list: this.props.data ? objectToArray(this.props.data) : []
     }
   }
 

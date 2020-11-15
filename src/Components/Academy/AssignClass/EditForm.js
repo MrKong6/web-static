@@ -627,7 +627,7 @@ class EditForm extends React.Component {
             });
         }
         query.registrarId = changeArrayItemToString(this.state.registrar);
-        query.registrarName = changeArrayItemToString(teacherNames);
+        query.registrarName = changeArrayItemToString(rNames);
         //
         // for (let i = 0; i < this.form.length; i++) {
         //     if (this.form[i].name) {

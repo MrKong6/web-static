@@ -11,7 +11,7 @@ class Gender extends React.Component {
     super(props);
     this.state = {
       redirectToReferrer: false,
-      list: objectToArray(this.props.data) || [],
+      list: this.props.data ? objectToArray(this.props.data) : [],
       type: this.props.type ? this.props.type : null,  //有值代表过滤未知性别
     }
   }

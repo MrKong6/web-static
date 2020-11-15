@@ -61,7 +61,7 @@ export default {
             NAME: '公有池'
         },
         "1-3-2": {
-            PATH_RULE: /^\/home\/mkt\/leadspublic\/edit\/((?!create).)*$/,
+            PATH_RULE: /^\/home\/mkt\/leadspublic\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-filter",
             CATEGORY: '线索',
             NAME: '公有池'

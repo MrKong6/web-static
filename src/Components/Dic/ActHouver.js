@@ -158,6 +158,12 @@ class ActHouver extends React.Component {
         this.tips.dialog.modal('show');
     }
 
+    componentWillUnmount() {
+        if (this.tipsContainer) {
+            document.body.removeChild(this.tipsContainer);
+        }
+    }
+
 
     render() {
 

@@ -312,7 +312,7 @@ class Form extends React.Component {
                       </div>
                       <div className="form-group row">
                         <label className="col-5 col-form-label font-weight-bold">
-                          <em className="text-danger">*</em>课程产品
+                          <em className="text-danger">*</em>课程阶段
                         </label>
                         <div className="col-7">
                           <CourseName/>

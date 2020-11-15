@@ -35,7 +35,6 @@ class CourseType extends React.Component{
                 let list = await ajax('/course/type/courseTypeList.do');
 
                 this.setState({list});
-
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -79,6 +78,7 @@ class CourseType extends React.Component{
     }
 
     changeType = (evt) => {
+        debugger
         if(evt.target.value){
             emitter.emit('changeCourseType', evt.target.value);
         }

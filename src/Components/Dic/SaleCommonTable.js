@@ -102,7 +102,7 @@ class ActHouver extends React.Component {
                     width: 100,
                 },
                 {
-                    label: "课程产品",
+                    label: "课程阶段",
                     prop: "courseName",
                     sortable: true,
                     width: 100,

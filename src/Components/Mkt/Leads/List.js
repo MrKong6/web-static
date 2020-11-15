@@ -16,87 +16,7 @@ import './Leads.css'
 
 import ajaxFile from "../../../utils/ajaxFile";
 import DialogUser from "../../Dialog/DialogUser";
-
-/*
-const Table = ({list, goto}) => {
-    return (
-        <table className="table table-bordered table-sm">
-            <thead>
-            <tr>
-                <th>创建人</th>
-                <th>创建时间</th>
-                <th>所属组织</th>
-                <th>所属用户</th>
-                <th>来源</th>
-                <th>渠道</th>
-                <th>阶段</th>
-                <th>状态</th>
-                <th>学员姓名</th>
-                <th>性别</th>
-                <th>年龄</th>
-                <th>在读年级</th>
-                <th>所在学校</th>
-                <th>家长姓名</th>
-                <th>与学员关系</th>
-                <th>电话号码</th>
-                <th>微信号</th>
-                <th>家庭住址</th>
-                <th>课程类别</th>
-                <th>课程产品</th>
-                <th>备注</th>
-                <th>沟通记录</th>
-            </tr>
-            </thead>
-            <tbody>{TableItem(list, goto)}</tbody>
-        </table>
-    );
-};
-*/
-
-/*
-const TableItem = (data, goto) => {
-    let table = [];
-
-    if (data.length === 0) {
-        return table;
-    }
-
-    data.map(item => {
-        table.push(
-            <tr key={item.id}>
-                <td>{item.creatorName}</td>
-                <td>{fmtDate(item.createTime)}</td>
-                <td>{item.organizationName}</td>
-                <td>{item.executiveName}</td>
-                <td>{item.sourceName}</td>
-                <td>{item.channelName}</td>
-                <td>{item.stageName}</td>
-                <td>{item.statusName}</td>
-                <td>
-                    <a onClick={goto} lid={item.id} href="javascript:;">{item.student.name}</a>
-                </td>
-                <td>{item.student.genderText !== 'null' ? item.student.genderText : '--'}</td>
-                <td>{item.student.age !== 'null' ? item.student.age : '--'}</td>
-                <td>{item.student.classGrade !== 'null' ? item.student.classGrade : '--'}</td>
-                <td>{item.student.schoolName ? item.student.schoolName : '--'}</td>
-                <td>
-                    <a onClick={goto} lid={item.id} href="javascript:;">{item.parent.name}</a>
-                </td>
-                <td>{item.parent.relation ? item.parent.relation : '--'}</td>
-                <td>{item.parent.cellphone ? item.parent.cellphone : '--'}</td>
-                <td>{item.parent.weichat ? item.parent.weichat : '--'}</td>
-                <td>{item.parent.address ? item.parent.address : '--'}</td>
-                <td>{item.courseType !== 'null' ? item.courseType : '--'}</td>
-                <td>{item.courseName !== 'null' ? item.courseName : '--'}</td>
-                <td>{item.note ? item.note : '--'}</td>
-                <td>--</td>
-            </tr>
-        );
-    });
-
-    return table;
-};
-*/
+import LeadsList from "../../Dic/LeadsList";
 
 class List extends React.Component {
 
@@ -113,12 +33,9 @@ class List extends React.Component {
 
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
-        // this.goToDetails = this.goToDetails.bind(this);
+        this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
         this.exportAction = this.exportAction.bind(this);
-        this.chooseStageSearch = this.chooseStageSearch.bind(this);
-        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
-        this.chooseAdvisorSearch = this.chooseAdvisorSearch.bind(this);
         this.addAction = this.addAction.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
@@ -126,167 +43,8 @@ class List extends React.Component {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
-            chooseRows: [],
-            isAnimating: true,
-            redirectToReferrer: false,
-            cellphone : storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
-            columns:[
-                {
-                    type: 'selection',
-                    width: 20,
-                },
-                {
-                    type: 'index',
-                    fixed: 'left',
-                },
-                {
-                    label: "学员姓名",
-                    prop: "student.name",
-                    width: 95,
-                    fixed: 'left',
-                    render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
-                    }
-                    /*render: function(data){
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this,data.id)} lid={data.id}>{data.student.name}</Button></span>
-                    }*/
-                },
-                {
-                    label: "性别",
-                    prop: "student.genderText",
-                    width: 65
-                },
-                {
-                    label: "年龄",
-                    prop: "student.age",
-                    width: 90,
-                    sortable: true
-                },
-                {
-                    label: "在读年级",
-                    prop: "student.classGrade",
-                    width: 95
-                },
-                {
-                    label: "所在学校",
-                    prop: "student.schoolName",
-                    width: 120
-                },
-                {
-                    label: "家长姓名",
-                    prop: "parent.name",
-                    width: 95,
-                    render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{(row.parent ? row.parent.name : "--")}</Button></span>
-                    }
-                },
-                {
-                    label: "与学员关系",
-                    prop: "parent.relation",
-                    width: 110
-                },
-                {
-                    label: "电话号码",
-                    prop: "parent.cellphone",
-                    width: 95,
-                    className:'tabletd',
-                    render: function (data) {
-                        return <Tooltip effect="dark" content={data.parent ? data.parent.cellphone : null}
-                                        placement="top-start">
-                                    {data.parent ? data.parent.cellphone : null}
-                                </Tooltip>
-                    }
-
-                },
-                {
-                    label: "微信号",
-                    prop: "parent.weichat",
-                    width: 80
-                },
-                {
-                    label: "家庭住址",
-                    prop: "parent.address",
-                    width: 95
-                },
-                {
-                    label: "课程类别",
-                    prop: "courseType",
-                    width: 95
-                },
-                {
-                    label: "课程产品",
-                    prop: "courseName",
-                    width: 95,
-                    className:'tabletd',
-                    render: function (data) {
-
-                        return <Tooltip effect="dark" content={data.courseName}
-                                        placement="top-start">
-                            {data.courseName}
-                        </Tooltip>
-                    }
-                },
-                {
-                    label: "来源",
-                    prop: "sourceName",
-                    width: 100
-                },
-                {
-                    label: "渠道",
-                    prop: "channelName",
-                    width: 120
-                },
-                {
-                    label: "阶段",
-                    prop: "stageName",
-                    width: 150
-                },
-                {
-                    label: "状态",
-                    prop: "statusName",
-                    width: 150
-                },
-                {
-                    label: "所属组织",
-                    prop: "organizationName",
-                    width: 175,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "创建人",
-                    prop: "creatorName",
-                    width: 100,
-                    sortable: true
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 150,
-                    sortable: true
-                },
-                {
-                    label: "转移时间",
-                    prop: "transTime",
-                    width: 150,
-                    sortable: true
-                },
-            ],
-            totalPage:0,
-            currentPage:storage.getItem("leadCurrentPage") ? Number(storage.getItem("leadCurrentPage")) : 1,
-            pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
-            totalCount:0,
-            stageName:[],
-            chooseStageNameLeads:storage.getItem("chooseStageNameLeads") ? storage.getItem("chooseStageNameLeads") : '',
-            statusName:[],
-            chooseStatusNameLeads:storage.getItem("chooseStatusNameLeads") ? Number(storage.getItem("chooseStatusNameLeads")) : '',
-            advisorList:[],
-            chooseAdvisorName:storage.getItem("chooseAdvisorName") ? storage.getItem("chooseAdvisorName") : '',
-
+            typeId: 1,
+            fromWay:2,
         };
     }
 
@@ -431,54 +189,11 @@ class List extends React.Component {
         this.componentDidMount();
         this.successMsg("导入成功")
     };
-
-    onChange(key, value) {
-        this.setState({
-            cellphone: value
-        });
-        window.sessionStorage.setItem("cellphone",value);
-    }
-
-    pageChange(currentPage){
-        console.log(currentPage);
-        this.state.currentPage = currentPage;
-        window.sessionStorage.setItem("leadCurrentPage",currentPage);
-        // this.setState({currentPage:currentPage});
-        this.componentDidMount();
-    }
-
-    sizeChange(pageSize){
-        console.log(pageSize);
-        this.state.pageSize = pageSize;
-        window.sessionStorage.setItem("pageSize",pageSize);
-        this.componentDidMount();
-    }
-
     exportAction() {
         ajaxFile('/mkt/leads/export.do',{orgId: this.state.group.id,fromWay:2,
             isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0)})
     };
-    chooseStageSearch(chooseStageNameLeads){
-        // debugger;
-        this.state.chooseStageNameLeads = chooseStageNameLeads;
-        this.state.currentPage = 1;
-        window.sessionStorage.setItem("chooseStageNameLeads",chooseStageNameLeads);
-        this.componentDidMount();
-    }
-    chooseStatusSearch(chooseStatusNameLeads){
-        // debugger;
-        this.state.chooseStatusNameLeads = chooseStatusNameLeads;
-        window.sessionStorage.setItem("chooseStatusNameLeads",chooseStatusNameLeads);
-        this.state.currentPage = 1;
-        this.componentDidMount();
-    }
-    chooseAdvisorSearch(chooseAdvisorName){
-        // debugger;
-        this.state.chooseAdvisorName = chooseAdvisorName;
-        window.sessionStorage.setItem("chooseAdvisorName",chooseAdvisorName);
-        this.state.currentPage = 1;
-        this.componentDidMount();
-    }
+
     /**
      * 列表选择
      * @param value
@@ -579,57 +294,13 @@ class List extends React.Component {
                         assignParams={this.state.chooseRows}
                     />
                 </h5>
-                <div id="main" className="main p-3">
-                    <Progress isAnimating={this.state.isAnimating}/>
-                    {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <Input placeholder="请输入手机号"
-                           className={"leadlist_search"}
-                           value={this.state.cellphone}
-                           style={{width: '20%'}}
-                           onChange={this.onChange.bind(this, 'cellphone')}
-                           append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
-                            />
-                    <Select value={this.state.chooseStageNameLeads} placeholder="请选择阶段" clearable={true} onChange={this.chooseStageSearch} className={"leftMargin"}>
-                        {
-                            this.state.stageName.map(el => {
-                                return <Select.Option key={el.id} label={el.name} value={el.id} />
-                            })
-                        }
-                    </Select>
-                    <Select value={this.state.chooseStatusNameLeads} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch} className={"leftMargin"}>
-                        {
-                            this.state.statusName.map(el => {
-                                return <Select.Option key={el.id} label={el.name} value={el.id} />
-                            })
-                        }
-                    </Select>
-                    <Select value={this.state.chooseAdvisorName} placeholder="请选择所属用户" clearable={true} onChange={this.chooseAdvisorSearch} className={"leftMargin"}>
-                        {
-                            this.state.advisorList ? this.state.advisorList.map(el => {
-                                return <Select.Option key={el.cId} label={el.cRealName} value={el.cId} />
-                            }) : null
-                        }
-                    </Select>
-                    {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
-                    <Table
-                        style={{width: '100%',"marginBottom":"30px"}}
-                        columns={this.state.columns}
-                        data={this.state.list}
-                        border={true}
-                        fit={false}
-                        height='80%'
-                        onSelectChange={(selection) => this.selectRow(selection) }
-                    />
-                    <Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={this.state.totalCount}
-                                pageSizes={[10, 50, 100]}
-                                pageSize={this.state.pageSize}
-                                currentPage={this.state.currentPage}
-                                pageCount={this.state.totalPage}
-                                className={"page_bottom"}
-                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
-                </div>
+                <LeadsList pathName={this.props.location.pathname}
+                           commands={this.props.commands}
+                           group={this.state.group}
+                           accept={this.goToDetails}
+                           fromWay={this.state.fromWay}
+                           typeId={this.state.typeId}
+                />
             </div>
         )
     }

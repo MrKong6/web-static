@@ -184,8 +184,11 @@ class List extends React.Component {
         }*/
         let that = this;
         return (
-            <div>
-                <Button type="text" style={{"marginLeft":"26px"}} onClick={this.showDialog.bind(this)}><i className="el-icon-plus el-icon-right"></i> &nbsp;&nbsp;新增沟通记录</Button>
+            <div style={{"padding":"20px"}}>
+                <div>
+                    <label className="fontTitle">沟通记录</label>
+                    <Button type="text" style={{"marginLeft":"50%"}} onClick={this.showDialog.bind(this)}><i className="el-icon-plus el-icon-right"></i> &nbsp;&nbsp;新增沟通记录</Button>
+                </div>
                 <VerticalTimeline  layout='1-column'>
                     {
                         this.state.list.map(item => {

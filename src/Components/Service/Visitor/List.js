@@ -17,6 +17,7 @@ import './Visitor.css'
 
 import {$} from "../../../vendor";
 import ajaxFile from "../../../utils/ajaxFile";
+import LeadsList from "../../Dic/LeadsList";
 
 class List extends React.Component {
 
@@ -26,7 +27,6 @@ class List extends React.Component {
         this.commands = this.props.commands.filter(command => (command.name === 'Add' || command.name === 'Import'|| command.name === 'Transfer'|| command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
-        // this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
         this.exportAction = this.exportAction.bind(this);
         this.assignAction = this.assignAction.bind(this);
@@ -36,173 +36,10 @@ class List extends React.Component {
             userId:this.props.profile.cId,
             list: [],
             ids: [],
-            isAnimating: true,
-            redirectToReferrer: false,
-            cellphone : storage.getItem("cellphone") ? storage.getItem("cellphone") : '',
-            chooseRows:[],
-            columns:[
-                {
-                    type: 'selection',
-                    width: 20,
-                },
-                {
-                    label: "序号",
-                    type: 'index',
-                    width: 20,
-                    fixed: 'left',
-                },
-                /*{
-                    label: "阶段",
-                    prop: "stageName",
-                    width: 150
-                },*/
-                {
-                    label: "学员姓名",
-                    prop: "student.name",
-                    width: 95,
-                    fixed: 'left',
-                    render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
-                    }
-                    /*render: function(data){
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this,data.id)} lid={data.id}>{data.student.name}</Button></span>
-                    }*/
-                },
-                {
-                    label: "创建人",
-                    prop: "creatorName",
-                    width: 100,
-                    fixed: 'left',
-                },
-                {
-                    label: "创建时间",
-                    prop: "createTime",
-                    width: 150,
-                    fixed: 'left',
-                },
-                {
-                    label: "性别",
-                    prop: "student.genderText",
-                    width: 65
-                },
-                {
-                    label: "年龄",
-                    prop: "student.age",
-                    width: 90,
-                    sortable: true
-                },
-                {
-                    label: "在读年级",
-                    prop: "student.classGrade",
-                    width: 95
-                },
-                {
-                    label: "所在学校",
-                    prop: "student.schoolName",
-                    width: 120
-                },
-                {
-                    label: "家长姓名",
-                    prop: "parent.name",
-                    width: 95,
-                    render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.parent ? row.parent.name : null}</Button></span>
-                    }
-                },
-                {
-                    label: "与学员关系",
-                    prop: "parent.relation",
-                    width: 110
-                },
-                {
-                    label: "电话号码",
-                    prop: "parent.cellphone",
-                    width: 95,
-                    className:'tabletd',
-                    render: function (data) {
-                        return <Tooltip effect="dark" content={data.parent ? data.parent.cellphone : null}
-                                        placement="top-start">
-                            {data.parent ? data.parent.cellphone : null}
-                        </Tooltip>
-                    }
-
-                },
-                {
-                    label: "微信号",
-                    prop: "parent.weichat",
-                    width: 80
-                },
-                {
-                    label: "家庭住址",
-                    prop: "parent.address",
-                    width: 95
-                },
-                {
-                    label: "课程类别",
-                    prop: "courseType",
-                    width: 95
-                },
-                {
-                    label: "课程产品",
-                    prop: "courseName",
-                    width: 95,
-                    className:'tabletd',
-                    render: function (data) {
-
-                        return <Tooltip effect="dark" content={data.courseName}
-                                        placement="top-start">
-                            {data.courseName}
-                        </Tooltip>
-                    }
-                },
-                {
-                    label: "来源",
-                    prop: "sourceName",
-                    width: 100
-                },
-                {
-                    label: "渠道",
-                    prop: "channelName",
-                    width: 120
-                },
-                {
-                    label: "状态",
-                    prop: "statusName",
-                    width: 150
-                },
-                {
-                    label: "所属组织",
-                    prop: "organizationName",
-                    width: 175,
-                    showOverflowTooltip: true,
-                },
-                {
-                    label: "所属用户",
-                    prop: "executiveName",
-                    width: 95
-                },
-                {
-                    label: "(校区)",
-                    prop: "schoolArea",
-                    width: 120
-                },
-
-            ],
-            totalPage:0,
-            currentPage:1,
-            pageSize:storage.getItem("pageSize") ? Number(storage.getItem("pageSize")) : 10,
-            totalCount:0,
-            stageName:[],
-            chooseStageName:storage.getItem("chooseStageName") ? storage.getItem("chooseStageName") : '',
-            statusName:[],
-            chooseStatusName:storage.getItem("chooseStatusName") ? Number(storage.getItem("chooseStatusName")) : '',
-            createOnRange:[],
-            createOnStart:null,
-            createOnEnd:null,
+            typeId: 4,
+            fromWay:1,
         };
-        this.chooseStageSearch = this.chooseStageSearch.bind(this);
-        this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
-        this.changeTimeSearch = this.changeTimeSearch.bind(this);
+        this.goToDetails = this.goToDetails.bind(this);
     }
 
     componentDidMount() {
@@ -404,21 +241,6 @@ class List extends React.Component {
         window.sessionStorage.setItem("cellphone",value);
     }
 
-    chooseStageSearch(chooseStageName){
-        // debugger;
-        this.state.chooseStageName = chooseStageName;
-        window.sessionStorage.setItem("chooseStageName",chooseStageName);
-        this.state.currentPage = 1;
-        this.componentDidMount();
-    }
-    chooseStatusSearch(chooseStatusName){
-        // debugger;
-        this.state.chooseStatusName = chooseStatusName;
-        window.sessionStorage.setItem("chooseStatusName",chooseStatusName);
-        this.state.currentPage = 1;
-        this.componentDidMount();
-    }
-
     /**
      * 列表选择
      * @param value
@@ -431,35 +253,6 @@ class List extends React.Component {
         this.setState({
             chooseRows: ids
         });
-    }
-
-    pageChange(currentPage){
-        console.log(currentPage);
-        this.state.currentPage = currentPage;
-        // this.setState({currentPage:currentPage});
-        this.componentDidMount();
-    }
-
-    sizeChange(pageSize){
-        console.log(pageSize);
-        this.state.pageSize = pageSize;
-        this.state.currentPage = 1;
-        window.sessionStorage.setItem("pageSize",pageSize);
-        this.componentDidMount();
-    }
-    //时间搜索
-    changeTimeSearch(data){
-        if(data){
-            this.state.createOnStart = data[0].getTime();
-            this.state.createOnEnd = data[1].getTime();
-            this.setState({createOnRange:data})
-        }else{
-            this.state.createOnStart = null;
-            this.state.createOnEnd = null;
-            this.setState({createOnRange:null})
-        }
-
-        this.componentDidMount();
     }
 
     render() {
@@ -495,57 +288,13 @@ class List extends React.Component {
                         /*importAction={uploadConfig}*/
                     />
                 </h5>
-                <div id="main" className="main p-3">
-                    <Progress isAnimating={this.state.isAnimating}/>
-                    {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
-                    <div class="row">
-                        <div class="col-3">
-                            <Input placeholder="请输入手机号"
-                                   className={"leadlist_search"}
-                                   value={this.state.cellphone}
-                                   onChange={this.onChange.bind(this, 'cellphone')}
-                                   append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
-                            />
-                        </div>
-                        <div class="col-2">
-                            <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch}>
-                                {
-                                    this.state.statusName.map(el => {
-                                        return <Select.Option key={el.id} label={el.name} value={el.id} />
-                                    })
-                                }
-                            </Select>
-                        </div>
-                        <div class="col-3">
-                            <DateRangePicker
-                                value={this.state.createOnRange}
-                                placeholder="选择创建日期范围"
-                                onChange={this.changeTimeSearch}
-                            />
-                        </div>
-                    </div>
-
-                    {/*append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}*/}
-                    <Table
-                        style={{width: '100%',"margin-bottom":"30px"}}
-                        columns={this.state.columns}
-                        data={this.state.list}
-                        border={true}
-                        fit={false}
-                        onSelectChange={(selection) => this.selectRow(selection) }
-                        height='80%'
-                    />
-                    <Pagination layout="total, sizes, prev, pager, next, jumper"
-                                total={this.state.totalCount}
-                                pageSizes={[10, 50, 100]}
-                                pageSize={this.state.pageSize}
-                                currentPage={this.state.currentPage}
-                                pageCount={this.state.totalPage}
-                                className={"page_bottom"}
-                                onCurrentChange={(currentPage) => this.pageChange(currentPage)}
-                                onSizeChange={(pageSize) => this.sizeChange(pageSize)}
-                    />
-                </div>
+                <LeadsList pathName={this.props.location.pathname}
+                           commands={this.props.commands}
+                           group={this.state.group}
+                           accept={this.goToDetails}
+                           fromWay={this.state.fromWay}
+                           typeId={this.state.typeId}
+                />
             </div>
         )
     }
