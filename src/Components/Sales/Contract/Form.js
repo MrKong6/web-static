@@ -54,7 +54,7 @@ class Form extends React.Component {
                 let contractAllStatus = await ajax('/service/contract/contractAllStatus.do');
                 let classAllType = await ajax('/academy/class/classType.do');
                 let classList = await ajax('/academy/class/getClassShortList.do',{statusId:4,orgId:this.state.group.id});
-                let data = null,oneDate = null,oneAmount = null;
+                let data = null,oneDate = null,oneAmount = null, moneyList = [];
                 classList = classList.data;
                 let courseInfo = {},readCourse = false;
 
@@ -69,10 +69,9 @@ class Form extends React.Component {
                             if (item.id) {
                                 item.clsName = "cls" + item.periodNum;
                                 item.name = item.periodNum;
-                                // item.ttt = item.amount;
-                                // item.amount=null;
                             }
                         });
+                        moneyList = data.list;
                     }
                 } else {
                     //获取课程信息
@@ -81,6 +80,16 @@ class Form extends React.Component {
                         if(courseInfo.data){
                             courseInfo = courseInfo.data;
                             readCourse = true;
+                        }
+                        if(courseInfo.fields && courseInfo.fields.length > 0){
+                            //期数
+                            courseInfo.fields.map(item => {
+                                item.clsName1="cls1"+item.periodNum;
+                                item.clsName2="cls2"+item.periodNum;
+                                item.clsName3="cls3"+item.periodNum;
+                                item.clsName4="cls4"+item.periodNum;
+                            });
+                            moneyList = courseInfo.fields;
                         }
                     }
                     data = {
@@ -103,15 +112,15 @@ class Form extends React.Component {
 
                 const birthday = new Date(data.stuBirthday);
                 const startDate = data.startDate ? new Date(data.startDate) : null;
-                const age = calculateAge(birthday);
-                data.age = age;
-
+                if(!data.age){
+                    const age = calculateAge(birthday);
+                    data.age = age;
+                }
                 this.setState({
                     option: {relation, gender},
                     data,
                     birthday,
-                    age,
-                    moneyList: data.list ? data.list : [],
+                    age: data.age,
                     oneAmount,
                     oneDate,
                     contractAllStatus,
@@ -120,7 +129,11 @@ class Form extends React.Component {
                     startDate,
                     typeId: data ? data.typeId : null,
                     contractStatus: data ? data.contractStatus : null,
-                    readCourse
+                    readCourse,
+                    moneyList,
+                    typeId: data.typeId + '',
+                    classId: data.classId,
+                    contractStatus: data.contractStatus
                 }, () => {
                     const keys = Object.keys(data);
 
@@ -133,7 +146,7 @@ class Form extends React.Component {
                             }
                         }
                     });
-                    if(courseInfo){
+                    if(courseInfo && courseInfo.classHour){
                         $("#course").hide();
                         $("#courseType").hide();
                         $("#courseRead").show();
@@ -145,6 +158,19 @@ class Form extends React.Component {
                         this.form["oriPrice"].value = courseInfo.amount;
                         this.form["courseTypeName"].value = courseInfo.courseType;
                         this.form["courseName"].value = courseInfo.name;
+                    }else{
+                        $("#course").show();
+                        $("#courseType").show();
+                        $("#courseRead").hide();
+                        $("#courseTypeRead").hide();
+                    }
+                    if (this.props.isEditor && data.list &&data.list.length > 0) {
+                        data.list.map(item => {
+                            if (item.id) {
+                                item.clsName = "cls" + item.periodNum;
+                                item.name = item.periodNum;
+                            }
+                        });
                     }
                 });
             } catch (err) {
@@ -207,10 +233,10 @@ class Form extends React.Component {
         //付费信息
         if(this.state.moneyList){
             this.state.moneyList.map(item => {
-                item.thisAmount = this.form[item.clsName4].value;
-                item.discount = this.form[item.clsName3].value;
-                item.otherFee = this.form[item.clsName2].value;
-                item.bookFee = this.form[item.clsName1].value;
+                item.thisAmount = this.form[item.clsName4].value ? this.form[item.clsName4].value : 0;
+                item.discount = this.form[item.clsName3].value ? this.form[item.clsName3].value : 0;
+                item.otherFee = this.form[item.clsName2].value ? this.form[item.clsName2].value : 0;
+                item.bookFee = this.form[item.clsName1].value ? this.form[item.clsName1].value : 0;
             });
         }
 
@@ -230,12 +256,9 @@ class Form extends React.Component {
         query.listStr=JSON.stringify(this.state.moneyList);
         query.stuBirthday = this.state.birthday;
         query.startDate = this.state.startDate;
-        if(this.state.readCourse){
-            query.courseType = this.state.data.courseTypeId;
-        }else{
-            query.courseType = this.form.courseTypeId.options[this.form.courseTypeName.selectedIndex].text;
-            query.courseName = this.form.courseId.options[this.form.courseId.selectedIndex].text;
-        }
+        query.contractStatus = this.state.contractStatus;
+        query.classId = this.state.classId;
+
         query.courseId = this.state.data.courseId;
 
         return query;
@@ -255,7 +278,13 @@ class Form extends React.Component {
     }
 
     changeClass(value){
-
+        this.state.classId = value;
+        this.setState({classId:value});
+    }
+    //更改合同状态
+    changeStatus(value){
+        this.state.contractStatus = value;
+        this.setState({contractStatus:value});
     }
 
     changeCourse(children,data){
@@ -265,10 +294,12 @@ class Form extends React.Component {
         if(data){
             // console.log(data);
             const keys = Object.keys(data);
-            this.form['oriPrice'].value = data['amount'] ? data['amount'] : 0;
+            if(this.form['oriPrice']){
+                this.form['oriPrice'].value = data['amount'] ? data['amount'] : 0;
+            }
             this.state.data.courseId = data.id;
             keys.map(key => {
-                if (this.form[key]) {
+                if (this.form && this.form[key]) {
                     if (key === 'startDate' || key === 'endDate') {
                         this.form[key].value = fmtDate(data[key]);
                     } else {
@@ -471,10 +502,10 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>合同状态
                                                 </label>
                                                 <div className="col-7">
-                                                    <Select value={this.state.contractStatus} placeholder="请选择">
+                                                    <Select value={this.state.contractStatus} placeholder="请选择" onChange={this.changeStatus.bind(this)}>
                                                         {
                                                             this.state.contractAllStatus ? this.state.contractAllStatus.map(el => {
-                                                                return <Select.Option key={el.id} label={el.name} value={el.id} />
+                                                                return <Select.Option key={el.code} label={el.name} value={el.code} />
                                                             }) : null
                                                         }
                                                     </Select>
@@ -654,7 +685,7 @@ class Form extends React.Component {
                                                 </label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="cRealname"
-                                                           required={true} value={this.state.profiles && this.state.profiles.cRealname ? this.state.profiles.cRealname : ''} />
+                                                           required={true} value={this.state.profiles && this.state.profiles.cRealname ? this.state.profiles.cRealname : this.state.data.creatorName} />
                                                 </div>
                                             </div>
                                             <div className="form-group row">

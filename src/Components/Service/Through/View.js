@@ -197,7 +197,7 @@ class View extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">{this.state.data.stuName}</p>
+                    <p className="d-inline text-muted">{this.state.data ? this.state.data.code : ''}</p>
 
                     <div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
@@ -336,7 +336,7 @@ class View extends React.Component {
                             <li className="breadcrumb-item"><Link
                                 to={{
                                     pathname: `/home/service/through/student/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
+                                    state: {stuName: this.state.data.code}
                                 }}>体验课学员信息</Link></li>
                         </ol>
                     </nav>

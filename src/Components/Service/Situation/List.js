@@ -64,6 +64,15 @@ class List extends React.Component {
         mainSize();
     }
 
+    shouldComponentUpdate(nextProps, nextState) {
+        if(nextProps.changedCrmGroup.id != this.props.changedCrmGroup.id){
+            this.state.group = nextProps.changedCrmGroup;
+            this.setState(nextProps.changedCrmGroup);
+            this.componentDidMount();
+        }
+        return true;
+    }
+
     componentWillUnmount() {
         if (this.tipsContainer) {
             document.body.removeChild(this.tipsContainer);

@@ -249,13 +249,35 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-2 col-form-label font-weight-bold">时间</label>
+                                                <label className="col-2 col-form-label font-weight-bold">开始时间</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
                                                         value={formatWithTime(this.state.data.throughTime)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">结束时间</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={formatWithTime(this.state.data.throughEndTime)}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">教室</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.room}
                                                     />
                                                 </div>
                                             </div>
@@ -292,6 +314,17 @@ class View extends React.Component {
                                                     />
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+                                                <label className="col-2 col-form-label font-weight-bold">体验课人数</label>
+                                                <div className="col-7">
+                                                    <input
+                                                        type="text"
+                                                        readOnly={true}
+                                                        className="form-control-plaintext"
+                                                        value={this.state.data.num}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -303,7 +336,7 @@ class View extends React.Component {
                             <li className="breadcrumb-item active">体验课基本信息</li>
                             <li className="breadcrumb-item"><Link
                                 to={{
-                                    pathname: `/home/service/through/student/${this.state.id}`,
+                                    pathname: `/home/education/through/student/${this.state.id}`,
                                     state: {stuName: this.state.data.name}
                                 }}>体验课学员信息</Link></li>
                         </ol>

@@ -111,7 +111,7 @@ class Create extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/service/through"/>
+                <Redirect to="/home/education/through"/>
             )
         }
 

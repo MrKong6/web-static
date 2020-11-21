@@ -99,8 +99,10 @@ class Form extends React.Component {
     let adminAndManger = [];
     let tempRoles = [];
 
-    for (let i = 0; i < this.form.rank.length; i++) {
-      adminAndManger.push(this.form.rank[i].value)
+    if(this.form.rank){
+        for (let i = 0; i < this.form.rank.length; i++) {
+            adminAndManger.push(this.form.rank[i].value)
+        }
     }
 
     if (evt.target.getAttribute('type') === 'radio') {

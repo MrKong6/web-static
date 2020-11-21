@@ -24,6 +24,7 @@ class List extends React.Component {
         this.addAction = this.addAction.bind(this);
         this.chooseStatusSearch = this.chooseStatusSearch.bind(this);
         this.rowClassName = this.rowClassName.bind(this);
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],

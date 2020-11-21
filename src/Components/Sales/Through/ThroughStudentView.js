@@ -103,11 +103,18 @@ class ThroughStudentView extends React.Component {
                     prop: "parent.cellphone",
                 },
                 {
+                    label: "状态",
+                    prop: "throughStateName",
+                },
+                {
                     label: "操作",
-                    width: 120,
+                    width: 150,
                     fixed: 'right',
                     render: (row, column, index)=>{
-                        return <span><Button type="danger" size="small" onClick={this.deleteRow.bind(this, row.id)}>移除</Button></span>
+                        return <span>
+                            <Button type="info" size="small" onClick={this.signRow.bind(this, row.id)}>签到</Button>
+                            <Button type="danger" size="small" onClick={this.deleteRow.bind(this, row.id)}>移除</Button>
+                        </span>
                     }
                 }
             ],
@@ -184,7 +191,7 @@ class ThroughStudentView extends React.Component {
     goToDetails(id) {
         this.props.history.push(`/home/sales/oppor/${id}`);
     }
-
+    //移除
     deleteRow(columnId){
         MessageBox.confirm('此操作将从体验课移除该学员, 是否继续?', '提示', {
             type: 'warning'
@@ -208,6 +215,22 @@ class ThroughStudentView extends React.Component {
                 }
             }
         };
+    }
+    //签到
+    signRow(columnId){
+        const request = async () => {
+            try {
+                let list = await ajax('/sales/oppor/signInThAssign.do', {id:columnId,throughId:this.state.id,type:2,orgId:this.state.group.id});
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            }
+        };
+        request();
     }
 
     render() {

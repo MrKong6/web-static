@@ -8,7 +8,7 @@ import isPhone from "../../utils/isPhone";
 import SCHOOLPAL_CONFIG from "../../utils/config";
 import ReactDOM from "react-dom";
 import './Drawer.css'
-import {Button} from "element-react";
+import {Button, Message} from "element-react";
 
 const GroupDialogBBtn = ({groupName, action}) => (
     <div>
@@ -168,12 +168,19 @@ class Drawer extends React.Component {
         this.group.dialog.modal('show');
     }
 
-    acceptGroupDialog(selected) {
+    //设置全局组织信息
+    acceptGroupDialog(selected, orgList) {
+        console.log(selected);
         this.setState({
             groupId: selected.id,
             groupName: selected.name
         });
+        window.sessionStorage.setItem("orgId", selected.id);
 
+        $("#orgName").empty();
+        orgList.map(item => {
+            $("#orgName").append("<option value='"+item.id+"'>"+item.name+"</option>");
+        });
         this.props.changed(selected)
     }
     //改变功能菜单

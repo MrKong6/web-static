@@ -18,6 +18,7 @@ import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituati
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '5-4'));
     groupCommands = groupCommands[0];
+    debugger
     return (
         <Switch>
             <Route path={`${match.url}/situation/changeClassAdd/:contractId`} render={(props) => (

@@ -1,7 +1,7 @@
 import React from 'react'
 import {$} from "../../vendor";
 
-import groupProcess from "../../utils/groupProcess";
+import groupProcess, {getSonListByGroupId, sonListByGroup} from "../../utils/groupProcess";
 import ajax from "../../utils/ajax";
 
 const Group = ({list}) => {
@@ -149,8 +149,11 @@ class DialogGroup extends React.Component {
     if (this.state.selected === null) {
       return;
     }
-
-    this.props.accept(this.state.selected);
+    let dataList = [];
+    let dataByOrgId = [];
+    dataByOrgId.push(getSonListByGroupId(this.state.list, this.state.selected.id));
+    sonListByGroup(dataByOrgId, dataList);
+    this.props.accept(this.state.selected, dataList);
     this.dialog.modal('hide');
   }
 

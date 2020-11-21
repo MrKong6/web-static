@@ -72,7 +72,6 @@ const VIEW_INPUT_CSS_NAME = "col-7 txt";
 
 class View extends React.Component {
     constructor(props) {
-        debugger
         super(props);
         this.title = fmtTitle(this.props.pathName);
         this.commands = this.props.commands;
@@ -239,7 +238,7 @@ class View extends React.Component {
         const request = async () => {
             try {
                 await ajax('/sales/oppor/delLead.do', {id: this.state.editVo.id});
-                this.queryOpporInfo();
+                this.props.back();
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -256,34 +255,89 @@ class View extends React.Component {
 
     SignAction() {
         this.state.data.courseId = this.state.twoTab.id;
-        this.props.SignAction(this.state.data,this.state.id);
+        this.props.SignAction(this.state.data,this.state.editVo.id);
     }
 
     //机会、线索 - 分配给弹框展示
     assignAction() {
-        const defaults = {
-            groupId: this.state.group.id,
-            groupName: this.state.group.name,
-            userId: this.state.data.executiveId,
-            userName: this.state.data.executiveName,
-        };
-        this.userContainer = document.createElement('div');
-        ReactDOM.render(
-            <DialogUser
-                accept={this.assignAccept}
-                title={this.state.data.name}
-                container={this.userContainer}
-                defaults={defaults}
-                from={this.props.location}
-                path="/sales/oppor/listAssignableUsers.do"
-                ref={(dom) => {
-                    this.user = dom
-                }}
-            />,
-            document.body.appendChild(this.userContainer)
-        );
+        if(this.state.typeId == 4){
+            const defaults = {
+                groupId: this.state.group.id,
+                groupName: this.state.group.name,
+                userId: null,
+                userName: null,
+                type: 1
+            };
+            this.userContainer = document.createElement('div');
+            ReactDOM.render(
+                <DialogUser
+                    accept={this.assignAcceptOppor}
+                    title="转移到"
+                    container={this.userContainer}
+                    defaults={defaults}
+                    from={this.props.location}
+                    typeName="4"
+                    path="/mkt/leads/listAssignableUsers.do"
+                    ref={(dom) => {
+                        this.user = dom
+                    }}
+                />,
+                document.body.appendChild(this.userContainer)
+            );
 
-        this.user.dialog.modal('show');
+            this.user.dialog.modal('show');
+        }else{
+            const defaults = {
+                groupId: this.state.group.id,
+                groupName: this.state.group.name,
+                userId: this.state.data.executiveId,
+                userName: this.state.data.executiveName,
+            };
+            this.userContainer = document.createElement('div');
+            ReactDOM.render(
+                <DialogUser
+                    accept={this.assignAccept}
+                    title={this.state.data.name}
+                    container={this.userContainer}
+                    defaults={defaults}
+                    from={this.props.location}
+                    path="/sales/oppor/listAssignableUsers.do"
+                    ref={(dom) => {
+                        this.user = dom
+                    }}
+                />,
+                document.body.appendChild(this.userContainer)
+            );
+
+            this.user.dialog.modal('show');
+        }
+    }
+    /**
+     * 转移给确认
+     * @param selected
+     */
+    assignAcceptOppor(selected) {
+        const request = async () => {
+            try {
+                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: (selected.typeId ? selected.typeId : 1)};
+                await ajax('/service/visitor/batchAssign.do', {"assignVo":JSON.stringify(param)});
+                Message({
+                    message: "已转移",
+                    type: 'info'
+                });
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+
+        request()
     }
     //机会、线索 -分配给回调函数
     assignAccept(selected) {
@@ -389,7 +443,7 @@ class View extends React.Component {
     thActionAccept(selected) {
         const request = async () => {
             try {
-                await ajax('/sales/oppor/thAssign.do', {id: this.state.id, throughId: selected.throughId, type: this.state.typeId});
+                await ajax('/sales/oppor/thAssign.do', {id: this.state.editVo.id, throughId: selected.throughId, type: 1, orgId: this.state.group.id});
                 Message({
                     message: "成功",
                     type: 'info'
@@ -528,6 +582,14 @@ class View extends React.Component {
             $("#addView").show();
             $("#editView").hide();
         }else{
+            //若是访客 到了机会阶段则不能编辑
+            if(this.state.typeId != this.state.editVo.typeId){
+                Message({
+                    type: 'error',
+                    message: '该条记录已无法编辑'
+                });
+                return;
+            }
             //编辑弹出框
             $("#addView").hide();
             $("#editView").show();
@@ -908,7 +970,7 @@ class View extends React.Component {
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div className="col">
-                                                                                                <div className="form-group row">
+                                                                                                {/*<div className="form-group row">
                                                                                                     <label className="col-5 col-form-label font-weight-bold">类型</label>
                                                                                                     <div className="col-7">
                                                                                                         <input
@@ -918,7 +980,7 @@ class View extends React.Component {
                                                                                                             value={vo.leadsInfo ? config.TYPE_ID[vo.leadsInfo.typeId] : ''}
                                                                                                         />
                                                                                                     </div>
-                                                                                                </div>
+                                                                                                </div>*/}
                                                                                                 <div className="form-group row">
                                                                                                     <label className="col-5 col-form-label font-weight-bold">阶段</label>
                                                                                                     <div className="col-7">
@@ -987,6 +1049,14 @@ class View extends React.Component {
                                                                                                             className="form-control-plaintext"
                                                                                                             value={vo.leadsInfo ? formatWithTime(vo.leadsInfo.createTime) : ''}
                                                                                                         />
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div className="form-group row">
+                                                                                                    <label className="col-5 col-form-label">备注</label>
+                                                                                                    <div className="col-7">
+                                                                                                        <p className="form-control-plaintext">
+                                                                                                            {vo.leadsInfo ? vo.leadsInfo.note : ''}
+                                                                                                        </p>
                                                                                                     </div>
                                                                                                 </div>
                                                                                             </div>

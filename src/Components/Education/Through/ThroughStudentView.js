@@ -23,7 +23,7 @@ const NextBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/through/${ids[curIndex + 1]}`,
+                pathname: `/home/education/through/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -42,7 +42,7 @@ const PrevBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/through/${ids[curIndex - 1]}`,
+                pathname: `/home/education/through/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -75,7 +75,7 @@ class ThroughStudentView extends React.Component {
                     prop: "student.name",
                     sortable: true,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.student.id)}>{row.student.name}</Button></span>
                     }
                 },
                 {
@@ -117,7 +117,7 @@ class ThroughStudentView extends React.Component {
                 let list = await ajax('/sales/oppor/list.do', {orgId: this.state.group.id, typeId: 2,fromWay:3,
                     pageNum:this.state.currentPage,pageSize:this.state.pageSize,cellphone:this.state.cellphone,
                     isIn:((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0),
-                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName});
+                    stageId:this.state.chooseStageName,statusId:this.state.chooseStatusName,throughId:this.state.id,through:1});
                 list.data.map(item => {
                     if(item.createTime != null){
                         item.createTime = formatWithTime(item.createTime);
@@ -187,7 +187,7 @@ class ThroughStudentView extends React.Component {
 
         if (this.state.redirectToList) {
             return (
-                <Redirect to="/home/service/through"/>
+                <Redirect to="/home/education/through"/>
             )
         }
 
@@ -239,7 +239,7 @@ class ThroughStudentView extends React.Component {
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
                             <li className="breadcrumb-item active"><Link
-                                to={`/home/service/through/${this.state.id}`}>体验课基本信息</Link></li>
+                                to={`/home/education/through/${this.state.id}`}>体验课基本信息</Link></li>
                             <li className="breadcrumb-item">体验课学员信息</li>
                         </ol>
                     </nav>

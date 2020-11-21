@@ -79,9 +79,14 @@ class Create extends React.Component {
         query.endDate = this.form.state.endTime ? this.form.state.endTime : null;
         query.courseStartDate = this.form.state.courseStartTime ? this.form.state.courseStartTime : null;
         query.courseEndDate = this.form.state.courseEndTime ? this.form.state.courseEndTime : null;
-        query.orgId = this.state.group.id;
+        if(!query.orgId){
+            query.orgId = this.state.group.id;
+        }
         query.mainTeacher = this.form.state.mainTeacherIds.toString();
         query.createOn = null;
+        if(window.sessionStorage.getItem("orgInfo")){
+            query.orgId = window.sessionStorage.getItem("orgId");
+        }
 
         this.setState({isAnimating: true});
 

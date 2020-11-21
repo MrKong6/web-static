@@ -549,7 +549,7 @@ class AssignForm extends React.Component {
                                     courseName: cou.courseType + '(' + cou.name + ')',
                                     teacherId: [],
                                     registrar: [],
-                                    teacherList: this.state.teacherList.filter(item => {
+                                    teacherList: this.state.teacherList ? this.state.teacherList.filter(item => {
                                         if(item.courseId){
                                             let judge = false;
                                             item.courseName.split(",").map(sp => {
@@ -559,7 +559,7 @@ class AssignForm extends React.Component {
                                             });
                                             return judge;
                                         }
-                                    })
+                                    }) : []
                                 });
                             });
                         }

@@ -480,7 +480,7 @@ class View extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                                                <label className="col-5 col-form-label font-weight-bold">创建用户</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"

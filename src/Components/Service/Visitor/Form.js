@@ -175,9 +175,6 @@ class Form extends React.Component {
                 query[this.form[i].name] = this.form[i].value;
             }
         }
-
-
-
         return query;
     }
 

@@ -53,6 +53,7 @@ import WechatOrder from "../Setting/WechatOrder/WechatOrder";
 import WechatCourseStage from "../Setting/WechatCourseStage/WechatCourseStage";
 import WechatIdxImage from "../Setting/WechatIdxImage/WechatIdxImage";
 import WechatUser from "../Setting/WechatUser/WechatUser";
+import {getSonListByGroupId, sonListByGroup} from "../../utils/groupProcess";
 
 class Home extends React.Component {
     constructor(props) {
@@ -71,7 +72,9 @@ class Home extends React.Component {
         const request = async () => {
             try {
                 let profile = await ajax('/user/profile.do');
+
                 const fmtProfile = profileProcess(profile);
+                window.sessionStorage.setItem("orgId", fmtProfile.profile.org.cId);
                 this.setState({
                     profile: fmtProfile,
                     group: {

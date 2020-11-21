@@ -38,6 +38,7 @@ class List extends React.Component {
         this.exportAction = this.exportAction.bind(this);
         this.addAction = this.addAction.bind(this);
         this.assignAction = this.assignAction.bind(this);
+        this.selectRow = this.selectRow.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -45,6 +46,7 @@ class List extends React.Component {
             ids: [],
             typeId: 1,
             fromWay:2,
+            isIn: ((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0),
         };
     }
 
@@ -300,6 +302,8 @@ class List extends React.Component {
                            accept={this.goToDetails}
                            fromWay={this.state.fromWay}
                            typeId={this.state.typeId}
+                           selectRow={this.selectRow}
+                           isIn={this.state.isIn}
                 />
             </div>
         )

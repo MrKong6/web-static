@@ -303,7 +303,7 @@ class List extends React.Component {
             fromWay: this.props.fromWay, //机会3
             courseTypeList:[],
             courseTypeId: null, //课程类别筛选条件
-            isIn: ((this.props.pathName.indexOf('/home/sales/opporpublic') == -1 || this.props.pathName.indexOf('/home/sales/leadspublic') == -1)  ? 1 : 0)
+            isIn: this.props.isIn
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.chooseStageSearch = this.chooseStageSearch.bind(this);
@@ -378,6 +378,14 @@ class List extends React.Component {
             }
         };
         request();
+    }
+    shouldComponentUpdate(nextProps, nextState) {
+        debugger
+        if(nextProps.group.id != this.props.group.id){
+            this.state.group = nextProps.group;
+            this.loadData();
+        }
+        return true;
     }
     //加载下拉列表
     loadFilter(){
@@ -487,13 +495,7 @@ class List extends React.Component {
      * @param value
      */
     selectRow(value) {
-        var ids = [];
-        if(value){
-            value.map((leads) => (ids.push(leads.id)));
-        }
-        this.setState({
-            chooseRows: ids
-        });
+        this.props.selectRow(value);
     }
 
     //选择显示那个

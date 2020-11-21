@@ -154,7 +154,7 @@ class View extends React.Component {
     back(){
         let link = "/home/service/visitor";
         if (this.props.location.pathname.indexOf("visitorin") != -1) {
-            link = "/home/service/visitorpublic";
+            link = "/home/service/visitorin";
         }
         this.props.history.push(link);
     }

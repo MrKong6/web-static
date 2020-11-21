@@ -10,7 +10,7 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import formatWithTime from "../../../utils/fmtDate";
-import {Button, Pagination, Table} from "element-react";
+import {Button, Message, MessageBox, Pagination, Table} from "element-react";
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
@@ -75,7 +75,7 @@ class ThroughStudentView extends React.Component {
                     prop: "student.name",
                     sortable: true,
                     render: (row, column, data)=>{
-                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.student.name}</Button></span>
+                        return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.student.id)}>{row.student.name}</Button></span>
                     }
                 },
                 {
@@ -101,6 +101,20 @@ class ThroughStudentView extends React.Component {
                     label: "电话号码",
                     prop: "parent.cellphone",
                 },
+                {
+                    label: "状态",
+                    prop: "throughStateName",
+                },
+                {
+                    label: "操作",
+                    width: 150,
+                    fixed: 'right',
+                    render: (row, column, index)=>{
+                        return <span>
+                            <Button type="danger" size="small" onClick={this.deleteRow.bind(this, row.id)}>移除</Button>
+                        </span>
+                    }
+                }
             ],
             totalPage:0,
             currentPage:1,
@@ -188,6 +202,32 @@ class ThroughStudentView extends React.Component {
         console.log(pageSize);
         this.state.pageSize = pageSize;
         this.componentDidMount();
+    }
+
+    //移除
+    deleteRow(columnId){
+        MessageBox.confirm('此操作将从体验课移除该学员, 是否继续?', '提示', {
+            type: 'warning'
+        }).then(() => {
+            request();
+        }).catch(() => {
+            Message({
+                type: 'info',
+                message: '已取消删除'
+            });
+        });
+        const request = async () => {
+            try {
+                let list = await ajax('/sales/oppor/removeThAssign.do', {id:columnId,throughId:this.state.id,type:2});
+                this.componentDidMount();
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            }
+        };
     }
 
     render() {

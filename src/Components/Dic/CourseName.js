@@ -43,7 +43,7 @@ class CourseName extends React.Component{
         const request = async () => {
 
             try {
-                let list = await ajax('/course/type/listAll.do',{courseType:this.state.typeId ? this.state.typeId : 0});
+                let list = await ajax('/course/type/listAll.do',{courseType:this.state.typeId ? this.state.typeId : 0, orgId: window.sessionStorage.getItem("orgId")});
                 this.state.list = list.data.items ? list.data.items : [];
                 this.setState({list : list.data.items});
                 this.changeFirstCourse((list.data.items && list.data.items.length) > 0 ? list.data.items[0].id : null);

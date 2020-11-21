@@ -31,6 +31,7 @@ class List extends React.Component {
         this.exportAction = this.exportAction.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
+        this.selectRow = this.selectRow.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             userId:this.props.profile.cId,
@@ -38,6 +39,7 @@ class List extends React.Component {
             ids: [],
             typeId: 4,
             fromWay:1,
+            isIn: ((this.props.history.location.pathname.indexOf('/home/service/visitorin') == -1)  ? 0 : 1),
         };
         this.goToDetails = this.goToDetails.bind(this);
     }
@@ -165,7 +167,6 @@ class List extends React.Component {
      * 转移给
      */
     assignAction() {
-        console.log(this.state.chooseRows);
         const defaults = {
             groupId: this.state.group.id,
             groupName: this.state.group.name,
@@ -246,6 +247,7 @@ class List extends React.Component {
      * @param value
      */
     selectRow(value) {
+        debugger
         var ids = [];
         if(value){
             value.map((leads) => (ids.push(leads.id)));
@@ -294,6 +296,8 @@ class List extends React.Component {
                            accept={this.goToDetails}
                            fromWay={this.state.fromWay}
                            typeId={this.state.typeId}
+                           selectRow={this.selectRow}
+                           isIn={this.state.isIn}
                 />
             </div>
         )

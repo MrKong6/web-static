@@ -41,18 +41,26 @@ class List extends React.Component {
             redirectToReferrer: false,
             typeId: 2,
             fromWay:3,
+            isIn: ((this.props.history.location.pathname.indexOf('/home/sales/opporpublic') == -1)  ? 1 : 0),
         };
         this.addAction = this.addAction.bind(this);
         this.assignAction = this.assignAction.bind(this);
         this.assignAccept = this.assignAccept.bind(this);
         this.exportAction = this.exportAction.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.selectRow = this.selectRow.bind(this);
     }
 
     componentDidMount() {
         mainSize()
     }
-
+    componentWillReceiveProps(nextProps) {
+        if (this.props.changedCrmGroup.id !== nextProps.changedCrmGroup.id) {
+            this.setState({
+                group: nextProps.changedCrmGroup
+            });
+        }
+    }
 
     addAction() {
         this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
@@ -97,7 +105,7 @@ class List extends React.Component {
                     message: "已重新分配",
                     type: 'info'
                 });
-                this.loadData();
+                // this.loadData();
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -130,7 +138,20 @@ class List extends React.Component {
         this.loadData();
         this.successMsg("导入成功")
     };
-
+    /**
+     * 列表选择
+     * @param value
+     */
+    selectRow(value) {
+        debugger
+        var ids = [];
+        if(value){
+            value.map((leads) => (ids.push(leads.id)));
+        }
+        this.setState({
+            chooseRows: ids
+        });
+    }
     goToDetails(data) {
         const url = `${this.props.match.url}/${data}`;
 
@@ -174,6 +195,8 @@ class List extends React.Component {
                            accept={this.goToDetails}
                            fromWay={this.state.fromWay}
                            typeId={this.state.typeId}
+                           selectRow={this.selectRow}
+                           isIn={this.state.isIn}
                 />
             </div>
         )

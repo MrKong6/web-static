@@ -64,7 +64,7 @@ class DialogUser extends React.Component {
             } catch (err) {
                 if (err.errCode === 401) {
                     this.dialog.modal('hide');
-                    this.props.replace('/login', {from: this.props.from})
+                    // this.props.replace('/login', {from: this.props.from})
                 } else {
                     this.setState({errText: `${err.errCode}: ${err.errText}`});
                 }
@@ -173,14 +173,6 @@ class DialogUser extends React.Component {
     }
 
     render() {
-        if (this.state.redirectToReferrer) {
-            return (
-                <Redirect to={{
-                    pathname: '/login',
-                    state: {from: this.props.location}
-                }}/>
-            )
-        }
         if (this.state.type && this.state.type == 1) {
             /*转移给界面*/
             return (

@@ -9,6 +9,9 @@ import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {DatePicker, Message, Select} from "element-react";
 import InputColor from 'react-input-color';
+import {getSonListByGroupId, sonListByGroup} from "../../../utils/groupProcess";
+import {$} from "../../../vendor";
+import groupProcess from "../../../utils/groupProcess";
 
 class Form extends React.Component {
     constructor(props) {
@@ -38,13 +41,24 @@ class Form extends React.Component {
         this.chooseMainTeacher = this.chooseMainTeacher.bind(this);
         this.changeCourseType = this.changeCourseType.bind(this);
         this.changeClsName = this.changeClsName.bind(this);
-
     }
 
     componentDidMount() {
         // $(".el-color-dropdown__btn").setAttribute('type',"button");
         const request = async () => {
             try {
+
+                //设置所属组织
+                let orgList = await ajax('/user/listOrgs.do');
+                //设置组织
+                let dataList = [];
+                let dataByOrgId = [];
+                dataByOrgId.push(getSonListByGroupId(groupProcess(orgList), this.state.group.id));
+                sonListByGroup(dataByOrgId, dataList);
+                $("#orgName").empty();
+                dataList.map(item => {
+                    $("#orgName").append("<option value='"+item.id+"'>"+item.name+"</option>");
+                });
 
                 /*let allClass = await ajax('/academy/class/classList.do', {orgId: this.state.group.id});*/
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
@@ -140,6 +154,10 @@ class Form extends React.Component {
                         });
                     }else{
                         this.form['classStatus'].value = '1';
+                        this.form['createOn'].value = fmtDate(new Date());
+                        this.form['crea'].value = this.state.group.cRealName;
+                        this.form['createBy'].value = this.state.group.cRealName;
+                        this.form['orgName'].value = this.state.group.name;
                     }
 
                 });
@@ -204,7 +222,6 @@ class Form extends React.Component {
     }
 
     getFormValue() {
-        console.log(this.state.chooseCourseTypes);
 
         //处理课程阶段
         let hasCourse = [], courseRange = '';
@@ -227,7 +244,6 @@ class Form extends React.Component {
                 hasCourse.push(courseTypeId);
             }
         });
-
         if (!this.form.checkValidity()) {
             this.errorMsg("请补全信息");
             return
@@ -248,6 +264,8 @@ class Form extends React.Component {
             if (this.form[i].name) {
                 if (this.form[i].name === 'startDate' || this.form[i].name === 'endDate') {
                     query[this.form[i].name] = new Date(this.form[i].value);
+                } else if(this.form[i].name === 'orgName'){
+                    query.orgId = this.form[i].value;
                 } else {
                     query[this.form[i].name] = this.form[i].value ? this.form[i].value : null;
                 }
@@ -284,22 +302,6 @@ class Form extends React.Component {
     }
 
     render() {
-
-        // if (!this.state.option || (this.props.isEditor && !this.state.data)) {
-        //   return (
-        //     <form ref={(dom) => {
-        //       this.form = dom
-        //     }}>
-        //       <div className="row justify-content-md-center">
-        //         <div className="col col-12">
-        //           <div className="card">
-        //             <div className="card-body">数据加载中...</div>
-        //           </div>
-        //         </div>
-        //       </div>
-        //     </form>
-        //   )
-        // } else {
         return (
             <form ref={(dom) => {
                 this.form = dom
@@ -572,7 +574,8 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">所属组织</label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="orgName" readOnly={true}/>
+                                                {/*<input type="text" id="orgName" className="form-control" name="orgName" readOnly={true}/>*/}
+                                                <select name="orgName" className="form-control" id="orgName"></select>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -583,7 +586,7 @@ class Form extends React.Component {
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">创建人</label>
+                                            <label className="col-5 col-form-label font-weight-bold">创建用户</label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="createBy" readOnly={true}/>
                                             </div>
