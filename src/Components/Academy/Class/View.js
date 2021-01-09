@@ -58,13 +58,15 @@ class View extends React.Component {
 
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Assign'
             && command.name !== 'Import'&& command.name !== 'Export'&& command.name !== 'ShowNormal'));
-        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6')) == false) ? 'normal' : 'none';
-        this.title = fmtTitle(this.props.location.pathname);
+        debugger
+        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1' || view.id == '5-6-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2' || view.id == '5-6-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3' || view.id == '5-6-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4' || view.id == '5-6-4')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5' || view.id == '5-6-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6' || view.id == '5-6-6')) == false) ? 'normal' : 'none';
+        let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
+        this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -72,7 +74,7 @@ class View extends React.Component {
             isAnimating: false,
             id: this.props.match.params.contractId,
             data: null,
-            ids: []
+            ids: [],
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.modAction = this.modAction.bind(this);
@@ -89,7 +91,6 @@ class View extends React.Component {
 
                 const ids = list.data.items.map((contract) => (contract.id+''));
                 this.setState({data: data.data,ids:ids});
-                console.log(data.data)
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -98,7 +99,6 @@ class View extends React.Component {
                 }
             }
         };
-
         request();
         mainSize();
     }
@@ -458,18 +458,18 @@ class View extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">所属组织</label>
+                                                <label className="col-5 col-form-label font-weight-bold">所属用户</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.orgName}
+                                                        value={this.state.data.executiveName}
                                                     />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">所属用户</label>
+                                                <label className="col-5 col-form-label font-weight-bold">所属组织</label>
                                                 <div className="col-7">
                                                     <input
                                                         type="text"

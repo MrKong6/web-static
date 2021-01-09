@@ -213,6 +213,7 @@ class Form extends React.Component {
                 }
             }
         }
+        query.orgId =  this.state.data ? this.state.data.orgId : null;
         query.classId = this.state.classId;
         return query;
     }
@@ -231,7 +232,28 @@ class Form extends React.Component {
     }
     //改变班级
     changeClass(value){
-        this.setState({classId:value});
+        let orgId = null, orgName = null;
+        this.state.classList.map(item => {
+            if(item.id == value){
+                orgName = item.orgName;
+                orgId = item.orgId;
+            }
+        });
+        //当classId清空时需要还原回去
+        if(!orgId){
+            if(this.props.isEditor){
+                orgId = this.state.data.orgId || '';
+                orgName = this.state.data.orgName || '';
+            }else{
+                orgId = this.props.apporData.orgId || '';
+                orgName = this.props.apporData.orgName || '';
+            }
+        }
+        let data = this.state.data;
+        data.orgId = orgId;
+        this.setState({classId:value,data}, ()=>{
+            this.form["orgName"].value = orgName;
+        });
     }
 
     changeCourse(children,data){

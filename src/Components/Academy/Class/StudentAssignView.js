@@ -58,7 +58,9 @@ class StudentAssignView extends React.Component {
         super(props);
 
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod'));
-        this.title = fmtTitle(this.props.location.pathname);
+        let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
+        this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
+
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,

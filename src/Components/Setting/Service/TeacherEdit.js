@@ -76,10 +76,9 @@ class Editor extends React.Component {
     }
 
     this.setState({isAnimating: true});
-    query.organizationId = this.state.group.id;
+    // query.organizationId = this.state.group.id;
     query.id = this.state.id;
     query.birthday = this.form.state.birthday ? this.form.state.birthday.getTime() : "";
-
 
       const request = async () => {
       try {

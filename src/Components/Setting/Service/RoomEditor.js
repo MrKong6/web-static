@@ -116,7 +116,7 @@ class Editor extends React.Component {
     if (this.state.isUpdated) {
       return (
         <Redirect to={{
-          pathname: `/home/setting/academy/${this.state.id}`,
+          pathname: `/home/setting/academy`,
           state: {ids: this.ids}
         }}/>
       )

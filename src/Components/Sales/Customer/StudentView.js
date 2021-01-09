@@ -61,6 +61,10 @@ class StudentView extends React.Component {
         this.second = !(this.props.sonView.filter(view => (view.id == '2-3-2')) == false) ? 'normal' : 'none';
         this.third = !(this.props.sonView.filter(view => (view.id == '2-3-3')) == false) ? 'normal' : 'none';
         this.fourth = !(this.props.sonView.filter(view => (view.id == '2-3-5')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '2-3-6')) == false) ? 'normal' : 'none';
+        this.sixth = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '2-3-7')) == false) ? 'normal' : 'none';
+        this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '2-3-8')) == false) ? 'normal' : 'none';
+
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -359,12 +363,24 @@ class StudentView extends React.Component {
                                     state: {stuName: this.state.data.name}
                                 }}>异动信息</Link>
                             </li>
-                            {/*<li className="breadcrumb-item" style={{"display":this.fourth}}>
+                            <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{
                                     pathname: `/home/sales/customer/account/${this.state.id}`,
                                     state: {stuName: this.state.data.name}
                                 }}>账户信息</Link>
-                            </li>*/}
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.sixth}}>
+                                <Link to={{
+                                    pathname: `/home/sales/customer/class/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>班级信息</Link>
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.seventh}}>
+                                <Link to={{
+                                    pathname: `/home/sales/customer/charge/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>卡券信息</Link>
+                            </li>
                         </ol>
                     </nav>
                 </div>

@@ -127,11 +127,12 @@ export default function (data) {
     console.log(hasChangeGroupBtn, menu, access, commands, profile);
     //处理三级权限  即页面中tab页面情况   如班级管理详情tab
     if(commands && commands.length > 0){
+        debugger
         let array = [];
         let sonArray = [],sonOwnClass = [],sonStudentArray = [],sonOwnStudentArray = [];
         let groupCommands,ownClass,student,ownStudent;
         commands.map(item => {
-           if(item.id == '5-4'){
+           if(item.id == '5-4' && !groupCommands){
                groupCommands = item;
            } else if(item.id == '5-4-1' || item.id == '5-4-2' || item.id == '5-4-3'|| item.id == '5-4-4'|| item.id == '5-4-5'|| item.id == '5-4-6'){
                //班级管理
@@ -142,7 +143,18 @@ export default function (data) {
                    item.commands = [];
                }
                sonArray.push(item);
-           }else if(item.id == '6-1'){
+           }else if(item.id == '5-6' && !groupCommands){
+                groupCommands = item;
+            } else if(item.id == '5-6-1' || item.id == '5-6-2' || item.id == '5-6-3'|| item.id == '5-6-4'|| item.id == '5-6-5'|| item.id == '5-6-6'){
+                //班级管理
+                if(item.commands && item.commands.length > 0){
+                    for(let j=0;j<item.commands.length;j++){
+                        groupCommands.commands.push(item.commands[j]);
+                    }
+                    item.commands = [];
+                }
+                sonArray.push(item);
+            }else if(item.id == '6-1'){
                //我的班级
                ownClass = item;
            }else if(item.id == '6-1-1' || item.id == '6-1-2' || item.id == '6-1-3'|| item.id == '6-1-4'
@@ -170,7 +182,7 @@ export default function (data) {
            }else if(item.id == '2-3'){
                //我的学员
                ownStudent = item;
-           }else if(item.id == '2-3-1' || item.id == '2-3-2' || item.id == '2-3-3'|| item.id == '2-3-4'|| item.id == '2-3-5'){
+           }else if(item.id == '2-3-1' || item.id == '2-3-2' || item.id == '2-3-3'|| item.id == '2-3-4'|| item.id == '2-3-5'|| item.id == '2-3-6'|| item.id == '2-3-7'|| item.id == '2-3-8'){
                //我的学员
                if(item.commands && item.commands.length > 0){
                    for(let j=0;j<item.commands.length;j++){
@@ -183,6 +195,10 @@ export default function (data) {
                array.push(item);
            }
         });
+        if(profile != null &&profile.teacherId > 0){
+            //是教师的时候
+            access.push(SCHOOLPAL_CONFIG.AUTH['3-2'].PATH_RULE);
+        }
         if(groupCommands && groupCommands.id){
             groupCommands.sonResource = sonArray;
             array.push(groupCommands);

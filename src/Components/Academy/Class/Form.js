@@ -12,6 +12,7 @@ import InputColor from 'react-input-color';
 import {getSonListByGroupId, sonListByGroup} from "../../../utils/groupProcess";
 import {$} from "../../../vendor";
 import groupProcess from "../../../utils/groupProcess";
+import Org from "../../Dic/Org";
 
 class Form extends React.Component {
     constructor(props) {
@@ -33,6 +34,8 @@ class Form extends React.Component {
             allClassCourseRange: [],
             chooseCourseTypes:[],
             courseTypes: [],
+            userList: [],
+            orgList: [],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -41,6 +44,7 @@ class Form extends React.Component {
         this.chooseMainTeacher = this.chooseMainTeacher.bind(this);
         this.changeCourseType = this.changeCourseType.bind(this);
         this.changeClsName = this.changeClsName.bind(this);
+        this.refreshUserList = this.refreshUserList.bind(this);
     }
 
     componentDidMount() {
@@ -55,10 +59,6 @@ class Form extends React.Component {
                 let dataByOrgId = [];
                 dataByOrgId.push(getSonListByGroupId(groupProcess(orgList), this.state.group.id));
                 sonListByGroup(dataByOrgId, dataList);
-                $("#orgName").empty();
-                dataList.map(item => {
-                    $("#orgName").append("<option value='"+item.id+"'>"+item.name+"</option>");
-                });
 
                 /*let allClass = await ajax('/academy/class/classList.do', {orgId: this.state.group.id});*/
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
@@ -80,6 +80,7 @@ class Form extends React.Component {
                 if (this.props.isEditor) {
                     data = await ajax('/academy/class/query.do', {id: this.props.editorId});
                     data = data.data;
+                    allClassStatus = this.dealClassStatus(data.classStatus, allClassStatus);
                 }
                 /*else {
                          data = {
@@ -122,10 +123,12 @@ class Form extends React.Component {
                     mainTeacherIds: main,
                     allClassCourseRange: allClassCourseRange,
                     courseTypes: list.data ? list.data : [],
-                    chooseCourseTypes
+                    chooseCourseTypes,
+                    orgList: dataList
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
+                        debugger
                         keys.map(key => {
                             if (this.form[key]) {
                                 if (key === 'createOn') {
@@ -134,6 +137,8 @@ class Form extends React.Component {
                                     this.form[key].value =fmtDate(data[key]);
                                 }else if (key === 'courseEndDate') {
                                     this.form[key].value =fmtDate(data[key]);
+                                }else if (key === 'orgName') {
+                                    this.form["orgName"].value = data['orgId'];
                                 }else{
                                     this.form[key].value = data[key];
                                 }
@@ -155,9 +160,9 @@ class Form extends React.Component {
                     }else{
                         this.form['classStatus'].value = '1';
                         this.form['createOn'].value = fmtDate(new Date());
-                        this.form['crea'].value = this.state.group.cRealName;
+                        // this.form['crea'].value = this.state.group.cRealName;
                         this.form['createBy'].value = this.state.group.cRealName;
-                        this.form['orgName'].value = this.state.group.name;
+                        this.form['orgName'].value = this.state.group.id;
                     }
 
                 });
@@ -171,8 +176,52 @@ class Form extends React.Component {
                 this.setState({isAnimating: false});
             }
         };
-
+        this.refreshUserList();
         request()
+    }
+
+    dealClassStatus(classStatus, allClassStatus){
+        let codes = [3,4,5,6];
+        debugger
+        //未排课情况下不能编辑班级状态
+        if(classStatus == 1){
+            allClassStatus.map(item => {
+                item.showStr = "2";
+            });
+        }else if(classStatus == 2){
+            //已排课状态下放开 3/4/5/6
+            allClassStatus.map(item => {
+                if(codes.filter(it => item.code == it).length <= 0){
+                    item.showStr = "2";
+                }
+            });
+        }else if(codes.filter(it => classStatus == it).length > 0){
+            //进入3/4/5/6 可互选     到6可选7
+            allClassStatus.map(item => {
+                if(item.code > 6 || item.code < codes[0]){
+                    item.showStr = "2";
+                }
+                if(classStatus == 6 && item.code == 7){
+                    item.showStr = null;
+                }
+            });
+        }else if(classStatus == 7){
+            //7   放开6
+            allClassStatus.map(item => {
+                if(item.code != 6){
+                    item.showStr = "2";
+                }
+            });
+        }else if(classStatus == 8){
+            //只有在已开课8时才放开未结课9
+            allClassStatus.map(item => {
+                if(item.code < 8){
+                    item.showStr = "2";
+                }
+            });
+
+        }
+        return allClassStatus;
     }
 
     componentWillUnmount() {
@@ -266,6 +315,8 @@ class Form extends React.Component {
                     query[this.form[i].name] = new Date(this.form[i].value);
                 } else if(this.form[i].name === 'orgName'){
                     query.orgId = this.form[i].value;
+                } else if(this.form[i].name === 'executiveName'){
+                    query.executiveId = this.form[i].value;
                 } else {
                     query[this.form[i].name] = this.form[i].value ? this.form[i].value : null;
                 }
@@ -300,6 +351,27 @@ class Form extends React.Component {
         };
         request()
     }
+
+    //获取所属用户列表
+    refreshUserList(){
+        const request = async () => {
+            try {
+                let list = await ajax('/user/listUserByRole.do', {orgId: this.state.group.id, type: 5});
+                this.setState({
+                    userList: list
+                });
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.dialog.modal('hide');
+                    // this.props.replace('/login', {from: this.props.from})
+                } else {
+                    this.setState({errText: `${err.errCode}: ${err.errText}`});
+                }
+            }
+        };
+        request();
+    }
+
 
     render() {
         return (
@@ -567,15 +639,28 @@ class Form extends React.Component {
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">所属用户</label>
                                             <div className="col-7">
-                                                <input type="text" className="form-control" name="crea"
-                                                       readOnly={true}/>
+                                                <select name="executiveId" className="form-control">
+                                                    <option value="">请选择</option>
+                                                    {
+                                                        this.state.userList ? this.state.userList.map((user) => (
+                                                            <option value={user.cId}>{user.cRealName}</option>
+                                                        )) : []
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">所属组织</label>
                                             <div className="col-7">
                                                 {/*<input type="text" id="orgName" className="form-control" name="orgName" readOnly={true}/>*/}
-                                                <select name="orgName" className="form-control" id="orgName"></select>
+                                                <select name="orgName" className="form-control" id="orgName">
+                                                    {
+                                                        this.state.orgList ? this.state.orgList.map(item => (
+                                                            <option key={item.id}
+                                                                    value={item.id}>{item.name}({item.name})</option>
+                                                        )) : null
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                         <div className="form-group row">

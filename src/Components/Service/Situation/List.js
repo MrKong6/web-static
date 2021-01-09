@@ -20,8 +20,8 @@ class List extends React.Component {
 
         this.commands = this.props.commands.filter((command) => (command.name === 'Export' || command.name === 'Import'));//
         this.title = fmtTitle(this.props.location.pathname);
-        this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
+        this.createDialogTips = this.createDialogTips.bind(this);
         this.exportAction = this.exportAction.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -41,7 +41,7 @@ class List extends React.Component {
             try {
                 let list = await ajax('/student/situation/list.do', {
                     orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize,stuId:this.state.id
+                    pageSize: this.state.pageSize
                 });
                 if(list && list.items){
                     list.items.map(item => {
@@ -174,7 +174,7 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     <div className="row" style={{"height": '80%'}}>
-                        <StudentSituation type={"class"} id={this.state.id} data={this.state.list} />
+                        <StudentSituation goToDetails={this.goToDetails} type={"class"} id={this.state.id} data={this.state.list} />
                         <Pagination layout="total, sizes, prev, pager, next, jumper"
                                     total={this.state.totalCount}
                                     pageSizes={[10, 50, 100]}

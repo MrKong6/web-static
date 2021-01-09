@@ -20,16 +20,25 @@ class ClockedView extends React.Component {
                 label: "序号",
                 prop: 'idx',
                 fixed: 'left',
+                render: (row, column, data) =>{
+                    return <span style={{"color":row.situation !== "0" ? "#A9A9A9" : "#000000"}}>{row.idx}</span>
+                }
             },
             {
                 label: "学员",
-                prop: "name",
+                prop: "",
                 fixed: 'left',
+                render: (row, column, data) =>{
+                    return <span style={{"color":row.situation !== "0" ? "#A9A9A9" : "#000000"}}>{row.name}</span>
+                }
             },
             {
                 label: "英文名",
                 prop: "enName",
                 fixed: 'left',
+                render: (row, column, data) =>{
+                    return <span style={{"color":row.situation !== "0" ? "#A9A9A9" : "#000000"}}>{row.enName}</span>
+                }
             },
         ];
         this.dataTeacherHeader = [

@@ -24,10 +24,11 @@ class Form extends React.Component {
             group: this.props.changedCrmGroup,
             birthday: null,
             age: 0,
-            option: {'gender':[],'positionList':[],'typeList':[],'rangeList':[],'accountTeacherList':[]},
+            option: {'gender':[],'positionList':[],'typeList':[],'rangeList':[],'accountTeacherList':[],'orgList':[]},
             data: null,
             courseTypeList: [],
             chooseCouse: [],
+            orgIds: [],
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -44,6 +45,7 @@ class Form extends React.Component {
                 let positionList = await ajax('/academy/teacher/teacherPosition.do');
                 let accountTeacherList = await ajax('/user/listUserByRole.do',{orgId:this.state.group.id,type:2});
                 let courseTypeList = await ajax('/course/type/courseTypeList.do');
+                let orgList = await ajax('/user/listOrgs.do');
                 let data = null;
                 if (this.props.isEditor) {
                     data = await ajax('/academy/teacher/query.do', {id: this.props.editorId});
@@ -74,12 +76,13 @@ class Form extends React.Component {
                 }
                 $('.el-input__inner').attr('name','course')
                 this.setState({
-                    option: {gender,typeList,rangeList,positionList,accountTeacherList},
+                    option: {gender,typeList,rangeList,positionList,accountTeacherList,orgList},
                     data,
                     birthday,
                     age,
                     courseTypeList: courseTypeList,
                     chooseCouse: data && data.courseId ? data.courseId.split(",") : [],
+                    orgIds: data && data.orgIds ? data.orgIds : [],
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -151,6 +154,10 @@ class Form extends React.Component {
     changeCourse(value){
         this.state.chooseCouse = value;
     }
+    //更改所属组织
+    changeOrg(value){
+        this.state.orgIds = value;
+    }
     getFormValue() {
         if (!this.form.checkValidity()) {
             return
@@ -187,6 +194,17 @@ class Form extends React.Component {
         query.courseId = changeArrayItemToString(this.state.chooseCouse);
         query.courseName = changeArrayItemToString(courseNames);
 
+        //处理组织多选
+        let orgName=[];
+        this.state.orgIds.map(cc => {
+            this.state.option.orgList.map(item => {
+                if(cc == item.cId){
+                    orgName.push(item.cName);
+                }
+            });
+        });
+        query.orgIdsParam = changeArrayItemToString(this.state.orgIds);
+        query.orgName = changeArrayItemToString(orgName);
         return query;
     }
 
@@ -336,6 +354,21 @@ class Form extends React.Component {
                                                         )) : null
                                                     }
                                                 </select>
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">所属组织</label>
+                                            <div className="col-7">
+                                                <Select name={'orgId'} value={this.state.orgIds} placeholder="所属组织" name={'course'} multiple={true}
+                                                        filterable={true} clearable={true} style={{"width": "100%"}}
+                                                        onChange={this.changeOrg.bind(this)}>
+                                                    {
+                                                        (this.state.option.orgList && this.state.option.orgList.length > 0) ? this.state.option.orgList.map(el => {
+                                                            return <Select.Option key={el.cId+''} label={el.cName}
+                                                                                  value={el.cId+''}/>
+                                                        }) : null
+                                                    }
+                                                </Select>
                                             </div>
                                         </div>
                                         <div className="form-group row">

@@ -13,6 +13,7 @@ import ajax from "../../../utils/ajax";
 import fmtDate from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {DatePicker} from "element-react";
+import Org from "../../Dic/Org";
 
 class Form extends React.Component {
     constructor(props) {
@@ -150,6 +151,7 @@ class Form extends React.Component {
                                                        required={true}/>
                                             </div>
                                         </div>
+                                        <Org />
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 备注

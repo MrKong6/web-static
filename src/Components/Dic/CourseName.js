@@ -30,9 +30,9 @@ class CourseName extends React.Component{
     }
 
     componentWillUnmount() {
-        if(this.eventEmitter){
-            emitter.removeListener('changeCourseType',this.eventEmitter._events.changeCourseType);
-        }
+        // if(this.eventEmitter){
+        //     emitter.removeListener('changeCourseType',this.eventEmitter._events.changeCourseType);
+        // }
     }
     componentDidMount() {
         // debugger;

@@ -5,12 +5,19 @@ import List from './List'
 import View from './View';
 import Editor from "./Editor";
 import Create from "./Create";
+import StudentSituationView from "../Customer/StudentSituationView";
 
 const Situation = ({commands, location, match, profile, changedCrmGroup}) => {
     const groupCommands = commands.find(item => (item.rule.test(location.pathname) === true));
 
     return (
         <Switch>
+            <Route path={`/home/service/customer/sit/:contractId`} render={(props) => (
+                <StudentSituationView {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+            )}/>
+            <Route path={`${match.url}/:contractId`} render={(props) => (
+                <StudentSituationView {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
+            )}/>
             <Route path={`${match.url}/:contractId/edit`} render={(props) => (
                 <Editor {...props} profile={profile} changedCrmGroup={changedCrmGroup}/>
             )}/>

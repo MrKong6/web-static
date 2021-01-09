@@ -23,6 +23,7 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
+        window.sessionStorage.setItem("opporCurrentPage",1);
         if (this.props.location.pathname.indexOf("leadspublic") != -1) {
             this.commands = this.props.commands.filter(command => (command.name === 'Add' ||
                 command.name === 'Import' || command.name === 'Export' || command.name == 'Assign'));

@@ -15,6 +15,7 @@ import ajax from "../../../utils/ajax";
 import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
 import {DatePicker, Select} from 'element-react';
+import Org from "../../Dic/Org";
 
 class Form extends React.Component {
     constructor(props) {
@@ -34,6 +35,8 @@ class Form extends React.Component {
             classList: [],
             startDate: null,
             readCourse:false,//是否只读课程类别和课程阶段
+            orgId: null,//默认的合同所属组织
+            orgName: null
         };
         this.addPayItem = this.addPayItem.bind(this);
         this.changeBirthday = this.changeBirthday.bind(this);
@@ -106,7 +109,9 @@ class Form extends React.Component {
                         parAddress: this.props.apporData.parent.address,
                         courseId: courseInfo ? courseInfo.id : '',
                         courseTypeId: courseInfo ? courseInfo.courseTypeId : '',
-                        courseName: this.props.apporData.courseName || ''
+                        courseName: this.props.apporData.courseName || '',
+                        orgId: this.props.apporData.orgId || '',
+                        orgName: this.props.apporData.orgName || '',
                     }
                 }
 
@@ -133,7 +138,9 @@ class Form extends React.Component {
                     moneyList,
                     typeId: data.typeId + '',
                     classId: data.classId,
-                    contractStatus: data.contractStatus
+                    contractStatus: data.contractStatus,
+                    orgId: (data && data.orgId) ? data.orgId : null,
+                    orgName: (data && data.orgName) ? data.orgName : null
                 }, () => {
                     const keys = Object.keys(data);
 
@@ -258,6 +265,7 @@ class Form extends React.Component {
         query.startDate = this.state.startDate;
         query.contractStatus = this.state.contractStatus;
         query.classId = this.state.classId;
+        query.orgId = this.state.orgId;
 
         query.courseId = this.state.data.courseId;
 
@@ -276,10 +284,29 @@ class Form extends React.Component {
             [key] : value}
         )
     }
-
+    //选择班级
     changeClass(value){
         this.state.classId = value;
-        this.setState({classId:value});
+        let orgId = null, orgName = null;
+        this.state.classList.map(item => {
+            if(item.id == value){
+                orgName = item.orgName;
+                orgId = item.orgId;
+            }
+        });
+        //当classId清空时需要还原回去
+        if(!orgId){
+            if(this.props.isEditor){
+                orgId = this.state.data.orgId || '';
+                orgName = this.state.data.orgName || '';
+            }else{
+                orgId = this.props.apporData.orgId || '';
+                orgName = this.props.apporData.orgName || '';
+            }
+        }
+        this.setState({classId:value,orgId}, ()=>{
+            this.form["orgName"].value = orgName;
+        });
     }
     //更改合同状态
     changeStatus(value){
@@ -541,7 +568,7 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>班级编号
                                                 </label>
                                                 <div className="col-7">
-                                                    <Select value={this.state.classId} placeholder="请选择" onChange={this.changeClass}>
+                                                    <Select value={this.state.classId} placeholder="请选择" clearable={true} onChange={this.changeClass}>
                                                         {
                                                             this.state.classList ? this.state.classList.map(el => {
                                                                 return <Select.Option key={el.id} label={el.code} value={el.id} />
@@ -697,6 +724,15 @@ class Form extends React.Component {
                                                            required={true}
                                                            value={formatWithTime(new Date())}
                                                            placeholder={fmtDate(new Date())}/>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">
+                                                    <em className="text-danger">*</em>所属组织
+                                                </label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="orgName"
+                                                           readOnly={true} value={this.state.orgName} />
                                                 </div>
                                             </div>
                                         </div>

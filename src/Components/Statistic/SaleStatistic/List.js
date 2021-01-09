@@ -17,11 +17,12 @@ class List extends React.Component {
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.changeIndex = this.changeIndex.bind(this);
+        debugger
         this.first = !(this.props.commands.filter(view => (view.id == '8-1-1')) == false) ? 'normal' : 'none';
         this.second = !(this.props.commands.filter(view => (view.id == '8-1-2')) == false) ? 'normal' : 'none';
         this.third = !(this.props.commands.filter(view => (view.id == '8-1-3')) == false) ? 'normal' : 'none';
         this.fourth = !(this.props.commands.filter(view => (view.id == '8-1-4')) == false) ? 'normal' : 'none';
-        // this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.commands.filter(view => (view.id == '8-1-5')) == false) ? 'normal' : 'none';
         // this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6')) == false) ? 'normal' : 'none';
 
         this.commands = this.props.commands.filter(command => (command.name === 'Show'));
@@ -179,7 +180,7 @@ class List extends React.Component {
                             <Menu.Item index="4-1">班级</Menu.Item>
                             <Menu.Item index="4-2">教室</Menu.Item>
                         </Menu.SubMenu>
-                        <Menu.SubMenu index="5" title="教学管理" style={{"display":this.fourth}}>
+                        <Menu.SubMenu index="5" title="教学管理" style={{"display":this.fifth}}>
                             <Menu.Item index="5-1">教师课时</Menu.Item>
                         </Menu.SubMenu>
                     </Menu>

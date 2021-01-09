@@ -129,7 +129,7 @@ export default {
         },
         "2-3": {
             PATH: "home/sales/customer",
-            PATH_RULE: /^\/home\/sales\/customer(\/(student|parent|contract|situation)\/((?!create).)*)?$/,
+            PATH_RULE: /^\/home\/sales\/customer(\/(student|parent|contract|situation|account|charge|class)\/((?!create).)*)?$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '我的',
             NAME: '学员'
@@ -159,7 +159,25 @@ export default {
             NAME: '学员'
         },
         "2-3-5": {
-            PATH_RULE: /^\/home\/sales\/customer\/((?!create).)*\/edit$/,
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '我的',
+            NAME: '学员'
+        },
+        "2-3-6": {
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '我的',
+            NAME: '学员'
+        },
+        "2-3-7": {
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
+            ICON_CLASS: "fa-graduation-cap",
+            CATEGORY: '我的',
+            NAME: '学员'
+        },
+        "2-3-8": {
+            PATH_RULE: /^\/home\/sales\/customer\/student\/((?!create).)*\/edit$/,
             ICON_CLASS: "fa-graduation-cap",
             CATEGORY: '我的',
             NAME: '学员'
@@ -431,6 +449,55 @@ export default {
             ICON_CLASS: "fa-tasks",
             CATEGORY: '排课'
         },
+        "5-6": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "5-6-1": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "5-6-2": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "5-6-3": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "5-6-4": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "5-6-5": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
+        "5-6-6": {
+            PATH: "home/academy/cls/in",
+            PATH_RULE: /^\/home\/academy\/cls\/in(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '我的',
+            NAME: '班级'
+        },
 
         //教学相关权限配置
         "6": {ICON_CLASS: "fa-stack-overflow"},
@@ -496,6 +563,54 @@ export default {
             ICON_CLASS: "fa-desktop",
             CATEGORY: '我的',
             NAME: '体验课'
+        },
+        "6-4": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public\/create$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4-1": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4-2": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4-3": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4-4": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4-5": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
+        },
+        "6-4-6": {
+            PATH: "home/education/cls/public",
+            PATH_RULE: /^\/home\/education\/cls\/public(\/((?!create).)*)?$/,
+            ICON_CLASS: "fa-users",
+            CATEGORY: '班级'
         },
 
         //管理员相关权限配置

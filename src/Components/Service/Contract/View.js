@@ -79,12 +79,12 @@ class View extends React.Component {
         const request = async () => {
             try {
                 let data = await ajax('/service/contract/query.do', {id: this.state.id});
-                // let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
-                // const ids = list.data.map((contract) => (contract.id));
+                let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id});
+                const ids = list.data.map((contract) => (contract.id));
                 if(data.startDate){
                     data.startDate = fmtDate(data.startDate);
                 }
-                this.setState({data,  moneyList: data.list});
+                this.setState({data,  moneyList: data.list, ids});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})

@@ -19,6 +19,9 @@ import ChargeView from "./ChargeView";
 const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '3-2'));
     groupCommands = groupCommands[0];
+    if(!groupCommands){
+        groupCommands = {commands:[],sonResource:[]}
+    }
     return (
         <Switch>
             <Route path={`${match.url}/charge/:contractId`} render={(props) => (
@@ -30,6 +33,11 @@ const Customer = ({commands, location, match, profile, changedCrmGroup}) => {
                 <StudentSituation key={props.match.params.contractId} {...props} profile={profile}
                                   commands={groupCommands.commands}
                                   changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
+            )}/>
+            <Route path={`${match.url}/sit/:contractId`} render={(props) => (
+                <StudentSituationBackMoneyAdd key={props.match.params.contractId} {...props} profile={profile}
+                                              commands={groupCommands.commands}
+                                              changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/situation/changeClassAdd/:contractId`} render={(props) => (
                 <StudentSituationChangeClassAdd key={props.match.params.contractId} {...props} profile={profile}

@@ -75,6 +75,7 @@ class View extends React.Component {
         super(props);
         this.title = fmtTitle(this.props.pathName);
         this.commands = this.props.commands;
+        debugger
         this.state = {
             group: this.props.group,
             redirectToReferrer: false,
@@ -107,6 +108,7 @@ class View extends React.Component {
         this.convertAction = this.convertAction.bind(this);
         this.convertAccept = this.convertAccept.bind(this);
         this.changeOneTab = this.changeOneTab.bind(this);
+        this.assignAcceptOppor = this.assignAcceptOppor.bind(this);
         this.back = this.back.bind(this);
 
     }
@@ -253,8 +255,12 @@ class View extends React.Component {
         request();
     }
 
+    //创建合同
     SignAction() {
         this.state.data.courseId = this.state.twoTab.id;
+        debugger
+        this.state.data.orgId = this.state.editVo.organizationId;
+        this.state.data.orgName = this.state.editVo.organizationName;
         this.props.SignAction(this.state.data,this.state.editVo.id);
     }
 
@@ -319,7 +325,9 @@ class View extends React.Component {
     assignAcceptOppor(selected) {
         const request = async () => {
             try {
-                const param={ids: this.state.chooseRows, assigneeId: selected.user.id, type: (selected.typeId ? selected.typeId : 1)};
+                let chooseIds = [];
+                chooseIds.push(this.state.editVo.id);
+                const param={ids: chooseIds, type: (selected.typeId ? selected.typeId : 1)};
                 await ajax('/service/visitor/batchAssign.do', {"assignVo":JSON.stringify(param)});
                 Message({
                     message: "已转移",
@@ -332,8 +340,6 @@ class View extends React.Component {
                 } else {
                     this.createDialogTips(`${err.errCode}: ${err.errText}`);
                 }
-            } finally {
-                this.setState({isAnimating: false});
             }
         };
 
@@ -540,8 +546,8 @@ class View extends React.Component {
             }
         }
         query.id=this.state.data.id;
-        if(query.parent && this.state.data.parent){
-            query.parent.id=this.state.data.parent.id;
+        if(this.state.data.parent){
+            query.parentId=this.state.data.parent.id;
         }
         const request = async () => {
             try {
@@ -597,7 +603,9 @@ class View extends React.Component {
                 this.form2.sourceId.value = Number(this.state.editVo.sourceId);
                 this.form2.stageId.value = this.state.editVo.stageId;
                 this.form2.statusId.value = this.state.editVo.statusId;
-
+                debugger
+                this.form2.courseTypeId.value = this.state.editVo.courseTypeId;
+                this.form2.courseId.value = this.state.editVo.courseId;
                 this.setState({
                     channelId: this.state.editVo.channelId,
                     channelText: this.state.editVo.channelName
@@ -610,6 +618,7 @@ class View extends React.Component {
         let query = {};
 
         if(type == 2){
+            query.fromWay = null;//防止误更新
             query.id = this.state.editVo.id;
             query.courseId = this.state.editVo.courseId;
             for (let i = 0; i < this.form2.length; i++) {
@@ -618,6 +627,7 @@ class View extends React.Component {
                 }
             }
         }else{
+            query.fromWay = this.state.fromWay;
             for (let i = 0; i < this.form.length; i++) {
                 if (this.form[i].tagName !== 'BUTTON' && !this.form[i].readOnly) {
                     query[this.form[i].name] = this.form[i].value;
@@ -631,7 +641,6 @@ class View extends React.Component {
             query.parentId= this.state.data.parent.id;
         }
         query.typeId = this.state.typeId;
-        query.fromWay = this.state.fromWay;
 
         const request = async () => {
             try {
@@ -686,7 +695,6 @@ class View extends React.Component {
                 }}/>
             )
         }
-
 
         if (!this.state.data) {
             return (
@@ -1084,6 +1092,7 @@ class View extends React.Component {
                                 canEdit={false}
                                 groupName={this.props.group.name}
                                 userName={this.props.profile.cRealname}
+                                back={this.back}
                             />
                         </div>
                         {/*新增弹出层*/}
@@ -1172,7 +1181,7 @@ class View extends React.Component {
                                     <form ref={(dom) => {
                                         this.form2 = dom
                                     }} labelWidth="120" style={{"width":"80%"}}>
-                                        <div className="form-group row">
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label">课程</label>
                                             <div className="col-7">
                                                 <input
@@ -1181,6 +1190,18 @@ class View extends React.Component {
                                                     className="form-control-plaintext"
                                                     value={(this.state.oneTab ? this.state.oneTab.name : '') + '/' + (this.state.twoTab ? this.state.twoTab.name : '')}
                                                 />
+                                            </div>
+                                        </div>*/}
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label">课程类别</label>
+                                            <div className="col-7">
+                                                <CourseType />
+                                            </div>
+                                        </div>
+                                        <div className="form-group row">
+                                            <label className="col-5 col-form-label">课程阶段</label>
+                                            <div className="col-7">
+                                                <CourseName />
                                             </div>
                                         </div>
                                         <div className="form-group row">

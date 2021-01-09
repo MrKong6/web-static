@@ -121,6 +121,11 @@ class SettingService extends React.Component {
                     prop: "courseName",
                 },
                 {
+                    label: "所属组织",
+                    prop: "orgName",
+                    showOverflowTooltip: true,
+                },
+                {
                     label: "备注",
                     prop: "comment",
                 },
@@ -146,6 +151,11 @@ class SettingService extends React.Component {
                     render: (row, column, data)=>{
                         return <span><Button type="text" size="small" onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
+                },
+                {
+                    label: "所属组织",
+                    prop: "orgName",
+                    showOverflowTooltip: true,
                 },
                 {
                     label: "备注",

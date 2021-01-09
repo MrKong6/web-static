@@ -7,7 +7,7 @@ import View from './View';
 import StudentView from './StudentView';
 import StudentAssignView from './StudentAssignView';
 import Editor from "./Editor";
-import StudentInfoView from './StudentInfoView';
+import CustomerStudentView from '../../Service/Customer/StudentView';
 import ParentEditor from "./ParentEditor";
 import ParentView from "./ParentView";
 import StudentEditor from "./StudentEditor";
@@ -55,7 +55,7 @@ const Account = ({commands, location, match, profile, changedCrmGroup}) => {
                                    changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/student/customer/:studentId`} render={(props) => (
-                <StudentInfoView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
+                <CustomerStudentView key={props.match.params.contractId} {...props} profile={profile} commands={groupCommands.commands}
                                    changedCrmGroup={changedCrmGroup} sonView={groupCommands.sonResource}/>
             )}/>
             <Route path={`${match.url}/student/customer/:studentId/edit`} render={(props) => (

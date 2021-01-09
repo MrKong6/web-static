@@ -12,7 +12,7 @@ const PrivateRoute = ({component: Component, ...rest}) => {
   console.log("====================================================")
   return (
     <Route {...rest} render={props => (
-      isAccess.length ? (
+      isAccess.length || temp.location.pathname.indexOf('/home/academy/class') != -1 ? (
         <Component profile={temp.profile} commands={temp.commands} changedCrmGroup={temp.changedCrmGroup} {...props}/>
       ) : (
         <Redirect to="/404"/>

@@ -4,6 +4,7 @@ import {Button, Message, Pagination, Table} from 'element-react';
 class StudentSituation extends React.Component {
     constructor(props) {
         super(props);
+        this.goToDetails = this.goToDetails.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -36,10 +37,16 @@ class StudentSituation extends React.Component {
                     label: "异动类型",
                     prop: "typeName",
                     width: 95,
-                    /*render: (row, column, data) => {
+
+                },
+                {
+                    label: "异动编号",
+                    prop: "code",
+                    width: 95,
+                    render: (row, column, data) => {
                         return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                    }*/
+                                             onClick={this.goToDetails.bind(this,row.id)}>{row.code}</Button></span>
+                    }
                 },
                 {
                     label: "异动原因",
@@ -113,6 +120,9 @@ class StudentSituation extends React.Component {
                 },
             ],
         };
+    }
+    goToDetails(id){
+        this.props.goToDetails(id)
     }
 
     componentDidMount() {

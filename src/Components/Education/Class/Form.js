@@ -27,6 +27,8 @@ class Form extends React.Component {
             createOn: null,
             classColor: null,
             mainTeacherIds: [],
+            courseTypes: [],
+            chooseCourseTypes:[]
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -45,19 +47,21 @@ class Form extends React.Component {
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
                 let allClassType = await ajax('/academy/class/classType.do');
                 let allClassRange = await ajax('/academy/class/classRange.do');
-                let allClassCourse = await ajax('/academy/class/classCourseType.do');
+                // let allClassCourse = await ajax('/academy/class/classCourseType.do', {orgId: this.state.group.id});
                 let mainTeacher = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id,position:1});  //主教
                 let gender = await ajax('/mkt/gender/list.do');
-                let data = null,allClassCourseType=[],allClassCourseRange=[];;
+                let list = await ajax('/course/type/listTypeAndSons.do',{orgId: this.state.group.id});  //课程类别
+
+                let data = null;
 
                 if(mainTeacher){
                     mainTeacher = mainTeacher.data.items;
                 }
 
-                if(allClassCourse){
-                    allClassCourseType = allClassCourse.type;
-                    allClassCourseRange = allClassCourse.range;
-                }
+                // if(allClassCourse){
+                //     allClassCourseType = allClassCourse.type;
+                //     allClassCourseRange = allClassCourse.range;
+                // }
 
                 if (this.props.isEditor) {
                     data = await ajax('/academy/class/query.do', {id: this.props.editorId});
@@ -93,9 +97,9 @@ class Form extends React.Component {
                     }
                 }
                 this.setState({
-                    option: {allClassStatus, allClassType, allClassRange, allClassCourseType,mainTeacher},
+                    option: {allClassStatus, allClassType, allClassRange,mainTeacher},
                     mainTeacherIds: main,
-                    allClassCourseRange: allClassCourseRange,
+                    courseTypes: list.data ? list.data : [],
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -183,7 +187,6 @@ class Form extends React.Component {
         }
 
         let query = {};
-
         /*query.stuBirthday = this.state.birthday;
         query.stuCode = this.form.code.value;
         query.courseType = this.form.courseId.options[this.form.courseId.selectedIndex].text;*/
@@ -209,23 +212,14 @@ class Form extends React.Component {
         this.state.mainTeacherIds = data;
     }
 
+    //选中课程
+    changeClsName(data){
+        this.state.chooseCourseTypes = data;
+        this.setState({chooseCourseTypes:data});
+    }
+
     render() {
 
-        // if (!this.state.option || (this.props.isEditor && !this.state.data)) {
-        //   return (
-        //     <form ref={(dom) => {
-        //       this.form = dom
-        //     }}>
-        //       <div className="row justify-content-md-center">
-        //         <div className="col col-12">
-        //           <div className="card">
-        //             <div className="card-body">数据加载中...</div>
-        //           </div>
-        //         </div>
-        //       </div>
-        //     </form>
-        //   )
-        // } else {
         return (
             <form ref={(dom) => {
                 this.form = dom
@@ -365,7 +359,7 @@ class Form extends React.Component {
                                             </label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control" name="planNum"
-                                                       required={true}/>
+                                                       readOnly={true} required={true}/>
                                             </div>
                                         </div>
                                         {/*<div className="form-group row">
@@ -390,7 +384,7 @@ class Form extends React.Component {
                                             <label className="col-5 col-form-label font-weight-bold">主教</label>
                                             <div className="col-7">
                                                 {/*<input type="text" className="form-control" name="mainTeacher"/>*/}
-                                                <Select value={this.state.mainTeacherIds} multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
+                                                <Select value={this.state.mainTeacherIds} disabled={true}  multiple={true} style={{width:'100%'}} onChange={this.chooseMainTeacher}>
                                                     {
                                                         (this.state.option && this.state.option.mainTeacher) ? this.state.option.mainTeacher.map(el => {
                                                             return <Select.Option key={el.id} label={el.name}
@@ -409,6 +403,32 @@ class Form extends React.Component {
                                     </div>
                                     <div className="col">
                                         <div className="form-group row">
+                                            <label className="col-5 col-form-label font-weight-bold">
+                                                <em className="text-danger">*</em>课程类别
+                                            </label>
+                                            <div className="col-7">
+                                                <Select value={this.state.chooseCourseTypes} multiple={true} disabled={true} onChange={this.changeClsName.bind(this)}>
+                                                    {
+                                                        this.state.courseTypes.map(group => {
+                                                            return (
+                                                                <Select.OptionGroup key={group.id} label={group.name}>
+                                                                    {
+                                                                        group.courses.map(el => {
+                                                                            return (
+                                                                                <Select.Option key={el.id} label={el.name} value={el.id}>
+                                                                                    <span style={{float: 'left'}}>{el.name}</span>
+                                                                                </Select.Option>
+                                                                            )
+                                                                        })
+                                                                    }
+                                                                </Select.OptionGroup>
+                                                            )
+                                                        })
+                                                    }
+                                                </Select>
+                                            </div>
+                                        </div>
+                                        {/*<div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">
                                                 <em className="text-danger">*</em>课程类别
                                             </label>
@@ -437,7 +457,7 @@ class Form extends React.Component {
                                                     }
                                                 </select>
                                             </div>
-                                        </div>
+                                        </div>*/}
                                         <div className="form-group row">
                                             <label className="col-5 col-form-label font-weight-bold">课程表</label>
                                             <div className="col-7">

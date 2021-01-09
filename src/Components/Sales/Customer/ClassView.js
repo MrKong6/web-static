@@ -21,7 +21,7 @@ const NextBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/customer/contract/${ids[curIndex + 1]}`,
+                pathname: `/home/sales/customer/contract/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -41,7 +41,7 @@ const PrevBtn = ({id, ids}) => {
         <Link
             className="btn btn-light"
             to={{
-                pathname: `/home/service/customer/contract/${ids[curIndex - 1]}`,
+                pathname: `/home/sales/customer/contract/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
@@ -54,29 +54,14 @@ class ClassView extends React.Component {
     constructor(props) {
         super(props);
         this.title = fmtTitle(this.props.location.pathname);
-        let type = 1;
-        if(this.props.location.state && this.props.location.state.type && this.props.location.state.type == 2){
-            //从教学的我的班级的学员信息页面跳转而来
-            type = this.props.location.state.type;
-            this.commands = [];
-            this.first = 'normal';
-            this.second = 'normal';
-            this.third = 'normal';
-            this.fourth = 'normal';
-            this.fifth = 'normal';
-            this.sixth = 'normal'
-            this.seventh = 'normal';
-        }else{
-            this.commands = this.props.commands.filter(command => (command.id === '3-2-1-2' || command.id === '3-2-1-3'));
-            this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
-            this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
-            this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
-            this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
-            this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
-            this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none'
-            this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
+        this.first = !(this.props.sonView.filter(view => (view.id == '2-3-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '2-3-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '2-3-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '2-3-5')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '2-3-6')) == false) ? 'normal' : 'none';
+        this.sixth = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '2-3-7')) == false) ? 'normal' : 'none';
+        this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '2-3-8')) == false) ? 'normal' : 'none';
 
-        }
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -96,12 +81,8 @@ class ClassView extends React.Component {
                     prop: "code",
                     width: 120,
                     render: (row, column, data) => {
-                        if(type == 2){
-                            return <span>{row.code}</span>
-                        }else{
-                            return <span><Button type="text" size="small"
-                                                 onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
-                        }
+                        return <span><Button type="text" size="small"
+                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
                     }
                 },
                 {
@@ -177,8 +158,7 @@ class ClassView extends React.Component {
                     width: 120
                 }
             ],
-            data: [],
-            type: type,
+            data: []
 
         };
         this.createAccountDialog = this.createAccountDialog.bind(this);
@@ -324,28 +304,24 @@ class ClassView extends React.Component {
 
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
-                            <li className="breadcrumb-item"style={{"display":this.first}}>
-                                <Link
-                                    to={{pathname: `/home/service/customer/student/${this.state.id}`,
-                                        state: {stuName: this.state.data.name,type: this.state.type}}}>学员信息
-                                </Link>
-                            </li>
+                            <li className="breadcrumb-item"style={{"display":this.first}}><Link
+                                to={`/home/sales/customer/student/${this.state.id}`}>学员信息</Link></li>
                             <li className="breadcrumb-item" style={{"display":this.second}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/parent/${this.state.id}`,
-                                    state: {stuName: this.state.name,type: this.state.type}
+                                    pathname: `/home/sales/customer/parent/${this.state.id}`,
+                                    state: {stuName: this.state.name}
                                 }}>家长信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.third}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/contract/${this.state.id}`,
-                                    state: {stuName: this.state.name,type: this.state.type}
+                                    pathname: `/home/sales/customer/contract/${this.state.id}`,
+                                    state: {stuName: this.state.name}
                                 }}>合同信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/account/${this.state.id}`,
-                                    state: {stuName: this.state.name,type: this.state.type}
+                                    pathname: `/home/sales/customer/account/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
                                 }}>账户信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.sixth}}>
@@ -353,14 +329,14 @@ class ClassView extends React.Component {
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/situation/${this.state.id}`,
-                                    state: {stuName: this.state.name,type: this.state.type}
+                                    pathname: `/home/sales/customer/situation/${this.state.id}`,
+                                    state: {stuName: this.state.name}
                                 }}>异动信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.seventh}}>
                                 <Link to={{
-                                    pathname: `/home/service/customer/charge/${this.state.id}`,
-                                    state: {stuName: this.state.name,type: this.state.type}
+                                    pathname: `/home/sales/customer/charge/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
                                 }}>卡券信息</Link>
                             </li>
                         </ol>

@@ -22,6 +22,7 @@ class List extends React.Component {
     constructor(props) {
         super(props);
         let storage = window.sessionStorage;
+        window.sessionStorage.setItem("opporCurrentPage",1);
         let link = "/home/sales/oppor";
         if (this.props.location.pathname.indexOf("opporpublic") != -1) {
             this.commands = this.props.commands.filter(command => (command.name === 'Add' ||

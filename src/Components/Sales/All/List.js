@@ -492,7 +492,7 @@ class List extends React.Component {
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
-                    <Input placeholder="请输入手机号"
+                    <Input placeholder="请输入手机号/学员姓名"
                            className={"leadlist_search"}
                            value={this.state.cellphone}
                            style={{width: '20%'}}

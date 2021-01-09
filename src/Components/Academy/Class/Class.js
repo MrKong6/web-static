@@ -16,9 +16,14 @@ import StudentSituationChangeClassAdd from "../../Service/Customer/StudentSituat
 import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituationPauseClassAdd";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
-    let groupCommands = commands.filter(item => (item.id == '5-4'));
-    groupCommands = groupCommands[0];
+    let groupCommands = commands.filter(item => (item.id == '5-4' || item.id == '5-6'));
     debugger
+    groupCommands = groupCommands[0];
+    if(groupCommands && groupCommands.commands){
+        groupCommands.commands = groupCommands ? groupCommands.commands.filter(item => (item.id.indexOf(groupCommands.id) != -1)) : [];
+    }else{
+        groupCommands = {commands:[],sonResource:[]}
+    }
     return (
         <Switch>
             <Route path={`${match.url}/situation/changeClassAdd/:contractId`} render={(props) => (

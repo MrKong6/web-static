@@ -76,8 +76,9 @@ class Create extends React.Component {
         }
 
         query.birthday = this.form.state.birthday ? this.form.state.birthday.getTime() : "";
-        query.orgId = this.state.group.id;
-
+        if(!query.orgId){
+            query.orgId = this.state.group.id;
+        }
         this.setState({isAnimating: true});
 
         const request = async () => {

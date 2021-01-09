@@ -54,14 +54,28 @@ class ContractView extends React.Component {
         super(props);
 
         this.title = fmtTitle(this.props.location.pathname);
-        this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
-        this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
-
+        let type = 1;
+        if(this.props.location.state && this.props.location.state.type && this.props.location.state.type == 2){
+            //从教学的我的班级的学员信息页面跳转而来
+            type = this.props.location.state.type;
+            this.commands = [];
+            this.first = 'normal';
+            this.second = 'normal';
+            this.third = 'normal';
+            this.fourth = 'normal';
+            this.fifth = 'normal';
+            this.sixth = 'normal'
+            this.seventh = 'normal';
+        }else{
+            this.commands = this.props.commands.filter(command => (command.id === '3-2-1-2' || command.id === '3-2-1-3'));
+            this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
+            this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
+            this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
+            this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
+            this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
+            this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none'
+            this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
+        }
 
         this.state = {
             group: this.props.changedCrmGroup,
@@ -114,8 +128,13 @@ class ContractView extends React.Component {
                     width: 130,
                     fixed: true,
                     render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
-                                             onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                        //如果是我的班级则不需要跳转至详情
+                        if(type == 2){
+                            return <span>{row.code}</span>
+                        }else{
+                            return <span><Button type="text" size="small"
+                                                 onClick={this.goToDetails.bind(this, row.id)}>{row.code}</Button></span>
+                        }
                     }
                 },
                 {
@@ -217,6 +236,7 @@ class ContractView extends React.Component {
                     width: 120
                 }
             ],
+            type: type,
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
@@ -363,14 +383,17 @@ class ContractView extends React.Component {
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
-                            this.props.history.push('/home/service/customer');
+                            this.props.history.goBack();
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
                     <div className="btn-group float-right" role="group">
-                        <button onClick={this.addContract} type="button" className="btn btn-primary" id="btnChoose">
-                            新增
-                        </button>
+                        {
+                            this.state.type == 2 ? null :
+                                <button onClick={this.addContract} type="button" className="btn btn-primary" id="btnChoose">
+                                    新增
+                                </button>
+                        }
                     </div>
                 </h5>
 
@@ -395,37 +418,41 @@ class ContractView extends React.Component {
 
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
-                            <li className="breadcrumb-item" style={{"display":this.first}}><Link
-                                to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link></li>
+                            <li className="breadcrumb-item"style={{"display":this.first}}>
+                                <Link
+                                    to={{pathname: `/home/service/customer/student/${this.state.id}`,
+                                        state: {stuName: this.state.data.name,type: this.state.type}}}>学员信息
+                                </Link>
+                            </li>
                             <li className="breadcrumb-item" style={{"display":this.second}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/parent/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
+                                    state: {stuName: this.state.data.name,type: this.state.type}
                                 }}>家长信息</Link>
                             </li>
                             <li className="breadcrumb-item active" style={{"display":this.third}}>合同信息</li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/account/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
+                                    state: {stuName: this.state.data.name,type: this.state.type}
                                 }}>账户信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.sixth}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/class/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
+                                    state: {stuName: this.state.data.name,type: this.state.type}
                                 }}>班级信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/situation/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
+                                    state: {stuName: this.state.data.name,type: this.state.type}
                                 }}>异动信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.seventh}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/charge/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
+                                    state: {stuName: this.state.data.name,type: this.state.type}
                                 }}>卡券信息</Link>
                             </li>
                         </ol>

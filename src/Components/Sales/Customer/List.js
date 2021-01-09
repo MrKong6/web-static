@@ -136,7 +136,7 @@ class List extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/sales/customer/student/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+        let list = await ajax('/service/customer/student/list.do', {isPublic:1,orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
           list.data.map(item => {
               if(item.idType != null){
                   item.idType = CONFIG.DOCUMENT[item.idType];

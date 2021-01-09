@@ -18,16 +18,25 @@ class ClockedView extends React.Component {
                 label: "序号",
                 prop: 'idx',
                 fixed: 'left',
+                render: (row, column, data) =>{
+                    return <span style={{"color":row.situation!== "0" ? "#A9A9A9" : "#000000"}}>{row.idx}</span>
+                }
             },
             {
                 label: "学员",
-                prop: "name",
+                prop: "",
                 fixed: 'left',
+                render: (row, column, data) =>{
+                    return <span style={{"color":row.situation!== "0" ? "#A9A9A9" : "#000000"}}>{row.name}</span>
+                }
             },
             {
                 label: "英文名",
                 prop: "enName",
                 fixed: 'left',
+                render: (row, column, data) =>{
+                    return <span style={{"color":row.situation!== "0" ? "#A9A9A9" : "#000000"}}>{row.enName}</span>
+                }
             },
         ];
         this.dataTeacherHeader = [
@@ -44,13 +53,15 @@ class ClockedView extends React.Component {
             },
         ];
         this.commands = this.props.commands.filter(command => (command.name == 'ShowNormal'));
-        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6')) == false) ? 'normal' : 'none';
-        this.title = fmtTitle(this.props.location.pathname);
+        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1' || view.id == '5-6-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2' || view.id == '5-6-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3' || view.id == '5-6-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4' || view.id == '5-6-4')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5' || view.id == '5-6-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6' || view.id == '5-6-6')) == false) ? 'normal' : 'none';
+
+        let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
+        this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
         this.state = {
             group: this.props.changedCrmGroup,
             redirectToReferrer: false,
@@ -72,16 +83,25 @@ class ClockedView extends React.Component {
                     label: "序号",
                     fixed: 'left',
                     prop: 'idx',
+                    render: (row, column, data) =>{
+                        return <span style={{"color":row.situation ? "#A9A9A9" : "#000000"}}>{row.idx}</span>
+                    }
                 },
                 {
                     label: "学员",
                     prop: "name",
                     fixed: 'left',
+                    render: (row, column, data) =>{
+                        return <span style={{"color":row.situation ? "#A9A9A9" : "#000000"}}>{row.name}</span>
+                    }
                 },
                 {
                     label: "英文名",
                     prop: "enName",
                     fixed: 'left',
+                    render: (row, column, data) =>{
+                        return <span style={{"color":row.situation ? "#A9A9A9" : "#000000"}}>{row.enName}</span>
+                    }
                 },
             ],
             teacherColumns: [

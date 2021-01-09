@@ -607,14 +607,14 @@ class Editor extends React.Component {
                             let i = 1;
                             return <div className="form-group row">
                                 <label className="col-1 col-form-label"
-                                       style={{"textAlign": "left"}}>{val.index + '.'} {val.name}</label>
+                                       style={{"textAlign": "left", "color":val.situation === "1" ? "#A9A9A9" : "#000000"}}>{val.index + '.'} {val.name}</label>
                                 {
                                    val.vos.map(function(valInner){
                                         return <div className="col-2">
                                             <div className="row">
                                                 <div className="col-4 col-form-label">
                                                     <Checkbox checked={valInner.checkInToday == 1}
-                                                              disabled={valInner.situation == 1}
+                                                              disabled={val.situation != 0}
                                                               onChange={that.handleSelect.bind(this,'innerCheck',val.id, valInner.courseId)}
                                                               >签到</Checkbox>
                                                     {/*onChange={check => {
@@ -625,6 +625,7 @@ class Editor extends React.Component {
                                                     <TimePicker
                                                         selectableRange="08:30:00 - 21:30:00"
                                                         value={valInner.rdate}
+                                                        isDisabled={val.situation != 0}
                                                         onChange={that.handleSelect.bind(this,'innerRdate',val.id, valInner.courseId)}
                                                         placeholder="选择时间"
                                                     />

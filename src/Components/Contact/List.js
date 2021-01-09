@@ -147,12 +147,17 @@ class List extends React.Component {
         let dialogVisible3 = this.state.dialogVisible3;
         this.setState({dialogVisible3:!dialogVisible3});
     }
-    //编辑沟通记录
-    editDialog(item){
-        if(item){
-            this.setState({datetime:new Date(item.datetime),summary:item.summary,contactId:item.id});
-            this.showDialog();
+    //编辑沟通记录 type 1:删除 2::编辑
+    editDialog(item, type){
+        if(type == 2){
+            if(item){
+                this.setState({datetime:new Date(item.datetime),summary:item.summary,contactId:item.id});
+                this.showDialog();
+            }
+        }else{
+            this.delDialog(item);
         }
+
     }
 
     //删除沟通记录
@@ -160,7 +165,19 @@ class List extends React.Component {
         MessageBox.confirm('此操作将永久删除, 是否继续?', '提示', {
             type: 'warning'
         }).then(() => {
-
+            const request = async () => {
+                try {
+                    await ajax('/contact/del.do', {id: item.id});
+                    this.props.back();
+                } catch (err) {
+                    if (err.errCode === 401) {
+                        this.setState({redirectToReferrer: true})
+                    } else {
+                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    }
+                }
+            };
+            request()
         }).catch(() => {
             Message({
                 type: 'info',
@@ -201,8 +218,8 @@ class List extends React.Component {
                                 icon={<BsBook />}
                             >
                                 <div style={{"position": "absolute","right": "0px","top": "0px","display":item.executiveName == that.state.userName ? "normal" : "none"}}>
-
-                                    <Button type="text" style={{"marginLeft":"26px"}} onClick={that.editDialog.bind(this,item)}><i className="el-icon-edit el-icon-right"></i> &nbsp;&nbsp;编辑</Button>
+                                    <Button type="text" style={{"marginLeft":"26px"}} onClick={that.editDialog.bind(this,item,1)}><i className="el-icon-delete"></i> &nbsp;&nbsp;删除</Button>
+                                    <Button type="text" style={{"marginLeft":"26px"}} onClick={that.editDialog.bind(this,item,2)}><i className="el-icon-edit el-icon-right"></i> &nbsp;&nbsp;编辑</Button>
                                 </div>
                                 <p>
                                     {item.summary}

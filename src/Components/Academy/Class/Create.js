@@ -14,7 +14,8 @@ import ajax from "../../../utils/ajax";
 class Create extends React.Component {
     constructor(props) {
         super(props);
-        this.title = fmtTitle(this.props.location.pathname);
+        let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
+        this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
         this.ids = this.props.location.state.ids;
         this.state = {
             group: this.props.changedCrmGroup,

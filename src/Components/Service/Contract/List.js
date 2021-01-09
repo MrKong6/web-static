@@ -9,11 +9,12 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message, Select} from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message, Select, Checkbox} from 'element-react';
 import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 import ajaxFile from "../../../utils/ajaxFile";
+import {changeArrayItemToString} from "../../../utils/objectToArray";
 
 class List extends React.Component {
     constructor(props) {
@@ -33,6 +34,9 @@ class List extends React.Component {
             group: this.props.changedCrmGroup,
             list: [],
             ids: [],
+            courseTypeList: [],
+            chooseCourseType: [],
+            chooseCourseTypeIds: [],
             typeId: null,
             isAnimating: true,
             redirectToReferrer: false,
@@ -192,7 +196,9 @@ class List extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax('/service/contract/list.do', {orgId: this.state.group.id,
-                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:this.state.typeId,chooseCode: this.state.chooseCode});
+                    pageNum:this.state.currentPage,pageSize:this.state.pageSize,typeId:this.state.typeId,chooseCode: this.state.chooseCode, courseType: changeArrayItemToString(this.state.chooseCourseType)});
+
+                let courseTypeList = await ajax('/course/type/courseTypeList.do');
                 const ids = list.data.map((contract) => (contract.id));
                 list.data.map(item => {
                     if(item.createTime != null){
@@ -208,7 +214,7 @@ class List extends React.Component {
                         item.typeId = CONFIG.TYPE_ID[item.typeId];
                     }
                 });
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,courseTypeList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -336,6 +342,13 @@ class List extends React.Component {
         });
     }
 
+    //课程类别筛选
+    chooseCourseTypeSearch(chooseCourseType){
+        this.state.chooseCourseType = chooseCourseType;
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -374,6 +387,15 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <div className="row">
+                        <Checkbox.Group value={this.state.chooseCourseType} onChange={this.chooseCourseTypeSearch.bind(this)}>
+                            {
+                                this.state.courseTypeList.map(function(item){
+                                    return  <Checkbox key={item.id} label={item.name}></Checkbox>
+                                })
+                            }
+                        </Checkbox.Group>
+                    </div>
                     <div className="row">
                         <div className="col-3">
                             <Input placeholder="请输入学员姓名/合同编号"

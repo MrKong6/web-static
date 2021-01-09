@@ -379,8 +379,15 @@ class List extends React.Component {
         };
         request();
     }
+    //改变状态
+    chooseStatusSearch(chooseStatusName){
+        // debugger;
+        this.state.chooseStatusName = chooseStatusName;
+        window.sessionStorage.setItem("chooseStatusName",chooseStatusName);
+        this.state.currentPage = 1;
+        this.loadData();
+    }
     shouldComponentUpdate(nextProps, nextState) {
-        debugger
         if(nextProps.group.id != this.props.group.id){
             this.state.group = nextProps.group;
             this.loadData();
@@ -563,7 +570,7 @@ class List extends React.Component {
                     </Checkbox.Group>
                 </div>
                 <div className="row" id="shortOne1">
-                    <Input placeholder="请输入手机号"
+                    <Input placeholder="请输入手机号/学员姓名"
                            className={"leadlist_search"}
                            value={this.state.cellphone}
                            style={{width: '20%'}}
@@ -616,13 +623,22 @@ class List extends React.Component {
                 </div>
 
                 <div className="row" id="shortOne2">
-                    <Input placeholder="请输入手机号"
+                    <Input placeholder="请输入手机号/学员姓名"
                            className={"leadlist_search"}
                            value={this.state.cellphone}
                            style={{width: '20%'}}
                            onChange={this.onChange.bind(this, 'cellphone')}
                            append={<Button type="primary" icon="search" onClick={this.loadData.bind(this)}>搜索</Button>}
                     />
+                    <div className="col-2">
+                        <Select value={this.state.chooseStatusName} placeholder="请选择状态" clearable={true} onChange={this.chooseStatusSearch}>
+                            {
+                                this.state.statusName.map(el => {
+                                    return <Select.Option key={el.id} label={el.name} value={el.id}/>
+                                })
+                            }
+                        </Select>
+                    </div>
                 </div>
                 <div className="row" id="shortTwo2">
                     <Table

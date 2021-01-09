@@ -207,7 +207,8 @@ class StudentView extends React.Component {
     }
 
     goToDetails(id) {
-        this.props.history.push(`/home/education/class/student/customer/`+id);
+        this.props.history.push(`/home/education/class/student/customer/`+id,{type:2});
+        // this.props.history.push(`/home/service/customer/student/` + id);
     }
 
     pageChange(currentPage){

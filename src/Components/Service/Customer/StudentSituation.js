@@ -15,17 +15,33 @@ import StudentSit from "../../Service/Situation/StudentSituation"
 class StudentSituation extends React.Component {
     constructor(props) {
         super(props);
-        debugger
         this.commands = this.props.commands.filter(command => (command.id == '3-2-5-1'));
+        //异动信息编辑按钮
+        this.editommands = this.props.commands.filter(command => (command.id == '3-2-5-2'));
 
-        this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none';
-        this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
+        let type = 1;
+        if(this.props.location.state && this.props.location.state.type && this.props.location.state.type == 2){
+            //从教学的我的班级的学员信息页面跳转而来
+            type = this.props.location.state.type;
+            this.commands = [];
+            this.first = 'normal';
+            this.second = 'normal';
+            this.third = 'normal';
+            this.fourth = 'normal';
+            this.fifth = 'normal';
+            this.sixth = 'normal'
+            this.seventh = 'normal';
+        }else{
+            this.commands = this.props.commands.filter(command => (command.id === '3-2-1-2' || command.id === '3-2-1-3'));
+            this.first = !(this.props.sonView.filter(view => (view.id == '3-2-1')) == false) ? 'normal' : 'none';
+            this.second = !(this.props.sonView.filter(view => (view.id == '3-2-2')) == false) ? 'normal' : 'none';
+            this.third = !(this.props.sonView.filter(view => (view.id == '3-2-3')) == false) ? 'normal' : 'none';
+            this.fourth = !(this.props.sonView.filter(view => (view.id == '3-2-4')) == false) ? 'normal' : 'none';
+            this.fifth = !(this.props.sonView.filter(view => (view.id == '3-2-5')) == false) ? 'normal' : 'none';
+            this.sixth = !(this.props.sonView.filter(view => (view.id == '3-2-6')) == false) ? 'normal' : 'none'
+            this.seventh = this.props.sonView && !(this.props.sonView.filter(view => (view.id == '3-2-7')) == false) ? 'normal' : 'none';
 
+        }
         this.title = fmtTitle(this.props.location.pathname);
         this.state = {
             group: this.props.changedCrmGroup,
@@ -40,7 +56,8 @@ class StudentSituation extends React.Component {
             currentPage: 1,
             pageSize: 10,
             totalCount: 0,
-            situationView: 1
+            situationView: 1,
+            type: type,
         };
         this.createDialogTips = this.createDialogTips.bind(this);
         this.assignAction = this.assignAction.bind(this);
@@ -89,7 +106,7 @@ class StudentSituation extends React.Component {
     }
 
     goToDetails(id) {
-        this.props.history.push(`/home/service/customer/student/` + id);
+        this.props.history.push(`/home/service/situation/` + id, {commands: this.editommands});
     }
 
     createDialogTips(text) {
@@ -172,9 +189,12 @@ class StudentSituation extends React.Component {
                     <p className="d-inline text-muted">{this.state.stuName}</p>
                     <div className="btn-group float-right" role="group">
                         <div className="btn-group float-right" role="group">
-                            <button onClick={this.assignAction} type="button" className="btn btn-primary" id="btnChoose" disabled={this.state.canAssign}>
-                                新建
-                            </button>
+                            {
+                                this.state.type == 2 ? null :
+                                    <button onClick={this.assignAction} type="button" className="btn btn-primary" id="btnChoose" disabled={this.state.canAssign}>
+                                        新建
+                                    </button>
+                            }
                         </div>
                     </div>
                 </h5>
@@ -194,7 +214,7 @@ class StudentSituation extends React.Component {
                                 <StudentSituationChangeClass type={"class"} id={this.state.id} data={this.state.list} />
                             </Tabs.Pane>
                         </Tabs>*/}
-                        <StudentSit type={"class"} id={this.state.id} data={this.state.list} />
+                        <StudentSit goToDetails={this.goToDetails} type={"class"} id={this.state.id} data={this.state.list} />
                     </div>
                     <Dialog
                         title="请选择异动类型"
@@ -220,31 +240,34 @@ class StudentSituation extends React.Component {
                     </Dialog>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
-                            <li className="breadcrumb-item"style={{"display":this.first}}><Link
-                                to={`/home/service/customer/student/${this.state.id}`}>学员信息</Link>
+                            <li className="breadcrumb-item"style={{"display":this.first}}>
+                                <Link
+                                    to={{pathname: `/home/service/customer/student/${this.state.id}`,
+                                        state: {stuName: this.state.stuName,type: this.state.type}}}>学员信息
+                                </Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.second}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/parent/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.stuName,type: this.state.type}
                                 }}>家长信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.third}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/contract/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.stuName,type: this.state.type}
                                 }}>合同信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/account/${this.state.id}`,
-                                    state: {stuName: this.state.stuName}
+                                    state: {stuName: this.state.stuName,type: this.state.type}
                                 }}>账户信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.sixth}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/class/${this.state.id}`,
-                                    state: {stuName: this.state.data ? this.state.data.name : this.state.stuName}
+                                    state: {stuName: this.state.data ? this.state.data.name : this.state.stuName,type: this.state.type}
                                 }}>班级信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.fifth}}>
@@ -253,7 +276,7 @@ class StudentSituation extends React.Component {
                             <li className="breadcrumb-item" style={{"display":this.seventh}}>
                                 <Link to={{
                                     pathname: `/home/service/customer/charge/${this.state.id}`,
-                                    state: {stuName: this.state.data ? this.state.data.name : this.state.stuName}
+                                    state: {stuName: this.state.data ? this.state.data.name : this.state.stuName,type: this.state.type}
                                 }}>卡券信息</Link>
                             </li>
                         </ol>

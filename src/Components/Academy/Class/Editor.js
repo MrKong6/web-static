@@ -16,7 +16,8 @@ class Editor extends React.Component {
     constructor(props) {
         super(props);
 
-        this.title = fmtTitle(this.props.location.pathname);
+        let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
+        this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
         this.ids = this.props.location.state.ids;
         this.state = {
             group: this.props.changedCrmGroup,
@@ -82,7 +83,9 @@ class Editor extends React.Component {
         query.courseStartDate = this.form.state.courseStartTime ? this.form.state.courseStartTime.getTime() : "";
         query.courseEndDate = this.form.state.courseEndTime ? this.form.state.courseEndTime.getTime() : "";
         query.classColor = this.form.state.classColor.hex;
-        query.orgId = this.state.group.id;
+        if(!query.orgId){
+            query.orgId = this.state.group.id;
+        }
         query.id = this.state.id;
         query.mainTeacher = this.form.state.mainTeacherIds.toString();
         if(query.courseRelIds && query.courseRelIds.length > 0){

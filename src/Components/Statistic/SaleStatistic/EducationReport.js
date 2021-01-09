@@ -2,9 +2,10 @@ import React from 'react'
 
 import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
-import {Button, DateRangePicker} from "element-react";
+import {Button, DateRangePicker, Select} from "element-react";
 import ReactEcharts from 'echarts-for-react';
 import {getYOption} from "../../../utils/const";
+import {changeArrayItemToString} from "../../../utils/objectToArray";
 
 class EducationReport extends React.Component {
     constructor(props) {
@@ -22,7 +23,10 @@ class EducationReport extends React.Component {
             fromWay : this.props.fromWay,
             reportType: 1,
             dateRange: [],
+            dateRangeCls: [],
+            teacherId:[],
             teacherHour: getYOption(),
+            teacherClsHour: getYOption(),
         };
         this.panelLeadReq = this.panelLeadReq.bind(this);
     }
@@ -30,6 +34,7 @@ class EducationReport extends React.Component {
     componentDidMount() {
         if(this.state.typeId == 11){
             this.panelLeadReq();
+            this.panelTeacherReq();
         }
         mainSize();
     }
@@ -67,7 +72,6 @@ class EducationReport extends React.Component {
                         value.push(Number(item.value));
                     })
                 }
-                debugger
                 this.setState({
                     teacherHour: {
                         title : {
@@ -105,13 +109,83 @@ class EducationReport extends React.Component {
         request();
     }
 
+    //教师班级课时数据渲染
+    panelTeacherReq(){
+        const request = async () => {
+            let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
+            let list = await ajax('/statistic/getTeacherClsUseStatistic.do', {
+                orgId: this.state.group.id,
+                startDate: (this.state.dateRangeCls && this.state.dateRangeCls.length > 0) ? this.state.dateRangeCls[0].getTime() : null,
+                endDate: (this.state.dateRangeCls && this.state.dateRangeCls.length > 0) > 0 ? this.state.dateRangeCls[1].getTime() : null,
+                teacherIds: changeArrayItemToString(this.state.teacherId)
+            });
+            let legendText = [],value=[];
+            if (list &&list.data) {
+                list = list.data;
+                if (list && list.length > 0) {
+                    list.map(item => {
+                        legendText.push(item.name);
+                        value.push(Number(item.value));
+                    })
+                }
+            }
+            this.setState({
+                teacherList: teacherList.data.items,
+                teacherClsHour: {
+                    title : {
+                        text: '教师班级课时统计',
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        type: 'value',
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: legendText
+                    },
+                    series: [
+                        {
+                            type: 'bar',
+                            data: value
+                        }
+                    ]
+                }
+            });
+        };
+        request();
+    }
+
     //近一年  近一月
-    changeTeacherDate(value){
-        if(this.state.typeId == 11){
+    changeTeacherDate(type,value){
+        if(type == 1){
             this.state.dateRange = value;
             this.setState({dateRange:value});
             this.panelLeadReq();
+        }else if (type == 2){
+            this.state.dateRangeCls = value;
+            this.setState({dateRangeCls:value});
+            this.panelTeacherReq();
         }
+    }
+
+
+    // 更新表单值
+    handleSelect(type, key, value) {
+        if(key == 'teacherId'){
+            this.state.teacherId = value;
+        }
+        this.panelTeacherReq();
     }
 
     render() {
@@ -124,7 +198,7 @@ class EducationReport extends React.Component {
                         <DateRangePicker
                             value={this.state.dateRange}
                             placeholder="选择日期范围"
-                            onChange={this.changeTeacherDate.bind(this)}
+                            onChange={this.changeTeacherDate.bind(this,1)}
                         />
                     </div>
                     <div className="row">
@@ -134,6 +208,32 @@ class EducationReport extends React.Component {
                             className='react_for_echarts'/>
                     </div>
                     <br/><br/>
+                    <div className="row">
+                        <div className="col-4">
+                            <DateRangePicker
+                                value={this.state.dateRangeCls}
+                                placeholder="选择日期范围"
+                                onChange={this.changeTeacherDate.bind(this,2)}
+                            />
+                        </div>
+                        <div className="col-3">
+                            <Select name="teacherId" value={this.state.teacherId} placeholder="请选择教师" multiple={true}
+                                    filterable={true} clearable={true} style={{"width":"100%"}}
+                                    onChange={this.handleSelect.bind(this, 1, "teacherId")}>
+                                {
+                                    (this.state.teacherList && this.state.teacherList.length > 0) ? this.state.teacherList.map(el => {
+                                        return <Select.Option key={el.id} label={el.name} value={el.id}/>
+                                    }) : null
+                                }
+                            </Select>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <ReactEcharts
+                            option={this.state.teacherClsHour}
+                            style={{height: '350px', width: '1000px'}}
+                            className='react_for_echarts'/>
+                    </div>
                 </div>
             )
         }else {

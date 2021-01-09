@@ -5,19 +5,21 @@ import DialogTips from "../../Dialog/DialogTips";
 import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
-import {Button, Table, Pagination, Message, Tooltip, Select, Input,Progress} from 'element-react';
+import {Button, Table, Pagination, Message, Tooltip, Select, Input, Progress, Checkbox, Radio} from 'element-react';
 import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 import ajaxFile from "../../../utils/ajaxFile";
 import '../../Mkt/Leads/Leads.css'
 import "../../App/common.css"
+import {changeArrayItemToString} from "../../../utils/objectToArray";
 
 class List extends React.Component {
     constructor(props) {
         super(props);
         this.commands = this.props.commands.filter((command) => (command.name === 'Add' || command.name === 'Import'
             || command.name === 'Export'));
-        this.title = fmtTitle(this.props.location.pathname);
+        let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
+        this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.addAction = this.addAction.bind(this);
@@ -31,8 +33,11 @@ class List extends React.Component {
             list: [],
             ids: [],
             classStatus: [],
+            courseTypeList:[],//课程类别
             chooseStatusName: null,
             chooseClassName: null,
+            chooseCourseType: [],
+            chooseCourseTypeIds: [],
             isAnimating: true,
             redirectToReferrer: false,
             columns: [
@@ -54,9 +59,14 @@ class List extends React.Component {
                     }
                 },
                 {
-                    label: "(校区名称)",
-                    prop: "schoolArea",
+                    label: "所属组织",
+                    prop: "orgName",
                     width: 120,
+                },
+                {
+                    label: "所属用户",
+                    prop: "executiveName",
+                    width: 80,
                 },
                 {
                     label: "班级状态",
@@ -195,6 +205,7 @@ class List extends React.Component {
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            isIn: (this.props.history.location.pathname.indexOf('/home/academy/cls/in') != -1)  ? 1 : 0//标识是否是我的班级1或者班级管理
         };
     }
 
@@ -202,8 +213,9 @@ class List extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax('/academy/class/list.do', {orgId: this.state.group.id,pageIndex:this.state.currentPage,
-                    limit:this.state.pageSize,statusId:this.state.chooseStatusName,classCode:this.state.chooseClassName});
+                    limit:this.state.pageSize,statusId:this.state.chooseStatusName,classCode:this.state.chooseClassName, isIn: this.state.isIn, courseType: changeArrayItemToString(this.state.chooseCourseTypeIds)});
                 let allClassStatus = await ajax('/academy/class/classStatus.do');
+                let courseTypeList = await ajax('/course/type/courseTypeList.do');
                 let ids = [];
                 if(list.data && list.data.items){
                     ids = list.data.items.map((contract) => (contract.id));
@@ -226,7 +238,8 @@ class List extends React.Component {
                     });
                 }
 
-                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count,classStatus:allClassStatus});
+                this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,
+                    totalCount: list.data.count,classStatus:allClassStatus,courseTypeList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -250,7 +263,7 @@ class List extends React.Component {
         return true;
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(preProps){
         //如果是移动端
         /*if(navigator.userAgent.match(/mobile/i)) {
             let classDom = document.getElementsByClassName('el-button');
@@ -259,6 +272,11 @@ class List extends React.Component {
                 classDom[i].style.padding="auto";
             }*!/
         }*/
+        //当切换班管理和我的班级时更新数据
+        if(this.props.match != preProps.match){
+            this.state.isIn = (this.props.history.location.pathname.indexOf('/home/academy/cls/in') == -1)  ? 0 : 1;
+            this.componentDidMount();
+        }
     }
 
     /*componentWillReceiveProps(nextProps) {
@@ -343,14 +361,16 @@ class List extends React.Component {
 
     exportAction() {
         ajaxFile('/academy/class/export.do',{orgId: this.state.group.id,fromWay:2,
-            isIn:((this.props.history.location.pathname.indexOf('/home/mkt/leadspublic') == -1)  ? 1 : 0)})
+            isIn: this.state.isIn})
     };
+
     successMsg(msg) {
         Message({
             message: msg,
             type: 'info'
         });
     }
+
     errorMsg(msg) {
         Message({
             message: msg,
@@ -358,14 +378,31 @@ class List extends React.Component {
             duration: 30000  //30s
         });
     }
+
     importSuccess() {
         this.componentDidMount();
         this.successMsg("导入成功")
     };
+    //状态筛选
     chooseStatusSearch(chooseStatusName){
         this.state.chooseStatusName = chooseStatusName;
         /*window.sessionStorage.setItem("chooseStatusName",chooseStatusName);*/
         this.state.currentPage = 1;
+        this.componentDidMount();
+    }
+    //课程类别筛选
+    chooseCourseTypeSearch(chooseCourseType){
+        let ids = [];
+        this.state.courseTypeList.map(item => {
+            chooseCourseType.map(vv => {
+                if(vv == item.name){
+                    ids.push(item.id);
+                }
+            });
+        });
+        this.state.chooseCourseType = chooseCourseType;
+        this.state.currentPage = 1;
+        this.state.chooseCourseTypeIds = ids;
         this.componentDidMount();
     }
 
@@ -377,15 +414,12 @@ class List extends React.Component {
 
     //表格行内底色
     rowClassName(row, index) {
-        if (row.classStatus === 1) {
+        if (row.classStatus === 4) {
             //已开班
             return 'back_table_tr_yellow';
-        } else if (row.classStatus === 3) {
-            //已结课
+        } else if (row.classStatus === 5 || row.classStatus === 9) {
+            //未结班 and 未结课
             return 'back_table_tr_grew';
-        }else if (row.classStatus === 4) {
-            //已结班
-            return 'back_table_tr_orange';
         }
         return '';
     }
@@ -415,6 +449,7 @@ class List extends React.Component {
             )
         }
 
+        let that = this;
         return (
             <div>
                 <h5 id="subNav">
@@ -429,6 +464,15 @@ class List extends React.Component {
                 <div id="main" className="main p-3">
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <div className="row">
+                        <Checkbox.Group value={this.state.chooseCourseType} onChange={this.chooseCourseTypeSearch.bind(this)}>
+                            {
+                                this.state.courseTypeList.map(function(item){
+                                    return  <Checkbox key={item.id} label={item.name}></Checkbox>
+                                })
+                            }
+                        </Checkbox.Group>
+                    </div>
                     <div class="row">
                         <div className="col-3">
                             <Input placeholder="请输入班级编号"
@@ -448,6 +492,16 @@ class List extends React.Component {
                                 }
                             </Select>
                         </div>
+                        {/*<div className="col-2">
+                            <Select value={this.state.chooseCourseType} placeholder="请选择课程类别" clearable={true}
+                                    onChange={this.chooseCourseTypeSearch.bind(this)}>
+                                {
+                                    this.state.courseTypeList.map(el => {
+                                        return <Select.Option key={el.id} label={el.name} value={el.id}/>
+                                    })
+                                }
+                            </Select>
+                        </div>*/}
                     </div>
                     <Table
                         style={{width: '100%',"margin-bottom":"30px"}}

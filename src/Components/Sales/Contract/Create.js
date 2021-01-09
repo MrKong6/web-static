@@ -77,7 +77,6 @@ class Create extends React.Component {
             return;
         }
 
-        query.orgId = this.state.group.id;
         query.oriId = this.state.oriId;
         query.typeId = this.state.typeId;
         query.stuId = this.state.stuId;

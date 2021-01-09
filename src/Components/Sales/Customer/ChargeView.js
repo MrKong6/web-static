@@ -9,49 +9,8 @@ import mainSize from "../../../utils/mainSize";
 import DialogAccount from "../../Dialog/DialogAccount";
 import {Button, Form, Table} from "element-react";
 import DialogAccountRelateClass from "../../Dialog/DialogAccountRelateClass";
-import DialogAccountTwo from "../../Dialog/DialogAccountTwo";
 
-const NextBtn = ({id, ids}) => {
-    const curIndex = ids.indexOf(id);
-
-    if ((curIndex + 1) === ids.length) {
-        return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
-    }
-
-    return (
-        <Link
-            className="btn btn-light"
-            to={{
-                pathname: `/home/sales/customer/contract/${ids[curIndex + 1]}`,
-                state: {ids: ids}
-            }}
-        >
-            下一条
-        </Link>
-    )
-};
-
-const PrevBtn = ({id, ids}) => {
-    const curIndex = ids.indexOf(id);
-
-    if (curIndex === 0) {
-        return <button type="button" className="btn btn-light" disabled={true}>上一条</button>
-    }
-
-    return (
-        <Link
-            className="btn btn-light"
-            to={{
-                pathname: `/home/sales/customer/contract/${ids[curIndex - 1]}`,
-                state: {ids: ids}
-            }}
-        >
-            上一条
-        </Link>
-    )
-};
-
-const INCOME="充值";
+const INCOME="收入";
 
 class AccountView extends React.Component {
     constructor(props) {
@@ -156,9 +115,6 @@ class AccountView extends React.Component {
                             }else{
                                 return <span><Button type="danger" size="small" onClick={this.createCourseHourDialog.bind(this,row)}>关联班级</Button></span>
                             }
-                        }else if(row.income && row.income > 0){
-                            //汇款记录  需要有支出按钮
-                            return <span><Button type="primary" size="small" onClick={this.createAccountDialog.bind(this,row)}>支出</Button></span>
                         }
                     }
                 }
@@ -188,57 +144,25 @@ class AccountView extends React.Component {
         }
     }
 
-    createAccountDialog(row,egt) {
-        if(egt.target.innerText == INCOME){
-            this.actContainer = document.createElement('div');
-            ReactDOM.render(
-                <div>
-                    <DialogAccount
-                        key={+new Date}
-                        accept={this.acceptActDialog}
-                        changedCrmGroup={this.state.group}
-                        refresh={this.refresh}
-                        id={this.state.id}
-                        accountType={1}
-                        notRoot={true}
-                        outRow={row}
-                        defaults={this.state.channelId}
-                        replace={this.props.replace}
-                        from={this.props.from}
-                        ref={(dom) => {
-                            this.act = dom
-                        }}
-                    />
-                </div>
-                ,
-                document.body.appendChild(this.actContainer)
-            );
-        }else{
-            this.actContainer = document.createElement('div');
-            let dateRandom = new Date().getTime();
-            ReactDOM.render(
-                    <DialogAccountTwo
-                        key={+new Date}
-                        dateRandom={dateRandom}
-                        accept={this.acceptActDialog}
-                        changedCrmGroup={this.state.group}
-                        refresh={this.refresh}
-                        id={this.state.id}
-                        accountType={2}
-                        notRoot={true}
-                        outRow={row}
-                        defaults={this.state.channelId}
-                        replace={this.props.replace}
-                        from={this.props.from}
-                        ref={(dom) => {
-                            this.act = dom
-                        }}
-                    />
-                ,
-                document.body.appendChild(this.actContainer)
-            );
-        }
-
+    createAccountDialog(egt) {
+        this.actContainer = document.createElement('div');
+        ReactDOM.render(
+            <DialogAccount
+                accept={this.acceptActDialog}
+                changedCrmGroup={this.state.group}
+                refresh={this.refresh}
+                id={this.state.id}
+                accountType={egt.target.innerText == INCOME ? 1 : 2}
+                notRoot={true}
+                defaults={this.state.channelId}
+                replace={this.props.replace}
+                from={this.props.from}
+                ref={(dom) => {
+                    this.act = dom
+                }}
+            />,
+            document.body.appendChild(this.actContainer)
+        );
         this.act.dialog.modal('show');
     }
 
@@ -326,10 +250,10 @@ class AccountView extends React.Component {
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>*/}
                     <div className="btn-group float-right ml-4" role="group" style={{"display":this.fourth}}>
-                        <button onClick={this.createAccountDialog.bind(this,null)} className="btn btn-primary" type="button">
-                            充值
-                        </button>
                         {/*<button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
+                            收入
+                        </button>
+                        <button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
                             支出
                         </button>*/}
                         <button onClick={() => {
@@ -341,7 +265,7 @@ class AccountView extends React.Component {
                 </h5>
 
                 <div id="main" className="main p-3" style={{"height":"80%"}}>
-                    <div className="row justify-content-md-center mb-2">
+                    {/*<div className="row justify-content-md-center mb-2">
                         <div className="col col-12">
                             <div className="card border-top-0">
                                 <div className="card-body">
@@ -356,7 +280,7 @@ class AccountView extends React.Component {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>*/}
 
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
@@ -374,14 +298,11 @@ class AccountView extends React.Component {
                                     state: {stuName: this.state.name}
                                 }}>合同信息</Link>
                             </li>
-                            <li className="breadcrumb-item" style={{"display":this.fifth}}>
-                                <Link to={{
-                                    pathname: `/home/sales/customer/situation/${this.state.id}`,
-                                    state: {stuName: this.state.name}
-                                }}>异动信息</Link>
-                            </li>
                             <li className="breadcrumb-item" style={{"display":this.fourth}}>
-                                账户信息
+                                <Link to={{
+                                    pathname: `/home/sales/customer/account/${this.state.id}`,
+                                    state: {stuName: this.state.data.name}
+                                }}>账户信息</Link>
                             </li>
                             <li className="breadcrumb-item" style={{"display":this.sixth}}>
                                 <Link to={{
@@ -389,11 +310,14 @@ class AccountView extends React.Component {
                                     state: {stuName: this.state.data.name}
                                 }}>班级信息</Link>
                             </li>
-                            <li className="breadcrumb-item" style={{"display":this.seventh}}>
+                            <li className="breadcrumb-item" style={{"display":this.fifth}}>
                                 <Link to={{
-                                    pathname: `/home/sales/customer/charge/${this.state.id}`,
-                                    state: {stuName: this.state.data.name}
-                                }}>卡券信息</Link>
+                                    pathname: `/home/sales/customer/situation/${this.state.id}`,
+                                    state: {stuName: this.state.name}
+                                }}>异动信息</Link>
+                            </li>
+                            <li className="breadcrumb-item" style={{"display":this.seventh}}>
+                                卡券信息
                             </li>
                         </ol>
                     </nav>

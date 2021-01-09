@@ -202,10 +202,14 @@ class Home extends React.Component {
                                       component={FinanceAccount}{...query}/>
                         <PrivateRoute path="/home/finance/charge" changedCrmGroup={this.state.group}
                                       component={FinanceCharge}{...query}/>
+                        <PrivateRoute path="/home/education/cls/public" changedCrmGroup={this.state.group}
+                                      component={AcademyClass}{...query}/>
                         <PrivateRoute path="/home/academy/course" changedCrmGroup={this.state.group}
                                       component={AcademyCourse}{...query}/>
                         <PrivateRoute path="/home/academy/teacher" changedCrmGroup={this.state.group}
                                       component={AcademyTeacher}{...query}/>
+                        <PrivateRoute path="/home/academy/cls/in" changedCrmGroup={this.state.group}
+                                      component={AcademyClass}{...query}/>
                         <PrivateRoute path="/home/academy/class" changedCrmGroup={this.state.group}
                                       component={AcademyClass}{...query}/>
                         <PrivateRoute path="/home/academy/room" changedCrmGroup={this.state.group}
