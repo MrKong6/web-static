@@ -1,5 +1,4 @@
 import SCHOOLPAL_CONFIG from "./config";
-import idToNumber from './idToNumber';
 
 const ADMIN_ID = "7";
 
@@ -126,92 +125,102 @@ export default function (data) {
 
     console.log(hasChangeGroupBtn, menu, access, commands, profile);
     //处理三级权限  即页面中tab页面情况   如班级管理详情tab
-    if(commands && commands.length > 0){
-        debugger
+    if (commands && commands.length > 0) {
         let array = [];
-        let sonArray = [],sonOwnClass = [],sonStudentArray = [],sonOwnStudentArray = [];
-        let groupCommands,ownClass,student,ownStudent;
+        let sonArray = [], sonOwnClass = [], sonStudentArray = [], sonOwnStudentArray = [];
+        let groupCommands, ownClass, student, ownStudent;
         commands.map(item => {
-           if(item.id == '5-4' && !groupCommands){
-               groupCommands = item;
-           } else if(item.id == '5-4-1' || item.id == '5-4-2' || item.id == '5-4-3'|| item.id == '5-4-4'|| item.id == '5-4-5'|| item.id == '5-4-6'){
-               //班级管理
-               if(item.commands && item.commands.length > 0){
-                   for(let j=0;j<item.commands.length;j++){
-                       groupCommands.commands.push(item.commands[j]);
-                   }
-                   item.commands = [];
-               }
-               sonArray.push(item);
-           }else if(item.id == '5-6' && !groupCommands){
+            if (item.id == '5-4' && !groupCommands) {
                 groupCommands = item;
-            } else if(item.id == '5-6-1' || item.id == '5-6-2' || item.id == '5-6-3'|| item.id == '5-6-4'|| item.id == '5-6-5'|| item.id == '5-6-6'){
+            } else if (item.id == '5-4-1' || item.id == '5-4-2' || item.id == '5-4-3' || item.id == '5-4-4' || item.id == '5-4-5' || item.id == '5-4-6') {
                 //班级管理
-                if(item.commands && item.commands.length > 0){
-                    for(let j=0;j<item.commands.length;j++){
+                if (item.commands && item.commands.length > 0) {
+                    for (let j = 0; j < item.commands.length; j++) {
                         groupCommands.commands.push(item.commands[j]);
                     }
                     item.commands = [];
                 }
                 sonArray.push(item);
-            }else if(item.id == '6-1'){
-               //我的班级
-               ownClass = item;
-           }else if(item.id == '6-1-1' || item.id == '6-1-2' || item.id == '6-1-3'|| item.id == '6-1-4'
-               || item.id == '6-1-5'|| item.id == '6-1-6'){
-               //班级管理
-               if(item.commands && item.commands.length > 0){
-                   for(let j=0;j<item.commands.length;j++){
-                       ownClass.commands.push(item.commands[j]);
-                   }
-                   item.commands = [];
-               }
-               sonOwnClass.push(item);
-           }else if(item.id == '3-2'){
-               //学员管理
-               student = item;
-           }else if(item.id == '3-2-1' || item.id == '3-2-2' || item.id == '3-2-3'|| item.id == '3-2-4'|| item.id == '3-2-5'|| item.id == '3-2-6'|| item.id == '3-2-7'){
-               //学员管理
-               if(item.commands && item.commands.length > 0){
-                   for(let j=0;j<item.commands.length;j++){
-                       student.commands.push(item.commands[j]);
-                   }
-                   item.commands = [];
-               }
-               sonStudentArray.push(item);
-           }else if(item.id == '2-3'){
-               //我的学员
-               ownStudent = item;
-           }else if(item.id == '2-3-1' || item.id == '2-3-2' || item.id == '2-3-3'|| item.id == '2-3-4'|| item.id == '2-3-5'|| item.id == '2-3-6'|| item.id == '2-3-7'|| item.id == '2-3-8'){
-               //我的学员
-               if(item.commands && item.commands.length > 0){
-                   for(let j=0;j<item.commands.length;j++){
-                       ownStudent.commands.push(item.commands[j]);
-                   }
-                   item.commands = [];
-               }
-               sonOwnStudentArray.push(item);
-           }else{
-               array.push(item);
-           }
+            } else if (item.id == '5-6' && !groupCommands) {
+                groupCommands = item;
+            } else if (item.id == '5-6-1' || item.id == '5-6-2' || item.id == '5-6-3' || item.id == '5-6-4' || item.id == '5-6-5' || item.id == '5-6-6') {
+                //班级管理
+                if (item.commands && item.commands.length > 0) {
+                    for (let j = 0; j < item.commands.length; j++) {
+                        groupCommands.commands.push(item.commands[j]);
+                    }
+                    item.commands = [];
+                }
+                sonArray.push(item);
+            }  else if (item.id == '6-4' && !groupCommands) {
+                groupCommands = item;
+            }  else if (item.id == '6-4-1' || item.id == '6-4-2' || item.id == '6-4-3' || item.id == '6-4-4' || item.id == '6-4-5' || item.id == '6-4-6') {
+                //教学 -- 班级管理
+                if (item.commands && item.commands.length > 0) {
+                    for (let j = 0; j < item.commands.length; j++) {
+                        groupCommands.commands.push(item.commands[j]);
+                    }
+                    item.commands = [];
+                }
+                sonArray.push(item);
+            } else if (item.id == '6-1') {
+                //我的班级
+                ownClass = item;
+            } else if (item.id == '6-1-1' || item.id == '6-1-2' || item.id == '6-1-3' || item.id == '6-1-4'
+                || item.id == '6-1-5' || item.id == '6-1-6') {
+                //班级管理
+                if (item.commands && item.commands.length > 0) {
+                    for (let j = 0; j < item.commands.length; j++) {
+                        ownClass.commands.push(item.commands[j]);
+                    }
+                    item.commands = [];
+                }
+                sonOwnClass.push(item);
+            } else if (item.id == '3-2') {
+                //学员管理
+                student = item;
+            } else if (item.id == '3-2-1' || item.id == '3-2-2' || item.id == '3-2-3' || item.id == '3-2-4' || item.id == '3-2-5' || item.id == '3-2-6' || item.id == '3-2-7') {
+                //学员管理
+                if (item.commands && item.commands.length > 0) {
+                    for (let j = 0; j < item.commands.length; j++) {
+                        student.commands.push(item.commands[j]);
+                    }
+                    item.commands = [];
+                }
+                sonStudentArray.push(item);
+            } else if (item.id == '2-3') {
+                //我的学员
+                ownStudent = item;
+            } else if (item.id == '2-3-1' || item.id == '2-3-2' || item.id == '2-3-3' || item.id == '2-3-4' || item.id == '2-3-5' || item.id == '2-3-6' || item.id == '2-3-7' || item.id == '2-3-8') {
+                //我的学员
+                if (item.commands && item.commands.length > 0) {
+                    for (let j = 0; j < item.commands.length; j++) {
+                        ownStudent.commands.push(item.commands[j]);
+                    }
+                    item.commands = [];
+                }
+                sonOwnStudentArray.push(item);
+            } else {
+                array.push(item);
+            }
         });
-        if(profile != null &&profile.teacherId > 0){
+        if (profile != null && profile.teacherId > 0) {
             //是教师的时候
             access.push(SCHOOLPAL_CONFIG.AUTH['3-2'].PATH_RULE);
         }
-        if(groupCommands && groupCommands.id){
+        if (groupCommands && groupCommands.id) {
             groupCommands.sonResource = sonArray;
             array.push(groupCommands);
         }
-        if(ownClass && ownClass.id){
+        if (ownClass && ownClass.id) {
             ownClass.sonResource = sonOwnClass;
             array.push(ownClass);
         }
-        if(student && student.id){
+        if (student && student.id) {
             student.sonResource = sonStudentArray;
             array.push(student);
         }
-        if(ownStudent && ownStudent.id){
+        if (ownStudent && ownStudent.id) {
             ownStudent.sonResource = sonOwnStudentArray;
             array.push(ownStudent);
         }
