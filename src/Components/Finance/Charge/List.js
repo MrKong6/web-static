@@ -51,6 +51,7 @@ class List extends React.Component {
                 {
                     label: "日期",
                     prop: "payDate",
+                    sortable: true
                 },
                 {
                     label: "收入",
@@ -58,12 +59,12 @@ class List extends React.Component {
                 },
                 {
                     label: "支出",
-                    prop: "outome",
+                    prop: "outcome",
                     sortable: true
                 },
                 {
                     label: "余额",
-                    prop: "balance",
+                    prop: "afterBalance",
                 },
             ],
             totalPage:0,
@@ -76,7 +77,7 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/account/list.do', {orgId: this.state.group.id,
+                let list = await ajax('/service/account/chargePageList.do', {orgId: this.state.group.id,
                     pageNum:this.state.currentPage,pageSize:this.state.pageSize,orderByCretedOn:2});
                 if(list.data && list.data.items){
                     list.data.items.map(item => {

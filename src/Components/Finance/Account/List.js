@@ -9,9 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import { Button,Table,Pagination,Upload,Input,Tooltip } from 'element-react';
-import CONFIG from "../../../utils/config";
-import fmtDate from "../../../utils/fmtDate";
+import {Button, Table, Pagination, Tag, Input} from 'element-react';
 
 class List extends React.Component {
     constructor(props) {
@@ -70,18 +68,30 @@ class List extends React.Component {
                     prop: "accountBalance",
                     sortable: true
                 },
+                {
+                    label: "课时总支出",
+                    prop: "courseFeeOut",
+                    sortable: true
+                },
+                {
+                    label: "课时总余额",
+                    prop: "courseFee",
+                },
             ],
             totalPage:0,
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            mount:{},
+            chooseStuName: null
         };
     }
 
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/service/account/accountBalanceList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/service/account/accountBalanceList.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
+                    pageSize:this.state.pageSize, stuName: this.state.chooseStuName});
                 if(list.data && list.data.items){
                     const ids = list.data.items.map((contract) => (contract.id));
                     this.setState({list: list.data.items, ids: ids,totalPage: list.data.totalPage,totalCount: list.data.count});
@@ -98,6 +108,7 @@ class List extends React.Component {
         };
         request();
         mainSize()
+        this.getTotal();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -133,7 +144,7 @@ class List extends React.Component {
 
     goToDetails(evt,name) {
         const url = `${this.props.match.url}/customer/account/`+evt;
-        this.props.history.push(url,{state: {stuName: name}});
+        this.props.history.push(url,{state: {"stuName": name}});
     }
 
     pageChange(currentPage){
@@ -147,6 +158,35 @@ class List extends React.Component {
         console.log(pageSize);
         this.state.pageSize = pageSize;
         this.componentDidMount();
+    }
+
+    //获取汇总金额
+    getTotal(){
+        const request = async () => {
+            try {
+                let list = await ajax('/service/account/getTotalAmount.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                if(list.data){
+                    if(list.data.allInCome >= list.data.accountBalance){
+                        list.data.outCome = list.data.allInCome - list.data.accountBalance;
+                    }
+                    this.setState({mount: list.data});
+                }
+            } catch (err) {
+                if (err.errCode === 401) {
+                    this.setState({redirectToReferrer: true})
+                } else {
+                    this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                }
+            } finally {
+                this.setState({isAnimating: false});
+            }
+        };
+        request();
+    }
+    //学员姓名搜索
+    onChange(value){
+        this.state.chooseStuName = value;
+        this.setState({chooseStuName: value});
     }
 
     render() {
@@ -166,7 +206,25 @@ class List extends React.Component {
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
+                    <div className="row">
+                        <div className="col-3">
+                            <Input placeholder="请输入学员姓名"
+                                   className={"leadlist_search"}
+                                   value={this.state.chooseStuName}
+                                   onChange={this.onChange.bind(this)}
+                                   append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                            />
+                        </div>
+                    </div>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <div style={{"textAlign":"right","marginBottom":"15px"}}>
+                        <Tag type="primary" style={{"marginRight":"15px","fontWeight":"bolder"}}>总收入：{this.state.mount.allInCome}</Tag>
+                        <Tag type="primary" style={{"marginRight":"15px","fontWeight":"bolder"}}>总支出：{this.state.mount.outCome}</Tag>
+                        <Tag type="primary" style={{"marginRight":"15px","fontWeight":"bolder"}}>总余额：{this.state.mount.accountBalance}</Tag>
+                        <Tag type="primary" style={{"marginRight":"15px","fontWeight":"bolder"}}>课时总支出：{this.state.mount.courseFeeOut}</Tag>
+                        <Tag type="primary" style={{"marginRight":"15px","fontWeight":"bolder"}}>课时总余额：{this.state.mount.courseFee}</Tag>
+
+                    </div>
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}

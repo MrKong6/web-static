@@ -5,17 +5,15 @@ import {Redirect} from 'react-router-dom'
 import DialogTips from "../../Dialog/DialogTips";
 import DialogUser from '../../Dialog/DialogUser';
 import Commands from "../../Commands/Commands";
-import Progress from "../../Progress/Progress"
 
 import mainSize from "../../../utils/mainSize";
-import fmtDate, {formatWithTime} from '../../../utils/fmtDate';
+import {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
-import {Button, Table, Pagination, Message, Input, Tooltip, Select, DateRangePicker} from 'element-react';
+import {Message} from 'element-react';
 import './Visitor.css'
 
-import {$} from "../../../vendor";
 import ajaxFile from "../../../utils/ajaxFile";
 import LeadsList from "../../Dic/LeadsList";
 

@@ -11,14 +11,15 @@ class DialogAccountTwo extends React.Component {
     constructor(props) {
         super(props);
         this.cancel = this.cancel.bind(this);
+        debugger
         this.state = {
             group: this.props.changedCrmGroup,
             id : this.props.id ? this.props.id : null,
             accountType:this.props.accountType,
             payTypes:[],
             contractList:[],
-            contractId: null,
-            contractNumId: null,
+            contractId: this.props.outRow ? this.props.outRow.contractId : null,
+            contractNumId: this.props.outRow ? this.props.outRow.contractNumId : null,
             outRow: this.props.outRow,
             idName: new Date().getTime()
         }
@@ -39,9 +40,14 @@ class DialogAccountTwo extends React.Component {
 
     componentDidMount() {
         this.dialog = $(`#accountViewTwo`);
-        this.dialog.on('hidden.bs.modal', () => {
+        this.dialog.on('hidden.bs.modal', '.modal', function () {
+            $(this).removeData('bs.modal');
+            this.state.outRow = null;
             this.cancel();
         });
+        // this.dialog.on('hidden.bs.modal', () => {
+        //     this.cancel();
+        // });
         this.changeAccountType(this.props.accountType);
         //清空表单数据
         const request = async () => {
@@ -175,7 +181,7 @@ class DialogAccountTwo extends React.Component {
             this.state.payTypes.map(item => {
                 if(item.id == evt.target.value){
                     if(item.code == 'CLASS_FEE'){
-                        this.form["outcome"].value = outRow.amount ? outRow.amount : 0;
+                        this.form["outcome"].value = outRow.income ? outRow.income : 0 - (outRow.bookFee ? outRow.bookFee : 0) - (outRow.otherFee ? outRow.otherFee : 0);
                     }else if(item.code == 'BOOK_FEE'){
                         this.form["outcome"].value = outRow.bookFee ? outRow.bookFee : 0;
                     }else if(item.code == 'OTHER_FEE'){

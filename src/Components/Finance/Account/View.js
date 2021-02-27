@@ -65,6 +65,7 @@ class View extends React.Component {
       redirectToList: false,
       isAnimating: false,
       id: this.props.match.params.contractId,
+      name: this.props.location.state.stuName,
       data: null,
       ids: []
     };
@@ -200,7 +201,7 @@ class View extends React.Component {
         <h5 id="subNav">
           <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
           &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-          <p className="d-inline text-muted">{this.state.data.stuName}</p>
+          <p className="d-inline text-muted">{this.state.name}</p>
 
           <div className="btn-group float-right ml-4" role="group">
             <PrevBtn id={this.state.id} ids={this.state.ids}/>

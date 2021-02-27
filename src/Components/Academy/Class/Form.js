@@ -653,7 +653,7 @@ class Form extends React.Component {
                                             <label className="col-5 col-form-label font-weight-bold">所属组织</label>
                                             <div className="col-7">
                                                 {/*<input type="text" id="orgName" className="form-control" name="orgName" readOnly={true}/>*/}
-                                                <select name="orgName" className="form-control" id="orgName">
+                                                <select name="orgName" className="form-control" id="orgName" disabled={this.state.data ? this.state.data.classStatus == 1 : false}>
                                                     {
                                                         this.state.orgList ? this.state.orgList.map(item => (
                                                             <option key={item.id}

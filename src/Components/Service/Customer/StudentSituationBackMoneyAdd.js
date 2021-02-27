@@ -23,20 +23,25 @@ class StudentSituationBackMoneyAdd extends React.Component {
             list:[],
             classData:null,
             stuData:null,
-            applyTime: new Date()
+            applyTime: new Date(),
+            situationTypeList:[],
+            situationType: this.props.location.state.data ? this.props.location.state.data.type : 1,
         };
         this.changeStu = this.changeStu.bind(this);
         this.saveData = this.saveData.bind(this);
+        this.changeClass = this.changeClass.bind(this);
     }
 
     componentDidMount() {
         const request = async () => {
             try {
+                //获取异动类型
+                let situationTypeList = await ajax('/student/situation/situationTypes.do');
                 //获取信息
                 if(this.state.type == 2){
                     //编辑
                     let data = this.state.editData;
-                    this.setState({data},()=>{
+                    this.setState({data,situationTypeList},()=>{
                         const keys = Object.keys(data);
                         keys.map(key => {
                             if (this.form[key]) {
@@ -52,13 +57,13 @@ class StudentSituationBackMoneyAdd extends React.Component {
                 }else{
                     //新增
                     let data = await ajax('/student/situation/getStuInfo.do', {id: this.state.id});
-                    this.setState({data: data},()=>{
+                    this.setState({data: data,situationTypeList},()=>{
                         let dataOne = data;
                         //学生信息
                         if(dataOne){
-                            this.form["stuName"].value = dataOne.stuName;
+                            this.form["stuName"].value = dataOne.stuName ? dataOne.stuName : "";
                             this.form["stuCode"].value = dataOne.stuCode ? dataOne.stuCode : "";
-                            this.form["parentName"].value = dataOne.parentName;
+                            this.form["parentName"].value = dataOne.parentName ? dataOne.parentName : "";
                             this.form["relation"].value = dataOne.relation;
                             this.form["cellphone"].value = dataOne.cellphone;
                             this.form["applyPerson"].value = this.props.profile.cRealname;
@@ -136,7 +141,6 @@ class StudentSituationBackMoneyAdd extends React.Component {
                         query[this.form[i].name] = this.form[i].value;
                     }
                 }
-                query.type = 1;
                 query.stuId = this.state.data.stuId;
                 query.applyTime = this.state.applyTime.getTime();
 
@@ -169,7 +173,6 @@ class StudentSituationBackMoneyAdd extends React.Component {
                     }
                 }
                 query.id = this.state.data.id;
-                query.type = 1;
                 query.stuId = this.state.data.stuId;
                 query.applyTime = this.state.applyTime.getTime();
 
@@ -185,6 +188,67 @@ class StudentSituationBackMoneyAdd extends React.Component {
         request()
     }
 
+    //更改异动类型
+    changeSituationType(evt){
+        if(evt.target.value == 3){
+            //转班
+            this.getTransClass();
+        }
+        this.setState({situationType:evt.target.value});
+    }
+
+    //获取转班班级
+    getTransClass(){
+        const request = async () => {
+            try{
+                let classList = await ajax('/academy/class/getClassShortList.do', {
+                    orgId: this.state.group.id, courseType: (this.state.data.classByStuId != null && this.state.data.classByStuId.length > 0) ? this.state.data.classByStuId[0].courseTypeId : null
+                });
+                //转入班级下拉列表
+                if(classList && classList.data && classList.data.length > 0){
+                    let classData = classList.data[0];
+                    this.form["inUseCourseHour"].value = classData.useCourseHour ? classData.useCourseHour : "";
+                    this.form["inClassId"].value = classData.id ? classData.id :"";
+                    this.form["inMainTeacherName"].value = classData.mainTeacherName;
+                }
+                this.setState({classList:classList.data});
+            } catch (e) {
+
+            }
+        };
+        request();
+    }
+    //切换班级
+    changeClass(evt){
+        if(evt.target.value && this.state.classList){
+            this.state.classList.map(item => {
+                if(item.id == evt.target.value){
+                    let classData = item;
+                    this.form["inUseCourseHour"].value = classData.useCourseHour ? classData.useCourseHour : "";
+                    this.form["inClassId"].value = classData.id ? classData.id :"";
+                    this.form["inMainTeacherName"].value = classData.mainTeacherName;
+                    this.form["courseType"].value = classData.courseType ? classData.courseType : "";
+
+                    return ;
+                }
+            });
+        }
+    }
+    //切换学生
+    changeStu(evt){
+        if(evt.target.value && this.state.data && this.state.data.classByStuId && this.state.data.classByStuId.length > 0){
+            this.state.data.classByStuId.map(item => {
+                if(item.classId == evt.target.value){
+                    let zeor = item;
+                    this.form["classStatusName"].value = zeor.classStatusName ? zeor.classStatusName : "";
+                    this.form["noUseCourseHour"].value = zeor.noUseCourseHour ? zeor.noUseCourseHour : "";
+                    this.form["useCourseHour"].value = zeor.useCourseHour ? zeor.useCourseHour : "";
+                    this.form["mainTeacherName"].value = zeor.mainTeacherName ? zeor.mainTeacherName : "";
+                    return ;
+                }
+            });
+        }
+    }
 
     render() {
         return (
@@ -192,7 +256,7 @@ class StudentSituationBackMoneyAdd extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
-                    <p className="d-inline text-muted">退费信息{this.state.type == 2 ? '编辑' : '创建'}</p>
+                    <p className="d-inline text-muted">异动信息{this.state.type == 2 ? '编辑' : '创建'}</p>
                     <div className="btn-group float-right" role="group">
                         <button onClick={() => {
                             historyBack(this.props.history)
@@ -216,6 +280,23 @@ class StudentSituationBackMoneyAdd extends React.Component {
                             <div className="card">
                                 <div className="card-body">
                                     <p className="ht pb-3 b-b">基本信息</p>
+                                    <div className="row">
+                                        <div className="col col-3">
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label" style={{fontWeight:"bolder"}}>异动类型</label>
+                                                <div className="col-7">
+                                                    <select className="form-control" disabled={this.state.type == 2} name={"type"} onChange={this.changeSituationType.bind(this)}>
+                                                        {
+                                                            this.state.situationTypeList ? this.state.situationTypeList.map(item => (
+                                                                <option key={item.code}
+                                                                        value={item.code}>{item.name}</option>
+                                                            )) : null
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
@@ -244,22 +325,76 @@ class StudentSituationBackMoneyAdd extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">
-                                                    <em className="text-danger">*</em>退费额度
-                                                </label>
-                                                <div className="col-7">
-                                                    <input type="text" className="form-control" name="amount"
-                                                           required={true}/>
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">异动状态</label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="situationStatus"/>
                                                 </div>
                                             </div>
+                                            {
+                                                this.state.situationType == 1
+                                                    ?
+                                                    <div className="form-group row">
+                                                        <label className="col-5 col-form-label font-weight-bold">
+                                                            <em className="text-danger">*</em>退费额度
+                                                        </label>
+                                                        <div className="col-7">
+                                                            <input type="text" className="form-control" name="amount"
+                                                                   required={true}/>
+                                                        </div>
+                                                    </div>
+                                                    : null
+                                            }
+                                            {
+                                                this.state.situationType == 3
+                                                    ?
+                                                    <div className="form-group row">
+                                                        <label className="col-5 col-form-label font-weight-bold">
+                                                            <em className="text-danger">*</em>转入班级名称
+                                                        </label>
+                                                        <div className="col-7">
+                                                            <select className="form-control"
+                                                                    name={this.props.inClassId || "inClassId"} onChange={this.changeClass}>
+                                                                {
+                                                                    this.state.classList ? this.state.classList.map(item => (
+                                                                        <option key={item.id}
+                                                                                value={item.id}>{item.code}</option>
+                                                                    )) : null
+                                                                }
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    : null
+                                            }
+                                            {
+                                                this.state.situationType == 3
+                                                    ?
+                                                    <div className="form-group row">
+                                                        <label className="col-5 col-form-label font-weight-bold">
+                                                            <em className="text-danger">*</em>转入班级教师
+                                                        </label>
+                                                        <div className="col-7">
+                                                            <input type="text" className="form-control" name="inMainTeacherName"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    : null
+                                            }
+                                            {
+                                                this.state.situationType == 3
+                                                    ?
+                                                    <div className="form-group row">
+                                                        <label className="col-5 col-form-label font-weight-bold">
+                                                            <em className="text-danger">*</em>转入班级已消耗课时
+                                                        </label>
+                                                        <div className="col-7">
+                                                            <input type="text" className="form-control" name="inUseCourseHour"
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    : null
+                                            }
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">退费原因</label>
+                                                <label className="col-5 col-form-label font-weight-bold">异动原因</label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="reason"/>
                                                 </div>

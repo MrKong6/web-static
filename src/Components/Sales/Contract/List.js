@@ -11,10 +11,11 @@ import fmtTitle from '../../../utils/fmtTitle';
 import CONFIG from '../../../utils/config';
 import ajax, {AJAX_PATH} from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
-import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message} from 'element-react';
+import {Button, Table, Pagination, Upload, Input, Tooltip, Tabs, Message, Checkbox, Select} from 'element-react';
 import {getContractColumns} from "../../../utils/commonTableColumns";
 import Commands from "../../Commands/Commands";
 import ajaxFile from "../../../utils/ajaxFile";
+import {changeArrayItemToString} from "../../../utils/objectToArray";
 
 
 /*
@@ -90,11 +91,12 @@ class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export' || command.name === 'Add'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);
         this.exportAction = this.exportAction.bind(this);
+        this.addAction = this.addAction.bind(this);
         this.state = {
             group: this.props.changedCrmGroup,
             list: [],
@@ -245,6 +247,9 @@ class List extends React.Component {
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            courseTypeList: [],
+            chooseCourseType: [],
+            chooseCourseTypeIds: [],
         };
     }
 
@@ -252,7 +257,8 @@ class List extends React.Component {
         const request = async () => {
             try {
                 let list = await ajax('/sales/contract/list.do', {orgId: this.state.group.id,pageNum:this.state.currentPage,
-                    pageSize:this.state.pageSize,isIn:1,typeId:null});
+                    pageSize:this.state.pageSize,isIn:1,typeId:null,chooseCode: this.state.chooseCode, courseType: changeArrayItemToString(this.state.chooseCourseType)});
+                let courseTypeList = await ajax('/course/type/courseTypeList.do');
                 const ids = list.data.map((contract) => (contract.id));
                 if(list.data){
                     list.data.map(item => {
@@ -270,7 +276,7 @@ class List extends React.Component {
                         }
                     });
                 }
-                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.data, ids: ids,totalPage: list.totalPage,totalCount: list.count,courseTypeList});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -381,6 +387,32 @@ class List extends React.Component {
         });
     }
 
+    addAction() {
+        this.props.history.push(`${this.props.match.url}/create`, {ids: this.state.ids});
+    }
+    //课程类别筛选
+    chooseCourseTypeSearch(chooseCourseType){
+        this.state.chooseCourseType = chooseCourseType;
+        this.state.currentPage = 1;
+        this.componentDidMount();
+    }
+    //学员姓名和班级编号模糊搜索
+    onChange(value){
+        this.componentDidMount();
+    }
+    //切换tab
+    changeTabs(value){
+        this.state.typeId = value;
+        this.componentDidMount();
+    }
+
+    onChangeCls(value){
+        this.setState({
+            chooseCode: value
+        });
+    }
+
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -413,11 +445,36 @@ class List extends React.Component {
                         commands={this.commands}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
+                        addAction={this.addAction}
                     />
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>
-                    {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
+                    <div className="row">
+                        <Checkbox.Group value={this.state.chooseCourseType} onChange={this.chooseCourseTypeSearch.bind(this)}>
+                            {
+                                this.state.courseTypeList.map(function(item){
+                                    return  <Checkbox key={item.id} label={item.name}></Checkbox>
+                                })
+                            }
+                        </Checkbox.Group>
+                    </div>
+                    <div className="row">
+                        <div className="col-3">
+                            <Input placeholder="请输入学员姓名/合同编号"
+                                   className={"leadlist_search"}
+                                   value={this.state.chooseCode}
+                                   onChange={this.onChangeCls.bind(this)}
+                                   append={<Button type="primary" icon="search" onClick={this.onChange.bind(this)}>搜索</Button>}
+                            />
+                        </div>
+                        <div className="col-2">
+                            <Select value={this.state.chooseStatusName} placeholder="请选择合同类型" clearable={true} onChange={this.changeTabs} className={"leftMargin"}>
+                                <Select.Option key={1} label='新招' value={1} />
+                                <Select.Option key={2} label='续报' value={2} />
+                            </Select>
+                        </div>
+                    </div>
                     <Table
                         style={{width: '100%'}}
                         columns={this.state.columns}

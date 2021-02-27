@@ -63,11 +63,15 @@ class List extends React.Component {
         this.mid = this.mid.bind(this);
         this.changeFold = this.changeFold.bind(this);
         this.toDirect = this.toDirect.bind(this);
+        // $('.demo-app-calendar').find('.fc-prev-button,.fc-next-button').click(function(){
+        //     console.log(111111111111111111111)
+        // });
     }
 
     componentDidMount() {
         $("#clsFilter").hide();
         $("#multiCls").hide();
+
         const request = async () => {
             try {
                 //顶部

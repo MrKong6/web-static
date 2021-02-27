@@ -49,7 +49,7 @@ class StudentSituation extends React.Component {
             try {
                 let list = await ajax('/student/situation/list.do', {
                     orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize, situationType:this.state.situationView,classId:this.state.id
+                    pageSize: this.state.pageSize, classId:this.state.id
                 });
                 if(list && list.items){
                     list.items.map(item => {
@@ -85,7 +85,8 @@ class StudentSituation extends React.Component {
     }
 
     goToDetails(id) {
-        this.props.history.push(`/home/service/customer/student/` + id);
+        // this.props.history.push(`/home/service/customer/student/` + id);
+        // this.props.history.push(`/home/service/situation/` + id, {commands: []});
     }
 
     createDialogTips(text) {
@@ -172,7 +173,7 @@ class StudentSituation extends React.Component {
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     <p>班级异动信息</p>
                     <div className="row" style={{"height": '80%'}}>
-                        <StudentSit type={"class"} id={this.state.id} data={this.state.list} />
+                        <StudentSit type={"class"} id={this.state.id} data={this.state.list} goToDetails={this.goToDetails.bind(this)}  />
                     </div>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">

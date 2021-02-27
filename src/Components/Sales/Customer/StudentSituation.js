@@ -125,7 +125,8 @@ class StudentSituation extends React.Component {
     }
 
     assignAction() {
-        this.setState({ dialogVisible3: true });
+        // this.setState({ dialogVisible3: true });
+        this.props.history.push(`/home/academy/class/situation/backMoneyAdd/${this.state.id}`, {id: this.state.id,type: 1});
     }
 
     pageChange(currentPage) {

@@ -58,6 +58,7 @@ const MenuItem = ({item, path}) => {
 const Menu = data => {
     const menuData = data.data || data;
     let menu = [];
+    debugger
     menuData.map(item => {
         if (item.children && item.children.length) {
             let children = [];
@@ -110,7 +111,7 @@ const Menu = data => {
             );
         }
     });
-
+    console.log(menu);
     return menu;
 };
 

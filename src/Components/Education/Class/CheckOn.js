@@ -9,7 +9,7 @@ import mainSize from "../../../utils/mainSize";
 import ajax from "../../../utils/ajax";
 import fmtTitle from "../../../utils/fmtTitle";
 import {formatWithDateAndTime, formatWithOnlyTime, getTimeFourByDate} from "../../../utils/fmtDate";
-import {Checkbox, DatePicker, Message, Select, TimePicker} from "element-react";
+import {Checkbox, MessageBox, Message, Select, TimePicker} from "element-react";
 import {deepClone} from "../../../utils/objectToArray";
 
 class Editor extends React.Component {
@@ -27,7 +27,7 @@ class Editor extends React.Component {
                 item.index = idx++;
             });
         }
-        console.log(dataList);
+
         this.state = {
             group: this.props.changedCrmGroup,
             startTime: formatWithOnlyTime(new Date().getTime()),
@@ -251,6 +251,13 @@ class Editor extends React.Component {
                 let courseList = await ajax('/academy/class/getCourseHourByClassTime.do', {classId: this.props.location.state.classId,classTime: evt});
                 let dataList = this.state.data,date = null;
                 if(courseList.data && courseList.data.length > 0){
+                    //选课次时若为第一课时则校验该班级是否有子账户  若没有则不能签到
+                    let hasAccount = await ajax('/service/account/checkAccountEnough.do', {classId: this.props.location.state.classId, classHour: courseList.data[0].ch});
+                    if(hasAccount && hasAccount.data){
+                        let alertText = '您暂时无法签到，原因如下学员在本课次对应课时未发现子账户，请联系财务上报：' + hasAccount.data
+                        MessageBox.alert(alertText, '警告');
+                        return;
+                    }
                     courseList.data.map(item => {
                         if(item.time){
                             item.time = getTimeFourByDate(item.time);
@@ -259,9 +266,16 @@ class Editor extends React.Component {
                         }
                     });
                     if(dataList && dataList.length > 0){
+                        debugger
                         dataList.map(item => {
                             item.vos =deepClone(courseList.data);
                             item.vos.map(vo => {
+                                //此处判断是若是插班生则需要将插班前的课时内不能签到
+                                if(item.initHour && vo.ch < item.initHour){
+                                    item.situation = -1;
+                                }else{
+                                    item.situation = 0;
+                                }
                                 vo.rdate = new Date();
                                 if(item[vo.courseName+vo.ch] && item[vo.courseName+vo.ch].clocked == 1){
                                     vo.rdate = new Date(item[vo.courseName+vo.ch].startTime);
@@ -352,6 +366,10 @@ class Editor extends React.Component {
                         item.checkInToday = 2;
                         item.startTime = formatWithOnlyTime(new Date());
                         item.endTime = formatWithOnlyTime(new Date());
+                    }
+                    //判断初始化课时数
+                    if(item.initHour && item.initHour > evt){
+                        item.situdation = 1;
                     }
                 })
                 if (!existTime) {
@@ -475,6 +493,7 @@ class Editor extends React.Component {
                 }}/>
             )
         }
+
         let that = this;
         return (
             <div>

@@ -17,10 +17,11 @@ class DialogAccount extends React.Component {
             accountType:this.props.accountType,
             payTypes:[],
             contractList:[],
-            contractId: null,
-            contractNumId: null,
+            contractId: this.props.outRow ? this.props.outRow.contractId : null,
+            contractNumId: this.props.outRow ? this.props.outRow.contractNumId : null,
             outRow: this.props.outRow
         }
+        debugger
         // if(this.props.data && this.props.data.start)
         this.changeAccountType = this.changeAccountType.bind(this);
         this.chooseContract = this.chooseContract.bind(this);
@@ -221,7 +222,7 @@ class DialogAccount extends React.Component {
                                     <div className="form-group row">
                                         <label className="col-3 col-form-label">金额</label>
                                         <div className="col-6">
-                                            <Input placeholder="请输入金额" name={"income"} readOnly={true} />
+                                            <Input placeholder="请输入金额" name={"income"} />
                                         </div>
                                     </div>
                                 </div>

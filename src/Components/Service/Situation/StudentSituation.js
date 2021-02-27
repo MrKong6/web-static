@@ -1,5 +1,5 @@
 import React from 'react'
-import {Button, Message, Pagination, Table} from 'element-react';
+import {Button, Message, Pagination, Select, Table} from 'element-react';
 
 class StudentSituation extends React.Component {
     constructor(props) {

@@ -66,7 +66,8 @@ class StudentSituation extends React.Component {
     }
 
     modAction() {
-        this.toDirect();
+        // this.toDirect();
+        this.props.history.push(`/home/academy/class/situation/backMoneyAdd/${this.state.id}`, {id: this.state.id,type: 2, data: this.state.data});
     }
 
     //返回按钮
@@ -104,7 +105,7 @@ class StudentSituation extends React.Component {
                                             <label className="col-5 col-form-label font-weight-bold">学员姓名</label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control-plaintext" name="stuName"
-                                                       readOnly={true} value={this.state.data.stuName}/>
+                                                       readOnly={true} value={this.state.data.stuName ? this.state.data.stuName : ""}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -113,7 +114,7 @@ class StudentSituation extends React.Component {
                                             </label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control-plaintext" name="stuCode"
-                                                       readOnly={true} value={this.state.data.stuCode}/>
+                                                       readOnly={true} value={this.state.data.stuCode ? this.state.data.stuCode : ""}/>
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -185,7 +186,7 @@ class StudentSituation extends React.Component {
                                             </div>
                                         </div>
                                         <div className="form-group row">
-                                            <label className="col-5 col-form-label font-weight-bold">退费原因</label>
+                                            <label className="col-5 col-form-label font-weight-bold">异动原因</label>
                                             <div className="col-7">
                                                 <input type="text" className="form-control-plaintext" name="reason"
                                                        required={true} value={this.state.data.reason}/>

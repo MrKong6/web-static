@@ -12,7 +12,7 @@ import Commands from "../../Commands/Commands";
 import fmtDate from "../../../utils/fmtDate";
 import ajaxFile from "../../../utils/ajaxFile";
 import StudentSituation from "./StudentSituation";
-import {Message, Pagination} from "element-react";
+import {Button, Input, Message, Pagination, Select} from "element-react";
 
 class List extends React.Component {
     constructor(props) {
@@ -33,6 +33,8 @@ class List extends React.Component {
             currentPage:1,
             pageSize:10,
             totalCount:0,
+            abnormalTypes: [],
+            chooseAbnormalType: null
         };
     }
 
@@ -41,8 +43,9 @@ class List extends React.Component {
             try {
                 let list = await ajax('/student/situation/list.do', {
                     orgId: this.state.group.id, pageNum: this.state.currentPage,
-                    pageSize: this.state.pageSize
+                    pageSize: this.state.pageSize,situationType: this.state.chooseAbnormalType, stuName: this.state.chooseStuName
                 });
+                let situationTypes = await ajax('/student/situation/situationTypes.do');
                 if(list && list.items){
                     list.items.map(item => {
                         if (item.applyTime != null) {
@@ -50,7 +53,7 @@ class List extends React.Component {
                         }
                     });
                 }
-                this.setState({list: list.items,totalPage: list.totalPage,totalCount: list.count});
+                this.setState({list: list.items,totalPage: list.totalPage,totalCount: list.count, abnormalTypes:situationTypes});
             } catch (err) {
                 if (err.errCode === 401) {
                     this.setState({redirectToReferrer: true})
@@ -137,6 +140,19 @@ class List extends React.Component {
         });
     }
 
+    //异动类型筛选
+    chooseSearch(value){
+        this.state.chooseAbnormalType = value;
+        this.setState({chooseAbnormalType : value});
+        this.componentDidMount();
+    }
+    //学员姓名搜索
+    onChange(value){
+        this.state.chooseStuName = value;
+        this.setState({chooseStuName: value});
+    }
+
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -172,8 +188,28 @@ class List extends React.Component {
                     />
                 </h5>
                 <div id="main" className="main p-3">
+                    <div className="row">
+                        <div className="col-3">
+                            <Input placeholder="请输入学员姓名"
+                                   className={"leadlist_search"}
+                                   value={this.state.chooseStuName}
+                                   onChange={this.onChange.bind(this)}
+                                   append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+                            />
+                        </div>
+                        <div className="col-3">
+                            <Select value={this.state.chooseAbnormalType} placeholder="请选择异动类型" clearable={true}
+                                    onChange={this.chooseSearch.bind(this)}>
+                                {
+                                    this.state.abnormalTypes.map(el => {
+                                        return <Select.Option key={el.code} label={el.name} value={el.code}/>
+                                    })
+                                }
+                            </Select>
+                        </div>
+                    </div>
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
-                    <div className="row" style={{"height": '80%'}}>
+                    <div className="row" style={{"height": '80%',"marginTop": '20px'}}>
                         <StudentSituation goToDetails={this.goToDetails} type={"class"} id={this.state.id} data={this.state.list} />
                         <Pagination layout="total, sizes, prev, pager, next, jumper"
                                     total={this.state.totalCount}

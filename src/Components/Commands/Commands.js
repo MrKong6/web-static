@@ -6,19 +6,19 @@ const Add = ({action}) => (
 );
 
 const Mod = ({action}) => (
-    <button onClick={action} type="button" className="btn btn-primary">
+    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary">
         <i className="fa fa-pencil" aria-hidden="true"/>&nbsp;&nbsp;编辑
     </button>
 );
 
 const Del = ({action}) => (
-    <button type="button" className="btn btn-danger" onClick={action}>
+    <button type="button" style={{"borderRadius":"4px"}} className="btn btn-danger" onClick={action}>
         <i className="fa fa-trash-o" aria-hidden="true"/>&nbsp;&nbsp;删除
     </button>
 );
 
 const Auth = ({action}) => (
-    <button onClick={action} className="btn btn-danger">
+    <button onClick={action} style={{"borderRadius":"4px"}} className="btn btn-danger">
         <i className="fa fa-shield" aria-hidden="true"/>&nbsp;&nbsp;授权
     </button>
 );
@@ -30,19 +30,19 @@ const Import = ({action}) => (
 );
 
 const Defaults = ({text, action}) => (
-    <button onClick={action} type="button" className="btn btn-primary">
+    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary">
         {text}
     </button>
 );
 
 const Show = ({text, action}) => (
-    <button onClick={action} type="button" className="btn btn-primary" id="btnChoose" style={{"background": "none","color": "black","border": "none"}}>
+    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary" id="btnChoose" style={{"background": "none","color": "black","border": "none"}}>
         {text}
     </button>
 );
 
 const ShowNormal = ({text, action}) => (
-    <button onClick={action} type="button" className="btn btn-primary" id="btnChoose">
+    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary" id="btnChoose">
         {text}
     </button>
 );

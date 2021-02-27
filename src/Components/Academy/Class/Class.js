@@ -16,9 +16,10 @@ import StudentSituationChangeClassAdd from "../../Service/Customer/StudentSituat
 import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituationPauseClassAdd";
 
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
-    let groupCommands = commands.filter(item => (item.id == '5-4' || item.id == '5-6'));
-    debugger
+    let groupCommands = commands.filter(item => (item.id == '5-4' || item.id == '5-6' || item.id == '6-4'));
     groupCommands = groupCommands[0];
+    debugger
+
     if(groupCommands && groupCommands.commands){
         groupCommands.commands = groupCommands ? groupCommands.commands.filter(item => (item.id.indexOf(groupCommands.id) != -1)) : [];
     }else{

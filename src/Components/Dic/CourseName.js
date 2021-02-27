@@ -94,9 +94,10 @@ class CourseName extends React.Component{
         if(id == null){
             this.props.parent.changeCourse(this, null);
         }else{
+            let that = this;
             this.state.list.map(item => {
                 if(item.id == id){
-                    this.props.parent.changeCourse(this, item);
+                    that.props.changeCourse(this, item);
                     return;
                 }
             });

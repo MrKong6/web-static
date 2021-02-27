@@ -59,12 +59,12 @@ class StudentView extends React.Component {
 
         this.commands = this.props.commands.filter(command => (command.name !== 'Add' && command.name !== 'Mod'
             && command.name !== 'Del' && command.name !== 'Import' && command.name !== 'Export' && command.name !== 'ShowNormal'));
-        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1' || view.id == '5-6-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2' || view.id == '5-6-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3' || view.id == '5-6-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4' || view.id == '5-6-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5' || view.id == '5-6-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6' || view.id == '5-6-6')) == false) ? 'normal' : 'none';
+        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1' || view.id == '5-6-1' || view.id == '6-4-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2' || view.id == '5-6-2' || view.id == '6-4-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3' || view.id == '5-6-3' || view.id == '6-4-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4' || view.id == '5-6-4' || view.id == '6-4-4')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5' || view.id == '5-6-5' || view.id == '6-4-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6' || view.id == '5-6-6' || view.id == '6-4-6')) == false) ? 'normal' : 'none';
 
         let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
         this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
@@ -88,7 +88,7 @@ class StudentView extends React.Component {
                     label: "学员",
                     prop: "name",
                     render: (row, column, data) => {
-                        return <span><Button type="text" size="small" style={{"color":row.classStatusTag ? "#A9A9A9" : "#007bff"}}
+                        return <span><Button type="text" size="small" style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#007bff"}}
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.name}</Button></span>
                     }
                 },
@@ -96,63 +96,63 @@ class StudentView extends React.Component {
                     label: "学员编号",
                     prop: "code",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.code}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.code}</span>
                     }
                 },
                 {
                     label: "英文名",
                     prop: "enName",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.enName}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.enName}</span>
                     }
                 },
                 {
                     label: "性别",
                     prop: "genderText",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.genderText}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.genderText}</span>
                     }
                 },
                 {
                     label: "出生年月",
                     prop: "birthday",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.birthday}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.birthday}</span>
                     }
                 },
                 {
                     label: "年龄",
                     prop: "age",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.age}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.age}</span>
                     }
                 },
                 {
                     label: "家长姓名",
                     prop: "parent.name",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.parent ? row.parent.name : ""}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.parent ? row.parent.name : ""}</span>
                     }
                 },
                 {
                     label: "与学员关系",
                     prop: "parent.relation",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.parent ? row.parent.relation : ""}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.parent ? row.parent.relation : ""}</span>
                     }
                 },
                 {
                     label: "学员状态",
                     prop: "classStuStatusName",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.classStuStatusName}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.classStuStatusName}</span>
                     }
                 },
                 {
                     label: "异动状态",
                     prop: "classStatusTag",
                     render: (row, column, data) =>{
-                        return <span style={{"color":row.classStatusTag ? "#A9A9A9" : "#000000"}}>{row.classStatusTag}</span>
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.classStatusTag}</span>
                     }
                 },
             ],

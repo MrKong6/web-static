@@ -4,7 +4,8 @@ import {Link, Redirect} from 'react-router-dom'
 import {$} from "../../vendor";
 
 import DialogTips from "../Dialog/DialogTips";
-import ajax, {IMG_URL} from "../../utils/ajax";
+import ajax, {IMG_URL, ROUTE_TO_FMS} from "../../utils/ajax";
+import {Button} from "element-react";
 
 const toggleDrawer = () => {
     $('#drawer').toggle();
@@ -16,6 +17,7 @@ class Header extends React.Component {
         this.state = {
             isLogout: false,
             imgUrl: IMG_URL + this.props.profile.qrCode,
+            routeToFms: ROUTE_TO_FMS
         };
         this.logout = this.logout.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -67,8 +69,10 @@ class Header extends React.Component {
                 <button onClick={toggleDrawer} className="btn btn-link">
                     <i className="fa fa-bars" aria-hidden="true"/>
                 </button>
-                <ul className="navbar-nav"/>
 
+                <div style={{"position":"absolute","right":"140px","background":"white","border-radius":"5px","padding":"10px"}}>
+                    <a href={this.state.routeToFms} target="_blank">FMS</a>
+                </div>
                 <div className="dropdown">
                     <button id="menu-button" className="btn btn-link dropdown-toggle" data-toggle="dropdown">
                         {`${this.props.profile.cRealname}`}

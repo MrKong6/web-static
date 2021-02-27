@@ -14,7 +14,7 @@ import {$} from '../../../vendor'
 import ajax from "../../../utils/ajax";
 import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {DatePicker, Select} from 'element-react';
+import {DatePicker, Select, Switch} from 'element-react';
 import Org from "../../Dic/Org";
 
 class Form extends React.Component {
@@ -36,7 +36,8 @@ class Form extends React.Component {
             startDate: null,
             readCourse:false,//是否只读课程类别和课程阶段
             orgId: null,//默认的合同所属组织
-            orgName: null
+            orgName: null,
+            value: false, //合同类型 控制表单开关
         };
         this.addPayItem = this.addPayItem.bind(this);
         this.changeBirthday = this.changeBirthday.bind(this);
@@ -45,8 +46,10 @@ class Form extends React.Component {
         this.changeInput = this.changeInput.bind(this);
         this.changeClass = this.changeClass.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
+        this.changeCourseHour = this.changeCourseHour.bind(this);
         $("#courseRead").hide();
         $("#courseTypeRead").hide();
+        $("#classCode").hide();
     }
 
     componentDidMount() {
@@ -56,76 +59,110 @@ class Form extends React.Component {
                 let gender = await ajax('/mkt/gender/list.do');
                 let contractAllStatus = await ajax('/service/contract/contractAllStatus.do');
                 let classAllType = await ajax('/academy/class/classType.do');
-                let classList = await ajax('/academy/class/getClassShortList.do',{statusId:4,orgId:this.state.group.id});
                 let data = null,oneDate = null,oneAmount = null, moneyList = [];
-                classList = classList.data;
                 let courseInfo = {},readCourse = false;
-
-                if (this.props.isEditor) {
-                    data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
-                    //处理付款信息中的时间
-                    if (data.list && data.list.length > 0) {
-                        if(!data.stuBirthday){
-                            data.stuBirthday = new Date().getTime();
-                        }
-                        data.list.map(item => {
-                            if (item.id) {
-                                item.clsName = "cls" + item.periodNum;
-                                item.name = item.periodNum;
+                let birthday,startDate;
+                if(this.props.isEditor || this.props.apporData){
+                    //此处表示是从销售走过来的
+                    if (this.props.isEditor) {
+                        data = await ajax('/sales/contract/query.do', {id: this.props.editorId});
+                        //处理付款信息中的时间
+                        if (data.list && data.list.length > 0) {
+                            if(!data.stuBirthday){
+                                data.stuBirthday = new Date().getTime();
                             }
-                        });
-                        moneyList = data.list;
-                    }
-                } else {
-                    //获取课程信息
-                    if(this.props.apporData.courseId){
-                        courseInfo = await ajax('/course/type/query.do',{id:this.props.apporData.courseId});
-                        if(courseInfo.data){
-                            courseInfo = courseInfo.data;
-                            readCourse = true;
-                        }
-                        if(courseInfo.fields && courseInfo.fields.length > 0){
-                            //期数
-                            courseInfo.fields.map(item => {
-                                item.clsName1="cls1"+item.periodNum;
-                                item.clsName2="cls2"+item.periodNum;
-                                item.clsName3="cls3"+item.periodNum;
-                                item.clsName4="cls4"+item.periodNum;
+                            data.list.map(item => {
+                                if (item.id) {
+                                    item.clsName = "cls" + item.periodNum;
+                                    item.name = item.periodNum;
+                                }
                             });
-                            moneyList = courseInfo.fields;
+                            moneyList = data.list;
+                            if(moneyList && moneyList.length > 0){
+                                moneyList.map(item => {
+                                    item.clsName1="cls1"+item.periodNum;
+                                    item.clsName2="cls2"+item.periodNum;
+                                    item.clsName3="cls3"+item.periodNum;
+                                    item.clsName4="cls4"+item.periodNum;
+                                });
+                            }
+                        }
+                    } else if(this.props.apporData){
+                        //获取课程信息
+                        if(this.props.apporData && this.props.apporData.courseId){
+                            courseInfo = await ajax('/course/type/query.do',{id:this.props.apporData.courseId});
+                            if(courseInfo.data){
+                                courseInfo = courseInfo.data;
+                                readCourse = true;
+                            }
+                            if(courseInfo.fields && courseInfo.fields.length > 0){
+                                //期数
+                                courseInfo.fields.map(item => {
+                                    item.clsName1="cls1"+item.periodNum;
+                                    item.clsName2="cls2"+item.periodNum;
+                                    item.clsName3="cls3"+item.periodNum;
+                                    item.clsName4="cls4"+item.periodNum;
+                                });
+                                moneyList = courseInfo.fields;
+                            }
+                        }
+                        data = {
+                            stuName: this.props.apporData.name,
+                            stuGrade: this.props.apporData.classGrade,
+                            stuBirthday: this.props.apporData.birthday ? new Date(this.props.apporData.birthday) : new Date(),
+                            stuGenderId: this.props.apporData.genderId || '',
+                            stuSchoolName: this.props.apporData.schoolName,
+                            age: this.props.apporData.age,
+                            parName: this.props.apporData.parent.name,
+                            relation: this.props.apporData.parent.relation,
+                            parCellphone: this.props.apporData.parent.cellphone,
+                            parWechat: this.props.apporData.parent.wechat || '',
+                            parAddress: this.props.apporData.parent.address,
+                            courseId: courseInfo ? courseInfo.id : '',
+                            courseTypeId: courseInfo ? courseInfo.courseTypeId : '',
+                            courseName: this.props.apporData.courseName || '',
+                            orgId: this.props.apporData.orgId || '',
+                            orgName: this.props.apporData.orgName || '',
                         }
                     }
-                    data = {
-                        stuName: this.props.apporData.name,
-                        stuGrade: this.props.apporData.classGrade,
-                        stuBirthday: this.props.apporData.birthday ? new Date(this.props.apporData.birthday) : new Date(),
-                        stuGenderId: this.props.apporData.genderId || '',
-                        stuSchoolName: this.props.apporData.schoolName,
-                        age: this.props.apporData.age,
-                        parName: this.props.apporData.parent.name,
-                        relation: this.props.apporData.parent.relation,
-                        parCellphone: this.props.apporData.parent.cellphone,
-                        parWechat: this.props.apporData.parent.wechat || '',
-                        parAddress: this.props.apporData.parent.address,
-                        courseId: courseInfo ? courseInfo.id : '',
-                        courseTypeId: courseInfo ? courseInfo.courseTypeId : '',
-                        courseName: this.props.apporData.courseName || '',
-                        orgId: this.props.apporData.orgId || '',
-                        orgName: this.props.apporData.orgName || '',
+
+                    birthday = new Date(data.stuBirthday);
+                    startDate = data.startDate ? new Date(data.startDate) : null;
+                    if(!data.age){
+                        const age = calculateAge(birthday);
+                        data.age = age;
+                    }
+                }else{
+                    //直接新建合同
+                    readCourse = false;
+                    $("#courseRead").hide();
+                    $("#courseTypeRead").hide();
+                    $("#classCode").hide();
+                    let cId = data ? data.courseId : this.form["courseId"].value;
+                    courseInfo = await ajax('/course/type/query.do',{id:cId});
+                    if(courseInfo.data){
+                        courseInfo = courseInfo.data;
+                    }
+                    if(courseInfo.fields && courseInfo.fields.length > 0){
+                        //期数
+                        courseInfo.fields.map(item => {
+                            item.clsName1="cls1"+item.periodNum;
+                            item.clsName2="cls2"+item.periodNum;
+                            item.clsName3="cls3"+item.periodNum;
+                            item.clsName4="cls4"+item.periodNum;
+                        });
+                        moneyList = courseInfo.fields;
                     }
                 }
+                let cId = data ? data.courseId : this.form["courseId"].value;
+                let classList = await ajax('/academy/class/getClassShortList.do',{statusId:4,orgId:this.state.group.id,courseId: cId});
+                classList = classList.data;
 
-                const birthday = new Date(data.stuBirthday);
-                const startDate = data.startDate ? new Date(data.startDate) : null;
-                if(!data.age){
-                    const age = calculateAge(birthday);
-                    data.age = age;
-                }
                 this.setState({
                     option: {relation, gender},
                     data,
                     birthday,
-                    age: data.age,
+                    age: data ? data.age : 0,
                     oneAmount,
                     oneDate,
                     contractAllStatus,
@@ -136,14 +173,17 @@ class Form extends React.Component {
                     contractStatus: data ? data.contractStatus : null,
                     readCourse,
                     moneyList,
-                    typeId: data.typeId + '',
-                    classId: data.classId,
-                    contractStatus: data.contractStatus,
+                    typeId: data ? data.typeId + '' : '',
+                    classId: data ? data.classId : '',
+                    contractStatus: data ? data.contractStatus : '',
                     orgId: (data && data.orgId) ? data.orgId : null,
-                    orgName: (data && data.orgName) ? data.orgName : null
+                    orgName: (data && data.orgName) ? data.orgName : null,
+                    classType: (data && data.classType) ? data.classType : null,
                 }, () => {
+                    if(!data){
+                        return;
+                    }
                     const keys = Object.keys(data);
-
                     keys.map(key => {
                         if (this.form[key]) {
                             if (key === 'startDate' || key === 'endDate') {
@@ -153,13 +193,16 @@ class Form extends React.Component {
                             }
                         }
                     });
+                    debugger
                     if(courseInfo && courseInfo.classHour){
                         $("#course").hide();
                         $("#courseType").hide();
+                        $("#classCode").hide();
                         $("#courseRead").show();
                         $("#courseTypeRead").show();
-                        this.form["classHour"].value = courseInfo.classHour;
-                        this.form["classTime"].value = courseInfo.classTime;
+                        $("#classCodeRead").show();
+                        this.form["courseHours"].value = courseInfo.classHour;
+                        this.form["courseTimes"].value = courseInfo.classTime;
                         this.form["price"].value = courseInfo.price;
                         this.form["time"].value = courseInfo.time;
                         this.form["oriPrice"].value = courseInfo.amount;
@@ -168,8 +211,14 @@ class Form extends React.Component {
                     }else{
                         $("#course").show();
                         $("#courseType").show();
+                        $("#classCode").show();
                         $("#courseRead").hide();
                         $("#courseTypeRead").hide();
+                        $("#classCodeRead").hide();
+                    }
+                    if(this.props.isEditor){
+                        this.form["courseTypeId"].value = Number(data["courseTypeId"]);
+                        this.form["courseId"].value = Number(data["courseId"]);
                     }
                     if (this.props.isEditor && data.list &&data.list.length > 0) {
                         data.list.map(item => {
@@ -313,27 +362,32 @@ class Form extends React.Component {
         this.state.contractStatus = value;
         this.setState({contractStatus:value});
     }
-
+    //改变课程类别和课程阶段
     changeCourse(children,data){
         if(this.state.readCourse){
             return;
         }
+        debugger
         if(data){
             // console.log(data);
             const keys = Object.keys(data);
             if(this.form['oriPrice']){
                 this.form['oriPrice'].value = data['amount'] ? data['amount'] : 0;
             }
-            this.state.data.courseId = data.id;
+            if(this.state.data){
+                this.state.data.courseId = data.id;
+            }
             keys.map(key => {
                 if (this.form && this.form[key]) {
                     if (key === 'startDate' || key === 'endDate') {
                         this.form[key].value = fmtDate(data[key]);
-                    } else {
+                    }else {
                         this.form[key].value = data[key];
                     }
                 }
-            })
+            });
+            this.form['courseHours'].value = data['classHour'];
+            this.form['courseTimes'].value = data['classTime'];
             if(data.fields && data.fields.length > 0){
                 //期数
                 data.fields.map(item => {
@@ -350,24 +404,56 @@ class Form extends React.Component {
             this.setState({moneyList:[]});
         }
     }
+    // 更改总课时 刷新总课时费用
+    changeCourseHour(evt){
+        this.form["oriPrice"].value = evt.target.value * this.form["price"].value;
+    }
+    //改变开关
+    changeSwitch(){
+        let value = this.state.value;
+        this.setState({value: !value})
+        let cId = this.state.data ? this.state.data.courseId.courseId : this.form["courseId"].value;
+        if(!value){
+            const request = async () => {
+                try {
+
+                    let classList = await ajax('/academy/class/getClassShortList.do',{statusId:"4,5,6,7,8,9",orgId:this.state.group.id,courseId: cId});
+                    classList = classList.data;
+                    this.setState({classList});
+                } catch (err) {
+                    if (err.errCode === 401) {
+                        this.setState({redirectToReferrer: true})
+                    } else {
+                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    }
+                } finally {
+                    this.setState({isAnimating: false});
+                }
+            };
+            request();
+        }else{
+            const request = async () => {
+                try {
+                    let classList = await ajax('/academy/class/getClassShortList.do',{statusId:"4",orgId:this.state.group.id,courseId: cId});
+                    classList = classList.data;
+                    this.setState({classList});
+                } catch (err) {
+                    if (err.errCode === 401) {
+                        this.setState({redirectToReferrer: true})
+                    } else {
+                        this.createDialogTips(`${err.errCode}: ${err.errText}`);
+                    }
+                } finally {
+                    this.setState({isAnimating: false});
+                }
+            };
+            request();
+        }
+    }
 
     render() {
         let thisPage = this;
-        if (!this.state.option || (this.props.isEditor && !this.state.data)) {
-            return (
-                <form ref={(dom) => {
-                    this.form = dom
-                }}>
-                    <div className="row justify-content-md-center">
-                        <div className="col col-12">
-                            <div className="card">
-                                <div className="card-body">数据加载中...</div>
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            )
-        } else {
+
             return (
                 <form ref={(dom) => {
                     this.form = dom
@@ -389,9 +475,18 @@ class Form extends React.Component {
                                                 </div>
                                             </div>
                                             <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">
+                                                    学员昵称
+                                                </label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="nickName"
+                                                           required={true}/>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">学员性别</label>
                                                 <div className="col-7">
-                                                    <Gender data={this.state.option.gender} name="stuGenderId"/>
+                                                    <Gender name="stuGenderId"/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -415,7 +510,21 @@ class Form extends React.Component {
                                                 </label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="stuAge" readOnly={true}
-                                                           value={this.state.data.age ? this.state.data.age : ''}/>
+                                                           value={this.state.data ? this.state.data.age : ''}/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="col">
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">证件类型</label>
+                                                <div className="col-7">
+                                                    <Document name="stuIdType"/>
+                                                </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-5 col-form-label font-weight-bold">证件号码</label>
+                                                <div className="col-7">
+                                                    <input type="text" className="form-control" name="stuIdCode"/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -438,20 +547,6 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col">
                                             <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">证件类型</label>
-                                                <div className="col-7">
-                                                    <Document name="stuIdType"/>
-                                                </div>
-                                            </div>
-                                            <div className="form-group row">
-                                                <label className="col-5 col-form-label font-weight-bold">证件号码</label>
-                                                <div className="col-7">
-                                                    <input type="text" className="form-control" name="stuIdCode"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col">
-                                            <div className="form-group row">
                                                 <label className="col-5 col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>家长姓名
                                                 </label>
@@ -465,7 +560,7 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>与孩子关系
                                                 </label>
                                                 <div className="col-7">
-                                                    <Relation data={this.state.option.relation}/>
+                                                    <Relation />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -498,7 +593,14 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col"/>
                                     </div>
-                                    <p className="ht pt-3 pb-3 b-t b-b">合同信息</p>
+                                    <p className="ht pt-3 pb-3 b-t b-b">
+                                        <span style={{"marginRight": "30px"}}>合同信息</span>
+                                        <Switch
+                                            value={this.state.value}
+                                            onChange={this.changeSwitch.bind(this)}
+                                        >
+                                        </Switch>
+                                    </p>
                                     <div className="row">
                                         <div className="col">
                                             <div className="form-group row">
@@ -567,7 +669,7 @@ class Form extends React.Component {
                                                 <label className="col-5 col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>班级编号
                                                 </label>
-                                                <div className="col-7">
+                                                <div className="col-7" id="classCodeRead">
                                                     <Select value={this.state.classId} placeholder="请选择" clearable={true} onChange={this.changeClass}>
                                                         {
                                                             this.state.classList ? this.state.classList.map(el => {
@@ -575,6 +677,10 @@ class Form extends React.Component {
                                                             }) : null
                                                         }
                                                     </Select>
+                                                </div>
+                                                <div className="col-7" id="classCode">
+                                                    <input type="text" className="form-control" name="classCode"
+                                                           readOnly={true}/>
                                                 </div>
                                             </div>
                                         </div>
@@ -584,7 +690,7 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>课程类别
                                                 </label>
                                                 <div className="col-7" id="courseType">
-                                                    <CourseType/>
+                                                    <CourseType />
                                                 </div>
                                                 <div className="col-7" id="courseTypeRead">
                                                     <input type="text" className="form-control" name="courseTypeName"
@@ -596,7 +702,7 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>课程阶段
                                                 </label>
                                                 <div className="col-7" id="course">
-                                                    <CourseName parent={this} />
+                                                    <CourseName parent={true} changeCourse={this.changeCourse.bind(this)} />
                                                 </div>
                                                 <div className="col-7" id="courseRead">
                                                     <input type="text" className="form-control" name="courseName"
@@ -608,8 +714,8 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>总课时
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="classHour"
-                                                           readOnly={true}/>
+                                                    <input type="text" className="form-control" name="courseHours" onChange={this.changeCourseHour.bind(this)}
+                                                           readOnly={!this.state.value}/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -617,8 +723,8 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>总课次
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="classTime"
-                                                           readOnly={true}/>
+                                                    <input type="text" className="form-control" name="courseTimes"
+                                                           readOnly={!this.state.value}/>
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -711,8 +817,8 @@ class Form extends React.Component {
                                                     <em className="text-danger">*</em>创建人
                                                 </label>
                                                 <div className="col-7">
-                                                    <input type="text" className="form-control" name="cRealname"
-                                                           required={true} value={this.state.profiles && this.state.profiles.cRealname ? this.state.profiles.cRealname : this.state.data.creatorName} />
+                                                    <input type="text" className="form-control" name="cRealname" readOnly={true}
+                                                           value={this.state.profiles && this.state.profiles.cRealname ? this.state.profiles.cRealname : (this.state.data ? this.state.data.creatorName : "")} />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -721,7 +827,6 @@ class Form extends React.Component {
                                                 </label>
                                                 <div className="col-7">
                                                     <input type="text" className="form-control" name="startDate"
-                                                           required={true}
                                                            value={formatWithTime(new Date())}
                                                            placeholder={fmtDate(new Date())}/>
                                                 </div>
@@ -809,7 +914,7 @@ class Form extends React.Component {
                                         </div>
                                     </div>
                                     {this.state.moneyList.map(function (item) {
-                                        return <div className="row">
+                                        return <div className="row" key={item.periodNum}>
                                             <div className="col-1">
                                                 <label className="col-form-label font-weight-bold">
                                                     <em className="text-danger">*</em>{item.periodNum}期：
@@ -827,25 +932,25 @@ class Form extends React.Component {
                                             </div>
                                             <div className="col-1">
                                                 <div className="form-group row">
-                                                    <input type="text" className="form-control" name={item.clsName1} value={item.bookFee}
+                                                    <input type="text" className="form-control" name={item.clsName1} defaultValue={item.bookFee}
                                                            placeholder="请输入金额" required={true}/>
                                                 </div>
                                             </div>
                                             <div className="col-1">
                                                 <div className="form-group row">
-                                                    <input type="text" className="form-control" name={item.clsName2} value={item.otherFee}
+                                                    <input type="text" className="form-control" name={item.clsName2} defaultValue={item.otherFee}
                                                            placeholder="请输入金额" required={true}/>
                                                 </div>
                                             </div>
                                             <div className="col-1">
                                                 <div className="form-group row">
-                                                    <input type="text" className="form-control" name={item.clsName3} value={item.discount}
+                                                    <input type="text" className="form-control" name={item.clsName3} defaultValue={item.discount}
                                                            placeholder="请输入金额" required={true}/>
                                                 </div>
                                             </div>
                                             <div className="col-1">
                                                 <div className="form-group row">
-                                                    <input type="text" className="form-control" name={item.clsName4} value={item.thisAmount}
+                                                    <input type="text" className="form-control" name={item.clsName4} defaultValue={item.thisAmount}
                                                            placeholder="请输入金额" required={true}/>
                                                 </div>
                                             </div>
@@ -858,7 +963,6 @@ class Form extends React.Component {
                     </div>
                 </form>
             )
-        }
     }
 }
 

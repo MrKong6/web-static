@@ -86,45 +86,72 @@ class StudentView extends React.Component {
                     label: "学员",
                     prop: "name",
                     render: (row, column, data) => {
-                        return <span><Button type="text" size="small"
+                        return <span><Button type="text" size="small" style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#007bff"}}
                                              onClick={this.goToDetails.bind(this, row.id)}>{row.name}</Button></span>
                     }
                 },
                 {
                     label: "学员编号",
                     prop: "code",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.code}</span>
+                    }
                 },
                 {
                     label: "英文名",
                     prop: "enName",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.enName}</span>
+                    }
                 },
                 {
                     label: "性别",
                     prop: "genderText",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.genderText}</span>
+                    }
                 },
                 {
                     label: "出生年月",
                     prop: "birthday",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.birthday}</span>
+                    }
                 },
                 {
                     label: "年龄",
                     prop: "age",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.age}</span>
+                    }
                 },
                 {
                     label: "家长姓名",
                     prop: "parent.name",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.parent ? row.parent.name : ""}</span>
+                    }
                 },
                 {
                     label: "与学员关系",
                     prop: "parent.relation",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.parent ? row.parent.relation : ""}</span>
+                    }
                 },
                 {
                     label: "学员状态",
                     prop: "classStuStatusName",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.classStuStatusName}</span>
+                    }
                 },
                 {
                     label: "异动状态",
                     prop: "classStatusTag",
+                    render: (row, column, data) =>{
+                        return <span style={{"color":(row.classStatusTag && row.classStatusTag.indexOf('转入') == -1) ? "#A9A9A9" : "#000000"}}>{row.classStatusTag}</span>
+                    }
                 },
             ],
             totalPage: 0,

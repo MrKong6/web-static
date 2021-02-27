@@ -16,12 +16,13 @@ class StudentSituation extends React.Component {
         super(props);
         debugger
         this.commands = this.props.commands.filter(command => (command.id == '5-4-6-1'));
-        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1')) == false) ? 'normal' : 'none';
-        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2')) == false) ? 'normal' : 'none';
-        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3')) == false) ? 'normal' : 'none';
-        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4')) == false) ? 'normal' : 'none';
-        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5')) == false) ? 'normal' : 'none';
-        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6')) == false) ? 'normal' : 'none';
+        this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1' || view.id == '5-6-1' || view.id == '6-4-1')) == false) ? 'normal' : 'none';
+        this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2' || view.id == '5-6-2' || view.id == '6-4-2')) == false) ? 'normal' : 'none';
+        this.third = !(this.props.sonView.filter(view => (view.id == '5-4-3' || view.id == '5-6-3' || view.id == '6-4-3')) == false) ? 'normal' : 'none';
+        this.fourth = !(this.props.sonView.filter(view => (view.id == '5-4-4' || view.id == '5-6-4' || view.id == '6-4-4')) == false) ? 'normal' : 'none';
+        this.fifth = !(this.props.sonView.filter(view => (view.id == '5-4-5' || view.id == '5-6-5' || view.id == '6-4-5')) == false) ? 'normal' : 'none';
+        this.sixth = !(this.props.sonView.filter(view => (view.id == '5-4-6' || view.id == '5-6-6' || view.id == '6-4-6')) == false) ? 'normal' : 'none';
+
         let data = this.props.sonView.filter(view => (view.id.indexOf('5-4') != -1));
         this.title = fmtTitle(data && data.length > 0 ? this.props.location.pathname : '/home/academy/cls/in');
         this.state = {
@@ -86,7 +87,9 @@ class StudentSituation extends React.Component {
     }
 
     goToDetails(id) {
-        this.props.history.push(`/home/service/customer/student/` + id);
+        // this.props.history.push(`/home/service/customer/student/` + id);
+        this.props.history.push(`/home/service/situation/` + id, {commands: []});
+
     }
 
     createDialogTips(text) {
@@ -121,8 +124,11 @@ class StudentSituation extends React.Component {
         }
     }
 
+    //跳转至新增异动页面
     assignAction() {
-        this.setState({ dialogVisible3: true });
+        // this.setState({ dialogVisible3: true });
+        this.props.history.push(`/home/academy/class/situation/backMoneyAdd/${this.state.id}`, {id: this.state.id,type: 1});
+
     }
 
     pageChange(currentPage) {
@@ -188,9 +194,9 @@ class StudentSituation extends React.Component {
                                 <StudentSituationChangeClass type={"class"} id={this.state.id} data={this.state.list} />
                             </Tabs.Pane>
                         </Tabs>*/}
-                        <StudentSit type={"class"} id={this.state.id} data={this.state.list} />
+                        <StudentSit type={"class"} id={this.state.id} data={this.state.list} goToDetails={this.goToDetails.bind(this)} />
                     </div>
-                    <Dialog
+                    {/*<Dialog
                         title="请选择异动类型"
                         size="tiny"
                         visible={ this.state.dialogVisible3 }
@@ -211,7 +217,7 @@ class StudentSituation extends React.Component {
                             <Button onClick={ () => this.setState({ dialogVisible3: false }) }>取 消</Button>
                             <Button type="primary" onClick={this.toDirect.bind(this)}>确 定</Button>
                         </Dialog.Footer>
-                    </Dialog>
+                    </Dialog>*/}
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb location_bottom">
                             <li className="breadcrumb-item"><Link

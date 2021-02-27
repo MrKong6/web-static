@@ -493,7 +493,7 @@ class View extends React.Component {
                                                 type="text"
                                                 readOnly={true}
                                                 className="form-control-plaintext"
-                                                value={this.state.data.classHour}
+                                                value={this.state.data.courseHours}
                                             />
                                         </div>
                                     </div>
@@ -504,7 +504,7 @@ class View extends React.Component {
                                                 type="text"
                                                 readOnly={true}
                                                 className="form-control-plaintext"
-                                                value={this.state.data.classTime}
+                                                value={this.state.data.courseTimes}
                                             />
                                         </div>
                                     </div>

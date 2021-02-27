@@ -69,7 +69,8 @@ class Login extends React.Component {
 
         await ajax('/user/login.do', {
           loginName: userName,
-          mixedPWD: mixedPWD
+          mixedPWD: mixedPWD,
+            type: 1
         });
         this.setState({redirectToReferrer: true});
       } catch (err) {

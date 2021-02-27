@@ -19,9 +19,11 @@ class DialogAccountRelateClass extends React.Component {
             mainAccountId: this.props.mainAccountId,
             classList:[],
             totalFee:this.props.totalFee ? this.props.totalFee : 0,
-            classHour:0,
-            averageFee:0,
-            chooseClass: null,
+            classHour:this.props.row ? this.props.row.courseHours: 0,
+            averageFee:this.props.row ? this.props.row.price: 0,
+            chooseClass: this.props.row ? this.props.row.classId: 0,
+            endClassHour: this.props.row ? this.props.row.endClassHour: 0,
+            startClassHour: this.props.row ? this.props.row.startClassHour: 0,
         }
     }
 
@@ -34,8 +36,12 @@ class DialogAccountRelateClass extends React.Component {
             try {
                 let classList = await ajax('/academy/class/getClassListByStu.do', {stuId: this.state.id});
                 if(classList && classList.data){
-                    let fee = (classList.data[0].classHour && classList.data[0].classHour != 0) ? this.state.totalFee / classList.data[0].classHour : 0;
-                    this.setState({classList:classList.data,chooseClass:classList.data[0].id,averageFee:Math.floor(fee*100)/100,classHour:classList.data[0].classHour})
+                    if(this.state.chooseClass){
+                        this.setState({classList:classList.data})
+                    }else{
+                        let fee = (classList.data[0].classHour && classList.data[0].classHour != 0) ? this.state.totalFee / classList.data[0].classHour : 0;
+                        this.setState({classList:classList.data,chooseClass:classList.data[0].id,averageFee:Math.floor(fee*100)/100,classHour:classList.data[0].classHour})
+                    }
                 }
             } catch (err) {
                 if (err.errCode === 401) {
@@ -134,9 +140,21 @@ class DialogAccountRelateClass extends React.Component {
                                 </div>
                             </div>
                             <div className="form-group row">
-                                <label className="col-3 col-form-label">课时数</label>
+                                <label className="col-3 col-form-label">总课时数</label>
                                 <div className="col-6">
                                     <Input value={'60'} disabled name={"classHour"} value={this.state.classHour}  />
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label className="col-3 col-form-label">开始课时</label>
+                                <div className="col-6">
+                                    <Input value={'60'} disabled name={"startClassHour"} value={this.state.startClassHour}  />
+                                </div>
+                            </div>
+                            <div className="form-group row">
+                                <label className="col-3 col-form-label">结束课时</label>
+                                <div className="col-6">
+                                    <Input value={'60'} disabled name={"endClassHour"} value={this.state.endClassHour}  />
                                 </div>
                             </div>
                             <div className="form-group row">
