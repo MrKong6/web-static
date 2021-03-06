@@ -96,7 +96,7 @@ class List extends React.Component {
             }
         };
         request();
-        mainSize()
+        // mainSize()
     }
 
     /*componentWillReceiveProps(nextProps) {

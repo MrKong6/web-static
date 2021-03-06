@@ -14,7 +14,7 @@ import {Button, Dialog, Radio} from "element-react";
 class StudentSituation extends React.Component {
     constructor(props) {
         super(props);
-        debugger
+        // debugger
         this.commands = this.props.commands.filter(command => (command.id == '5-4-6-1'));
         this.first = !(this.props.sonView.filter(view => (view.id == '5-4-1' || view.id == '5-6-1' || view.id == '6-4-1')) == false) ? 'normal' : 'none';
         this.second = !(this.props.sonView.filter(view => (view.id == '5-4-2' || view.id == '5-6-2' || view.id == '6-4-2')) == false) ? 'normal' : 'none';

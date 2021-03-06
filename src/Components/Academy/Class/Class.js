@@ -18,7 +18,7 @@ import StudentSituationPauseClassAdd from "../../Service/Customer/StudentSituati
 const Account = ({commands, location, match, profile, changedCrmGroup}) => {
     let groupCommands = commands.filter(item => (item.id == '5-4' || item.id == '5-6' || item.id == '6-4'));
     groupCommands = groupCommands[0];
-    debugger
+    // debugger
 
     if(groupCommands && groupCommands.commands){
         groupCommands.commands = groupCommands ? groupCommands.commands.filter(item => (item.id.indexOf(groupCommands.id) != -1)) : [];

@@ -5,7 +5,7 @@ import {$} from "../../vendor";
 
 import DialogTips from "../Dialog/DialogTips";
 import ajax, {IMG_URL, ROUTE_TO_FMS} from "../../utils/ajax";
-import {Button} from "element-react";
+import {Button, ColorPicker} from "element-react";
 
 const toggleDrawer = () => {
     $('#drawer').toggle();
@@ -65,16 +65,16 @@ class Header extends React.Component {
         }
 
         return (
-            <nav id="nav" className="navbar navbar-dark bg-primary">
-                <button onClick={toggleDrawer} className="btn btn-link">
+            <nav id="nav" className="navbar navbar-dark " style={{"height":"40.1px" ,"border-bottom": "1px solid rgba(0, 0, 0, 0.12)"}} >
+                <button onClick={toggleDrawer} className="btn btn-link" style={{"margin-top":"-10px","color":"rgba(0,0,0,0.7)"}}>
                     <i className="fa fa-bars" aria-hidden="true"/>
                 </button>
 
-                <div style={{"position":"absolute","right":"140px","background":"white","border-radius":"5px","padding":"10px"}}>
+                <div style={{"position":"absolute","right":"140px","background":"white","border-radius":"5px","padding":"7px"}}>
                     <a href={this.state.routeToFms} target="_blank">FMS</a>
                 </div>
                 <div className="dropdown">
-                    <button id="menu-button" className="btn btn-link dropdown-toggle" data-toggle="dropdown">
+                    <button id="menu-button" className="btn btn-link dropdown-toggle" data-toggle="dropdown"  style={{"margin-top":"-10px"}} >
                         {`${this.props.profile.cRealname}`}
                     </button>
                     <div className="dropdown-menu" aria-labelledby="menu-button">

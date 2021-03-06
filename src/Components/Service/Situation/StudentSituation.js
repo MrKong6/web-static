@@ -16,17 +16,17 @@ class StudentSituation extends React.Component {
             ids: [],
             columns: [
                 {
-                    width: 100,
+                    width: 20,
                     sortable: true,
                     type: 'index',
-                    fixed: 'left',
+                    // fixed: 'left',
                 },
                 {
                     label: "创建人",
                     prop: "applyPerson",
                     width: 120,
                     sortable: true,
-                    fixed: 'left',
+                    // fixed: 'left',
                 },
                 {
                     label: "创建时间",
@@ -126,12 +126,12 @@ class StudentSituation extends React.Component {
     }
 
     componentDidMount() {
+        console.log(1111);
     }
 
     render() {
 
         return (
-            <div>
                 <Table
                     style={{width: '100%'}}
                     columns={this.state.columns}
@@ -139,7 +139,6 @@ class StudentSituation extends React.Component {
                     border={true}
                     emptyText={"暂无数据"}
                 />
-            </div>
         )
     }
 }

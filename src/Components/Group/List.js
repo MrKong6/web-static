@@ -12,7 +12,7 @@ import ajax, {IMG_URL} from "../../utils/ajax";
 
 const Table = ({list}) => {
     return (
-        <table className="table table-bordered table-sm">
+        <table className="table table-bordered table-sm" style={{"margin-top":"25px"}}>
             <thead>
             <tr>
                 <th>&nbsp;</th>

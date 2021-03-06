@@ -117,8 +117,8 @@ class Create extends React.Component {
         }
 
         return (
-            <div>
-                <h5 id="subNav">
+            <div >
+                <h5 id="subNav"  >
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
                     <p className="d-inline text-muted">{this.props.location.state.classCode}</p>

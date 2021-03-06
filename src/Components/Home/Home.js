@@ -58,7 +58,6 @@ import {getSonListByGroupId, sonListByGroup} from "../../utils/groupProcess";
 class Home extends React.Component {
     constructor(props) {
         super(props);
-        // debugger
         this.state = {
             profile: null,
             group: null,

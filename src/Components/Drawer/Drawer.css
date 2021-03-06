@@ -1,8 +1,75 @@
-.function_panel{
-    position: fixed;
-    bottom: 5%;
-    z-index: 100;
-}
-.btn_font_size{
+.version{
+        position: absolute;
+        top: 684px;
+        display: block;
+        width: 197px;
+        /* height: 33px; */
+        list-style: none;
+        /* border-bottom: solid 1px #a0a0a0; */
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
+      
+      .version  > li {
+        display: inline-block;
+        margin: -2px;
+      }
+      
+      .version  > li > a {
+        display: block;
+        color:rgba(0, 0,0, 0.7);
+        text-decoration: none;
+        text-align: center;
+        width: 69.5px;
+        border: solid 1px #e5e5e5;
+        border-bottom: none;
+        border-left: none;
+        border-right: none;
+        margin: 0;
+        line-height: 37px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        background-color: #f3f3f3;
+        font-size: 15px;
+      }
+      .version >li> :hover {
+        background-color: #f3f3f3;
+        color: #428bca;
+      }
+      .active-card {
+        background-color: #fff !important;
+        color: #39f  !important;;
+      }
+      /*====2.4switch====*/
+      .expand{
+        width: 150px;
+        height: 118px;
+        margin-left:200px ;
+        position:fixed;
+        top: 634px;
+        display: none;
+        background-color:#f3f3f3;
+      }
+      
+      .expand > ul > li {
+        border: 1px solid #ccc;
+        /* background-color: #fff; */
+        padding-left: 15px;
+        line-height: 38px; 
+        z-index: 9999;
+      }
+      .expand >ul>li:hover {
+        /* background-color: #e40606; */
+        color: #39f;
+      }
+      .interface{
+        /* text-align: center; */
+        padding-left: 40px;
+        color:rgba(0, 0,0, 0.7);
+        text-decoration:none;
+        background-color:#f3f3f3;
+      }
+/* .btn_font_size{
     font-size: 22px !important;
-}
+} */

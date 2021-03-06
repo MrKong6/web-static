@@ -2,7 +2,7 @@ import React from "react";
 import {Button, Upload} from 'element-react';
 
 const Add = ({action}) => (
-    <Button type="primary" icon="plus" onClick={action}>新建</Button>
+    <Button  type="primary" icon="plus" onClick={action}>新建</Button>
 );
 
 const Mod = ({action}) => (
@@ -24,31 +24,31 @@ const Auth = ({action}) => (
 );
 
 const Import = ({action}) => (
-    <Upload {...action}>
+    <Upload {...action}  >
         <Button type="primary" size="large" icon="upload2">导入</Button>
     </Upload>
 );
 
-const Defaults = ({text, action}) => (
-    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary">
+const Defaults = ({text, action}) => (    //分配
+    <button  onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary">
         {text}
     </button>
 );
 
 const Show = ({text, action}) => (
-    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary" id="btnChoose" style={{"background": "none","color": "black","border": "none"}}>
+    <button  onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary" id="btnChoose" style={{"background": "none","color": "black","border": "none"}}>
         {text}
     </button>
 );
 
 const ShowNormal = ({text, action}) => (
-    <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary" id="btnChoose">
+    <button    onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary" id="btnChoose">
         {text}
     </button>
 );
 
 const Transfer = ({action,param}) => (
-    <Button className="el-button-nomargin" type="warning" icon="d-arrow-right" onClick={action} param={param}>转移到</Button>
+    <Button  className="el-button-nomargin" type="warning" icon="d-arrow-right" onClick={action} param={param}>转移到</Button>
 );
 
 const Export = ({action}) => (
@@ -58,7 +58,7 @@ const Export = ({action}) => (
 const Commands = (props) => {
     // const list = props.commands.map(command => (command.name));
     return (
-        <div className="btn-group float-right" role="group">
+        <div className="btn-group float-right" role="group"  style={{"margin-top":"40px","zIndex":"1","padding-right":"20px"}}>
             {
                 props.commands.map((item) => {
 
