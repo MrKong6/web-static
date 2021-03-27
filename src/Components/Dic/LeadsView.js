@@ -667,10 +667,18 @@ class View extends React.Component {
 
     }
     //切换课程类别/阶段
-    changeOneTab(tab,type){
+    changeOneTab(tab,type,item){
+        debugger
+        console.log(tab.props.children);
         if(type == 1){
             // 课程类别
-            this.setState({oneTab:{name:tab.props.label,id:tab.props.name}});
+            let dataItem = this.state.data.courseTypes.filter(item => item.id == tab.props.name);
+            let courseTwo = this.state.twoTab;
+            this.setState(
+                {
+                    oneTab:{name:tab.props.label,id:tab.props.name},
+                    twoTab: dataItem&&dataItem.length > 0 ? {name:dataItem[0].courses[0].name,id:dataItem[0].courses[0].id} : courseTwo
+                });
         }else{
             // 课程阶段
             this.state.data.courseTypes.map(item => {

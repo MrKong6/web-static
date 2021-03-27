@@ -176,8 +176,8 @@ class Form extends React.Component {
                     typeId: data ? data.typeId + '' : '',
                     classId: data ? data.classId : '',
                     contractStatus: data ? data.contractStatus : '',
-                    orgId: (data && data.orgId) ? data.orgId : null,
-                    orgName: (data && data.orgName) ? data.orgName : null,
+                    orgId: (data && data.orgId) ? data.orgId : this.state.group.id,
+                    orgName: (data && data.orgName) ? data.orgName : this.state.group.name,
                     classType: (data && data.classType) ? data.classType : null,
                 }, () => {
                     if(!data){

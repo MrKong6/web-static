@@ -186,6 +186,7 @@ class List extends React.Component {
     }
     //学员姓名搜索
     onChange(value){
+        this.state.currentPage = 1;
         this.state.chooseStuName = value;
         this.setState({chooseStuName: value});
     }

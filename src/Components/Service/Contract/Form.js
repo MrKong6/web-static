@@ -84,7 +84,7 @@ class Form extends React.Component {
                 }
 
                 const birthday = new Date(data.stuBirthday);
-                const startDate = data.startDate ? new Date(data.startDate) : null;
+                const startDate = data.startDate ? new Date(data.startDate) : new Date();
                 const age = calculateAge(birthday);
                 data.age = age;
 
@@ -146,7 +146,7 @@ class Form extends React.Component {
     }
 
     createDialogTips(text) {
-        if (this.tips === undefined) {
+        /*if (this.tips === undefined) {
             this.tipsContainer = document.createElement('div');
 
             ReactDOM.render(
@@ -164,7 +164,7 @@ class Form extends React.Component {
             this.tips.setText(text);
         }
 
-        this.tips.dialog.modal('show');
+        this.tips.dialog.modal('show');*/
     }
 
     changeBirthday(day) {
@@ -204,7 +204,7 @@ class Form extends React.Component {
         for (let i = 0; i < this.form.length; i++) {
             if (this.form[i].name) {
                 if (this.form[i].name === 'startDate' || this.form[i].name === 'endDate') {
-                    query[this.form[i].name] = new Date(this.form[i].value);
+                    // query[this.form[i].name] = new Date(this.form[i].value);
                 } else {
                     query[this.form[i].name] = this.form[i].value;
                 }
@@ -627,7 +627,7 @@ class Form extends React.Component {
                                                 <em className="text-danger">*</em>课程阶段
                                             </label>
                                             <div className="col-7">
-                                                <CourseName />
+                                                <CourseName parent={true} changeCourse={this.changeCourse.bind(this)} />
                                             </div>
                                         </div>
                                         <div className="form-group row">
@@ -861,25 +861,25 @@ class Form extends React.Component {
                                         </div>
                                         <div className="col-1">
                                             <div className="form-group row">
-                                                <input type="text" className="form-control" name={item.clsName1} value={item.bookFee}
+                                                <input type="text" className="form-control" name={item.clsName1} defaultValue={item.bookFee}
                                                        placeholder="请输入金额" />
                                             </div>
                                         </div>
                                         <div className="col-1">
                                             <div className="form-group row">
-                                                <input type="text" className="form-control" name={item.clsName2} value={item.otherFee}
+                                                <input type="text" className="form-control" name={item.clsName2} defaultValue={item.otherFee}
                                                        placeholder="请输入金额" required={true}/>
                                             </div>
                                         </div>
                                         <div className="col-1">
                                             <div className="form-group row">
-                                                <input type="text" className="form-control" name={item.clsName3} value={item.discount}
+                                                <input type="text" className="form-control" name={item.clsName3} defaultValue={item.discount}
                                                        placeholder="请输入金额" required={true}/>
                                             </div>
                                         </div>
                                         <div className="col-1">
                                             <div className="form-group row">
-                                                <input type="text" className="form-control" name={item.clsName4} value={item.thisAmount}
+                                                <input type="text" className="form-control" name={item.clsName4} defaultValue={item.thisAmount}
                                                        placeholder="请输入金额" required={true}/>
                                             </div>
                                         </div>

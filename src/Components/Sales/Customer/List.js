@@ -136,7 +136,8 @@ class List extends React.Component {
   componentDidMount() {
     const request = async () => {
       try {
-        let list = await ajax('/service/customer/student/list.do', {isPublic:1,orgId: this.state.group.id,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+        let list = await ajax('/service/customer/student/list.do', {isPublic:1,orgId: this.state.group.id,
+            pageNum:this.state.currentPage,pageSize:this.state.pageSize,cellphone:this.state.cellphone});
           list.data.map(item => {
               if(item.idType != null){
                   item.idType = CONFIG.DOCUMENT[item.idType];
@@ -234,6 +235,12 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    onChange(key, value) {
+        this.setState({
+            cellphone: value
+        });
+    }
+
   render() {
     if (this.state.redirectToReferrer) {
       return (
@@ -252,6 +259,13 @@ class List extends React.Component {
         <div id="main" className="main p-3">
           <Progress isAnimating={this.state.isAnimating}/>
           {/*<Table list={this.state.list} path={this.props.match.url}/>*/}
+            <Input placeholder="请输入学生姓名"
+                   className={"leadlist_search"}
+                   value={this.state.cellphone}
+                   style={{width: '20%'}}
+                   onChange={this.onChange.bind(this, 'cellphone')}
+                   append={<Button type="primary" icon="search" onClick={this.componentDidMount.bind(this)}>搜索</Button>}
+            />
             <Table
                 style={{width: '100%'}}
                 columns={this.state.columns}

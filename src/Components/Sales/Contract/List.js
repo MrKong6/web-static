@@ -91,7 +91,7 @@ class List extends React.Component {
     constructor(props) {
         super(props);
 
-        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export' || command.name === 'Add'));
+        this.commands = this.props.commands.filter((command) => (command.name === 'Import' || command.name === 'Export'));
         this.title = fmtTitle(this.props.location.pathname);
         this.createDialogTips = this.createDialogTips.bind(this);
         this.goToDetails = this.goToDetails.bind(this);

@@ -75,11 +75,13 @@ class List extends React.Component {
                     label: "访问状态",
                     prop: "visitStatusName",
                     showOverflowTooltip: true,
+                    width: 100,
                 },
                 {
                     label: "阶段",
                     prop: "stageName",
                     showOverflowTooltip: true,
+                    width: 100,
                 },
                 {
                     label: "地域",
@@ -90,6 +92,7 @@ class List extends React.Component {
                 {
                     label: "来源",
                     prop: "sourceName",
+                    width: 100,
                     render: (row, column, data) => {
                         return <span>Wechat In</span>
                     }
@@ -97,24 +100,33 @@ class List extends React.Component {
                 {
                     label: "渠道",
                     prop: "sourceActivityName",
-                    sortable: true
+                    sortable: true,
+                    width: 100,
                 },
                 {
                     label: "码类别",
                     prop: "sourceActivityType",
+                    width: 120,
+                },
+                {
+                    label: "课程",
+                    prop: "courseType",
                     width: 100,
                 },
                 {
                     label: "访问IP",
                     prop: "visitIp",
+                    width: 100,
                 },
                 {
                     label: "访客标识码",
                     prop: "visitCert",
+                    width: 100,
                 },
                 {
                     label: "访客设备型号",
                     prop: "phoneVersion",
+                    width: 100,
                 },
                 {
                     label: "注册手机号",
@@ -145,7 +157,8 @@ class List extends React.Component {
             pageSize:10,
             totalCount:0,
             userList:[],
-            chooseUser: this.props.location.state && this.props.location.state.phone ? this.props.location.state.phone : null
+            chooseUser: this.props.location.state && this.props.location.state.phone ? this.props.location.state.phone : null,
+            chooseApp: '1'
 
         };
     }
@@ -153,7 +166,7 @@ class List extends React.Component {
     componentDidMount() {
         const request = async () => {
             try {
-                let list = await ajax('/wechat/getVisitRecordList.do', {orgId: this.state.group.id,phone:this.state.chooseUser,pageNum:this.state.currentPage,pageSize:this.state.pageSize});
+                let list = await ajax('/wechat/getVisitRecordList.do', {orgId: this.state.group.id,phone:this.state.chooseUser,pageNum:this.state.currentPage,pageSize:this.state.pageSize,recordType:this.state.chooseApp});
                 let userList = await ajax('/wechat/getWechatUserList.do', {orgId: this.state.group.id,pageNum:1,pageSize:9999});
 
                 if(list.data && list.data.items){
@@ -220,6 +233,12 @@ class List extends React.Component {
         this.componentDidMount();
     }
 
+    chooseApp(value){
+        this.state.chooseApp = value;
+        this.setState({chooseApp:value});
+        this.componentDidMount();
+    }
+
     render() {
         if (this.state.redirectToReferrer) {
             return (
@@ -249,6 +268,13 @@ class List extends React.Component {
                                         return <Select.Option key={el.phone} label={el.name} value={el.phone}/>
                                     })
                                 }
+                            </Select>
+                        </div>
+                        <div className="col-2">
+                            <Select value={this.state.chooseApp} placeholder="请选择小程序来源" clearable={true}
+                                    onChange={this.chooseApp.bind(this)}>
+                                <Select.Option key='1' label='优学荟' value='1'/>
+                                <Select.Option key='10' label='荟活动' value='10'/>
                             </Select>
                         </div>
                     </div>
