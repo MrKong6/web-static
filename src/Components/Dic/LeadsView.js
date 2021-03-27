@@ -26,23 +26,25 @@ import Age from "./Age";
 import Grade from "./Grade";
 import Relation from "./Relation";
 import ContactList from "../Contact/List";
+import './font/iconfont.css'
 
 const NextBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
 
     if ((curIndex + 1) === ids.length) {
-        return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
+        return <button  id="xbt" type="button" className="btn btn-light el-icon-caret-bottom" disabled={true}></button>
+        // 下一条
     }
 
     return (
-        <Link
-            className="btn btn-light"
+        <Link  id="xbt"
+            className="btn btn-light el-icon-caret-bottom"
             to={{
                 pathname: link + `/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
-            下一条
+            {/* 下一条 */}
         </Link>
     )
 };
@@ -51,18 +53,19 @@ const PrevBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
 
     if (curIndex === 0) {
-        return <button type="button" className="btn btn-light" disabled={true}>上一条</button>
+        return <button  id="bt" type="button" className="btn btn-light el-icon-caret-top" disabled={true}></button>
+        // 上一条
     }
 
     return (
-        <Link
-            className="btn btn-light"
+        <Link  id="bt"
+            className="btn btn-light el-icon-caret-top"
             to={{
                 pathname: link + `/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
-            上一条
+            {/* 上一条 */}
         </Link>
     )
 };
@@ -748,7 +751,8 @@ class View extends React.Component {
                         <NextBtn id={this.state.id} ids={this.state.ids} link={this.props.link}/>
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
-                        <button onClick={this.back} type="button" className="btn btn-light">返回
+                        <button   id="an" onClick={this.back} type="button" className="btn btn-light iconfont  iconweb-icon- ">
+                        {/* 导航返回公用按钮组件 */}
                         </button>
                     </div>
                 </h5>

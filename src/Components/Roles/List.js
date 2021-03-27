@@ -10,6 +10,7 @@ import Progress from "../Progress/Progress"
 import mainSize from "../../utils/mainSize";
 import ajax from "../../utils/ajax";
 import {$} from "../../vendor";
+import './Roles.css'
 
 const Table = ({list}) => {
   if (list.length) {
@@ -221,18 +222,20 @@ class List extends React.Component {
       <div>
         <h5 id="subNav">
           <i className="fa fa-sitemap" aria-hidden="true"/>&nbsp;角色管理
-
+       
+        </h5>
+        <div id="main" className="main p-3">
+        <div className=" ">
           <Commands
             commands={this.props.commands}
             addAction={this.addAction}
             modAction={this.modAction}
             delAction={this.delAction}
           />
-        </h5>
-        <div id="main" className="main p-3">
+          </div>
           <Progress isAnimating={this.state.isAnimating}/>
 
-          <div className="row">
+          <div id="tow" className="row">
             <div className="col-12 col-lg-5 col-xl-4">
               <Tree
                 defaults={this.state.groupId}

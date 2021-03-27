@@ -72,7 +72,7 @@ class StudentSituationBackMoney extends React.Component {
                     width: 95
                 },
                 {
-                    label: "总课时",
+                    label: "123132",
                     prop: "classHour",
                     width: 95,
                 },

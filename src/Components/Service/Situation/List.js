@@ -13,6 +13,7 @@ import fmtDate from "../../../utils/fmtDate";
 import ajaxFile from "../../../utils/ajaxFile";
 import StudentSituation from "./StudentSituation";
 import {Button, Input, Message, Pagination, Select} from "element-react";
+import './Situation.css'
 
 class List extends React.Component {
     constructor(props) {
@@ -181,13 +182,16 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                  
+                </h5>
+                <div id="main" className="main p-3">
+                <div className=" ">
                     <Commands
                         commands={this.commands}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
                     <div className="row">
                         <div className="col-3">
                             <Input placeholder="请输入学员姓名"

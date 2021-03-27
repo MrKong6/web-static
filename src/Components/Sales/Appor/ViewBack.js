@@ -31,12 +31,12 @@ const NextBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
 
     if ((curIndex + 1) === ids.length) {
-        return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
+        return <button type="button" className="btn btn-light el-ionc" disabled={true}>下一条</button>
     }
 
     return (
         <Link
-            className="btn btn-light"
+            className="btn btn-light "
             to={{
                 pathname: link + `/${ids[curIndex + 1]}`,
                 state: {ids: ids}
@@ -66,6 +66,8 @@ const PrevBtn = ({id, ids, link}) => {
         </Link>
     )
 };
+
+const EDIT_INPUT_CSS_NAME
 
 const EDIT_INPUT_CSS_NAME = "col-7";
 const VIEW_INPUT_CSS_NAME = "col-7 txt";

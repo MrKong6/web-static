@@ -441,14 +441,16 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
-                    <Commands
+                    </h5>
+                <div id="main" className="main p-3">
+                    <div>
+                    <Commands 
                         commands={this.commands}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
                         addAction={this.addAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
                     <Progress isAnimating={this.state.isAnimating}/>
                     <div className="row">
                         <Checkbox.Group value={this.state.chooseCourseType} onChange={this.chooseCourseTypeSearch.bind(this)}>

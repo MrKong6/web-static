@@ -492,7 +492,7 @@ class List extends React.Component {
                         assignParams={this.state.chooseRows}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
-                        /*importAction={uploadConfig}*/
+                        importAction={uploadConfig}
                     />
                 </h5>
                 <div id="main" className="main p-3">
@@ -541,7 +541,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"page_bottom"}
+                                className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}
                     />

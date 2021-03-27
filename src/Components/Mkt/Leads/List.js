@@ -287,25 +287,31 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
-
-                    <Commands
-                        commands={this.commands}
-                        addAction={this.addAction}
-                        importAction={uploadConfig}
-                        exportAction={this.exportAction}
-                        assignAction={this.assignAction}
-                        assignParams={this.state.chooseRows}
-                    />
+                    
                 </h5>
-                <LeadsList pathName={this.props.location.pathname}
-                           commands={this.props.commands}
-                           group={this.state.group}
-                           accept={this.goToDetails}
-                           fromWay={this.state.fromWay}
-                           typeId={this.state.typeId}
-                           selectRow={this.selectRow}
-                           isIn={this.state.isIn}
-                />
+              
+                <div id="main" className="main p-3">
+                <div className=" "> 
+                        <Commands
+                            commands={this.commands}
+                            addAction={this.addAction}
+                            importAction={uploadConfig}
+                            exportAction={this.exportAction}
+                            assignAction={this.assignAction}
+                            assignParams={this.state.chooseRows}
+                        />
+                        
+                    <LeadsList pathName={this.props.location.pathname}
+                            commands={this.props.commands}
+                            group={this.state.group}
+                            accept={this.goToDetails}
+                            fromWay={this.state.fromWay}
+                            typeId={this.state.typeId}
+                            selectRow={this.selectRow}
+                            isIn={this.state.isIn}
+                    />
+                    </div>    
+                </div> 
             </div>
         )
     }

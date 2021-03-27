@@ -13,6 +13,7 @@ import {Button, Table, Pagination, Upload, Input, Tooltip, Message} from 'elemen
 import CONFIG from "../../../utils/config";
 import fmtDate, {formatWithTime} from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
+import './WechatCls.css'
 
 class List extends React.Component {
     constructor(props) {
@@ -249,15 +250,18 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                   
+                </h5>
+                <div id="main" className="main p-3">
+                <div className=" ">
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
 
                     <div className="row">
-                        <div className="col-2 col-lg-2">
+                        <div className="col-2 col-lg-2 eli ">
                             {
                                 this.state.courseTypes ? this.state.courseTypes.map((cou) => (
                                     <p
@@ -271,7 +275,7 @@ class List extends React.Component {
                                 )) : null
                             }
                         </div>
-                        <div className="col-2 col-lg-2">
+                        <div className="col-2 col-lg-2 eli">
                             {
                                 this.state.courseList ? this.state.courseList.map((cou) => (
                                     <p
@@ -285,7 +289,7 @@ class List extends React.Component {
                                 )) : null
                             }
                         </div>
-                        <div className="col-8 col-lg-8 col-xl-8">
+                        <div className="col-8 col-lg-8 col-xl-8 elick">
                             <Table
                                 style={{width: '100%'}}
                                 columns={this.state.columns}

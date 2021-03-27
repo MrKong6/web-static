@@ -278,7 +278,10 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                    </h5>
 
+                    <div id="main" className="main p-3">
+                    <div className=" ">
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
@@ -286,9 +289,11 @@ class List extends React.Component {
                         assignParams={this.state.chooseRows}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
-                        /*importAction={uploadConfig}*/
+                        // importAction={uploadConfig}
                     />
-                </h5>
+                   
+               
+              
                 <LeadsList pathName={this.props.location.pathname}
                            commands={this.props.commands}
                            group={this.state.group}
@@ -298,6 +303,8 @@ class List extends React.Component {
                            selectRow={this.selectRow}
                            isIn={this.state.isIn}
                 />
+                 </div>
+                </div>
             </div>
         )
     }

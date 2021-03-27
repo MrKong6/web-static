@@ -8,12 +8,14 @@ const Add = ({action}) => (
 const Mod = ({action}) => (
     <button onClick={action} style={{"borderRadius":"4px"}} type="button" className="btn btn-primary">
         <i className="fa fa-pencil" aria-hidden="true"/>&nbsp;&nbsp;编辑
+        {/* ,"left":"232px" */}
     </button>
 );
 
 const Del = ({action}) => (
     <button type="button" style={{"borderRadius":"4px"}} className="btn btn-danger" onClick={action}>
         <i className="fa fa-trash-o" aria-hidden="true"/>&nbsp;&nbsp;删除
+        {/* ,"left":"237px" */}
     </button>
 );
 
@@ -58,7 +60,8 @@ const Export = ({action}) => (
 const Commands = (props) => {
     // const list = props.commands.map(command => (command.name));
     return (
-        <div className="btn-group float-right" role="group"  style={{"margin-top":"40px","zIndex":"1","padding-right":"20px"}}>
+        <div className="btn-group float-right" role="group"  style={{"zIndex":"3","padding-right":"44px"}}>
+            {/* style={{"margin-top":"40px","zIndex":"3","padding-right":"20px"}} */}
             {
                 props.commands.map((item) => {
 

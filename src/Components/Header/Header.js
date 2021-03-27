@@ -65,16 +65,17 @@ class Header extends React.Component {
         }
 
         return (
-            <nav id="nav" className="navbar navbar-dark " style={{"height":"40.1px" ,"border-bottom": "1px solid rgba(0, 0, 0, 0.12)"}} >
-                <button onClick={toggleDrawer} className="btn btn-link" style={{"margin-top":"-10px","color":"rgba(0,0,0,0.7)"}}>
+            <nav id="nav" className="navbar navbar-dark " style={{"height":"40.1px","background-color":"#20A0FF","box-shadow":"-4px 5px 5px -3px rgb(28 28 28 / 22%)","width":"101%"}} >
+            {/* <nav id="nav" className="navbar navbar-dark " style={{"height":"40.1px" ,"border-bottom": "1px solid rgba(0, 0, 0, 0.12)"}} > */}
+                <button onClick={toggleDrawer} className="btn btn-link" style={{"margin-top":"-10px","color":"#fffff"}}>
                     <i className="fa fa-bars" aria-hidden="true"/>
                 </button>
 
-                <div style={{"position":"absolute","right":"140px","background":"white","border-radius":"5px","padding":"7px"}}>
+                <div style={{"position":"absolute","right":"170px","background":"white","border-radius":"5px","padding":"4px"}}>
                     <a href={this.state.routeToFms} target="_blank">FMS</a>
                 </div>
                 <div className="dropdown">
-                    <button id="menu-button" className="btn btn-link dropdown-toggle" data-toggle="dropdown"  style={{"margin-top":"-10px"}} >
+                    <button id="menu-button" className="btn btn-link dropdown-toggle" data-toggle="dropdown"  style={{"margin-top":"-10px","margin-right":"15px"}} >
                         {`${this.props.profile.cRealname}`}
                     </button>
                     <div className="dropdown-menu" aria-labelledby="menu-button">

@@ -376,16 +376,15 @@ class List extends React.Component {
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}|&nbsp;&nbsp;{this.title.name}
                     <div className="btn-group float-right" role="group">
-                        <div className="btn-group float-right" role="group">
-                            <button onClick={this.handleDateClick} type="button" className="btn btn-primary" id="btnChoose" disabled={this.state.canAssign}>
-                                排课
-                            </button>
-                        </div>
-
                     </div>
 
                 </h5>
                 <div id="main" className="main p-3">
+                <div className="btn-group float-right" role="group">
+                            <button onClick={this.handleDateClick} type="button" className="btn btn-primary" id="btnChoose" disabled={this.state.canAssign}>
+                                排课
+                            </button>
+                        </div>
 
                     <div className='demo-app'>
                             {/*<div className="col-2">
@@ -425,7 +424,7 @@ class List extends React.Component {
 
                             </div>*/}
                         </div>
-                    <div className="row">
+                    <div className="row" id="xbout">
                         <div className="row" style={{width: '100%'}}>
                             <div className="col-1" style={{textAlign: 'right', height: '60px', lineHeight: '60px'}}>
                                 <label>班级：</label>

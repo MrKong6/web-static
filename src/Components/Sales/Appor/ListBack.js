@@ -670,7 +670,6 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
-
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
@@ -681,6 +680,14 @@ class List extends React.Component {
                     />
                 </h5>
                 <div id="main" className="main p-3">
+                <Commands 
+                        commands={this.commands}
+                        addAction={this.addAction}
+                        exportAction={this.exportAction}
+                        importAction={uploadConfig}
+                        assignAction={this.assignAction}
+                        assignParams={this.state.chooseRows}
+                    />
                     <Progress isAnimating={this.state.isAnimating}/>
                     <div className="row">
                         <Checkbox.Group value={this.state.checkList} onChange={this.handleType.bind(this)}>
@@ -739,7 +746,7 @@ class List extends React.Component {
                                     pageSize={this.state.pageSize}
                                     currentPage={this.state.currentPage}
                                     pageCount={this.state.totalPage}
-                                    className={"leadlist_page page_bottom"}
+                                    className={"leadlist_page "}
                                     onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                     onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                     </div>
@@ -770,7 +777,7 @@ class List extends React.Component {
                                     pageSize={this.state.pageSize}
                                     currentPage={this.state.currentPage}
                                     pageCount={this.state.totalPage}
-                                    className={"leadlist_page page_bottom"}
+                                    className={"leadlist_page"}
                                     onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                     onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                     </div>

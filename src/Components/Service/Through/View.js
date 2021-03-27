@@ -10,23 +10,26 @@ import fmtTitle from "../../../utils/fmtTitle";
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
 import {formatWithTime} from "../../../utils/fmtDate";
+import './Through.css'
+import '../../Dic/font/iconfont.css'
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
 
     if ((curIndex + 1) === ids.length) {
-        return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
+        return <button type="button" id="xbt" className="btn btn-light el-icon-caret-bottom" disabled={true}></button>
+        // 下一条
     }
 
     return (
-        <Link
-            className="btn btn-light"
+        <Link  id="xbt"
+            className="btn btn-light el-icon-caret-bottom"
             to={{
                 pathname: `/home/service/through/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
-            下一条
+            {/* 下一条 */}
         </Link>
     )
 };
@@ -35,18 +38,19 @@ const PrevBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
 
     if (curIndex === 0) {
-        return <button type="button" className="btn btn-light" disabled={true}>上一条</button>
+        return <button type="button"  id="bt" className="btn btn-light el-icon-caret-top" disabled={true}></button>
+        // 上一条
     }
 
     return (
-        <Link
-            className="btn btn-light"
+        <Link  id="bt"
+            className="btn btn-light el-icon-caret-top"
             to={{
                 pathname: `/home/service/through/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
-            上一条
+            {/* 上一条 */}
         </Link>
     )
 };
@@ -171,10 +175,11 @@ class View extends React.Component {
                         <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                         &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
 
-                        <div className="btn-group float-right ml-4" role="group">
-                            <button onClick={() => {
+                        <div className="btn-group float-right ml-4" role="group" id="an">
+                            <button   id="an" onClick={() => {
                                 this.props.history.push('/home/service/through');
-                            }} type="button" className="btn btn-light">返回
+                            }} type="button" className="btn btn-light iconfont  iconweb-icon- ">
+                                {/* 返回 */}
                             </button>
                         </div>
                     </h5>
@@ -198,23 +203,32 @@ class View extends React.Component {
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>
                     &nbsp;{this.title.text}&nbsp;&nbsp;|&nbsp;&nbsp;
                     <p className="d-inline text-muted">{this.state.data ? this.state.data.code : ''}</p>
+                    
 
                     <div className="btn-group float-right ml-4" role="group">
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
-                        <button onClick={() => {
+                        <button  id="an" onClick={() => {
                             this.props.history.push('/home/service/through');
-                        }} type="button" className="btn btn-light">返回
+                        }} type="button" className="btn btn-light iconfont  iconweb-icon- ">
+                            {/* 返回 */}
                         </button>
                     </div>
+                </h5>
+
+                <h5 id="secondSubNav">
+                    <p className="d-inline text-muted">{this.state.data ? this.state.data.code : ''}</p>
+                    <div className="bt">
                     <Commands
                         commands={this.commands}
                         modAction={this.modAction}
                         delAction={this.delAction}
                     />
-                </h5>
+                    </div>
+                  </h5>
+               
 
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>

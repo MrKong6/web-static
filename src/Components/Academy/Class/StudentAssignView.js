@@ -17,12 +17,13 @@ const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
 
     if ((curIndex + 1) === ids.length) {
-        return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
+        return <button type="button" className="btn btn-light el-icon-caret-bottom" disabled={true}></button>
+        // 下一条
     }
 
     return (
         <Link
-            className="btn btn-light"
+            className="btn btn-light el-icon-caret-bottom"
             to={{
                 pathname: `/home/academy/class/${ids[curIndex + 1]}`,
                 state: {ids: ids}
@@ -37,18 +38,19 @@ const PrevBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
 
     if (curIndex === 0) {
-        return <button type="button" className="btn btn-light" disabled={true}>上一条</button>
+        return <button type="button" className="btn btn-light el-icon-caret-top" disabled={true}></button>
+        // 上一条
     }
 
     return (
         <Link
-            className="btn btn-light"
+            className="btn btn-light el-icon-caret-top"
             to={{
                 pathname: `/home/academy/class/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
-            上一条
+            {/* 上一条 */}
         </Link>
     )
 };
@@ -331,7 +333,8 @@ class StudentAssignView extends React.Component {
                     <div className="btn-group float-right ml-4" role="group">
                         <button onClick={() => {
                             this.props.history.push('/home/academy/class');
-                        }} type="button" className="btn btn-light">返回
+                        }} type="button" className="btn btn-light  iconfont  iconweb-icon- ">
+                            {/* 返回 */}
                         </button>
                     </div>
                     {/*<Commands

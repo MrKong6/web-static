@@ -53,3 +53,9 @@
   position: relative;
   overflow: inherit !important;
 }
+#btnChoose{
+  z-index: 10;
+}
+#xbout{
+ margin-top: 30px;
+}

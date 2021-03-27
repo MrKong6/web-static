@@ -12,7 +12,7 @@ import ajax, {IMG_URL} from "../../utils/ajax";
 
 const Table = ({list}) => {
     return (
-        <table className="table table-bordered table-sm" style={{"margin-top":"25px"}}>
+        <table className="table table-bordered table-sm" style={{"margin-top":"50px"}}>
             <thead>
             <tr>
                 <th>&nbsp;</th>
@@ -250,15 +250,17 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className="fa fa-sitemap" aria-hidden="true"/>&nbsp;组织管理
-
+                 
+                </h5>
+                <div id="main" className="main p-3">
+                <div className=" ">
                     <Commands
                         commands={this.props.commands}
                         addAction={this.addAction}
                         modAction={this.modAction}
                         delAction={this.delAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
                     <Progress isAnimating={this.state.isAnimating}/>
                     <Table list={this.state.list}/>
                 </div>

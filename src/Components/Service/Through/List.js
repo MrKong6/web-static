@@ -193,12 +193,17 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                  
+                </h5>
+                <div id="main" className="main p-3">
+
+                <div className=" ">
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
+
                     <Progress isAnimating={this.state.isAnimating}/>
                     <Table
                         style={{width: '100%'}}

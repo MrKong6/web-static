@@ -15,6 +15,7 @@ import CONFIG from "../../../utils/config";
 import fmtDate from "../../../utils/fmtDate";
 import ajaxFile from "../../../utils/ajaxFile";
 import Commands from "../../Commands/Commands";
+import './customer.css'
 
 class List extends React.Component {
     constructor(props) {
@@ -324,14 +325,16 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                </h5>
+                <div id="main" className="main p-3">
+                <div className=" ">
                     <Commands
                         commands={this.commands}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
                         delAction={this.delAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} path={this.props.match.url}/>*/}
                     <Input placeholder="请输入学生姓名"
@@ -355,7 +358,7 @@ class List extends React.Component {
                         border={true}
                         fit={true}
                         emptyText={"--"}
-                        height='80%'
+                        height='86%'
                         onSelectChange={(selection) => this.selectRow(selection) }
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
@@ -364,7 +367,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"page_bottom"}
+                                className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

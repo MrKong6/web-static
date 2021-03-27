@@ -86,7 +86,8 @@ class StudentSituation extends React.Component {
                     <p className="d-inline text-muted">{this.state.data.stuName}</p>
                     <div className="btn-group float-right" role="group">
                         <div className="btn-group float-right" role="group">
-                            <button onClick={this.back.bind(this)} type="button" className="btn btn-light">返回
+                            <button id="an" onClick={this.back.bind(this)} type="button" className="btn btn-light  iconfont  iconweb-icon- ">
+                            {/* 返回 */}
                             </button>
                         </div>
                     </div>
@@ -95,9 +96,14 @@ class StudentSituation extends React.Component {
                         modAction={this.modAction}
                     />
                 </h5>
+
+                  <h5 id="secondSubNav">
+                  <p className="d-inline text-muted">{this.state.data.stuName}</p>
+                  </h5>
+
                 <div className="row justify-content-md-center">
                     <div className="col col-12">
-                        <div className="card">
+                        <div className="card" id="top">
                             <div className="card-body">
                                 <div className="row">
                                     <div className="col">

@@ -1,5 +1,7 @@
 .card {
   position: relative;
+  top: 25px;
+  border: none;
 }
 
 .card-title {

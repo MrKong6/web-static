@@ -6,7 +6,9 @@ import {Message} from "element-react";
 // export const IMG_URL = 'http://www.schooloms.com:8084/';
 //本地
 export const AJAX_PATH = 'http://localhost:8080/web/ajax';
+// export const AJAX_PATH = 'http://localhost:8080/ajax';
 export const IMG_URL = 'http://localhost:4040/';
+export const ROUTE_TO_FMS = 'http://www.schooloms.com:8084/';
 
 // export const AJAX_PATH = 'http://192.168.0.103:8081/ajax';
 // export const IMG_URL = 'http://192.168.0.103:4040/';

@@ -151,10 +151,12 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className="fa fa-shield" aria-hidden="true"/>&nbsp;课程管理
+                    <div className="an">
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
                     />
+                    </div>
                     <div className="btn-group float-right" role="group">
                         <Upload
                             className="upload-demo"

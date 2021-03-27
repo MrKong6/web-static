@@ -528,7 +528,7 @@ class List extends React.Component {
                         border={true}
                         fit={true}
                         emptyText={"--"}
-                        height='80%'
+                        height='86%'
                         onSelectChange={(selection) => this.selectRow(selection) }
                     />
                     <Pagination layout="total, sizes, prev, pager, next, jumper"
@@ -537,7 +537,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page page_bottom"}
+                                className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

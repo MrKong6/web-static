@@ -558,7 +558,7 @@ class List extends React.Component {
 
     render() {
         return (
-            <div id="main" className="main p-3">
+            <div>
                 <Progress isAnimating={this.state.isAnimating}/>
                 <div className="row">
                     <Checkbox.Group value={this.state.checkList} onChange={this.handleType.bind(this)}>
@@ -617,7 +617,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page page_bottom"}
+                                className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
@@ -657,7 +657,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"leadlist_page page_bottom"}
+                                className={"leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

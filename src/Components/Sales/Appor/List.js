@@ -17,6 +17,7 @@ import ajaxFile from "../../../utils/ajaxFile";
 import DialogUser from "../../Dialog/DialogUser";
 import {changeArrayItemToString} from "../../../utils/objectToArray";
 import LeadsList from "../../Dic/LeadsList";
+import "./Appor.css"
 
 class List extends React.Component {
     constructor(props) {
@@ -180,16 +181,17 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
-
-                    <Commands
+                    </h5>
+                       <div id="main" className="main p-3">
+                      <div className=" ">
+                    <Commands 
                         commands={this.commands}
                         addAction={this.addAction}
                         exportAction={this.exportAction}
                         importAction={uploadConfig}
                         assignAction={this.assignAction}
                         assignParams={this.state.chooseRows}
-                    />
-                </h5>
+                    />        
                 <LeadsList pathName={this.props.location.pathname}
                            commands={this.props.commands}
                            group={this.state.group}
@@ -199,6 +201,8 @@ class List extends React.Component {
                            selectRow={this.selectRow}
                            isIn={this.state.isIn}
                 />
+                  </div>
+                </div>
             </div>
         )
     }

@@ -7,13 +7,13 @@ import DialogGroup from "../Dialog/DialogGroup"
 import isPhone from "../../utils/isPhone";
 import SCHOOLPAL_CONFIG from "../../utils/config";
 import ReactDOM from "react-dom";
-import './Drawer.css'
-import { Button, Message } from "element-react";
+import './Drawer.css';
+import { Button, Message,collpse, Form,Icon } from "element-react";
 
 const GroupDialogBBtn = ({ groupName, action }) => (
     <div>
         <div className="item groups">
-            <a href="javascript:;" className="d-block" onClick={action}>
+            <a href="javascript:;" className="d-block" style={{"margin-top":"4px"}} onClick={action}>
                 {groupName}
                 <i className="fa fa-ellipsis-v fa-fw float-right" aria-hidden="true" />
             </a>
@@ -34,6 +34,7 @@ const MenuItem = ({ item, path }) => {
                 <i
                     className={`fa ${SCHOOLPAL_CONFIG.AUTH[item.cId].ICON_CLASS
                         } fa-fw`}
+                        
                     aria-hidden="true"
                 />
                 {item.cNameLong}
@@ -65,28 +66,29 @@ const Menu = data => {
             if (item.cAction != '/ajax/statistic/') {
                 children.push(Menu(item.children));
                 menu.push(
-                    <div key={item.cId} data-children=".item">
-                        <div className="item">
+                    
+                        <div key={item.cId} className="item" >
                             <a data-toggle="collapse" href={`${hrefUrl}`} data-parent="#accordion" aria-expanded="true"
-                                aria-controls="accordion" className="d-block">
+                               aria-controls="accordion" className="d-block">
                                 <i
-                                    className={`fa ${SCHOOLPAL_CONFIG.AUTH[item.cId].ICON_CLASS
+                                    className={`fa ${
+                                        SCHOOLPAL_CONFIG.AUTH[item.cId].ICON_CLASS
                                         } fa-fw`}
                                     aria-hidden="true"
-                                />
+                                    />
                                 {item.cNameLong}
                             </a>
                             <div id={item.cId} className="collapse" role="tabpanel">
                                 {children}
                             </div>
                         </div>
-                    </div>
+                
                 );
             } else {
                 menu.push(
                     <div key={item.cId} data-children=".item">
                         <div className="item">
-                            <a className="d-block" href='/home/statistic'>
+                            <a className="accordion-toggle" href='/home/statistic'>
                                 <i
                                     className={`fa ${SCHOOLPAL_CONFIG.AUTH[item.cId].ICON_CLASS
                                         } fa-fw`}
@@ -136,7 +138,7 @@ class Drawer extends React.Component {
             $('#drawer').show();
         }
 
-        this.clickCard(1, 'OMS');
+        this.clickCard2(1, 'OMS');
 
         window.addEventListener('resize', () => {
             if (isPhone()) {
@@ -191,7 +193,7 @@ class Drawer extends React.Component {
 
     }
 
-    clickCard(routeType, routeTypeName) {
+    clickCard2(routeType, routeTypeName) {
         //1.改变样式
         //2.改变功能菜单数据
         let data = this.props.menu.filter(item => item.routeType == routeType);
@@ -214,7 +216,7 @@ class Drawer extends React.Component {
                               {this.state.focusClsId == 1 ? 'OMS系统' : '微校通系统'}
                             </div>
                         : null}
-                        <div id="accordion" role="tablist">
+                        <div id="accordion" role="tablist" >
                             {this.props.hasChangeGroupBtn ?
                                 <GroupDialogBBtn groupName={this.state.groupName} action={this.createGroupsDialog} /> : null}
                             <Menu data={this.state.menuList} />
@@ -226,13 +228,13 @@ class Drawer extends React.Component {
                         {!this.props.hasChangeGroupBtn ?
                             <ul class="version">
                                 <li>
-                                    <a href="#" class={this.state.focusClsId == 1 ? 'active-card' : 'card'} onClick={this.clickCard.bind(this, 1, 'OMS系统')}>OMS</a>
+                                    <a href="#" class={this.state.focusClsId == 1 ? 'active-card' : 'card2'} onClick={this.clickCard2.bind(this, 1, 'OMS系统')}>OMS</a>
                                 </li>
                                 <li>
-                                    <a href="#" class={this.state.focusClsId == 2 ? 'active-card' : 'card'} onClick={this.clickCard.bind(this, 2, '微校通系统')}>微校通</a>
+                                    <a href="#" class={this.state.focusClsId == 2 ? 'active-card' : 'card2'} onClick={this.clickCard2.bind(this, 2, '微校通系统')}>微校通</a>
                                 </li>
                                 <li onclick="off()">
-                                    <a href="#" class={this.state.focusClsId == 3 ? 'active-card' : 'card1'} >...</a>
+                                    <a  href="#" class={this.state.focusClsId == 3 ? 'active-card' : 'card1'} ><i className="el-icon-more"></i></a>
                                 </li>
                             </ul>
                             : null}

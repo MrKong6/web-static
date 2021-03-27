@@ -10,6 +10,7 @@ import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import '../../Mkt/Leads/Leads.css'
 import {Button, Table, Pagination, Tag, Input} from 'element-react';
+import './Account.css'
 
 class List extends React.Component {
     constructor(props) {

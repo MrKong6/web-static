@@ -12,23 +12,25 @@ import fmtDate from "../../../utils/fmtDate";
 import CONFIG from "../../../utils/config";
 import calculateAge from "../../../utils/calculateAge";
 import {Message} from "element-react";
+import './Customer.css'
 
 const NextBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
 
     if ((curIndex + 1) === ids.length) {
-        return <button type="button" className="btn btn-light" disabled={true}>下一条</button>
+        return <button  id="xbt" type="button" className="btn btn-light el-icon-caret-bottom " disabled={true}></button>
+        // 下一条
     }
 
     return (
-        <Link
-            className="btn btn-light"
+        <Link  id="xbt"
+            className="btn btn-light el-icon-caret-bottom "
             to={{
                 pathname: `/home/sales/customer/student/${ids[curIndex + 1]}`,
                 state: {ids: ids}
             }}
         >
-            下一条
+            {/* 下一条 */}
         </Link>
     )
 };
@@ -37,18 +39,19 @@ const PrevBtn = ({id, ids}) => {
     const curIndex = ids.indexOf(id);
 
     if (curIndex === 0) {
-        return <button type="button" className="btn btn-light" disabled={true}>上一条</button>
+        return <button  id="bn" type="button" className="btn btn-light  el-icon-caret-top  " disabled={true}></button>
+        // 上一条
     }
 
     return (
-        <Link
-            className="btn btn-light"
+        <Link  id="bn"
+            className="btn btn-light  el-icon-caret-top  "
             to={{
                 pathname: `/home/sales/customer/student/${ids[curIndex - 1]}`,
                 state: {ids: ids}
             }}
         >
-            上一条
+            {/* 上一条 */}
         </Link>
     )
 };
@@ -223,16 +226,19 @@ class StudentView extends React.Component {
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>
                     <div className="btn-group float-right ml-4" role="group">
-                        <button onClick={() => {
+                        <button  id="an" onClick={() => {
                             this.props.history.push('/home/sales/customer');
-                        }} type="button" className="btn btn-light">返回
+                        }} type="button" className="btn btn-light  iconfont  iconweb-icon- ">
+                            {/* 返回 */}
                         </button>
                     </div>
+                    <div  id="colss">
                     <Commands
                         commands={this.commands}
                         modAction={this.modAction}
                         delAction={this.delAction}
                     />
+                    </div>
                 </h5>
 
                 <div id="main" className="main p-3">

@@ -133,7 +133,7 @@ class StudentSituation extends React.Component {
 
         return (
                 <Table
-                    style={{width: '100%'}}
+                    style={{width: '100%',"top":"-10px"}}
                     columns={this.state.columns}
                     data={this.props.data}
                     border={true}

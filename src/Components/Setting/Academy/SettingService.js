@@ -188,10 +188,12 @@ class SettingService extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className="fa fa-shield" aria-hidden="true"/>&nbsp;客户服务
+                    <div className="an">
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
                     />
+                    </div>
                 </h5>
                 <div id="main" className="main p-3">
                     <Progress isAnimating={this.state.isAnimating}/>

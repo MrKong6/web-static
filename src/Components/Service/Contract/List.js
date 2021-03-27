@@ -15,6 +15,7 @@ import fmtDate from "../../../utils/fmtDate";
 import Commands from "../../Commands/Commands";
 import ajaxFile from "../../../utils/ajaxFile";
 import {changeArrayItemToString} from "../../../utils/objectToArray";
+import './contract.css'
 
 class List extends React.Component {
     constructor(props) {
@@ -378,13 +379,15 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                </h5>
+                <div id="main" className="main p-3">
+                <div className=" ">
                     <Commands
                         commands={this.commands}
                         importAction={uploadConfig}
                         exportAction={this.exportAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
                     <Progress isAnimating={this.state.isAnimating}/>
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     <div className="row">

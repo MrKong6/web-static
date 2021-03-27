@@ -560,22 +560,25 @@ class AccountView extends React.Component {
                         <PrevBtn id={this.state.id} ids={this.state.ids}/>
                         <NextBtn id={this.state.id} ids={this.state.ids}/>
                     </div>*/}
-                    <div className="btn-group float-right ml-4" role="group" style={{"display":this.fourth}}>
+                    <div  id="right" className="btn-group float-right ml-4" role="group" style={{"display":this.fourth}}>
                         {
                             this.state.type == 2 ? null :
-                                <button onClick={this.createAccountDialog.bind(this,null,null)} className="btn btn-primary" type="button">
+                                <button id="bottom" onClick={this.createAccountDialog.bind(this,null,null)} className="btn btn-primary" type="button">
                                     充值
                                 </button>
                         }
                         {/*<button onClick={this.createAccountDialog} className="btn btn-primary" type="button">
                             支出
                         </button>*/}
-                        <button onClick={() => {
+                        <button id="bottom" onClick={() => {
                             this.props.history.goBack();
                         }} type="button" className="btn btn-light">返回
                         </button>
                     </div>
 
+                </h5>
+                   <h5 id="secondSubNav">
+                <p className="d-inline text-muted">{this.state.name}</p>
                 </h5>
 
                 <div id="main" className="main p-3" style={{"height":"80%"}}>

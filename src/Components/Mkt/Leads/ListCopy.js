@@ -11,7 +11,7 @@ import {formatWithTime} from '../../../utils/fmtDate';
 import fmtTitle from '../../../utils/fmtTitle';
 import ajax from "../../../utils/ajax";
 import {AJAX_PATH} from "../../../utils/ajax";
-import {Button, Table, Pagination, Message, Input, Tooltip, Select} from 'element-react';
+import { Table, Pagination, Message, Input, Tooltip, Select} from 'element-react';
 import './Leads.css'
 
 import ajaxFile from "../../../utils/ajaxFile";
@@ -545,7 +545,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"page_bottom"}
+                                className={"leadlist_page "}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>

@@ -11,6 +11,7 @@ import Progress from "../Progress/Progress"
 import mainSize from "../../utils/mainSize";
 import ajax from "../../utils/ajax";
 import permissionsProcess from "../../utils/permissionsProcess"
+import './permissions.css'
 
 
 const Table = ({list, selectedFunc, changedFunc}) => {
@@ -325,16 +326,18 @@ class Permissions extends React.Component {
       <div>
         <h5 id="subNav">
           <i className="fa fa-shield" aria-hidden="true"/>&nbsp;权限管理
-
+       
+        </h5>
+        <div id="main" className="main p-3">
+        <div className=" ">
           <Commands
             commands={groupCommands.commands}
             authAction={this.updated}
           />
-        </h5>
-        <div id="main" className="main p-3">
+          </div>
           <Progress isAnimating={this.state.isAnimating}/>
 
-          <div className="row">
+          <div  id="tow" className="row">
             <div className="col-12 col-lg-5 col-xl-4">
               <Tree
                 defaults={this.state.groupId}

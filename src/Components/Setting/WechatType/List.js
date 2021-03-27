@@ -150,10 +150,12 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                    <div className="an">
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
                     />
+                    </div>
                 </h5>
                 <div id="main" className="main p-3">
                     <Table

@@ -38,12 +38,12 @@ const PrevBtn = ({id, ids, link}) => {
     const curIndex = ids.indexOf(id);
 
     if (curIndex === 0) {
-        return <button type="button" className="btn btn-light" disabled={true}>上一条</button>
+        return <button type="button" className="btn btn-light " disabled={true}>上一条</button>
     }
 
     return (
         <Link
-            className="btn btn-light"
+            className="btn btn-light "
             to={{
                 pathname: link + `/${ids[curIndex - 1]}`,
                 state: {ids: ids}

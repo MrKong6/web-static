@@ -348,12 +348,15 @@ class List extends React.Component {
             <div>
                 <h5 id="subNav">
                     <i className={`fa ${this.title.icon}`} aria-hidden="true"/>&nbsp;{this.title.text}
+                  
+                </h5>
+                <div id="main" className="main p-3">
+                <div style={{"margin-top":"20px"}}>
                     <Commands
                         commands={this.commands}
                         addAction={this.addAction}
                     />
-                </h5>
-                <div id="main" className="main p-3">
+                    </div>
                     {/*<Progress isAnimating={this.state.isAnimating}/>*/}
                     {/*<Table list={this.state.list} goto={this.goToDetails}/>*/}
                     <div className="row">
@@ -384,7 +387,7 @@ class List extends React.Component {
                                 pageSize={this.state.pageSize}
                                 currentPage={this.state.currentPage}
                                 pageCount={this.state.totalPage}
-                                className={"page_bottom"}
+                                className={"el-pagination leadlist_page"}
                                 onCurrentChange={(currentPage) => this.pageChange(currentPage)}
                                 onSizeChange={(pageSize) => this.sizeChange(pageSize)}/>
                 </div>
