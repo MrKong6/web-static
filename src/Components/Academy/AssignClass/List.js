@@ -130,34 +130,10 @@ class List extends React.Component {
         calendarApi.gotoDate('2000-01-01') // call a method on the Calendar object
     }
 
+    //时间点击弹框
     eventOnClick = (evt) => {
         this.setState({ dialogVisible3: true });
         this.state.id = evt.event.id;
-        /*
-        this.setState({id:evt.event.id})
-        // this.state.chooseEvent = evt.event;
-        // this.handleDateClick();
-        // this.props.history.push(`${this.props.match.url}/`+evt.event.id);
-        this.actContainer = document.createElement('div');
-        ReactDOM.render(
-            <DialogAssignClass
-                accept={this.acceptActDialog}
-                changedCrmGroup={this.state.group}
-                toDirect={this.toDirect.bind(this)}
-                toChangeId={this.toChangeId.bind(this)}
-                id={evt.event.id}
-                key={new Date().getTime()}
-                defaults={this.state.channelId}
-                replace={this.props.replace}
-                from={this.props.from}
-                ref={(dom) => {
-                    this.act = dom
-                }}
-            />
-            ,
-            document.body.appendChild(this.actContainer)
-        );
-        this.act.dialog.modal('show');*/
     }
 
     windowResize(view) {
@@ -231,7 +207,7 @@ class List extends React.Component {
         }
         this.refreshAssignClass();
     }
-    //添加自定义事件
+    //排课按钮
     handleDateClick = (arg) => {
         if(this.state.chooseClass){
             let classCode = "";

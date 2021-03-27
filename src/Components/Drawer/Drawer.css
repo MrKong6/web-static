@@ -66,9 +66,11 @@
       .interface{
         /* text-align: center; */
         padding-left: 40px;
+        padding-top: 10px;
         color:rgba(0, 0,0, 0.7);
         text-decoration:none;
         background-color:#f3f3f3;
+        font-weight: bolder;
       }
 /* .btn_font_size{
     font-size: 22px !important;

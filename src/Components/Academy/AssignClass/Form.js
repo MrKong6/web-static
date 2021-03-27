@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {Button, DatePicker, Form, Icon, Input, Layout, Select, Tabs, TimePicker} from "element-react";
+import {Button, DatePicker, Form, Icon, Input, Layout, Message, Select, Tabs, TimePicker} from "element-react";
 import 'react-day-picker/lib/style.css';
 import './AssignClass.css';
 
@@ -10,9 +10,10 @@ import CONFIG from '../../../utils/config';
 
 import ajax from "../../../utils/ajax";
 import mainSize from "../../../utils/mainSize";
-import {getTimeFourByDate} from "../../../utils/fmtDate";
-import {changeArrayItemToString} from "../../../utils/objectToArray";
+import {addDate, formatWithDateAndTime, getTimeFourByDate, getWeekDate, getWeekDateByDate, stringToDate} from "../../../utils/fmtDate";
+import {arrayAppend, changeArrayItemToString, deepClone, getArrayIndex, getSubArray} from "../../../utils/objectToArray";
 import {AssignCommonCode} from "../../Dic/AssignCommonCode";
+import fmtDate from "../../../utils/fmtDate";
 
 const WEEKNAME = CONFIG.WEEKNAME;
 
@@ -321,6 +322,8 @@ class AssignForm extends React.Component {
                 teacherId: [],
                 registrar: [],
             }*/],
+            keepWeeksAll:[],  //全局缓存  用于存放切换周再切换回去后的数据
+            weekDate:[]
         }
         this.handleSelect = this.handleSelect.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -345,28 +348,20 @@ class AssignForm extends React.Component {
                     limit: 9999,
                     showAssignStatus: 1
                 });
-                let data = null;
-                let dateRange = [];
-                let hasEnd = 0;
-                if (this.state.id) {
-                    //即编辑
-                    let assignClassList = await ajax('/academy/class/assignClassList.do', {csId: this.state.id});
-                    if (assignClassList && assignClassList.data && assignClassList.data.length > 0) {
-                        data = assignClassList.data[0];
-                        if (data.loopStartTime) {
-                            dateRange.push(new Date(data.loopStartTime));
-                        }
-                        if (data.xunhuanEndDate) {
-                            dateRange.push(new Date(data.xunhuanEndDate));
-                        }
-                    }
+                let data = null, dateRange = [], hasEnd = 0, weeks = this.state.weeks;
+                let weekDate = getWeekDateByDate(new Date());
+                weeks.map(mid => {
+                    mid.weekDate = weekDate[mid.idx-1];
+                });
+                let keepWeeksAll = [];
+                arrayAppend(keepWeeksAll, weeks);
 
-                }
                 this.setState({
                     classList: classList.data,
                     teacherList: teacherList.data.items,
                     roomList: roomList.data.items,
                     registrarList: registrarList,
+                    weeks,keepWeeksAll,weekDate,
                     form: {
                         name: null,
                         classId: data ? data.classId : null,
@@ -653,70 +648,83 @@ class AssignForm extends React.Component {
         let query = {};
         let course = null;
         let teacherId = null, helpTeacherId = null, chooseTeacherId = [],chooseRegistrarId = [];
-        console.log(this.state.weeks);
+        //先将本weeks里面选择的排课信息同步到全局缓存keepWeeksAll中
+        this.state.weeks.map(item => {
+            this.state.keepWeeksAll.map(vo => {
+                if(item.weekDate == vo.weekDate){
+                    //表明同一天
+                    vo.items = deepClone(item.items);
+                }
+            });
+        });
         //封装排课信息
-        this.state.weeks.map(vo => {
-            if (vo.week1) {
-                let hasTeacherId = [];
-                vo.items.map(item => {
+        let weeks = this.state.keepWeeksAll.filter(item => item.items.length > 0);
+        console.log(weeks);
+        weeks.map(vo => {
+            let hasTeacherId = [];
+            vo.items.map(item => {
+                hasTeacherId = [];
+                if (course != null) {
+                    course = course + "、";
+                }
+                course = (course ? course : "") + vo.name;
+                if (item.date1) {
+                    course = course + getTimeFourByDate(item.date1);
+                } else {
+                    console.log(`请完善排课信息时间`,item);
+                    this.createDialogTips(`请完善排课信息时间`);
+                    return;
+                }
+                if (item.roomId1) {
+                    course = course + item.roomId1;
+                } else {
+                    console.log(`请选择排课信息对应教室编码`);
+                    this.createDialogTips(`请选择排课信息对应教室编码`);
+                    return;
+                }
+                if (item.courseId) {
+                    course = (course + "/" + item.courseId);
+                } else {
+                    console.log(`请选择排课信息对应课程编码`);
+                    this.createDialogTips(`请选择排课信息对应课程编码`);
+                    return;
+                }
+                if (item.teacherId1 && item.teacherId1.length > 0) {
+                    teacherId = null;
+                    item.teacherId1.map(id => {
+                        if (hasTeacherId.length == 0 || hasTeacherId.filter(str => (str == id)).length == 0) {
+                            hasTeacherId.push(id);
+                            teacherId = (teacherId + id + ",");
+                        }
+                    });
+                    if (teacherId) {
+                        teacherId = teacherId.substring(0, teacherId.length - 1);
+                        course = (course + "/" + teacherId);
+                    }
+                } else {
+                    console.log(`请选择排课信息对应主教信息`);
+                    this.createDialogTips(`请选择排课信息对应主教信息`);
+                    return;
+                }
+                if (item.teacherId2 && item.teacherId2.length > 0) {
                     hasTeacherId = [];
-                    if (course != null) {
-                        course = course + "、";
-                    }
-                    course = (course ? course : "") + vo.name;
-                    if (item.date1) {
-                        course = course + getTimeFourByDate(item.date1);
-                    } else {
-                        this.createDialogTips(`请完善排课信息时间`);
-                        return;
-                    }
-                    if (item.roomId1) {
-                        course = course + item.roomId1;
-                    } else {
-                        this.createDialogTips(`请选择排课信息对应班级编码`);
-                        return;
-                    }
-                    if (item.courseId) {
-                        course = (course + "/" + item.courseId);
-                    } else {
-                        this.createDialogTips(`请选择排课信息对应班级编码`);
-                        return;
-                    }
-                    if (item.teacherId1 && item.teacherId1.length > 0) {
-                        teacherId = null;
-                        item.teacherId1.map(id => {
-                            if (hasTeacherId.length == 0 || hasTeacherId.filter(str => (str == id)).length == 0) {
-                                hasTeacherId.push(id);
-                                teacherId = (teacherId + id + ",");
-                            }
-                        });
-                        if (teacherId) {
-                            teacherId = teacherId.substring(0, teacherId.length - 1);
-                            course = (course + "/" + teacherId);
+                    helpTeacherId = null;
+                    item.teacherId2.map(id => {
+                        if (hasTeacherId.length == 0 || hasTeacherId.filter(str => (str == id)).length == 0) {
+                            hasTeacherId.push(id);
+                            helpTeacherId = (helpTeacherId + id + ",");
                         }
-                    } else {
-                        this.createDialogTips(`请选择排课信息对应主教信息`);
-                        return;
+                    });
+                    if (helpTeacherId) {
+                        helpTeacherId = helpTeacherId.substring(0, helpTeacherId.length - 1);
+                        course = (course + "/" + helpTeacherId);
                     }
-                    if (item.teacherId2 && item.teacherId2.length > 0) {
-                        hasTeacherId = [];
-                        helpTeacherId = null;
-                        item.teacherId2.map(id => {
-                            if (hasTeacherId.length == 0 || hasTeacherId.filter(str => (str == id)).length == 0) {
-                                hasTeacherId.push(id);
-                                helpTeacherId = (helpTeacherId + id + ",");
-                            }
-                        });
-                        if (helpTeacherId) {
-                            helpTeacherId = helpTeacherId.substring(0, helpTeacherId.length - 1);
-                            course = (course + "/" + helpTeacherId);
-                        }
-                    } else {
-                        this.createDialogTips(`请选择排课信息对应助教信息`);
-                        return;
-                    }
-                });
-            }
+                } else {
+                    // console.log(`请选择排课信息对应助教信息`);
+                    // this.createDialogTips(`请选择排课信息对应助教信息`);
+                    // return;
+                }
+            });
         });
 
         //封装排课时修改的课程对应的主教和助教信息
@@ -779,12 +787,34 @@ class AssignForm extends React.Component {
     //增加或删除排课课时
     changeWeekItem(type, itemId, weekIdx) {
         let weeks = this.state.weeks;
+        let keepWeeksAll = this.state.keepWeeksAll;
+        let that = this;
+
+        //获取当前选中天的日期
+        let chooseDay = weeks.filter(item => item.idx == weekIdx)[0].weekDate;
 
         if (type == 2) {
             //新增一课时
+            //两个课时间不能超过一周
+            let oldData = keepWeeksAll.filter(item => item.items.length > 0);
+            if(oldData.length > 0){
+                let marginMillTime = stringToDate(chooseDay).getTime() - stringToDate(oldData[0].weekDate).getTime();
+                if(marginMillTime >= 604800000 || marginMillTime <= -604800000){
+                    Message({
+                        message: "只能排一周的课",
+                        type: 'error'
+                    });
+                    return;
+                }
+            }
+
             let classTime = 0;
+            let index = 1;
             weeks.map(item => {
                 if (item.items && item.idx == weekIdx) {
+                    if(item.items && item.items.length > 0){
+                        index = item.items[item.items.length-1].ch + 1;
+                    }
                     item.items.push({
                         date1: null,
                         week1: true,
@@ -793,31 +823,64 @@ class AssignForm extends React.Component {
                         teacherId2: this.state.form.registrar,
                         idx: (item.items.length + 1),
                     });
+                    //更新总的数据缓存
+                    for(let i=0;i<keepWeeksAll.length;i++){
+                        let kwa = keepWeeksAll[i];
+                        //设置课次
+                        if(kwa.items &&kwa.items.length > 0){
+                            kwa.ct = ++classTime;
+                        }else{
+                            kwa.ct = null;
+                        }
+                        if(kwa.weekDate == item.weekDate){
+                            item.ct = kwa.ct;
+                        }
+                        if(kwa.weekDate == item.weekDate){
+                            kwa.items.push({
+                                date1: null,
+                                week1: true,
+                                roomId1: null,
+                                teacherId1: that.state.teacherId,
+                                teacherId2: that.state.registrar,
+                                idx: (item.items.length + 1),
+                                ch: index,
+                                ct: classTime,
+                            });
+                            kwa.editAim = true;
+                            break;
+                        }
+                    }
                 }
-                if(item.items &&item.items.length > 0){
-                    item.ct = ++classTime;
-                }else{
-                    item.ct = null;
-                }
+
             });
         } else {
             weeks.map(item => {
                 if (item.items && item.items.length > 0 && item.idx == weekIdx) {
                     item.items = item.items.filter(vo => vo.idx != itemId);
+                    //更新总的数据缓存
+                    for(let i=0;i<keepWeeksAll.length;i++){
+                        let kwa = keepWeeksAll[i];
+                        if(kwa.weekDate == item.weekDate){
+                            if(kwa.weekDate == item.weekDate){
+                                kwa.items = kwa.items.filter(vo => vo.ch != itemId);
+                            }
+                            break;
+                        }
+                    }
                 }
             });
             let course = this.state.courses;
             this.resetIndx(course,weeks);
         }
-        debugger
-        this.setState({weeks});
+        this.setState({weeks, keepWeeksAll});
     }
     //课时条目的内容发生变动
     weekContentChange(itemId, weekIdx, value){
         let weeks = this.state.weeks;
         let course = this.state.courses;
+        let keepWeeksAll = this.state.keepWeeksAll;
 
-        this.resetIndx(course,weeks);
+        this.resetIndx(course,weeks,keepWeeksAll);
         weeks.map(item => {
             if (item.items && item.items.length > 0 && item.idx == weekIdx) {
                 item.items.map(vv => {
@@ -841,14 +904,33 @@ class AssignForm extends React.Component {
                 });
             }
         });
-        this.resetIndx(course,weeks);
+        this.resetIndx(course,weeks,keepWeeksAll);
         this.setState({weeks});
     }
     //重置显示课时
-    resetIndx(course,weeks){
+    resetIndx(course,weeks,keepWeeksAll){
         course.map(item => {
             item.index = 0;
         });
+
+        if(keepWeeksAll){
+            keepWeeksAll.map(item => {
+                item.items.map(vv => {
+                    let idx = 1;
+                    course.map(cou => {
+                        if(cou.courseId == vv.courseId){
+                            if(cou.index){
+                                idx = cou.index+1;
+                                cou.index = idx;
+                            }else{
+                                cou.index = 1;
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
         let classTime = 0;
         weeks.map(item => {
             item.items.map(vv => {
@@ -865,11 +947,79 @@ class AssignForm extends React.Component {
                     }
                 });
             });
-            if(item.items && item.items.length > 0){
-                item.ct = ++classTime;
-            }else{
-                item.ct = null;
+        });
+
+    }
+
+    //改变日期范围
+    changeDateRange(val1, evt){
+        let weekDate = deepClone(this.state.weekDate);
+        let weeks = this.state.weeks;
+        let weekInIdx = this.state.weekInIdx;
+        let keepWeeksAll = this.state.keepWeeksAll;
+        if(val1 == 1){
+            //右移一周
+            let remainData = weeks.filter(item => item.items.length > 0);  //获取编辑课次的数据
+            for(let i=0;i<weekDate.length;i++){
+                weekDate[i] = addDate(weekDate[i], 7);
             }
+            if(remainData.length > 0 && stringToDate(addDate(remainData[0].weekDate, 7)).getTime() < stringToDate(weekDate[0]).getTime()){
+                Message({
+                    message: "只能在编辑当前课次的一自然周内排课",
+                    type: 'error'
+                });
+                return;
+            }
+            this.refreshWeeksAll(weeks,keepWeeksAll);
+            weeks.map(item => {
+                item.weekDate = addDate(item.weekDate, 7);
+                item.items = [];
+                item.forbidon = false;
+                item.editAim = false;
+            });
+            weekInIdx += 1;
+        }else if(val1 == 2){
+            //左移一周
+            let hasForbidonData = weeks.filter(item => item.forbidon);
+            for(let i=0;i<weekDate.length;i++){
+                weekDate[i] = addDate(weekDate[i], -7);
+            }
+            if(hasForbidonData.length > 0){
+                Message({
+                    message: "只能在编辑当前课次的一自然周内排课",
+                    type: 'error'
+                });
+                return;
+            }
+            this.refreshWeeksAll(weeks,keepWeeksAll);
+            weeks.map(item => {
+                item.weekDate = addDate(item.weekDate, -7);
+                item.items = [];
+                item.editAim = false;
+            });
+            weekInIdx -= 1;
+        }
+        //查看keepWeeks中的日期是否和当前一致  一致则把数据keepWeeks赋值给当前周  否则直接向前拨
+        let fData = keepWeeksAll.filter(ob => (ob.weekDate == weeks[0].weekDate));
+        if(fData && fData.length>0){
+            let fromIdx = getArrayIndex(keepWeeksAll, weeks[0], 'weekDate');
+            weeks = getSubArray(keepWeeksAll, fromIdx, fromIdx + 6)
+        }else{
+            arrayAppend(keepWeeksAll, weeks);
+        }
+        this.setState({weekDate,weeks,weekInIdx,keepWeeksAll});
+    }
+
+    //翻页时刷新总缓存
+    refreshWeeksAll(weeks,keepWeeksAll){
+        weeks.map(item =>{
+            keepWeeksAll.map(vo => {
+                if(item.weekDate == vo.weekDate && item.items.length > 0){
+                    //说明当前周的数据在总缓存中有  则更新总缓存
+                    vo.items = deepClone(item.items);
+                    vo.ct = item.ct;
+                }
+            });
         });
     }
 
@@ -943,7 +1093,7 @@ class AssignForm extends React.Component {
                                             <DatePicker
                                                 name="startDate"
                                                 value={this.state.form.startDate}
-                                                placeholder="选择日期"
+                                                isDisabled={true}
                                                 onChange={this.handleSelect.bind(this, 1, 'startDate')}
                                             />
                                         </Form.Item>
@@ -959,86 +1109,24 @@ class AssignForm extends React.Component {
                                     </div>
                                 </div>
                             </Layout.Col>
-                            {/*<Layout.Col span="6">
-                                <Form.Item label="教师">
-                                    <Select value={this.state.form.teacherId} placeholder="请选择教师" multiple={true}
-                                            filterable={true} clearable={true} style={{"width":"100%"}}
-                                            onChange={this.handleSelect.bind(this, 1, "teacherId")}>
-                                        {
-                                            (this.state.teacherList && this.state.teacherList.length > 0) ? this.state.teacherList.map(el => {
-                                                return <Select.Option key={el.id} label={el.name} value={el.id}/>
-                                            }) : null
-                                        }
-                                    </Select>
-                                </Form.Item>
-                            </Layout.Col>*/}
                         </div>
-                        {/*<div className="row">
-                            <Layout.Col span="6">
-                                <Form.Item label="课程类型">
-                                    <Input value={this.state.form.courseType} disabled={true}></Input>
-                                </Form.Item>
-                            </Layout.Col>
-                            <Layout.Col span="6">
-                                <Form.Item label="助教">
-                                    <Select value={this.state.form.registrar} placeholder="请选择助教"  multiple={true}
-                                            filterable={true} clearable={true} style={{"width":"100%"}}
-                                            onChange={this.handleSelect.bind(this, 1, "registrar")}>
-                                        {
-                                            (this.state.teacherList && this.state.teacherList.length > 0) ? this.state.teacherList.map(el => {
-                                                return <Select.Option key={el.id} label={el.name} value={el.id}/>
-                                            }) : null
-                                        }
-                                    </Select>
-                                </Form.Item>
-                            </Layout.Col>
-                        </div>*/}
-                        {/*<div className="row">
-                            <Layout.Col span="6">
-                                <Form.Item label="课程阶段">
-                                    <Input value={this.state.form.courseRange} disabled={true}></Input>
-                                </Form.Item>
-                            </Layout.Col>
-                        </div>
-                        <div className="row">
-                            <Layout.Col span="6">
-                                <Form.Item label="总课时">
-                                    <Input value={this.state.form.classHour} disabled={true}></Input>
-                                </Form.Item>
-                            </Layout.Col>
-                        </div>
-                        <div className="row">
-                            <Layout.Col span="6">
-                                <Form.Item label="总课次">
-                                    <Input value={this.state.form.classTime} disabled={true}></Input>
-
-                                </Form.Item>
-                            </Layout.Col>
-                        </div>*/}
                         <div className="row"></div>
-                        <div className="row">
-                            {/*<Layout.Col span="6">
-                                <Form.Item label="课程时长">
-                                    <Input value={this.state.form.time} disabled={true}></Input>
-                                </Form.Item>
-                            </Layout.Col>
-                           <Layout.Col span="6">
-                                <Form.Item label="当前课次">
-                                    <Input value={this.state.form.currentClassTime} disabled={true}></Input>
-                                </Form.Item>
-                            </Layout.Col>*/}
-                        </div>
+                        <div className="row"></div>
 
                         <div className="row" style={{"marginTop": "20px"}}>
-                            <Tabs type="border-card" activeName={1} className="col-10"
+                            <div className="col-0.5">
+                                <Button type="primary" icon="arrow-left" onClick={this.changeDateRange.bind(this,2)}></Button>
+                            </div>
+                            <Tabs type="border-card" activeName={1} className="col-11"
                                   onTabClick={this.changeTabs.bind(this)}>
                                 {that.state.weeks.map(function (vo) {
                                     return (  /*vo.name*/
-                                        <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name}</span>} name={vo.idx}>
+                                        <Tabs.Pane label={ <span style={{"color": vo.items.length > 0 ? "red" : "black"}}><Icon name="date" /> {vo.name + '(' +vo.weekDate + ')'}</span>} name={vo.idx}>
                                             <div className="row">
                                                 <div className="col-2 grid-content bg-purple"
                                                     /*style={{"display": item.show}}*/>
-                                                    <label>{vo.ct}</label>
+                                                    {/*只有排了课的才可以*/}
+                                                    <label>{vo.items && vo.items.length > 0 ? vo.ct : ""}</label>
                                                     <Button type="primary" icon="plus" size='small'
                                                             onClick={that.changeWeekItem.bind(this, 2, vo.idx, vo.idx)}></Button>
                                                 </div>
@@ -1080,6 +1168,19 @@ class AssignForm extends React.Component {
                                                                     placeholder="开始上课时间"
                                                                     onChange={date => {
                                                                         item.date1 = date;
+                                                                        let has = false;
+                                                                        let keepWeeksAll = that.state.keepWeeksAll.filter(item => item.items.length > 0);
+                                                                        if(keepWeeksAll.length > 0){
+                                                                            if(stringToDate(keepWeeksAll[0].weekDate).getTime() < stringToDate(vo.weekDate).getTime()){
+                                                                                has = true
+                                                                            }
+                                                                        }
+                                                                        if(!has){
+                                                                            let form = that.state.form;
+                                                                            form.startDate = formatWithDateAndTime(stringToDate(vo.weekDate), date);
+                                                                            console.log( form.startDate);
+                                                                            that.setState({form});
+                                                                        }
                                                                     }}
                                                                 />
                                                             </div>
@@ -1150,7 +1251,9 @@ class AssignForm extends React.Component {
                                     )
                                 })}
                             </Tabs>
-
+                            <div className="col-0.5">
+                                <Button type="primary" onClick={this.changeDateRange.bind(this,1)}><i className="el-icon-arrow-right el-icon-right"></i></Button>
+                            </div>
                         </div>
 
 

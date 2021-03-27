@@ -7,10 +7,10 @@ import DialogTips from "../../Dialog/DialogTips";
 import ajax from "../../../utils/ajax";
 import CONFIG from '../../../utils/config';
 
-import fmtDate, {addDate, formatWithDateAndTime, getNumByWeek, getWeekDate} from "../../../utils/fmtDate";
+import fmtDate, {addDate, formatWithDateAndTime, getNumByWeek, getWeekDate, stringToDate} from "../../../utils/fmtDate";
 import calculateAge from "../../../utils/calculateAge";
-import {Button,  Tabs, DatePicker, Icon, Input, Layout, Radio, Select, TimePicker} from "element-react";
-import {changeArrayItemToInt, changeArrayItemToString, changeStringToArrayInt} from "../../../utils/objectToArray";
+import {Button, Tabs, DatePicker, Icon, Input, Layout, Radio, Select, TimePicker, Message} from "element-react";
+import {arrayAppend, changeArrayItemToInt, changeArrayItemToString, changeStringToArrayInt, deepClone, getArrayIndex, getSubArray} from "../../../utils/objectToArray";
 
 const WEEKNAME=CONFIG.WEEKNAME;
 class EditForm extends React.Component {
@@ -25,7 +25,7 @@ class EditForm extends React.Component {
             startTime: null,
             endTime: null,
             id: this.props.editorId,
-            showType: this.props.type,  //1是当前课次  2是所有课次
+            showType: this.props.type,  //2是当前课次  1是所有课次
             roomList: [],
             teacherList: [],
             chooseTeacher: [],
@@ -106,6 +106,7 @@ class EditForm extends React.Component {
                     name: '周日',
                     items: [],
                 }],
+            keepWeeksAll:[],  //全局缓存  用于存放切换周再切换回去后的数据
             weeksDataSource: [
                 {
                     date1: null,
@@ -276,7 +277,8 @@ class EditForm extends React.Component {
                             idx: 2,
                         }],
                 }],
-            weekDate: []
+            weekDate: [],
+            weekInIdx: 0, //0表示处于当前课次周   1表示后一周   -1表示前一周
         };
         this.changeBirthday = this.changeBirthday.bind(this);
         this.createDialogTips = this.createDialogTips.bind(this);
@@ -297,15 +299,17 @@ class EditForm extends React.Component {
             try {
 
                 let teacherId = [];
-                let data = await ajax('/academy/class/assignClassById.do', {csId: this.state.id,type:this.state.showType});
+                let respData = await ajax('/academy/class/assignClassById.do', {csId: this.state.id,type:this.state.showType});
                 let roomList = await ajax('/academy/room/list.do', {orgId: this.state.group.id});
                 let teacherList = await ajax('/academy/teacher/list.do', {orgId: this.state.group.id});
                 let registrarList = await ajax('/user/listUserByRole.do', {orgId: this.state.group.id,type:5});
 
                 let weeks = [],checkWeek = null,checkMuiltiWeek = [],weeksDataSource = this.state.weeksDataSource;
-                data = data.data;
+                let data = respData.data;
                 let mid = null;
                 let weekDate = getWeekDate(data[0].startTime);
+                let isForbidon = true;
+                let aimData = data.filter(item => item.id == this.state.id)[0];
                 //根据日期找到当前日期对应的当前周的日期
                 weeksDataSource.map(source => {
                     mid = source;
@@ -319,19 +323,31 @@ class EditForm extends React.Component {
                                 teacherId2: changeStringToArrayInt(vo.registrarId),
                                 ch:vo.currentClassHour,
                                 ct:vo.currentClassTime,
-                                id:vo.id});
+                                id:vo.id,
+
+                            });
                             mid.week1 = true;
                         }
                     });
                     if(mid.items.length > 0){
                         source.items = mid.items;
                     }
+                    if(mid.items && mid.items.length > 0 && mid.items[0].ct == aimData.currentClassTime){
+                        isForbidon = false;
+                    }
                     mid.weekDate = weekDate[source.idx-1];
+                    mid.forbidon = isForbidon;   //该字段表明这数据是不可动的元素
+                    mid.editAim = mid.items && mid.items.length > 0 ? (mid.items[0].ct == aimData.currentClassTime) : false;   //该字段表明编辑课次的元素
                     weeks.push(mid);
                 });
-                data = data[0];
+                let filData = data.filter(item => item.id == this.state.id);
+                if(filData && filData.length > 0){
+                    data = data.filter(item => item.classTime == filData[0].classTime)[0];
+                }
                 let defaultClickTab = Number(getNumByWeek(data.weekName));
 
+                let keepWeeksAll = [];
+                arrayAppend(keepWeeksAll, weeks);
 
                 this.setState({
                     checkWeek,checkMuiltiWeek,weeksDataSource,weekDate,
@@ -343,12 +359,14 @@ class EditForm extends React.Component {
                     // roomId: data.roomId ? (data.roomId.indexOf(0) == 0 ? Number(data.roomId.substr(1,data.roomId.length)) : data.roomId) : null,
                     roomId: Number(data.roomId),
                     chooseTeacher: teacherId,
-                    teacherId: changeStringToArrayInt(data.clTeacherId),
-                    registrar: changeStringToArrayInt(data.clRegistrarId),
+                    teacherId: changeStringToArrayInt(data.teacherId),
+                    registrar: changeStringToArrayInt(data.registrarId),
                     startDate: new Date(data.loopStartTime),
                     endDate: new Date(data.xunhuanEndDate),
                     data: data,
-                    weeks,weeksDataSource,defaultClickTab
+                    respData: respData.data,
+                    weeks,defaultClickTab,
+                    keepWeeksAll: keepWeeksAll
                 }, () => {
                     if (this.props.isEditor) {
                         const keys = Object.keys(data);
@@ -589,27 +607,6 @@ class EditForm extends React.Component {
 
         let query = this.state.data;
         query.showType = this.state.showType;
-
-        let items = [];
-        this.state.weeks.map(vo => {
-            vo.items.map(id => {
-                id.name = vo.name;
-                id.date1 = formatWithDateAndTime(vo.weekDate,id.date1);
-                items.push(id);
-            });
-        });
-        if (items.length <= 0) {
-            return
-        }
-        query.courseList = items;
-        // query.weekName = this.state.weeks[0].name;
-        // query.loopTrue = this.state.loopTrue; //1是循环 2是不循环
-        query.loopStartTime = new Date(query.loopStartTime);
-        query.xunhuanEndDate = new Date(query.xunhuanEndDate);
-        query.startTime = new Date(this.state.startTime);
-        query.endTime = new Date(this.state.endTime);
-        query.createOn = new Date();
-        // query.id = this.state.id;
         let teacherNames=[];
         if(this.state.teacherId && this.state.teacherId.length >0){
             this.state.teacherId.map(id=> {
@@ -628,17 +625,72 @@ class EditForm extends React.Component {
         }
         query.registrarId = changeArrayItemToString(this.state.registrar);
         query.registrarName = changeArrayItemToString(rNames);
-        //
-        // for (let i = 0; i < this.form.length; i++) {
-        //     if (this.form[i].name) {
-        //         if (this.form[i].name === 'startTime' || this.form[i].name === 'endTime') {
-        //             query[this.form[i].name] = new Date(this.form[i].value).getTime();
-        //         } else {
-        //             query[this.form[i].name] = this.form[i].value;
-        //         }
-        //     }
-        // }
 
+        if(this.state.showType == 1){
+            //所有课次
+
+            //先将本weeks里面选择的排课信息同步到全局缓存keepWeeksAll中
+            this.state.weeks.map(item => {
+                this.state.keepWeeksAll.map(vo => {
+                    if(item.weekDate == vo.weekDate){
+                        //表明同一天
+                        vo.items = deepClone(item.items);
+                    }
+                });
+            });
+
+            let weeks = this.state.keepWeeksAll.filter(item => item.items.length > 0 && item.items[0].ct >= query.classTime);
+            let items = [];
+            weeks.map(vo => {
+                vo.items.map(id => {
+                    id.name = vo.name;
+                    id.date1 = formatWithDateAndTime(vo.weekDate,id.date1);
+                    items.push(id);
+                });
+            });
+            if (items.length <= 0) {
+                return
+            }
+            query.loopStartTime = null;
+            query.xunhuanEndDate = null;
+            query.startTime = null;
+            query.endTime = null;
+            query.createOn = null;
+            query.courseList = items;
+        }else{
+
+            let items = [];
+            this.state.weeks.map(vo => {
+                vo.items.map(id => {
+                    id.name = vo.name;
+                    id.date1 = formatWithDateAndTime(vo.weekDate,id.date1);
+                    items.push(id);
+                });
+            });
+            if (items.length <= 0) {
+                return
+            }
+            query.courseList = items;
+            // query.weekName = this.state.weeks[0].name;
+            // query.loopTrue = this.state.loopTrue; //1是循环 2是不循环
+            query.loopStartTime = new Date(query.loopStartTime);
+            query.xunhuanEndDate = new Date(query.xunhuanEndDate);
+            query.startTime = new Date(this.state.startTime);
+            query.endTime = new Date(this.state.endTime);
+            query.createOn = new Date();
+            // query.id = this.state.id;
+
+            //
+            // for (let i = 0; i < this.form.length; i++) {
+            //     if (this.form[i].name) {
+            //         if (this.form[i].name === 'startTime' || this.form[i].name === 'endTime') {
+            //             query[this.form[i].name] = new Date(this.form[i].value).getTime();
+            //         } else {
+            //             query[this.form[i].name] = this.form[i].value;
+            //         }
+            //     }
+            // }
+        }
         return query;
     }
 
@@ -676,9 +728,36 @@ class EditForm extends React.Component {
     changeWeekItem(type, itemId, weekIdx) {
         let weeks = this.state.weeks;
         let that = this;
+        let weekInIdx = this.state.weekInIdx;
+        let keepWeeksAll = this.state.keepWeeksAll;
+        let deleteCh = null;
+
+        //获取当前选中天的日期
+        let chooseDay = weeks.filter(item => item.idx == weekIdx)[0].weekDate;
+        let oldData = this.state.respData.filter(item => item.classTime < this.state.data.classTime);
+        //不能再上一课时之前编辑
+        if(oldData.length > 0 && stringToDate(chooseDay).getTime() <= stringToDate(fmtDate(oldData[oldData.length - 1].startTime)).getTime()){
+            Message({
+                message: "不能操作此课时以前的课时",
+                type: 'error'
+            });
+            return;
+        }
 
         if (type == 2) {
             //新增一课时
+            //新增加的课时不能大于编辑课次的7天以上
+            let mid = keepWeeksAll.filter(item => item.items.length > 0 && item.items[0].ct == this.state.data.classTime);
+            if(mid && mid.length > 0){
+                // 604800000 = 7*24*60*60*1000
+                if((stringToDate(chooseDay).getTime() - stringToDate(mid[0].weekDate).getTime()) >= 604800000){
+                    Message({
+                        message: "不能操作当前编辑课次一周后的课时",
+                        type: 'error'
+                    });
+                    return;
+                }
+            }
             let index = 0;
             weeks.map(item => {
                 if (item.items && item.idx == weekIdx) {
@@ -696,19 +775,57 @@ class EditForm extends React.Component {
                         teacherId2: that.state.registrar,
                         idx: (item.items.length + 1),
                         ch: index,
-                        ct: this.state.data.currentClassTime
+                        ct: this.state.data.currentClassTime,
+                        editAim: true
                     });
+                    //更新总的数据缓存
+                    for(let i=0;i<keepWeeksAll.length;i++){
+                        let kwa = keepWeeksAll[i];
+                        if(kwa.weekDate == item.weekDate){
+                            kwa.items.push({
+                                date1: null,
+                                week1: true,
+                                roomId1: null,
+                                teacherId1: that.state.teacherId,
+                                teacherId2: that.state.registrar,
+                                idx: (item.items.length + 1),
+                                ch: index,
+                                ct: this.state.data.currentClassTime,
+                            });
+                            kwa.editAim = true;
+                            break;
+                        }
+                    }
                 }
             });
         } else {
             weeks.map(item => {
                 if (item.items && item.items.length > 0 && item.idx == weekIdx) {
+                    let delVo = item.items.filter(vo => vo.ch == itemId);
+                    deleteCh = delVo[0].ch;
                     item.items = item.items.filter(vo => vo.ch != itemId);
+                    if(item.items.length == 0){
+                        weekInIdx = 0;
+                        item.editAim = false;
+                    }
+                    //更新总的数据缓存
+                    for(let i=0;i<keepWeeksAll.length;i++){
+                        let kwa = keepWeeksAll[i];
+                        if(kwa.weekDate == item.weekDate){
+                            if(kwa.weekDate == item.weekDate){
+                                kwa.items = kwa.items.filter(vo => vo.ch != itemId);
+                                if(kwa.items.length == 0){
+                                    kwa.editAim = false;
+                                }
+                            }
+                            break;
+                        }
+                    }
                 }
             });
-            this.resetIndx(weeks);
         }
-        this.setState({weeks});
+        this.resetWeekCourseHourIndx(weeks,keepWeeksAll,this.state.data,chooseDay,type,deleteCh)
+        this.setState({weeks,weekInIdx,keepWeeksAll});
     }
 
     //课时条目的内容发生变动
@@ -756,28 +873,120 @@ class EditForm extends React.Component {
         });
     }
 
+    //重置新增的课时的课时数  deleteCh:删除的课时数
+    resetWeekCourseHourIndx(weeks, keepWeeksAll, data, chooseDay, type, deleteCh){
+        let idx = data.classHour;
+        let idx2 = data.classHour;
+        let finalIdx = data.classHour;
+        //先找到全局缓存最小的课时数  方便后续累加
+        for(let i=0;i<keepWeeksAll.length;i++){
+            if(keepWeeksAll[i].items.length > 0){
+                if(type == 1 && stringToDate(chooseDay).getTime() < stringToDate(keepWeeksAll[i].weekDate).getTime()){
+                    break;
+                }
+                idx = keepWeeksAll[i].items[0].ch;
+                idx2 = keepWeeksAll[i].items[0].ch;
+                break;
+            }
+        }
+        keepWeeksAll.map(item => {
+            if(item.items.length > 0){
+                item.items.map(vo => {
+                    vo.ch = idx2++;
+                });
+                if(item.weekDate == chooseDay){
+                    finalIdx = item.items[0].ch;
+                }
+            }
+        });
+        weeks.map(item => {
+            if(type == 2){
+                if(item.items.length > 0 && stringToDate(item.weekDate).getTime() >= stringToDate(chooseDay).getTime()){
+                    item.items.map(vo => {
+                        vo.ch = finalIdx++;
+                    });
+                }
+            }else{
+                if(item.items.length > 0 && item.items[0].ch >= deleteCh){
+                    item.items.map(vo => {
+                        vo.ch = vo.ch - 1;
+                    });
+                }
+            }
+
+        });
+
+    }
+
     //改变日期范围
     changeDateRange(val1, evt){
-        let weekDate = this.state.weekDate;
+        let weekDate = deepClone(this.state.weekDate);
         let weeks = this.state.weeks;
+        let weekInIdx = this.state.weekInIdx;
+        let keepWeeksAll = this.state.keepWeeksAll;
         if(val1 == 1){
             //右移一周
-            weekDate.map(item => {
-                item = addDate(item, 7);
-            });
+            let hasAimData = keepWeeksAll.filter(item => item.editAim);  //获取编辑课次的数据
+            for(let i=0;i<weekDate.length;i++){
+                weekDate[i] = addDate(weekDate[i], 7);
+            }
+            if(hasAimData.length > 0 && stringToDate(addDate(hasAimData[hasAimData.length-1].weekDate, 7)).getTime() < stringToDate(weekDate[0]).getTime()){
+                Message({
+                    message: "只能在编辑当前课次的一自然周内排课",
+                    type: 'error'
+                });
+                return;
+            }
+            this.refreshWeeksAll(weeks,keepWeeksAll);
             weeks.map(item => {
                 item.weekDate = addDate(item.weekDate, 7);
+                item.items = [];
+                item.forbidon = false;
+                item.editAim = false;
             });
+            weekInIdx += 1;
         }else if(val1 == 2){
             //左移一周
-            weekDate.map(item => {
-                item = addDate(item, -7);
-            });
+            let hasForbidonData = weeks.filter(item => item.forbidon);
+            for(let i=0;i<weekDate.length;i++){
+                weekDate[i] = addDate(weekDate[i], -7);
+            }
+            if(hasForbidonData.length > 0){
+                Message({
+                    message: "只能在编辑当前课次的一自然周内排课",
+                    type: 'error'
+                });
+                return;
+            }
+            this.refreshWeeksAll(weeks,keepWeeksAll);
             weeks.map(item => {
                 item.weekDate = addDate(item.weekDate, -7);
+                item.items = [];
+                item.editAim = false;
             });
+            weekInIdx -= 1;
         }
-        this.setState({weekDate,weeks});
+        //查看keepWeeks中的日期是否和当前一致  一致则把数据keepWeeks赋值给当前周  否则直接向前拨
+        let fData = keepWeeksAll.filter(ob => (ob.weekDate == weeks[0].weekDate));
+        if(fData && fData.length>0){
+            let fromIdx = getArrayIndex(keepWeeksAll, weeks[0], 'weekDate');
+            weeks = getSubArray(keepWeeksAll, fromIdx, fromIdx + 6)
+        }else{
+            arrayAppend(keepWeeksAll, weeks);
+        }
+        this.setState({weekDate,weeks,weekInIdx,keepWeeksAll});
+    }
+
+    //翻页时刷新总缓存
+    refreshWeeksAll(weeks,keepWeeksAll){
+        weeks.map(item =>{
+            keepWeeksAll.map(vo => {
+                if(item.weekDate == vo.weekDate && item.items.length > 0){
+                    //说明当前周的数据在总缓存中有  则更新总缓存
+                    vo.items = deepClone(item.items);
+                }
+            });
+        });
     }
 
     render() {
@@ -968,7 +1177,6 @@ class EditForm extends React.Component {
                                                                             }}
                                                                         />
                                                                     </div>
-
                                                                     <div className="col-2 grid-content bg-purple">
                                                                         <Select value={item.roomId1} placeholder="教室"
                                                                                 filterable={true}
@@ -986,7 +1194,6 @@ class EditForm extends React.Component {
                                                                             }
                                                                         </Select>
                                                                     </div>
-
                                                                     <div className="col-2 grid-content bg-purple">
                                                                         <Select value={item.teacherId1} placeholder="请选择主教"
                                                                                 filterable={true} multiple={true}
@@ -1004,7 +1211,6 @@ class EditForm extends React.Component {
                                                                             }
                                                                         </Select>
                                                                     </div>
-
                                                                     <div className="col-2 grid-content bg-purple">
                                                                         <Select value={item.teacherId2} placeholder="请选择助教"
                                                                                 filterable={true} multiple={true}
@@ -1048,5 +1254,4 @@ class EditForm extends React.Component {
         )
     }
 }
-
 export default EditForm;

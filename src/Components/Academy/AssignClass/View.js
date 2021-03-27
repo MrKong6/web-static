@@ -232,6 +232,7 @@ class View extends React.Component {
                 teacherList = teacherList.data.items;
                 let weeks = [],weeksDataSource = this.state.weeksDataSource;
                 let weekDate = getWeekDate(data[0].startTime);
+                debugger
                 if(data.length > 0){
                     weeksDataSource.map(source => {
                         source.items = [];
@@ -248,13 +249,12 @@ class View extends React.Component {
                                     index:vo.currentClassHour});
                                 source.week1 = true;
                             }
-
                         });
                         source.weekDate = weekDate[source.idx-1];
                         weeks.push(source);
 
                     });
-                    data = data[0];
+                    data = data.filter(item => item.id == this.state.id)[0];
                 }
                 let defaultClickTab = Number(getNumByWeek(data.weekName));
                 this.setState({roomList, teacherList, data, weeks,defaultClickTab});
@@ -444,7 +444,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.clTeacherName}
+                                                        value={this.state.data.teacherName}
                                                     />
                                                 </div>
                                             </div>
@@ -455,7 +455,7 @@ class View extends React.Component {
                                                         type="text"
                                                         readOnly={true}
                                                         className="form-control-plaintext"
-                                                        value={this.state.data.clRegistrarName}
+                                                        value={this.state.data.registrarName}
                                                     />
                                                 </div>
                                             </div>
